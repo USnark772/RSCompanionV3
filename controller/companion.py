@@ -19,8 +19,8 @@ import time
 
 import numpy as np
 
-RS_Devices = {"wVOG" : {"vid": 61525, "pid": 38912},
-              "DRT" : {"vid": 9114, "pid": 32798},
+RS_Devices = {"wVOG": {"vid": 61525, "pid": 38912},
+              "DRT": {"vid": 9114, "pid": 32798},
               "VOG": {"vid": 5824, "pid": 1155},
               "wDRT": {"vid": 23123, "pid": 32421}
               }
@@ -64,7 +64,6 @@ class MainController:
         asyncio.create_task(self.handle_frames())
 
         asyncio.create_task(self.send_stop())
-
 
         # loops here...
         with loop:
