@@ -25,9 +25,10 @@ RS_Devices = {"wVOG": {"vid": 61525, "pid": 38912},
               "wDRT": {"vid": 23123, "pid": 32421}
               }
 
-
 class MainController:
     def __init__(self):
+
+        #New comment
 
         # QT
         app = QApplication(sys.argv)
