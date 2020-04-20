@@ -12,7 +12,6 @@ import concurrent.futures
 import sys
 import asyncio
 
-
 import cv2
 
 import time
@@ -25,10 +24,14 @@ RS_Devices = {"wVOG": {"vid": 61525, "pid": 38912},
               "wDRT": {"vid": 23123, "pid": 32421}
               }
 
+
+# TODO: Implement device manager.
+
+
 class MainController:
     def __init__(self):
 
-        #New comment
+        # New comment
 
         # QT
         app = QApplication(sys.argv)

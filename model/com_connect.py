@@ -15,11 +15,9 @@ class Comports:
 
         self.loop = asyncio.get_running_loop()
 
-
     async def run(self):
         self.loop.run_in_executor(None, self._scan_for_change)
         self.loop.create_task(self.read_ports())
-
 
     async def read_ports(self):
         for ports in self.attached:
@@ -67,5 +65,5 @@ class Comports:
                 for device in self._device_ids:
                     if com.vid == self._device_ids[device]['vid'] and com.pid == self._device_ids[device]['pid']:
                         connection = aioserial.AioSerial(com.device)
-                        self.attached.update({com.device: {'type': device, 'conn': connection, 'reply': None}})
+                        self.attached.update({com.device: {'type': device, 'conn': connection}})
                         break
