@@ -28,7 +28,6 @@ RS_Devices = {"wVOG" : {"vid": 61525, "pid": 38912},
 class MainController:
     def __init__(self):
 
-
         # QT
         app = QApplication(sys.argv)
         loop = QEventLoop(app)
