@@ -23,9 +23,7 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from asyncio import get_event_loop, all_tasks, current_task, gather, Event
-from Model.rs_device_com_scanner import RSDeviceCommScanner
-from Model.app_defs import RS_Devices
+from asyncio import get_event_loop, all_tasks, current_task, gather
 
 
 class AppModel:
