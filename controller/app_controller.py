@@ -95,6 +95,7 @@ class AppController:
         self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, self.ch)
         self.flag_box = FlagBox(self.main_window, flag_box_size, self.ch)
         self.note_box = NoteBox(self.main_window, note_box_size, self.ch)
+        # TODO: Add mdi window to mani window.
 
         self.__setup_handlers()
         self.__setup_flags()
@@ -129,15 +130,6 @@ class AppController:
             print("Error connecting")
             self.__device_conn_error_flag.clear()
 
-    def __start(self) -> None:
-        """
-        Start all recurring functions.
-        :return: None
-        """
-        create_task(self.handle_new_devices())
-        create_task(self.handle_device_conn_error())
-        self.__dev_com_scanner.start()
-
     def __setup_handlers(self) -> None:
         """
         Attach event handlers as needed.
@@ -152,7 +144,7 @@ class AppController:
         :return: None
         """
         self.logger.debug("running")
-        self.main_window.add_close_handler(self.__close_handler)
+        self.main_window.add_close_handler(self.__cleanup)
         self.logger.debug("done")
 
     def __initialize_view(self) -> None:
@@ -179,6 +171,15 @@ class AppController:
         self.log_output.show()
         self.logger.debug("done")
 
-    def __close_handler(self):
+    def __start(self) -> None:
+        """
+        Start all recurring functions.
+        :return: None
+        """
+        create_task(self.handle_new_devices())
+        create_task(self.handle_device_conn_error())
+        self.__dev_com_scanner.start()
+
+    def __cleanup(self):
         self.__dev_com_scanner.cleanup()
         create_task(self.__model.cleanup())
