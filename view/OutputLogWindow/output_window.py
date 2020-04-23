@@ -17,29 +17,30 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
-Date: 2020
+Date: 2019
 Project: Companion App
 Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-import sys
-import asyncio
-from asyncqt import QEventLoop
-from PySide2.QtWidgets import QApplication
-from PySide2.QtCore import Qt
-from Controller.app_controller import AppController
+from PySide2.QtWidgets import QWidget, QVBoxLayout, QTextEdit
+from PySide2.QtGui import QTextCursor
 
 
-def main():
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    app = QApplication(sys.argv)
-    controller = AppController()  # Need reference else garbage collector has too much fun
-    app_loop = QEventLoop(app)
-    asyncio.set_event_loop(app_loop)
-    with app_loop:
-        sys.exit(app_loop.run_forever())
+class OutputWindow(QWidget):
+    """ This is to display small messages to the user. """
+    def __init__(self):
+        super().__init__()
+        self.resize(400, 200)
+        self.move(100, 100)
+        self.setWindowTitle('Program Output')
+        self.setLayout(QVBoxLayout())
+        self.textBox = QTextEdit()
+        self.layout().addWidget(self.textBox)
+        self.text = ""
+        self.textBox.setReadOnly(True)
 
-
-if __name__ == '__main__':
-    main()
+    def write(self, message):
+        self.textBox.moveCursor(QTextCursor.End)
+        self.textBox.insertPlainText(message)
+        self.textBox.moveCursor(QTextCursor.End)

@@ -17,29 +17,25 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
-Date: 2020
+Date: 2019
 Project: Companion App
 Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-import sys
-import asyncio
-from asyncqt import QEventLoop
-from PySide2.QtWidgets import QApplication
-from PySide2.QtCore import Qt
-from Controller.app_controller import AppController
+import logging
+from PySide2.QtWidgets import QMessageBox
 
 
-def main():
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    app = QApplication(sys.argv)
-    controller = AppController()  # Need reference else garbage collector has too much fun
-    app_loop = QEventLoop(app)
-    asyncio.set_event_loop(app_loop)
-    with app_loop:
-        sys.exit(app_loop.run_forever())
-
-
-if __name__ == '__main__':
-    main()
+class HelpWindow(QMessageBox):
+    """ This is to display small messages to the user. """
+    def __init__(self, name, text):
+        self.logger = logging.getLogger(__name__)
+        self.logger.debug("Initializing")
+        super().__init__()
+        self.setWindowTitle(name)
+        self.setText(text)
+        self.setStandardButtons(QMessageBox.Close)
+        self.setDefaultButton(QMessageBox.Close)
+        self.setEscapeButton(QMessageBox.Close)
+        self.logger.debug("Initialized")

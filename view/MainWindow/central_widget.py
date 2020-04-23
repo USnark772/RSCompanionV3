@@ -17,29 +17,21 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
-Date: 2020
+Date: 2019
 Project: Companion App
 Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-import sys
-import asyncio
-from asyncqt import QEventLoop
-from PySide2.QtWidgets import QApplication
-from PySide2.QtCore import Qt
-from Controller.app_controller import AppController
+import logging
+from PySide2.QtWidgets import QWidget, QVBoxLayout, QFrame
 
 
-def main():
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    app = QApplication(sys.argv)
-    controller = AppController()  # Need reference else garbage collector has too much fun
-    app_loop = QEventLoop(app)
-    asyncio.set_event_loop(app_loop)
-    with app_loop:
-        sys.exit(app_loop.run_forever())
-
-
-if __name__ == '__main__':
-    main()
+class CentralWidget(QWidget):
+    """ This code is the overall frame inside the app main window. All other parts will go inside this. """
+    def __init__(self, parent):
+        self.logger = logging.getLogger(__name__)
+        self.logger.debug("Initializing")
+        super().__init__(parent)
+        self.setLayout(QVBoxLayout(self))
+        self.logger.debug("Initialized")

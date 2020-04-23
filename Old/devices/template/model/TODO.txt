@@ -1,0 +1,1 @@
+Low level connection and communication protocol

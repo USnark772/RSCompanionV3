@@ -2,11 +2,12 @@ import cv2
 import time
 import queue
 import asyncio
+from multiprocessing.connection import Connection
 from multiprocessing import Value, Pipe
 
 
-class cameras:
-    def __init__(self, pipe, stop_flag, cam_n, frame_skip):
+class Cameras:
+    def __init__(self, pipe: Connection, stop_flag, cam_n, frame_skip):
         self.pipe = pipe
         self.stop_flag = stop_flag
 
@@ -22,6 +23,7 @@ class cameras:
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         self.out = cv2.VideoWriter(path, fourcc, self.fps, dims)
         self.q = queue.SimpleQueue()
+        self.running = True
 
         # Async loops
         asyncio.run(self.run_async_tasks())
@@ -30,6 +32,7 @@ class cameras:
         loop = asyncio.get_running_loop()
         loop.run_in_executor(None, self.read_frames)
         asyncio.create_task(self.frame_write_send())
+        asyncio.create_task(self.pipe_reader())
         await self.killer()
 
     async def frame_write_send(self):
@@ -48,10 +51,19 @@ class cameras:
             self.q.put(frame)
             time.sleep(.001)
 
+    async def pipe_reader(self):
+        while True:
+            print("Checking for msg")
+            if self.pipe.poll():
+                print(self.pipe.recv())
+                self.pipe.send("done closing")
+            await asyncio.sleep(0.1)
+
     async def killer(self):
         while not self.stop_flag.value:
             await asyncio.sleep(.1)
         await asyncio.sleep(self.fps/1000 * 3)
+        print("Closing cam")
         self.out.release()
         self.cap.release()
-        cv2.destroyAllWindows()
+        # cv2.destroyAllWindows()

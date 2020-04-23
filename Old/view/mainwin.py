@@ -1,17 +1,17 @@
-from PySide2.QtWidgets import (QApplication, QMainWindow, QWidget, QPushButton,
-                               QHBoxLayout, QVBoxLayout, QGroupBox, QGridLayout,
+from PySide2.QtWidgets import (QMainWindow, QWidget, QPushButton,
+                               QVBoxLayout, QGroupBox, QGridLayout,
                                QLabel, QLineEdit, QMdiArea, QTextEdit, QSpacerItem,
-                               QSizePolicy, QAction, QStatusBar, QMdiSubWindow, QSlider)
-from PySide2.QtGui import QColor, QIcon, QPixmap
+                               QSizePolicy, QAction, QStatusBar, QSlider)
+from PySide2.QtGui import QCloseEvent
 from PySide2.QtCore import Qt
-
-import sys
-from devices.template.view import mdi_win
+from asyncio import Event
+from Old.devices.template.view import mdi_win
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, close_event_callback: Event):
         super(MainWindow, self).__init__()
+        self.close_event_callback = close_event_callback
         self.resize(700, 900)
         # main_wgt
         main_wgt = QWidget()
@@ -168,3 +168,8 @@ class MainWindow(QMainWindow):
         grid.addWidget(btn, 1, 0)
 
         return group
+
+    def closeEvent(self, event:QCloseEvent):
+        self.close_event_callback.set()
+
+

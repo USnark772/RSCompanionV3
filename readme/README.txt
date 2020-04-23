@@ -1,0 +1,1 @@
+Please direct all inquiries and bug reports to https://redscientific.com/contact.html

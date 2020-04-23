@@ -1,4 +1,4 @@
-"""
+""" 
 Licensed under GNU GPL-3.0-or-later
 
 This file is part of RS Companion.
@@ -23,23 +23,42 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-import sys
-import asyncio
-from asyncqt import QEventLoop
-from PySide2.QtWidgets import QApplication
-from PySide2.QtCore import Qt
-from Controller.app_controller import AppController
+from abc import ABC, abstractmethod
+from Model.app_helpers import NotDefinedException
 
 
-def main():
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    app = QApplication(sys.argv)
-    controller = AppController()  # Need reference else garbage collector has too much fun
-    app_loop = QEventLoop(app)
-    asyncio.set_event_loop(app_loop)
-    with app_loop:
-        sys.exit(app_loop.run_forever())
+class ABCDeviceController(ABC):
+    def __init__(self):
+        self.active = True
 
+    @abstractmethod
+    def cleanup(self):
+        pass
 
-if __name__ == '__main__':
-    main()
+    def get_name(self):
+        raise NotDefinedException("Device controller must implement get_name()")
+
+    def create_new_save_file(self, new_filename):
+        pass
+
+    def start_exp(self):
+        pass
+
+    def end_exp(self):
+        pass
+
+    def start_block(self):
+        pass
+
+    def end_block(self):
+        pass
+
+    # TODO: Figure out if can pass instead of return ''
+    @staticmethod
+    def get_save_file_hdr():
+        return ''
+
+    # TODO: Figure out if can pass instead of return ''
+    @staticmethod
+    def get_note_spacer():
+        return ''

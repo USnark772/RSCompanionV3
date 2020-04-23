@@ -1,4 +1,4 @@
-"""
+""" 
 Licensed under GNU GPL-3.0-or-later
 
 This file is part of RS Companion.
@@ -23,23 +23,16 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-import sys
-import asyncio
-from asyncqt import QEventLoop
-from PySide2.QtWidgets import QApplication
-from PySide2.QtCore import Qt
-from Controller.app_controller import AppController
 
+class NotDefinedException(Exception):
+    def __init__(self, *args):
+        if args:
+            self.message = args[0]
+        else:
+            self.message = None
 
-def main():
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    app = QApplication(sys.argv)
-    controller = AppController()  # Need reference else garbage collector has too much fun
-    app_loop = QEventLoop(app)
-    asyncio.set_event_loop(app_loop)
-    with app_loop:
-        sys.exit(app_loop.run_forever())
-
-
-if __name__ == '__main__':
-    main()
+    def __str__(self):
+        if self.message:
+            return self.message
+        else:
+            return "Function or method not defined"

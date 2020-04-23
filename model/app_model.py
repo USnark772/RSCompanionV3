@@ -23,23 +23,23 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-import sys
-import asyncio
-from asyncqt import QEventLoop
-from PySide2.QtWidgets import QApplication
-from PySide2.QtCore import Qt
-from Controller.app_controller import AppController
+from tempfile import gettempdir
+from Model.strings_english import program_output_hdr
 
 
-def main():
-    QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    app = QApplication(sys.argv)
-    controller = AppController()  # Need reference else garbage collector has too much fun
-    app_loop = QEventLoop(app)
-    asyncio.set_event_loop(app_loop)
-    with app_loop:
-        sys.exit(app_loop.run_forever())
+class AppModel:
+    def __init__(self):
+        pass
 
+    @staticmethod
+    def setup_log_output_file(file_name: str) -> str:
+        """
+        Create program output file to save log.
+        :param file_name: Name of the save log
+        :return str: full directory to the save log, including the save log name
+        """
 
-if __name__ == '__main__':
-    main()
+        fname = gettempdir() + "\\" + file_name
+        with open(fname, "w") as temp:
+            temp.write(program_output_hdr)
+        return fname
