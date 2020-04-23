@@ -30,6 +30,10 @@ from datetime import datetime
 
 
 class PortWorker:
+    """
+    This code is used to continually check an AioSerial port for incoming data, send alerts and pass on said data.
+    Also used to send data through said port.
+    """
     def __init__(self, name: str, port: AioSerial, msg_q: Queue, new_msg_cb: Event, cleanup_cb: Event, err_cb: Event):
         self.__device_name = name
         self.__port = port

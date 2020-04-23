@@ -47,6 +47,9 @@ from View.MainWindow.note_box import NoteBox
 
 # TODO: Figure out logging for asyncio
 class AppController:
+    """
+    The main controller for this app.
+    """
     def __init__(self):
         # App settings and logging.
         self.__settings = QSettings(company_name, app_name)
