@@ -26,6 +26,7 @@ https://redscientific.com/index.html
 import logging
 from asyncio import Event, create_task
 from queue import Queue
+from aioserial import AioSerial
 # from PySide2.QtWidgets import *
 # from PySide2.QtGui import *
 from PySide2.QtCore import QSettings, QSize
@@ -98,17 +99,21 @@ class AppController:
         self.__start()
         self.logger.debug("Initialized")
 
-    # TODO: Figure out why this does not run every time.
     async def handle_new_devices(self) -> None:
         """
         Check for and handle any new Devices from the com scanner.
         :return: None
         """
         self.logger.debug("running")
+        dev_type: str = ''
+        dev_port: AioSerial = AioSerial()
         while True:
-            print("waiting for new devices")
             await self.__new_device_flag.wait()
-            print("Got new device")
+            # TODO: Handle new device here.
+            dev_type, dev_port = self.__new_device_queue.get()
+            new_dev = (dev_type + "_" + dev_port.port.strip("COM"), dev_port)
+            print(new_dev)
+            # dev_port.write(str.encode(msg))
             self.__new_device_flag.clear()
 
     async def handle_device_conn_error(self) -> None:

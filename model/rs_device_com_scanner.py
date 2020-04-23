@@ -30,7 +30,6 @@ from serial.tools.list_ports_common import ListPortInfo
 from time import sleep
 from aioserial import AioSerial
 from queue import Queue
-from PySide2.QtCore import QObject, Signal
 
 
 class RSDeviceCommScanner:
@@ -71,10 +70,10 @@ class RSDeviceCommScanner:
         while self.__running:
             ports = comports()
             if len(ports) > len(self.__known_ports):
-                self.__check_for_new_devices(ports)
+                self.__loop.call_soon_threadsafe(self.__check_for_new_devices, ports)
             elif len(ports) < len(self.__known_ports):
                 self.__check_for_disconnects(ports)
-            sleep(.1)
+            sleep(.5)
 
     def __check_for_new_devices(self, ports: [ListPortInfo]) -> None:
         """
@@ -88,7 +87,7 @@ class RSDeviceCommScanner:
                     if self.__verify_port(port, self.__device_ids[device_type]):
                         ret_val, connection = self.__try_open_port(port)
                         if ret_val:
-                            self.q.put(port)
+                            self.q.put((device_type, connection))
                             self.std_cb.set()
                         else:
                             self.err_cb.set()
