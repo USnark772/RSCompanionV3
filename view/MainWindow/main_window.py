@@ -50,6 +50,7 @@ class AppMainWindow(QMainWindow):
         self.__control_layout = QHBoxLayout()
         self.centralWidget().layout().addLayout(self.__control_layout)
 
+        self.unsaved = False
         self.__checker = QMessageBox()
         self.__close_callback = None
         self.__help_window = None
@@ -60,16 +61,17 @@ class AppMainWindow(QMainWindow):
     def closeEvent(self, event: QCloseEvent) -> None:
         """
         Check if user really wants to close the app and only if so alert close and close.
-        :param event: The close event
-        :return: None
+        :param event: The close event.
+        :return: None.
         """
         self.__logger.debug("running")
-        if self.__checker.exec_() == QMessageBox.Yes:
-            if self.__close_callback:
-                self.__close_callback()
-            event.accept()
-        else:
-            event.ignore()
+        if self.unsaved:
+            if not self.__checker.exec_() == QMessageBox.Yes:
+                event.ignore()
+                return
+        if self.__close_callback:
+            self.__close_callback()
+        event.accept()
         self.__logger.debug("done")
 
     def add_mdi_area(self, mdi_area: QMdiArea) -> None:
@@ -78,22 +80,25 @@ class AppMainWindow(QMainWindow):
         :param mdi_area: The MDI area to add.
         :return: None.
         """
-        self.add_mdi_area(mdi_area)
-        pass
+        self.__logger.debug("running")
+        self.centralWidget().layout().addWidget(mdi_area)
+        self.__logger.debug("done")
 
     def add_control_bar_widget(self, widget) -> None:
         """
         Add widget to the control layout.
         :param widget: The widget to add.
-        :return: None
+        :return: None.
         """
+        self.__logger.debug("running")
         self.__control_layout.addWidget(widget)
+        self.__logger.debug("done")
 
     def add_close_handler(self, func: classmethod) -> None:
         """
         Add handler to handle close events.
         :param func: The handler.
-        :return: None
+        :return: None.
         """
         self.__logger.debug("running")
         self.__close_callback = func
@@ -103,7 +108,7 @@ class AppMainWindow(QMainWindow):
         """
         Add menu bar to main window.
         :param widget: The menu bar.
-        :return: None
+        :return: None.
         """
         self.__logger.debug("running")
         self.setMenuBar(widget)
@@ -125,7 +130,7 @@ class AppMainWindow(QMainWindow):
     def __set_texts(self) -> None:
         """
         Set the texts for the main window.
-        :return: None
+        :return: None.
         """
         self.__logger.debug("running")
         self.setWindowTitle(app_name)
@@ -136,8 +141,10 @@ class AppMainWindow(QMainWindow):
     def __setup_checker_buttons(self) -> None:
         """
         Setup window for close check.
-        :return:
+        :return: None.
         """
+        self.__logger.debug("running")
         self.__checker.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
         self.__checker.setDefaultButton(QMessageBox.Cancel)
         self.__checker.setEscapeButton(QMessageBox.Cancel)
+        self.__logger.debug("done")

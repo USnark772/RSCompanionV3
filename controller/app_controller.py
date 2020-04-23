@@ -48,9 +48,7 @@ from View.MDIArea.mdi_area import MDIArea
 
 # TODO: Figure out logging for asyncio
 class AppController:
-    """
-    The main controller for this app.
-    """
+    """ The main controller for this app. """
     def __init__(self):
         # App settings and logging.
         self.__settings = QSettings(company_name, app_name)
@@ -61,16 +59,16 @@ class AppController:
         log_level = eval('logging.' + self.__settings.value('level'))
         self.__settings.endGroup()
         logging.basicConfig(filename=setup_log_file(log_out_filename), filemode='w', level=log_level, format=log_format)
-        self.logger = logging.getLogger(__name__)
+        self.__logger = logging.getLogger(__name__)
         self.log_output = OutputWindow()
         self.formatter = logging.Formatter(log_format)
         self.ch = logging.StreamHandler(self.log_output)
         self.ch.setLevel(log_level)
         self.ch.setFormatter(self.formatter)
-        self.logger.addHandler(self.ch)
-        self.logger.info(logging_version_identifier + str(current_version))
+        self.__logger.addHandler(self.ch)
+        self.__logger.info(logging_version_identifier + str(current_version))
 
-        self.logger.debug("Initializing")
+        self.__logger.debug("Initializing")
         # Flags
         self.__new_device_flag = Event()
         self.__device_conn_error_flag = Event()
@@ -96,20 +94,20 @@ class AppController:
         self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, self.ch)
         self.flag_box = FlagBox(self.main_window, flag_box_size, self.ch)
         self.note_box = NoteBox(self.main_window, note_box_size, self.ch)
-        # TODO: Add mdi window to main window.
+        self.mdi_area = MDIArea(self.main_window, self.ch)
 
         self.__setup_handlers()
         self.__setup_flags()
         self.__initialize_view()
         self.__start()
-        self.logger.debug("Initialized")
+        self.__logger.debug("Initialized")
 
     async def handle_new_devices(self) -> None:
         """
         Check for and handle any new Devices from the com scanner.
         :return: None
         """
-        self.logger.debug("running")
+        self.__logger.debug("running")
         dev_type: str = ''
         dev_port: AioSerial = AioSerial()
         while True:
@@ -136,24 +134,24 @@ class AppController:
         Attach event handlers as needed.
         :return: None
         """
-        self.logger.debug("running")
-        self.logger.debug("done")
+        self.__logger.debug("running")
+        self.__logger.debug("done")
 
     def __setup_flags(self) -> None:
         """
         Attach event flags as needed.
         :return: None
         """
-        self.logger.debug("running")
+        self.__logger.debug("running")
         self.main_window.add_close_handler(self.__cleanup)
-        self.logger.debug("done")
+        self.__logger.debug("done")
 
     def __initialize_view(self) -> None:
         """
         Put the different components of the view together and then show the view.
         :return: None
         """
-        self.logger.debug("running")
+        self.__logger.debug("running")
         self.main_window.add_menu_bar(self.menu_bar)
         self.menu_bar.add_log_window_handler(self.__log_window_handler)
         self.main_window.add_control_bar_widget(self.button_box)
@@ -161,6 +159,7 @@ class AppController:
         self.main_window.add_control_bar_widget(self.note_box)
         self.main_window.add_control_bar_widget(self.info_box)
         self.main_window.add_control_bar_widget(self.d_info_box)
+        self.main_window.add_mdi_area(self.mdi_area)
         self.main_window.show()
 
     def __log_window_handler(self) -> None:
@@ -168,9 +167,9 @@ class AppController:
         Handler for the output log
         :return None:
         """
-        self.logger.debug("running")
+        self.__logger.debug("running")
         self.log_output.show()
-        self.logger.debug("done")
+        self.__logger.debug("done")
 
     def __start(self) -> None:
         """
