@@ -9,25 +9,18 @@ class Comports:
         self.event_callback = event_callback
         self.attached = {}
 
-        self._ports_count = len(comports())
+        self._comports = comports()
+        self._ports_count = len(self._comports)
         self._device_ids = device_ids
         self._update_attached_devices()
-
         self.loop = asyncio.get_running_loop()
-
-    async def run(self):
         self.loop.run_in_executor(None, self._scan_for_change)
-        self.loop.create_task(self.read_ports())
 
-    async def read_ports(self):
-        for ports in self.attached:
-            if not self.attached[ports]['reply']:
-                self.attached[ports]['reply'] = self.loop.create_task(self.attached[ports]['conn'].read_async())
-                print(self.attached[ports]['reply'])
 
     def _scan_for_change(self):
         while True:
-            ports_count = len(comports())
+            self._comports = comports()
+            ports_count = len(self._comports)
             if ports_count != self._ports_count:
                 if ports_count < self._ports_count:
                     self.loop.call_soon_threadsafe(self._remove_event)
@@ -42,16 +35,8 @@ class Comports:
         self.event_callback.set()
 
     def _remove_event(self):
-        ports = comports()
-
-        attached = []
-        for com in ports:
-            attached.append(com.device)
-
-        to_remove = []
-        for port in self.attached:
-            if port not in attached:
-                to_remove.append(port)
+        attached = [com.device for com in self._comports]
+        to_remove = [com for com in self.attached.keys() if com not in attached]
 
         for port in to_remove:
             self.attached[port]['conn'].close()
@@ -60,7 +45,7 @@ class Comports:
         self.event_callback.set()
 
     def _update_attached_devices(self):
-        for com in comports():
+        for com in self._comports:
             if com.device not in self.attached.keys():
                 for device in self._device_ids:
                     if com.vid == self._device_ids[device]['vid'] and com.pid == self._device_ids[device]['pid']:

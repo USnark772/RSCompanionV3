@@ -41,7 +41,6 @@ class MainController:
         # com
         self.com_plug_event = asyncio.Event()
         self.com = com_connect.Comports(RS_Devices, self.com_plug_event)
-        asyncio.create_task(self.com.run())
         asyncio.create_task(self.comport_cb())
 
         # processes
@@ -60,7 +59,6 @@ class MainController:
 
         # --tasks
         asyncio.create_task(self.handle_frames())
-
         asyncio.create_task(self.send_stop())
 
         # loops here...
@@ -71,7 +69,6 @@ class MainController:
         while True:
             await self.com_plug_event.wait()
             self.com_plug_event.clear()
-
             print(self.com.attached)
 
     async def send_stop(self):
@@ -81,16 +78,13 @@ class MainController:
     async def scale_video_win(self):
         while True:
             print(self)
-
             await asyncio.sleep(.01)
 
     async def handle_frames(self):
         while True:
             if self.par_p.poll():
                 image = self.par_p.recv()
-
                 self.mw.mdi_win.display(image)
-
             await asyncio.sleep(.01)
 
     def new_experiment(self):
