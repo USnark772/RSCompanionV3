@@ -24,9 +24,7 @@ https://redscientific.com/index.html
 """
 
 import logging
-from asyncio import Event
-from PySide2.QtWidgets import QMainWindow, QHBoxLayout, QFrame, QMessageBox
-from PySide2.QtCore import Qt
+from PySide2.QtWidgets import QMainWindow, QHBoxLayout, QMessageBox, QMdiArea
 from PySide2.QtGui import QFont, QIcon, QCloseEvent
 from View.MainWindow.help_window import HelpWindow
 from View.MainWindow.central_widget import CentralWidget
@@ -74,6 +72,15 @@ class AppMainWindow(QMainWindow):
             event.ignore()
         self.__logger.debug("done")
 
+    def add_mdi_area(self, mdi_area: QMdiArea) -> None:
+        """
+        Add MDI area to the main window.
+        :param mdi_area: The MDI area to add.
+        :return: None.
+        """
+        self.add_mdi_area(mdi_area)
+        pass
+
     def add_control_bar_widget(self, widget) -> None:
         """
         Add widget to the control layout.
@@ -84,8 +91,8 @@ class AppMainWindow(QMainWindow):
 
     def add_close_handler(self, func: classmethod) -> None:
         """
-        Add flag to notify controller of close events.
-        :param func: The flag.
+        Add handler to handle close events.
+        :param func: The handler.
         :return: None
         """
         self.__logger.debug("running")

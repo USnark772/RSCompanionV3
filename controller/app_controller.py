@@ -43,6 +43,7 @@ from View.MainWindow.info_box import InfoBox
 from View.MainWindow.drive_info_box import DriveInfoBox
 from View.MainWindow.flag_box import FlagBox
 from View.MainWindow.note_box import NoteBox
+from View.MDIArea.mdi_area import MDIArea
 
 
 # TODO: Figure out logging for asyncio
@@ -95,7 +96,7 @@ class AppController:
         self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, self.ch)
         self.flag_box = FlagBox(self.main_window, flag_box_size, self.ch)
         self.note_box = NoteBox(self.main_window, note_box_size, self.ch)
-        # TODO: Add mdi window to mani window.
+        # TODO: Add mdi window to main window.
 
         self.__setup_handlers()
         self.__setup_flags()
