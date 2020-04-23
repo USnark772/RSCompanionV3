@@ -35,15 +35,15 @@ from Model.app_defs import current_version, log_format, RS_Devices
 from Model.app_helpers import setup_log_file
 from Model.strings_english import log_out_filename, company_name, app_name, logging_version_identifier
 from Model.rs_device_com_scanner import RSDeviceCommScanner
-from View.OutputLogWindow.output_window import OutputWindow
+from View.HelpWidgets.output_window import OutputWindow
 from View.MainWindow.main_window import AppMainWindow
-from View.MainWindow.menu_bar import AppMenuBar
-from View.MainWindow.button_box import ButtonBox
-from View.MainWindow.info_box import InfoBox
-from View.MainWindow.drive_info_box import DriveInfoBox
-from View.MainWindow.flag_box import FlagBox
-from View.MainWindow.note_box import NoteBox
-from View.MainWindow.mdi_area import MDIArea
+from View.ControlWidgets.menu_bar import AppMenuBar
+from View.ControlWidgets.button_box import ButtonBox
+from View.InfoWidgets.info_box import InfoBox
+from View.InfoWidgets.drive_info_box import DriveInfoBox
+from View.InfoWidgets.flag_box import FlagBox
+from View.ControlWidgets.note_box import NoteBox
+from View.DeviceDisplayWidgets.mdi_area import MDIArea
 
 
 # TODO: Figure out logging for asyncio

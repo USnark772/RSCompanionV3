@@ -26,7 +26,7 @@ https://redscientific.com/index.html
 import logging
 from PySide2.QtWidgets import QMainWindow, QHBoxLayout, QMessageBox, QMdiArea
 from PySide2.QtGui import QFont, QIcon, QCloseEvent
-from View.MainWindow.help_window import HelpWindow
+from View.HelpWidgets.help_window import HelpWindow
 from View.MainWindow.central_widget import CentralWidget
 from Model.app_defs import image_file_path
 from Model.strings_english import app_name, closing_app_text, close_confirmation_text
