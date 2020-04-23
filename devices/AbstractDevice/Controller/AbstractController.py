@@ -27,38 +27,10 @@ from abc import ABC, abstractmethod
 from Model.app_helpers import NotDefinedException
 
 
-class ABCDeviceController(ABC):
+class AbstractController(ABC):
     def __init__(self):
-        self.active = True
+        pass
 
     @abstractmethod
     def cleanup(self):
         pass
-
-    def get_name(self):
-        raise NotDefinedException("Device controller must implement get_name()")
-
-    def create_new_save_file(self, new_filename):
-        pass
-
-    def start_exp(self):
-        pass
-
-    def end_exp(self):
-        pass
-
-    def start_block(self):
-        pass
-
-    def end_block(self):
-        pass
-
-    # TODO: Figure out if can pass instead of return ''
-    @staticmethod
-    def get_save_file_hdr():
-        return ''
-
-    # TODO: Figure out if can pass instead of return ''
-    @staticmethod
-    def get_note_spacer():
-        return ''

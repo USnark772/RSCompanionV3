@@ -24,6 +24,7 @@ https://redscientific.com/index.html
 """
 
 import logging
+from asyncio import Event
 from PySide2.QtWidgets import QMainWindow, QHBoxLayout, QFrame, QMessageBox
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QFont, QIcon, QCloseEvent
@@ -40,23 +41,18 @@ class AppMainWindow(QMainWindow):
         self.__logger.addHandler(ch)
         self.__logger.debug("Initializing")
         super().__init__()
-        self.setMinimumSize(min_size)
+        self.__icon = QIcon(image_file_path + "rs_icon.png")
         font = QFont()
         font.setPointSize(10)
         self.setFont(font)
-        self.setCentralWidget(CentralWidget(self))
-        self.__graph_and_tab_layout = QHBoxLayout()
-        self.__graph_frame = QFrame(self)
-        self.__graph_frame.setLayout(QHBoxLayout())
-        self.__tab_frame = QFrame(self)
-        self.__tab_frame.setLayout(QHBoxLayout())
-        self.__graph_and_tab_layout.addWidget(self.__graph_frame)
-        self.__graph_and_tab_layout.addWidget(self.__tab_frame)
-        self.centralWidget().layout().addLayout(self.__graph_and_tab_layout)
-
-        self.__icon = QIcon(image_file_path + "rs_icon.png")
-        self.__checker = QMessageBox()
+        self.setMinimumSize(min_size)
         self.setWindowIcon(self.__icon)
+        self.setCentralWidget(CentralWidget(self))
+
+        self.__control_layout = QHBoxLayout()
+        self.centralWidget().layout().addLayout(self.__control_layout)
+
+        self.__checker = QMessageBox()
         self.__close_callback = None
         self.__help_window = None
         self.__set_texts()
@@ -78,47 +74,63 @@ class AppMainWindow(QMainWindow):
             event.ignore()
         self.__logger.debug("done")
 
+    def add_control_bar_widget(self, widget) -> None:
+        """
+        Add widget to the control layout.
+        :param widget: The widget to add.
+        :return: None
+        """
+        self.__control_layout.addWidget(widget)
+
     def add_close_handler(self, func: classmethod) -> None:
+        """
+        Add flag to notify controller of close events.
+        :param func: The flag.
+        :return: None
+        """
         self.__logger.debug("running")
         self.__close_callback = func
         self.__logger.debug("done")
 
-    def add_dock_widget(self, widget):
-        self.__logger.debug("running")
-        self.addDockWidget(Qt.DockWidgetArea(4), widget)
-        self.__logger.debug("done")
-
-    def add_menu_bar(self, widget):
+    def add_menu_bar(self, widget) -> None:
+        """
+        Add menu bar to main window.
+        :param widget: The menu bar.
+        :return: None
+        """
         self.__logger.debug("running")
         self.setMenuBar(widget)
         self.__logger.debug("done")
 
-    def add_graph_container(self, widget):
-        self.__logger.debug("running")
-        self.__graph_frame.layout().addWidget(widget)
-        self.__logger.debug("done")
-
-    def add_tab_widget(self, widget):
-        self.__logger.debug("running")
-        self.__tab_frame.layout().addWidget(widget)
-        self.__logger.debug("done")
-
-    def show_help_window(self, title, msg):
-        """ Show msg in a help window with the title. """
+    def show_help_window(self, title, msg) -> None:
+        """
+        Show a pop up message window.
+        :param title: The title of the window.
+        :param msg: The message to be shown.
+        :return: None
+        """
         self.__logger.debug("running")
         self.__help_window = HelpWindow(title, msg)
         self.__help_window.setWindowIcon(self.__icon)
         self.__help_window.show()
         self.__logger.debug("done")
 
-    def __set_texts(self):
+    def __set_texts(self) -> None:
+        """
+        Set the texts for the main window.
+        :return: None
+        """
         self.__logger.debug("running")
         self.setWindowTitle(app_name)
         self.__checker.setWindowTitle(closing_app_text)
         self.__checker.setText(close_confirmation_text)
         self.__logger.debug("done")
 
-    def __setup_checker_buttons(self):
+    def __setup_checker_buttons(self) -> None:
+        """
+        Setup window for close check.
+        :return:
+        """
         self.__checker.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
         self.__checker.setDefaultButton(QMessageBox.Cancel)
         self.__checker.setEscapeButton(QMessageBox.Cancel)

@@ -22,3 +22,15 @@ Project: Companion App
 Company: Red Scientific
 https://redscientific.com/index.html
 """
+
+from abc import ABC, abstractmethod
+from Model.app_helpers import NotDefinedException
+
+
+class AbstractView(ABC):
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def a_func(self):
+        pass

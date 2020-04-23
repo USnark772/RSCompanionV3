@@ -24,22 +24,22 @@ https://redscientific.com/index.html
 """
 
 import sys
-import asyncio
+from asyncio import set_event_loop, run
 from asyncqt import QEventLoop
 from PySide2.QtWidgets import QApplication
 from PySide2.QtCore import Qt
 from Controller.app_controller import AppController
 
 
-def main():
+async def main():
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     app = QApplication(sys.argv)
-    controller = AppController()  # Need reference else garbage collector has too much fun
     app_loop = QEventLoop(app)
-    asyncio.set_event_loop(app_loop)
+    set_event_loop(app_loop)
+    controller = AppController()  # Need reference else garbage collector has too much fun
     with app_loop:
         sys.exit(app_loop.run_forever())
 
 
 if __name__ == '__main__':
-    main()
+    run(main())

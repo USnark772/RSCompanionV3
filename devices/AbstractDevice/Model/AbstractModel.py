@@ -23,7 +23,10 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
+from abc import ABC, abstractmethod
+from Model.app_helpers import NotDefinedException
 
-class AbstractModel:
+
+class AbstractModel(ABC):
     def __init__(self):
         device_profile = {"device type": {"vid": None, "pid": None}}

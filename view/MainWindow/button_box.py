@@ -1,5 +1,6 @@
-""" Licensed under GNU GPL-3.0-or-later """
 """
+Licensed under GNU GPL-3.0-or-later
+
 This file is part of RS Companion.
 
 RS Companion is free software: you can redistribute it and/or modify
@@ -14,20 +15,24 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
+
+Author: Phillip Riskin
+Date: 2019
+Project: Companion App
+Company: Red Scientific
+https://redscientific.com/index.html
 """
 
-# Author: Phillip Riskin
-# Date: 2019
-# Project: Companion App
-# Company: Red Scientific
-# https://redscientific.com/index.html
 
 import logging
 from PySide2.QtWidgets import QGroupBox, QVBoxLayout, QHBoxLayout, QLineEdit, QProgressBar, QLabel
 from PySide2.QtGui import QIcon, QPixmap
 from PySide2.QtCore import QSize, Qt
-from Model.app_defs import image_file_path
 from Model.app_helpers import ClickAnimationButton
+from Model.app_defs import button_box_start_image_filepath, button_box_pause_image_filepath
+from Model.strings_english import button_box_create, button_box_create_tooltip, button_box_text_entry_placeholder, \
+    button_box_title, button_box_prog_bar_label, button_box_start_tooltip, button_box_resume_tooltip, \
+    button_box_end_tooltip, button_box_end, button_box_pause_tooltip
 
 
 class ButtonBox(QGroupBox):
@@ -52,104 +57,150 @@ class ButtonBox(QGroupBox):
         self.layout().addWidget(self.__text_entry)
 
         self.__play_icon = QIcon()
-        self.__play_icon.addPixmap(QPixmap(image_file_path + "green_arrow.png"))
+        self.__play_icon.addPixmap(QPixmap(button_box_start_image_filepath))
         self.__pause_icon = QIcon()
-        self.__pause_icon.addPixmap(QPixmap(image_file_path + "red_vertical_bars.png"))
+        self.__pause_icon.addPixmap(QPixmap(button_box_pause_image_filepath))
         self.__playing = False
 
-        self.initialization_bar_label = QLabel()
-        self.initialization_bar = QProgressBar()
-        self.initialization_bar.setTextVisible(True)
-        self.initialization_bar.setAlignment(Qt.AlignHCenter)
-        self.initialization_bar.setMaximumHeight(12)
-        self.layout().addWidget(self.initialization_bar_label)
-        self.layout().addWidget(self.initialization_bar)
+        self.prog_bar_label = QLabel()
+        self.prog_bar = QProgressBar()
+        self.prog_bar.setTextVisible(True)
+        self.prog_bar.setAlignment(Qt.AlignHCenter)
+        self.prog_bar.setMaximumHeight(12)
+        self.layout().addWidget(self.prog_bar_label)
+        self.layout().addWidget(self.prog_bar)
 
         self.__set_texts()
+        self.toggle_show_prog_bar(False)
         self.__set_button_states()
         self.__set_tooltips()
         self.logger.debug("Initialized")
 
-    def get_condition_name(self):
+    def get_condition_name(self) -> str:
+        """
+        Return the text from the condition name text entry
+        :return: The text from the text entry.
+        """
         return self.__text_entry.text()
 
-    def add_create_button_handler(self, func):
+    def add_create_button_handler(self, func: classmethod) -> None:
+        """
+        Add handler for the create button click event.
+        :param func: The handler.
+        :return: None.
+        """
         self.logger.debug("running")
         self.__create_button.clicked.connect(func)
         self.logger.debug("done")
 
-    def add_start_button_handler(self, func):
+    def add_start_button_handler(self, func: classmethod) -> None:
+        """
+        Add handler for the start button click event.
+        :param func: The handler
+        :return: None.
+        """
         self.logger.debug("running")
         self.__start_button.clicked.connect(func)
         self.logger.debug("done")
 
-    def toggle_condition_name_box(self):
+    def toggle_condition_name_box(self) -> None:
+        """
+        Toggle whether the text entry is usable.
+        :return: None
+        """
         self.logger.debug("running")
         self.__text_entry.setEnabled(not self.__text_entry.isEnabled())
         self.logger.debug("done")
 
-    def toggle_create_button(self):
-        """ Set create button to either create or end depending on what state any current experiment is in. """
+    def toggle_create_button(self) -> None:
+        """
+        Set create button to either create or end depending on what state any current experiment is in.
+        :return: None.
+        """
         self.logger.debug("running")
         state = self.__create_button.text()
-        if state == "Create":
-            self.__create_button.setText("End")
-            self.__create_button.setToolTip("End experiment")
+        if state == button_box_create:
+            self.__create_button.setText(button_box_end)
+            self.__create_button.setToolTip(button_box_end_tooltip)
             self.__start_button.setEnabled(True)
         else:
-            self.__create_button.setText("Create")
-            self.__create_button.setToolTip("Create a new experiment")
-            self.__start_button.setToolTip("Begin experiment")
+            self.__create_button.setText(button_box_create)
+            self.__create_button.setToolTip(button_box_create_tooltip)
+            self.__start_button.setToolTip(button_box_start_tooltip)
             self.__start_button.setEnabled(False)
         self.logger.debug("done")
 
-    def toggle_start_button(self):
-        """ Set start button state depending on if there is an experiment created and running or not. """
+    def toggle_start_button(self) -> None:
+        """
+        Set start button state depending on if there is an experiment created and running or not.
+        :return: None.
+        """
         self.logger.debug("running")
         if self.__playing:
             self.__playing = False
             self.__start_button.setIcon(self.__play_icon)
             self.__start_button.setIconSize(QSize(26, 26))
             self.__create_button.setEnabled(True)
-            self.__start_button.setToolTip("Resume experiment")
+            self.__start_button.setToolTip(button_box_resume_tooltip)
         else:
             self.__playing = True
             self.__start_button.setIcon(self.__pause_icon)
             self.__start_button.setIconSize(QSize(36, 36))
             self.__create_button.setEnabled(False)
-            self.__start_button.setToolTip("Pause experiment")
+            self.__start_button.setToolTip(button_box_pause_tooltip)
         self.logger.debug("done")
 
-    def toggle_show_prog_bar(self, is_visible):
+    def toggle_show_prog_bar(self, is_visible: bool) -> None:
+        """
+        Toggle showing the progress bar.
+        :param is_visible: Whether or not to show the progress bar.
+        :return: None.
+        """
         if is_visible:
-            self.initialization_bar.show()
-            self.initialization_bar_label.show()
+            self.prog_bar.show()
+            self.prog_bar_label.show()
         else:
-            self.initialization_bar.hide()
-            self.initialization_bar_label.hide()
+            self.prog_bar.hide()
+            self.prog_bar_label.hide()
 
-    def update_prog_bar_value(self, value: int):
-        self.initialization_bar.setValue(value)
+    def update_prog_bar_value(self, value: int) -> None:
+        """
+        Update the progress bar to the given value
+        :param value: The value to use when updating the progress bar.
+        :return: None.
+        """
+        self.prog_bar.setValue(value)
 
-    def __set_texts(self):
+    def __set_texts(self) -> None:
+        """
+        Set the texts of this view item.
+        :return: None.
+        """
         self.logger.debug("running")
-        self.setTitle("Experiment")
-        self.__text_entry.setPlaceholderText("Optional condition name")
-        self.__create_button.setText("Create")
+        self.setTitle(button_box_title)
+        self.__text_entry.setPlaceholderText(button_box_text_entry_placeholder)
+        self.__create_button.setText(button_box_create)
         self.__start_button.setIcon(self.__play_icon)
         self.__start_button.setIconSize(QSize(32, 32))
-        self.initialization_bar_label.setText("Saving video...")
-        self.initialization_bar.setValue(0)
+        self.prog_bar_label.setText(button_box_prog_bar_label)
+        self.prog_bar.setValue(0)
         self.logger.debug("done")
 
-    def __set_button_states(self):
-        """ Set default button states. """
+    def __set_button_states(self) -> None:
+        """
+        Set default button states.
+        :return: None.
+        """
         self.logger.debug("running")
         self.__start_button.setEnabled(False)
         self.logger.debug("done")
 
-    def __set_tooltips(self):
+    def __set_tooltips(self) -> None:
+        """
+        Set the text for the tooltips in this view item.
+        :return: None.
+        """
         self.logger.debug("running")
-        self.__create_button.setToolTip("Create a new experiment")
-        self.__start_button.setToolTip("Begin experiment")
+        self.__create_button.setToolTip(button_box_create_tooltip)
+        self.__start_button.setToolTip(button_box_start_tooltip)
         self.logger.debug("done")

@@ -23,8 +23,9 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from tempfile import gettempdir
-from Model.strings_english import program_output_hdr
+from asyncio import get_event_loop, all_tasks, current_task, gather, Event
+from Model.rs_device_com_scanner import RSDeviceCommScanner
+from Model.app_defs import RS_Devices
 
 
 class AppModel:
@@ -32,14 +33,8 @@ class AppModel:
         pass
 
     @staticmethod
-    def setup_log_output_file(file_name: str) -> str:
-        """
-        Create program output file to save log.
-        :param file_name: Name of the save log
-        :return str: full directory to the save log, including the save log name
-        """
-
-        fname = gettempdir() + "\\" + file_name
-        with open(fname, "w") as temp:
-            temp.write(program_output_hdr)
-        return fname
+    async def cleanup():
+        tasks = [t for t in all_tasks() if t is not current_task()]
+        [task.cancel() for task in tasks]
+        await gather(*tasks)
+        get_event_loop().stop()

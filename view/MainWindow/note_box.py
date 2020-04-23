@@ -1,5 +1,6 @@
-""" Licensed under GNU GPL-3.0-or-later """
 """
+Licensed under GNU GPL-3.0-or-later
+
 This file is part of RS Companion.
 
 RS Companion is free software: you can redistribute it and/or modify
@@ -14,13 +15,14 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
+
+Author: Phillip Riskin
+Date: 2019
+Project: Companion App
+Company: Red Scientific
+https://redscientific.com/index.html
 """
 
-# Author: Phillip Riskin
-# Date: 2019
-# Project: Companion App
-# Company: Red Scientific
-# https://redscientific.com/index.html
 
 import logging
 from PySide2.QtWidgets import QGroupBox, QGridLayout, QTextEdit

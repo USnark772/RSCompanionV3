@@ -38,17 +38,19 @@ RS_Devices = {"DRT": {"vid": 9114, "pid": 32798},
               }
 
 version_url = "https://raw.githubusercontent.com/redscientific/CompanionApp/master/Version.txt"
-logging_format = '%(levelname)s - %(name)s - %(funcName)s: %(message)s'
+log_format = '%(levelname)s - %(name)s - %(funcName)s: %(message)s'
 # TODO: Switch image_file_path for build
 image_file_path = '../View/Images/'
 # image_file_path = 'Images/'
 # TODO: Increment version number for build
 current_version = 2.0
-current_version_str = '2.0'
 
 #################################################################################################################
 # View
 #################################################################################################################
+
+button_box_start_image_filepath = image_file_path + "green_arrow.png"
+button_box_pause_image_filepath = image_file_path + "red_vertical_bars.png"
 
 __compliant_text_color = "rgb(0, 0, 0)"
 __error_text_color = "rgb(255, 0, 0)"

@@ -23,6 +23,25 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
+from logging import getLogger
+from tempfile import gettempdir
+from PySide2.QtWidgets import QPushButton
+from Model.app_defs import button_normal_style, button_pressed_style
+from Model.strings_english import program_output_hdr
+
+
+def setup_log_file(file_name: str) -> str:
+    """
+    Create program output file to save log.
+    :param file_name: Name of the save log
+    :return str: full directory to the save log, including the save log name
+    """
+
+    fname = gettempdir() + "\\" + file_name
+    with open(fname, "w") as temp:
+        temp.write(program_output_hdr)
+    return fname
+
 
 class NotDefinedException(Exception):
     def __init__(self, *args):
@@ -36,3 +55,20 @@ class NotDefinedException(Exception):
             return self.message
         else:
             return "Function or method not defined"
+
+
+class ClickAnimationButton(QPushButton):
+    def __init__(self, parent=None):
+        self.logger = getLogger(__name__)
+        self.logger.debug("Initializing")
+        super().__init__(parent)
+        self.pressed.connect(self.pressed_color)
+        self.released.connect(self.released_state)
+        self.setStyleSheet(button_normal_style)
+        self.logger.debug("Initialized")
+
+    def pressed_color(self):
+        self.setStyleSheet(button_pressed_style)
+
+    def released_state(self):
+        self.setStyleSheet(button_normal_style)

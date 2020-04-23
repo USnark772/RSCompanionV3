@@ -33,11 +33,6 @@ from queue import Queue
 from PySide2.QtCore import QObject, Signal
 
 
-class ScannerSig(QObject):
-    new_device_sig = Signal(str, AioSerial)
-    connection_failure_sig = Signal(str)
-
-
 class RSDeviceCommScanner:
     def __init__(self, device_ids: dict, std_cb: Event, err_cb: Event, q: Queue):
         """
@@ -46,7 +41,6 @@ class RSDeviceCommScanner:
         :param std_cb: The callback for when a device is plugged in or unplugged.
         :param err_cb: The callback for when an error is encountered while trying to connect to a new device.
         """
-        self.signals = ScannerSig()
         self.__device_ids = device_ids
         self.std_cb = std_cb
         self.err_cb = err_cb
@@ -54,9 +48,19 @@ class RSDeviceCommScanner:
         self.__known_ports = []
         self.__running = True
         self.__loop = get_running_loop()
+
+    def start(self) -> None:
+        """
+        Begin working.
+        :return: None
+        """
         self.__loop.run_in_executor(None, self.scan_ports)
 
-    def cleanup(self):
+    def cleanup(self) -> None:
+        """
+        Cleanup this class and prep for app closure.
+        :return: None
+        """
         self.__running = False
 
     def scan_ports(self) -> None:

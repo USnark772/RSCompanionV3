@@ -25,7 +25,7 @@ https://redscientific.com/index.html
 
 
 #################################################################################################################
-# general
+# general strings
 #################################################################################################################
 
 company_name = "Red Scientific"
@@ -70,8 +70,25 @@ error_checking_for_update = "There was an unexpected error connecting to the rep
 
 device_connection_error = "There was a problem connecting the device, please retry connection."
 
+logging_version_identifier = "RS Companion app version: "
+
 #################################################################################################################
-# Logging definitions
+# Button box strings
 #################################################################################################################
 
-logging_output_filename = "companion_app_log.txt"
+button_box_title = "Experiment"
+button_box_create = "Create"
+button_box_end = "End"
+button_box_create_tooltip = "Create a new experiment"
+button_box_end_tooltip = "End experiment"
+button_box_start_tooltip = "Begin experiment"
+button_box_resume_tooltip = "Resume experiment"
+button_box_pause_tooltip = "Pause experiment"
+button_box_text_entry_placeholder = "Optional condition name"
+button_box_prog_bar_label = "Saving video..."
+
+#################################################################################################################
+# Logging strings
+#################################################################################################################
+
+log_out_filename = "companion_app_log.txt"

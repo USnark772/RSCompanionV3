@@ -1,5 +1,6 @@
-""" Licensed under GNU GPL-3.0-or-later """
 """
+Licensed under GNU GPL-3.0-or-later
+
 This file is part of RS Companion.
 
 RS Companion is free software: you can redistribute it and/or modify
@@ -14,29 +15,29 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
+
+Author: Phillip Riskin
+Date: 2020
+Project: Companion App
+Company: Red Scientific
+https://redscientific.com/index.html
 """
 
-# Author: Phillip Riskin
-# Date: 2020
-# Project: Companion App
-# Company: Red Scientific
-# https://redscientific.com/index.html
-
-import logging
+from logging import getLogger, Handler
 from PySide2.QtWidgets import QLabel, QGridLayout, QGroupBox
 from PySide2.QtCore import Qt
 
 
 class DriveInfoBox(QGroupBox):
     """ This code is for displaying information about storage usage. """
-    def __init__(self, parent, size: (int, int), ch: logging.Handler):
+    def __init__(self, parent, size: (int, int), ch: Handler):
         """
         Initialize this view module.
         :param parent: parent of this view module.
         :param size: size this view module should occupy
         :param ch:
         """
-        self.logger = logging.getLogger(__name__)
+        self.logger = getLogger(__name__)
         self.logger.addHandler(ch)
         self.logger.debug("Initializing")
         super().__init__(parent)
@@ -84,7 +85,6 @@ class DriveInfoBox(QGroupBox):
         :param value: the value to show
         :return: None
         """
-
         self.__drive_name_val.setText(value)
 
     def set_perc_val(self, value: str) -> None:
@@ -93,7 +93,6 @@ class DriveInfoBox(QGroupBox):
         :param value: the value to show
         :return: None
         """
-
         self.__drive_percent_val.setText(value + '%')
 
     def set_gb_val(self, value: str) -> None:
@@ -102,7 +101,6 @@ class DriveInfoBox(QGroupBox):
         :param value: the value to show
         :return: None
         """
-
         self.__drive_gb_val.setText(value)
 
     def set_mb_val(self, value: str) -> None:
@@ -111,7 +109,6 @@ class DriveInfoBox(QGroupBox):
         :param value: the value to show
         :return: None
         """
-
         self.__drive_mb_val.setText(value)
 
     def __set_texts(self) -> None:
@@ -119,7 +116,6 @@ class DriveInfoBox(QGroupBox):
         Set the text for each element in this view module
         :return: None
         """
-
         self.logger.debug("running")
         self.setTitle("Storage Information")
         self.__drive_name_label.setText('Storage ID:')
