@@ -37,47 +37,47 @@ class DriveInfoBox(QGroupBox):
         :param size: size this view module should occupy
         :param ch:
         """
-        self.logger = getLogger(__name__)
-        self.logger.addHandler(ch)
-        self.logger.debug("Initializing")
+        self._logger = getLogger(__name__)
+        self._logger.addHandler(ch)
+        self._logger.debug("Initializing")
         super().__init__(parent)
         self.setMaximumSize(size)
         self.setLayout(QGridLayout())
 
-        self.__drive_name_label = QLabel()
-        self.__drive_name_label.setAlignment(Qt.AlignLeft)
-        self.layout().addWidget(self.__drive_name_label, 0, 0, 1, 1)
+        self._drive_name_label = QLabel()
+        self._drive_name_label.setAlignment(Qt.AlignLeft)
+        self.layout().addWidget(self._drive_name_label, 0, 0, 1, 1)
 
-        self.__drive_name_val = QLabel()
-        self.__drive_name_val.setAlignment(Qt.AlignRight)
-        self.layout().addWidget(self.__drive_name_val, 0, 1, 1, 1)
+        self._drive_name_val = QLabel()
+        self._drive_name_val.setAlignment(Qt.AlignRight)
+        self.layout().addWidget(self._drive_name_val, 0, 1, 1, 1)
 
-        self.__drive_percent_label = QLabel()
-        self.__drive_percent_label.setAlignment(Qt.AlignLeft)
-        self.layout().addWidget(self.__drive_percent_label, 1, 0, 1, 1)
+        self._drive_percent_label = QLabel()
+        self._drive_percent_label.setAlignment(Qt.AlignLeft)
+        self.layout().addWidget(self._drive_percent_label, 1, 0, 1, 1)
 
-        self.__drive_percent_val = QLabel()
-        self.__drive_percent_val.setAlignment(Qt.AlignRight)
-        self.layout().addWidget(self.__drive_percent_val, 1, 1, 1, 1)
+        self._drive_percent_val = QLabel()
+        self._drive_percent_val.setAlignment(Qt.AlignRight)
+        self.layout().addWidget(self._drive_percent_val, 1, 1, 1, 1)
 
-        self.__drive_gb_label = QLabel()
-        self.__drive_gb_label.setAlignment(Qt.AlignLeft)
-        self.layout().addWidget(self.__drive_gb_label, 2, 0, 1, 1)
+        self._drive_gb_label = QLabel()
+        self._drive_gb_label.setAlignment(Qt.AlignLeft)
+        self.layout().addWidget(self._drive_gb_label, 2, 0, 1, 1)
 
-        self.__drive_gb_val = QLabel()
-        self.__drive_gb_val.setAlignment(Qt.AlignRight)
-        self.layout().addWidget(self.__drive_gb_val, 2, 1, 1, 1)
+        self._drive_gb_val = QLabel()
+        self._drive_gb_val.setAlignment(Qt.AlignRight)
+        self.layout().addWidget(self._drive_gb_val, 2, 1, 1, 1)
 
-        self.__drive_mb_label = QLabel()
-        self.__drive_mb_label.setAlignment(Qt.AlignLeft)
-        self.layout().addWidget(self.__drive_mb_label, 3, 0, 1, 1)
+        self._drive_mb_label = QLabel()
+        self._drive_mb_label.setAlignment(Qt.AlignLeft)
+        self.layout().addWidget(self._drive_mb_label, 3, 0, 1, 1)
 
-        self.__drive_mb_val = QLabel()
-        self.__drive_mb_val.setAlignment(Qt.AlignRight)
-        self.layout().addWidget(self.__drive_mb_val, 3, 1, 1, 1)
+        self._drive_mb_val = QLabel()
+        self._drive_mb_val.setAlignment(Qt.AlignRight)
+        self.layout().addWidget(self._drive_mb_val, 3, 1, 1, 1)
 
-        self.__set_texts()
-        self.logger.debug("Initialized")
+        self._set_texts()
+        self._logger.debug("Initialized")
 
     def set_name_val(self, value: str) -> None:
         """
@@ -85,7 +85,7 @@ class DriveInfoBox(QGroupBox):
         :param value: the value to show
         :return: None
         """
-        self.__drive_name_val.setText(value)
+        self._drive_name_val.setText(value)
 
     def set_perc_val(self, value: str) -> None:
         """
@@ -93,7 +93,7 @@ class DriveInfoBox(QGroupBox):
         :param value: the value to show
         :return: None
         """
-        self.__drive_percent_val.setText(value + '%')
+        self._drive_percent_val.setText(value + '%')
 
     def set_gb_val(self, value: str) -> None:
         """
@@ -101,7 +101,7 @@ class DriveInfoBox(QGroupBox):
         :param value: the value to show
         :return: None
         """
-        self.__drive_gb_val.setText(value)
+        self._drive_gb_val.setText(value)
 
     def set_mb_val(self, value: str) -> None:
         """
@@ -109,21 +109,21 @@ class DriveInfoBox(QGroupBox):
         :param value: the value to show
         :return: None
         """
-        self.__drive_mb_val.setText(value)
+        self._drive_mb_val.setText(value)
 
-    def __set_texts(self) -> None:
+    def _set_texts(self) -> None:
         """
         Set the text for each element in this view module
         :return: None
         """
-        self.logger.debug("running")
+        self._logger.debug("running")
         self.setTitle("Storage Information")
-        self.__drive_name_label.setText('Storage ID:')
-        self.__drive_percent_label.setText("Percent free:")
-        self.__drive_gb_label.setText("GB free:")
-        self.__drive_mb_label.setText("MB free:")
-        self.__drive_name_val.setText('None')
-        self.__drive_percent_val.setText('0%')
-        self.__drive_gb_val.setText('0')
-        self.__drive_mb_val.setText('0')
-        self.logger.debug("Done")
+        self._drive_name_label.setText('Storage ID:')
+        self._drive_percent_label.setText("Percent free:")
+        self._drive_gb_label.setText("GB free:")
+        self._drive_mb_label.setText("MB free:")
+        self._drive_name_val.setText('None')
+        self._drive_percent_val.setText('0%')
+        self._drive_gb_val.setText('0')
+        self._drive_mb_val.setText('0')
+        self._logger.debug("Done")

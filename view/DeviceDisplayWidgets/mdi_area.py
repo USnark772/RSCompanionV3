@@ -30,12 +30,12 @@ from PySide2.QtWidgets import QMdiArea, QMdiSubWindow
 class MDIArea(QMdiArea):
     """ The area to show device specific views. """
     def __init__(self, parent, ch):
-        self.__logger = getLogger(__name__)
-        self.__logger.addHandler(ch)
-        self.__logger.debug("Initializing")
+        self._logger = getLogger(__name__)
+        self._logger.addHandler(ch)
+        self._logger.debug("Initializing")
         super().__init__(parent)
         self.setMinimumSize(500, 300)
-        self.__logger.debug("Done")
+        self._logger.debug("Done")
 
     def add_window(self, window: QMdiSubWindow) -> None:
         """
@@ -43,9 +43,9 @@ class MDIArea(QMdiArea):
         :param window: The window to add.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         self.addSubWindow(window)
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     def remove_window(self, window: QMdiSubWindow) -> None:
         """
@@ -53,9 +53,9 @@ class MDIArea(QMdiArea):
         :param window: The window to remove.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         self.removeSubWindow(window)
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     # TODO: Implement these
     def set_window_order(self):

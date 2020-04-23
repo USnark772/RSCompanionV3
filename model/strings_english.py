@@ -70,7 +70,7 @@ error_checking_for_update = "There was an unexpected error connecting to the rep
 
 device_connection_error = "There was a problem connecting the device, please retry connection."
 
-logging_version_identifier = "RS Companion app version: "
+log_version_id = "RS Companion app version: "
 
 #################################################################################################################
 # Button box strings

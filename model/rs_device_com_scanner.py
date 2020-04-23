@@ -40,73 +40,73 @@ class RSDeviceCommScanner:
         :param std_cb: The callback for when a device is plugged in or unplugged.
         :param err_cb: The callback for when an error is encountered while trying to connect to a new device.
         """
-        self.__device_ids = device_ids
+        self._device_ids = device_ids
         self.std_cb = std_cb
         self.err_cb = err_cb
         self.q = q
-        self.__known_ports = []
-        self.__running = True
-        self.__loop = get_running_loop()
+        self._known_ports = []
+        self._running = True
+        self._loop = get_running_loop()
 
     def start(self) -> None:
         """
         Begin working.
         :return: None
         """
-        self.__loop.run_in_executor(None, self.scan_ports)
+        self._loop.run_in_executor(None, self.scan_ports)
 
     def cleanup(self) -> None:
         """
         Cleanup this class and prep for app closure.
         :return: None
         """
-        self.__running = False
+        self._running = False
 
     def scan_ports(self) -> None:
         """
         Check number of ports being used. If different than last checked, check for plug or unplug events.
         :return: None
         """
-        while self.__running:
+        while self._running:
             ports = comports()
-            if len(ports) > len(self.__known_ports):
-                self.__loop.call_soon_threadsafe(self.__check_for_new_devices, ports)
-            elif len(ports) < len(self.__known_ports):
-                self.__check_for_disconnects(ports)
+            if len(ports) > len(self._known_ports):
+                self._loop.call_soon_threadsafe(self._check_for_new_devices, ports)
+            elif len(ports) < len(self._known_ports):
+                self._check_for_disconnects(ports)
             sleep(.5)
 
-    def __check_for_new_devices(self, ports: [ListPortInfo]) -> None:
+    def _check_for_new_devices(self, ports: [ListPortInfo]) -> None:
         """
         Check plug events for supported Devices.
         :param ports: The list of ports to check.
         :return: None
         """
         for port in ports:
-            if port not in self.__known_ports:
-                for device_type in self.__device_ids:
-                    if self.__verify_port(port, self.__device_ids[device_type]):
-                        ret_val, connection = self.__try_open_port(port)
+            if port not in self._known_ports:
+                for device_type in self._device_ids:
+                    if self._verify_port(port, self._device_ids[device_type]):
+                        ret_val, connection = self._try_open_port(port)
                         if ret_val:
                             self.q.put((device_type, connection))
                             self.std_cb.set()
                         else:
                             self.err_cb.set()
                         break
-                self.__known_ports.append(port)
+                self._known_ports.append(port)
 
-    def __check_for_disconnects(self, ports: [ListPortInfo]) -> None:
+    def _check_for_disconnects(self, ports: [ListPortInfo]) -> None:
         """
         Check the list of ports against list of known ports for any ports that are no longer in use
         and disconnect them.
         :param ports: List of ports to check
         :return: None
         """
-        for known_port in self.__known_ports:
+        for known_port in self._known_ports:
             if known_port not in ports:
-                self.__known_ports.remove(known_port)
+                self._known_ports.remove(known_port)
 
     @staticmethod
-    def __verify_port(port: ListPortInfo, profile: dict) -> bool:
+    def _verify_port(port: ListPortInfo, profile: dict) -> bool:
         """
         Check the port against the profile to tell if this is a supported device.
         :param port: The incomming port to check.
@@ -116,7 +116,7 @@ class RSDeviceCommScanner:
         return port.vid == profile['vid'] and port.pid == profile['pid']
 
     @staticmethod
-    def __try_open_port(port) -> (bool, AioSerial):
+    def _try_open_port(port) -> (bool, AioSerial):
         """
         Try to connect to the given port.
         :param port: The port to connect to

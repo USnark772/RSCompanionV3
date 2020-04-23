@@ -35,12 +35,16 @@ class OutputWindow(QWidget):
         self.move(100, 100)
         self.setWindowTitle('Program Output')
         self.setLayout(QVBoxLayout())
-        self.textBox = QTextEdit()
-        self.layout().addWidget(self.textBox)
-        self.text = ""
-        self.textBox.setReadOnly(True)
+        self._textBox = QTextEdit()
+        self.layout().addWidget(self._textBox)
+        self._textBox.setReadOnly(True)
 
-    def write(self, message):
-        self.textBox.moveCursor(QTextCursor.End)
-        self.textBox.insertPlainText(message)
-        self.textBox.moveCursor(QTextCursor.End)
+    def write(self, message) -> None:
+        """
+        Add text to output window.
+        :param message: The text to add.
+        :return: None.
+        """
+        self._textBox.moveCursor(QTextCursor.End)
+        self._textBox.insertPlainText(message)
+        self._textBox.moveCursor(QTextCursor.End)

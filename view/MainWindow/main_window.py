@@ -35,28 +35,28 @@ from Model.strings_english import app_name, closing_app_text, close_confirmation
 class AppMainWindow(QMainWindow):
     """ The main window the app will be displayed in. """
     def __init__(self, min_size, ch):
-        self.__logger = logging.getLogger(__name__)
-        self.__logger.addHandler(ch)
-        self.__logger.debug("Initializing")
+        self._logger = logging.getLogger(__name__)
+        self._logger.addHandler(ch)
+        self._logger.debug("Initializing")
         super().__init__()
-        self.__icon = QIcon(image_file_path + "rs_icon.png")
+        self._icon = QIcon(image_file_path + "rs_icon.png")
         font = QFont()
         font.setPointSize(10)
         self.setFont(font)
         self.setMinimumSize(min_size)
-        self.setWindowIcon(self.__icon)
+        self.setWindowIcon(self._icon)
         self.setCentralWidget(CentralWidget(self))
 
-        self.__control_layout = QHBoxLayout()
-        self.centralWidget().layout().addLayout(self.__control_layout)
+        self._control_layout = QHBoxLayout()
+        self.centralWidget().layout().addLayout(self._control_layout)
 
         self.unsaved = False
-        self.__checker = QMessageBox()
-        self.__close_callback = None
-        self.__help_window = None
-        self.__set_texts()
-        self.__setup_checker_buttons()
-        self.__logger.debug("Initialized")
+        self._checker = QMessageBox()
+        self._close_callback = None
+        self._help_window = None
+        self._set_texts()
+        self._setup_checker_buttons()
+        self._logger.debug("Initialized")
 
     def closeEvent(self, event: QCloseEvent) -> None:
         """
@@ -64,15 +64,15 @@ class AppMainWindow(QMainWindow):
         :param event: The close event.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         if self.unsaved:
-            if not self.__checker.exec_() == QMessageBox.Yes:
+            if not self._checker.exec_() == QMessageBox.Yes:
                 event.ignore()
                 return
-        if self.__close_callback:
-            self.__close_callback()
+        if self._close_callback:
+            self._close_callback()
         event.accept()
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     def add_mdi_area(self, mdi_area: QMdiArea) -> None:
         """
@@ -80,9 +80,9 @@ class AppMainWindow(QMainWindow):
         :param mdi_area: The MDI area to add.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         self.centralWidget().layout().addWidget(mdi_area)
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     def add_control_bar_widget(self, widget) -> None:
         """
@@ -90,9 +90,9 @@ class AppMainWindow(QMainWindow):
         :param widget: The widget to add.
         :return: None.
         """
-        self.__logger.debug("running")
-        self.__control_layout.addWidget(widget)
-        self.__logger.debug("done")
+        self._logger.debug("running")
+        self._control_layout.addWidget(widget)
+        self._logger.debug("done")
 
     def add_close_handler(self, func: classmethod) -> None:
         """
@@ -100,9 +100,9 @@ class AppMainWindow(QMainWindow):
         :param func: The handler.
         :return: None.
         """
-        self.__logger.debug("running")
-        self.__close_callback = func
-        self.__logger.debug("done")
+        self._logger.debug("running")
+        self._close_callback = func
+        self._logger.debug("done")
 
     def add_menu_bar(self, widget) -> None:
         """
@@ -110,9 +110,9 @@ class AppMainWindow(QMainWindow):
         :param widget: The menu bar.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         self.setMenuBar(widget)
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     def show_help_window(self, title, msg) -> None:
         """
@@ -121,30 +121,30 @@ class AppMainWindow(QMainWindow):
         :param msg: The message to be shown.
         :return: None
         """
-        self.__logger.debug("running")
-        self.__help_window = HelpWindow(title, msg)
-        self.__help_window.setWindowIcon(self.__icon)
-        self.__help_window.show()
-        self.__logger.debug("done")
+        self._logger.debug("running")
+        self._help_window = HelpWindow(title, msg)
+        self._help_window.setWindowIcon(self._icon)
+        self._help_window.show()
+        self._logger.debug("done")
 
-    def __set_texts(self) -> None:
+    def _set_texts(self) -> None:
         """
         Set the texts for the main window.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         self.setWindowTitle(app_name)
-        self.__checker.setWindowTitle(closing_app_text)
-        self.__checker.setText(close_confirmation_text)
-        self.__logger.debug("done")
+        self._checker.setWindowTitle(closing_app_text)
+        self._checker.setText(close_confirmation_text)
+        self._logger.debug("done")
 
-    def __setup_checker_buttons(self) -> None:
+    def _setup_checker_buttons(self) -> None:
         """
         Setup window for close check.
         :return: None.
         """
-        self.__logger.debug("running")
-        self.__checker.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
-        self.__checker.setDefaultButton(QMessageBox.Cancel)
-        self.__checker.setEscapeButton(QMessageBox.Cancel)
-        self.__logger.debug("done")
+        self._logger.debug("running")
+        self._checker.setStandardButtons(QMessageBox.Yes | QMessageBox.Cancel)
+        self._checker.setDefaultButton(QMessageBox.Cancel)
+        self._checker.setEscapeButton(QMessageBox.Cancel)
+        self._logger.debug("done")

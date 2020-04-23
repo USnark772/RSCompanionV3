@@ -44,23 +44,23 @@ class ButtonBox(QGroupBox):
         super().__init__(parent)
         self.setLayout(QVBoxLayout())
         self.setMaximumSize(size)
-        self.__button_layout = QHBoxLayout()
+        self._button_layout = QHBoxLayout()
 
-        self.__create_button = ClickAnimationButton()
-        self.__create_button.setFixedSize(60, 40)
-        self.__start_button = ClickAnimationButton()
-        self.__start_button.setFixedSize(120, 40)
-        self.__button_layout.addWidget(self.__create_button)
-        self.__button_layout.addWidget(self.__start_button)
-        self.__text_entry = QLineEdit()
-        self.layout().addLayout(self.__button_layout)
-        self.layout().addWidget(self.__text_entry)
+        self._create_button = ClickAnimationButton()
+        self._create_button.setFixedSize(60, 40)
+        self._start_button = ClickAnimationButton()
+        self._start_button.setFixedSize(120, 40)
+        self._button_layout.addWidget(self._create_button)
+        self._button_layout.addWidget(self._start_button)
+        self._text_entry = QLineEdit()
+        self.layout().addLayout(self._button_layout)
+        self.layout().addWidget(self._text_entry)
 
-        self.__play_icon = QIcon()
-        self.__play_icon.addPixmap(QPixmap(button_box_start_image_filepath))
-        self.__pause_icon = QIcon()
-        self.__pause_icon.addPixmap(QPixmap(button_box_pause_image_filepath))
-        self.__playing = False
+        self._play_icon = QIcon()
+        self._play_icon.addPixmap(QPixmap(button_box_start_image_filepath))
+        self._pause_icon = QIcon()
+        self._pause_icon.addPixmap(QPixmap(button_box_pause_image_filepath))
+        self._playing = False
 
         self.prog_bar_label = QLabel()
         self.prog_bar = QProgressBar()
@@ -70,10 +70,10 @@ class ButtonBox(QGroupBox):
         self.layout().addWidget(self.prog_bar_label)
         self.layout().addWidget(self.prog_bar)
 
-        self.__set_texts()
+        self._set_texts()
         self.toggle_show_prog_bar(False)
-        self.__set_button_states()
-        self.__set_tooltips()
+        self._set_button_states()
+        self._set_tooltips()
         self.logger.debug("Initialized")
 
     def get_condition_name(self) -> str:
@@ -81,7 +81,7 @@ class ButtonBox(QGroupBox):
         Return the text from the condition name text entry
         :return: The text from the text entry.
         """
-        return self.__text_entry.text()
+        return self._text_entry.text()
 
     def add_create_button_handler(self, func: classmethod) -> None:
         """
@@ -90,7 +90,7 @@ class ButtonBox(QGroupBox):
         :return: None.
         """
         self.logger.debug("running")
-        self.__create_button.clicked.connect(func)
+        self._create_button.clicked.connect(func)
         self.logger.debug("done")
 
     def add_start_button_handler(self, func: classmethod) -> None:
@@ -100,7 +100,7 @@ class ButtonBox(QGroupBox):
         :return: None.
         """
         self.logger.debug("running")
-        self.__start_button.clicked.connect(func)
+        self._start_button.clicked.connect(func)
         self.logger.debug("done")
 
     def toggle_condition_name_box(self) -> None:
@@ -109,7 +109,7 @@ class ButtonBox(QGroupBox):
         :return: None
         """
         self.logger.debug("running")
-        self.__text_entry.setEnabled(not self.__text_entry.isEnabled())
+        self._text_entry.setEnabled(not self._text_entry.isEnabled())
         self.logger.debug("done")
 
     def toggle_create_button(self) -> None:
@@ -118,16 +118,16 @@ class ButtonBox(QGroupBox):
         :return: None.
         """
         self.logger.debug("running")
-        state = self.__create_button.text()
+        state = self._create_button.text()
         if state == button_box_create:
-            self.__create_button.setText(button_box_end)
-            self.__create_button.setToolTip(button_box_end_tooltip)
-            self.__start_button.setEnabled(True)
+            self._create_button.setText(button_box_end)
+            self._create_button.setToolTip(button_box_end_tooltip)
+            self._start_button.setEnabled(True)
         else:
-            self.__create_button.setText(button_box_create)
-            self.__create_button.setToolTip(button_box_create_tooltip)
-            self.__start_button.setToolTip(button_box_start_tooltip)
-            self.__start_button.setEnabled(False)
+            self._create_button.setText(button_box_create)
+            self._create_button.setToolTip(button_box_create_tooltip)
+            self._start_button.setToolTip(button_box_start_tooltip)
+            self._start_button.setEnabled(False)
         self.logger.debug("done")
 
     def toggle_start_button(self) -> None:
@@ -136,18 +136,18 @@ class ButtonBox(QGroupBox):
         :return: None.
         """
         self.logger.debug("running")
-        if self.__playing:
-            self.__playing = False
-            self.__start_button.setIcon(self.__play_icon)
-            self.__start_button.setIconSize(QSize(26, 26))
-            self.__create_button.setEnabled(True)
-            self.__start_button.setToolTip(button_box_resume_tooltip)
+        if self._playing:
+            self._playing = False
+            self._start_button.setIcon(self._play_icon)
+            self._start_button.setIconSize(QSize(26, 26))
+            self._create_button.setEnabled(True)
+            self._start_button.setToolTip(button_box_resume_tooltip)
         else:
-            self.__playing = True
-            self.__start_button.setIcon(self.__pause_icon)
-            self.__start_button.setIconSize(QSize(36, 36))
-            self.__create_button.setEnabled(False)
-            self.__start_button.setToolTip(button_box_pause_tooltip)
+            self._playing = True
+            self._start_button.setIcon(self._pause_icon)
+            self._start_button.setIconSize(QSize(36, 36))
+            self._create_button.setEnabled(False)
+            self._start_button.setToolTip(button_box_pause_tooltip)
         self.logger.debug("done")
 
     def toggle_show_prog_bar(self, is_visible: bool) -> None:
@@ -171,36 +171,36 @@ class ButtonBox(QGroupBox):
         """
         self.prog_bar.setValue(value)
 
-    def __set_texts(self) -> None:
+    def _set_texts(self) -> None:
         """
         Set the texts of this view item.
         :return: None.
         """
         self.logger.debug("running")
         self.setTitle(button_box_title)
-        self.__text_entry.setPlaceholderText(button_box_text_entry_placeholder)
-        self.__create_button.setText(button_box_create)
-        self.__start_button.setIcon(self.__play_icon)
-        self.__start_button.setIconSize(QSize(32, 32))
+        self._text_entry.setPlaceholderText(button_box_text_entry_placeholder)
+        self._create_button.setText(button_box_create)
+        self._start_button.setIcon(self._play_icon)
+        self._start_button.setIconSize(QSize(32, 32))
         self.prog_bar_label.setText(button_box_prog_bar_label)
         self.prog_bar.setValue(0)
         self.logger.debug("done")
 
-    def __set_button_states(self) -> None:
+    def _set_button_states(self) -> None:
         """
         Set default button states.
         :return: None.
         """
         self.logger.debug("running")
-        self.__start_button.setEnabled(False)
+        self._start_button.setEnabled(False)
         self.logger.debug("done")
 
-    def __set_tooltips(self) -> None:
+    def _set_tooltips(self) -> None:
         """
         Set the text for the tooltips in this view item.
         :return: None.
         """
         self.logger.debug("running")
-        self.__create_button.setToolTip(button_box_create_tooltip)
-        self.__start_button.setToolTip(button_box_start_tooltip)
+        self._create_button.setToolTip(button_box_create_tooltip)
+        self._start_button.setToolTip(button_box_start_tooltip)
         self.logger.debug("done")

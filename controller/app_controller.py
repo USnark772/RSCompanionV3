@@ -24,6 +24,8 @@ https://redscientific.com/index.html
 """
 
 import logging
+import os
+from importlib import import_module
 from asyncio import Event, create_task
 from queue import Queue
 from aioserial import AioSerial
@@ -31,9 +33,9 @@ from aioserial import AioSerial
 # from PySide2.QtGui import *
 from PySide2.QtCore import QSettings, QSize
 from Model.app_model import AppModel
-from Model.app_defs import current_version, log_format, RS_Devices
+from Model.app_defs import current_version, log_format
 from Model.app_helpers import setup_log_file
-from Model.strings_english import log_out_filename, company_name, app_name, logging_version_identifier
+from Model.strings_english import log_out_filename, company_name, app_name, log_version_id
 from Model.rs_device_com_scanner import RSDeviceCommScanner
 from View.HelpWidgets.output_window import OutputWindow
 from View.MainWindow.main_window import AppMainWindow
@@ -46,39 +48,54 @@ from View.ControlWidgets.note_box import NoteBox
 from View.DeviceDisplayWidgets.mdi_area import MDIArea
 
 
+def get_profiles() -> dict:
+    # TODO: Figure out a more dynamic way to do this.
+    #  pythoncentral.io/how-to-traverse-a-directory-tree-in-python-guide-to-os-walk/
+    from Devices.DRT.Model.drt_defs import profile as prof1
+    from Devices.wDRT.Model.w_drt_defs import profile as prof2
+    from Devices.VOG.Model.vog_defs import profile as prof3
+    from Devices.wVOG.Model.w_vog_defs import profile as prof4
+    profiles = [prof1, prof2, prof3, prof4]
+    ret = dict()
+    for prof in profiles:
+        for key in prof.keys():
+            ret[key] = prof[key]
+    return ret
+
+
 # TODO: Figure out logging for asyncio
 class AppController:
     """ The main controller for this app. """
     def __init__(self):
         # App settings and logging.
-        self.__settings = QSettings(company_name, app_name)
-        self.__settings.beginGroup("logging")
+        self._settings = QSettings(company_name, app_name)
+        self._settings.beginGroup("logging")
         # TODO: Give user control over logging level
-        if not self.__settings.contains("level"):
-            self.__settings.setValue("level", "DEBUG")
-        log_level = eval('logging.' + self.__settings.value('level'))
-        self.__settings.endGroup()
+        if not self._settings.contains("level"):
+            self._settings.setValue("level", "DEBUG")
+        log_level = eval('logging.' + self._settings.value('level'))
+        self._settings.endGroup()
         logging.basicConfig(filename=setup_log_file(log_out_filename), filemode='w', level=log_level, format=log_format)
-        self.__logger = logging.getLogger(__name__)
+        self._logger = logging.getLogger(__name__)
         self.log_output = OutputWindow()
         self.formatter = logging.Formatter(log_format)
         self.ch = logging.StreamHandler(self.log_output)
         self.ch.setLevel(log_level)
         self.ch.setFormatter(self.formatter)
-        self.__logger.addHandler(self.ch)
-        self.__logger.info(logging_version_identifier + str(current_version))
+        self._logger.addHandler(self.ch)
+        self._logger.info(log_version_id + str(current_version))
 
-        self.__logger.debug("Initializing")
+        self._logger.debug("Initializing")
         # Flags
-        self.__new_device_flag = Event()
-        self.__device_conn_error_flag = Event()
-        self.__close_event_flag = Event()
+        self._new_device_flag = Event()
+        self._device_conn_error_flag = Event()
+        self._close_event_flag = Event()
 
         # Model
-        self.__new_device_queue = Queue()
-        self.__dev_com_scanner = RSDeviceCommScanner(RS_Devices, self.__new_device_flag,
-                                                     self.__device_conn_error_flag, self.__new_device_queue)
-        self.__model = AppModel()
+        self._new_device_queue = Queue()
+        self._dev_com_scanner = RSDeviceCommScanner(get_profiles(), self._new_device_flag,
+                                                    self._device_conn_error_flag, self._new_device_queue)
+        self._model = AppModel()
 
         # View
         ui_min_size = QSize(950, 740)
@@ -96,26 +113,26 @@ class AppController:
         self.note_box = NoteBox(self.main_window, note_box_size, self.ch)
         self.mdi_area = MDIArea(self.main_window, self.ch)
 
-        self.__setup_handlers()
-        self.__initialize_view()
-        self.__start()
-        self.__logger.debug("Initialized")
+        self._setup_handlers()
+        self._initialize_view()
+        self._start()
+        self._logger.debug("Initialized")
 
     async def handle_new_devices(self) -> None:
         """
         Check for and handle any new Devices from the com scanner.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         dev_type: str
         dev_port: AioSerial
         while True:
-            await self.__new_device_flag.wait()
+            await self._new_device_flag.wait()
             # TODO: Handle new device here.
-            dev_type, dev_port = self.__new_device_queue.get()
+            dev_type, dev_port = self._new_device_queue.get()
             new_dev = (dev_type + "_" + dev_port.port.strip("COM"), dev_port)
             print(new_dev)
-            self.__new_device_flag.clear()
+            self._new_device_flag.clear()
 
     async def handle_device_conn_error(self) -> None:
         """
@@ -123,90 +140,90 @@ class AppController:
         :return: None.
         """
         while True:
-            await self.__device_conn_error_flag.wait()
+            await self._device_conn_error_flag.wait()
             print("Error connecting")
-            self.__device_conn_error_flag.clear()
+            self._device_conn_error_flag.clear()
 
     def create_end_exp_handler(self) -> None:
         """
         Handler for create/end button.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         print("Implement handling for this button.")
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     def start_stop_exp_handler(self) -> None:
         """
         Handler play/pause button.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         print("Implement handling for this button.")
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     def post_handler(self) -> None:
         """
         Handler for post button.
         :return:
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         print("Implement handling for this button.")
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     def about_rs_handler(self) -> None:
         """
         Handler for about company button.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         print("Implement handling for this button")
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     def about_app_handler(self) -> None:
         """
         Handler for about app button.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         print("Implement handling for this button")
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     def check_for_updates_handler(self) -> None:
         """
         Handler for update button.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         print("Implement handling for this button")
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     def log_window_handler(self) -> None:
         """
         Handler for output log button.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         self.log_output.show()
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     def last_save_dir_handler(self) -> None:
         """
         Handler for last save dir button.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         print("Implement handling for this button")
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     def toggle_cam_handler(self) -> None:
         """
         Handler for use cam button.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         print("Implement handling for this button")
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
     # TODO: Implement these.
     def create_exp(self):
@@ -221,12 +238,12 @@ class AppController:
     def stop_exp(self):
         pass
 
-    def __setup_handlers(self) -> None:
+    def _setup_handlers(self) -> None:
         """
         Attach events to handlers
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         # Control bar
         self.button_box.add_create_button_handler(self.create_end_exp_handler)
         self.button_box.add_start_button_handler(self.start_stop_exp_handler)
@@ -243,16 +260,16 @@ class AppController:
         self.menu_bar.add_log_window_handler(self.log_window_handler)
 
         # Close app button
-        self.main_window.add_close_handler(self.__cleanup)
+        self.main_window.add_close_handler(self._cleanup)
 
-        self.__logger.debug("done")
+        self._logger.debug("done")
 
-    def __initialize_view(self) -> None:
+    def _initialize_view(self) -> None:
         """
         Put the different components of the view together and then show the view.
         :return: None.
         """
-        self.__logger.debug("running")
+        self._logger.debug("running")
         self.main_window.add_menu_bar(self.menu_bar)
         self.main_window.add_control_bar_widget(self.button_box)
         self.main_window.add_control_bar_widget(self.flag_box)
@@ -262,19 +279,19 @@ class AppController:
         self.main_window.add_mdi_area(self.mdi_area)
         self.main_window.show()
 
-    def __start(self) -> None:
+    def _start(self) -> None:
         """
         Start all recurring functions.
         :return: None.
         """
         create_task(self.handle_new_devices())
         create_task(self.handle_device_conn_error())
-        self.__dev_com_scanner.start()
+        self._dev_com_scanner.start()
 
-    def __cleanup(self) -> None:
+    def _cleanup(self) -> None:
         """
         Cleanup any code that would cause problems for shutdown and prep for app closure.
         :return: None.
         """
-        self.__dev_com_scanner.cleanup()
-        create_task(self.__model.cleanup())
+        self._dev_com_scanner.cleanup()
+        create_task(self._model.cleanup())

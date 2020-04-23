@@ -33,37 +33,37 @@ from PySide2.QtCore import Qt
 class FlagBox(QGroupBox):
     """ This code is for showing and storing the keyflag which in this case is the last letter key the user pressed. """
     def __init__(self, parent, size, ch):
-        self.logger = logging.getLogger(__name__)
-        self.logger.addHandler(ch)
-        self.logger.debug("Initializing")
+        self._logger = logging.getLogger(__name__)
+        self._logger.addHandler(ch)
+        self._logger.debug("Initializing")
         super().__init__(parent)
         self.setLayout(QVBoxLayout())
         self.setMaximumSize(size)
-        self.__flag = QLabel(self)
+        self._flag = QLabel(self)
         font = QFont()
         font.setPointSize(16)
-        self.__flag.setFont(font)
-        self.layout().addWidget(self.__flag, 0, Qt.AlignHCenter)
+        self._flag.setFont(font)
+        self.layout().addWidget(self._flag, 0, Qt.AlignHCenter)
 
-        self.__set_texts()
-        self.__set_tooltips()
-        self.logger.debug("Initialized")
+        self._set_texts()
+        self._set_tooltips()
+        self._logger.debug("Initialized")
 
     def set_flag(self, text):
-        self.logger.debug("running")
-        self.__flag.setText(text)
-        self.logger.debug("done")
+        self._logger.debug("running")
+        self._flag.setText(text)
+        self._logger.debug("done")
 
     def get_flag(self):
-        return self.__flag.text()
+        return self._flag.text()
 
-    def __set_texts(self):
-        self.logger.debug("running")
+    def _set_texts(self):
+        self._logger.debug("running")
         self.setTitle("Key Flag")
-        self.__flag.setText("")
-        self.logger.debug("done")
+        self._flag.setText("")
+        self._logger.debug("done")
 
-    def __set_tooltips(self):
-        self.logger.debug("running")
-        self.__flag.setToolTip("The most recent key pressed for reference in save file")
-        self.logger.debug("done")
+    def _set_tooltips(self):
+        self._logger.debug("running")
+        self._flag.setToolTip("The most recent key pressed for reference in save file")
+        self._logger.debug("done")

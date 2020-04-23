@@ -31,12 +31,6 @@ from cv2 import VideoWriter_fourcc, CAP_DSHOW
 # Model
 #################################################################################################################
 
-RS_Devices = {"DRT": {"vid": 9114, "pid": 32798},
-              "wDRT": {"vid": 23123, "pid": 32421},
-              "VOG": {"vid": 5824, "pid": 1155},
-              "wVOG": {"vid": 61525, "pid": 38912}
-              }
-
 version_url = "https://raw.githubusercontent.com/redscientific/CompanionApp/master/Version.txt"
 log_format = '%(levelname)s - %(name)s - %(funcName)s: %(message)s'
 # TODO: Switch image_file_path for build
@@ -52,30 +46,30 @@ current_version = 2.0
 button_box_start_image_filepath = image_file_path + "green_arrow.png"
 button_box_pause_image_filepath = image_file_path + "red_vertical_bars.png"
 
-__compliant_text_color = "rgb(0, 0, 0)"
-__error_text_color = "rgb(255, 0, 0)"
-__selection_color = "rgb(0, 150, 255)"
-__font_size = "12px"
+_compliant_text_color = "rgb(0, 0, 0)"
+_error_text_color = "rgb(255, 0, 0)"
+_selection_color = "rgb(0, 150, 255)"
+_font_size = "12px"
 tab_line_edit_compliant_style = "QLineEdit { color: " \
-                                + __compliant_text_color \
+                                + _compliant_text_color \
                                 + "; selection-background-color: " \
-                                + __selection_color \
+                                + _selection_color \
                                 + "; font: " \
-                                + __font_size + "; }"
+                                + _font_size + "; }"
 tab_line_edit_error_style = "QLineEdit { color: " \
-                            + __error_text_color \
+                            + _error_text_color \
                             + "; selection-background-color: " \
-                            + __selection_color \
+                            + _selection_color \
                             + "; font: " \
-                            + __font_size + "; }"
+                            + _font_size + "; }"
 
 # "QPushButton:pressed { background-color: rgb(150, 180, 200);
 button_pressed_style = "QPushButton:pressed { background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, " \
-                       "stop: 0 #dadbde, stop: 1 #f6f7fa); font: " + __font_size + "; }"
+                       "stop: 0 #dadbde, stop: 1 #f6f7fa); font: " + _font_size + "; }"
 
 # "background-color: rgb(230, 230, 230); " \
 button_normal_style = "QPushButton { border: 1px solid #8f8f91; background-color: qlineargradient(x1: 0, y1: 0, " \
-                      "x2: 0, y2: 1, stop: 0 #f6f7fa, stop: 1 #dadbde); min-height: 22px; font: " + __font_size + "; }"
+                      "x2: 0, y2: 1, stop: 0 #f6f7fa, stop: 1 #dadbde); min-height: 22px; font: " + _font_size + "; }"
 
 #################################################################################################################
 # Controller

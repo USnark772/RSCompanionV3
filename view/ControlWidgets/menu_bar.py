@@ -31,49 +31,49 @@ from PySide2.QtCore import QRect
 class AppMenuBar(QMenuBar):
     """ This code is for the menu bar at the top of the main window. File, help, etc. """
     def __init__(self, parent, ch):
-        self.logger = logging.getLogger(__name__)
-        self.logger.addHandler(ch)
-        self.logger.debug("Initializing")
+        self._logger = logging.getLogger(__name__)
+        self._logger.addHandler(ch)
+        self._logger.debug("Initializing")
         super().__init__(parent)
         self.setGeometry(QRect(0, 0, 840, 22))
 
-        self.__file_menu = QMenu(self)
-        self.addAction((self.__file_menu.menuAction()))
+        self._file_menu = QMenu(self)
+        self.addAction((self._file_menu.menuAction()))
 
-        self.__open_last_save_dir_action = QAction(self)
-        self.__file_menu.addAction(self.__open_last_save_dir_action)
+        self._open_last_save_dir_action = QAction(self)
+        self._file_menu.addAction(self._open_last_save_dir_action)
 
-        self.__cam_list_menu = QMenu(self)
-        self.__file_menu.addMenu(self.__cam_list_menu)
+        self._cam_list_menu = QMenu(self)
+        self._file_menu.addMenu(self._cam_list_menu)
 
-        self.__use_cams_action = QAction(self)
-        self.__use_cams_action.setCheckable(True)
-        self.__cam_list_menu.addAction(self.__use_cams_action)
+        self._use_cams_action = QAction(self)
+        self._use_cams_action.setCheckable(True)
+        self._cam_list_menu.addAction(self._use_cams_action)
 
-        sep = self.__cam_list_menu.addSeparator()
+        sep = self._cam_list_menu.addSeparator()
 
-        self.__help_menu = QMenu(self)
-        self.addAction(self.__help_menu.menuAction())
+        self._help_menu = QMenu(self)
+        self.addAction(self._help_menu.menuAction())
 
-        self.__about_app_action = QAction(self)
-        self.__help_menu.addAction(self.__about_app_action)
+        self._about_app_action = QAction(self)
+        self._help_menu.addAction(self._about_app_action)
 
-        self.__about_company_action = QAction(self)
-        self.__help_menu.addAction(self.__about_company_action)
+        self._about_company_action = QAction(self)
+        self._help_menu.addAction(self._about_company_action)
 
-        self.__update_action = QAction(self)
-        self.__help_menu.addAction(self.__update_action)
+        self._update_action = QAction(self)
+        self._help_menu.addAction(self._update_action)
 
-        self.__log_window_action = QAction(self)
-        self.__help_menu.addAction(self.__log_window_action)
+        self._log_window_action = QAction(self)
+        self._help_menu.addAction(self._log_window_action)
 
-        self.__cam_actions = {}
+        self._cam_actions = {}
 
         # self.add_cam_action('test action', self.temp_handler)
         # self.remove_cam_action('test action')
 
-        self.__set_texts()
-        self.logger.debug("Initialized")
+        self._set_texts()
+        self._logger.debug("Initialized")
 
     # def temp_handler(self, is_active: bool):
     #     print('test action is now:', is_active)
@@ -85,8 +85,8 @@ class AppMenuBar(QMenuBar):
         :return: None
         """
 
-        self.__use_cams_action.setEnabled(is_active)
-        for action in self.__cam_actions.values():
+        self._use_cams_action.setEnabled(is_active)
+        for action in self._cam_actions.values():
             action.setEnabled(is_active)
 
     def set_cam_bool_checked(self, is_active: bool) -> None:
@@ -95,13 +95,13 @@ class AppMenuBar(QMenuBar):
         :param is_active: whether or not this action should be checked.
         :return: None
         """
-        self.__use_cams_action.setChecked(is_active)
+        self._use_cams_action.setChecked(is_active)
         self.empty_cam_actions()
 
     def add_cam_bool_handler(self, func):
-        self.logger.debug("running")
-        self.__use_cams_action.toggled.connect(func)
-        self.logger.debug("done")
+        self._logger.debug("running")
+        self._use_cams_action.toggled.connect(func)
+        self._logger.debug("done")
 
     def set_use_cams_action_active(self, is_active: bool) -> None:
         """
@@ -110,32 +110,32 @@ class AppMenuBar(QMenuBar):
         :return: None
         """
 
-        self.__use_cams_action.setEnabled(is_active)
+        self._use_cams_action.setEnabled(is_active)
 
     def add_open_last_save_dir_handler(self, func):
-        self.logger.debug("running")
-        self.__open_last_save_dir_action.triggered.connect(func)
-        self.logger.debug("done")
+        self._logger.debug("running")
+        self._open_last_save_dir_action.triggered.connect(func)
+        self._logger.debug("done")
 
     def add_about_app_handler(self, func):
-        self.logger.debug("running")
-        self.__about_app_action.triggered.connect(func)
-        self.logger.debug("done")
+        self._logger.debug("running")
+        self._about_app_action.triggered.connect(func)
+        self._logger.debug("done")
 
     def add_about_company_handler(self, func):
-        self.logger.debug("running")
-        self.__about_company_action.triggered.connect(func)
-        self.logger.debug("done")
+        self._logger.debug("running")
+        self._about_company_action.triggered.connect(func)
+        self._logger.debug("done")
 
     def add_update_handler(self, func):
-        self.logger.debug("running")
-        self.__update_action.triggered.connect(func)
-        self.logger.debug("done")
+        self._logger.debug("running")
+        self._update_action.triggered.connect(func)
+        self._logger.debug("done")
 
     def add_log_window_handler(self, func):
-        self.logger.debug("running")
-        self.__log_window_action.triggered.connect(func)
-        self.logger.debug("done")
+        self._logger.debug("running")
+        self._log_window_action.triggered.connect(func)
+        self._logger.debug("done")
 
     def add_cam_action(self, name: str, handler: classmethod, is_active: bool = True) -> None:
         """
@@ -151,9 +151,9 @@ class AppMenuBar(QMenuBar):
         new_cam_action.setCheckable(True)
         new_cam_action.setChecked(is_active)
         new_cam_action.toggled.connect(handler)
-        self.__cam_actions[name] = new_cam_action
-        self.__cam_list_menu.addAction(new_cam_action)
-        # self.__default_cam_option.setVisible(False)
+        self._cam_actions[name] = new_cam_action
+        self._cam_list_menu.addAction(new_cam_action)
+        # self._default_cam_option.setVisible(False)
 
     def remove_cam_action(self, name: str) -> None:
         """
@@ -162,27 +162,27 @@ class AppMenuBar(QMenuBar):
         :return:
         """
 
-        if name in self.__cam_actions.keys():
-            self.__cam_list_menu.removeAction(self.__cam_actions[name])
-            del self.__cam_actions[name]
-        # if len(self.__cam_selectors) == 0:
-        #     self.__default_cam_option.setVisible(True)
+        if name in self._cam_actions.keys():
+            self._cam_list_menu.removeAction(self._cam_actions[name])
+            del self._cam_actions[name]
+        # if len(self._cam_selectors) == 0:
+        #     self._default_cam_option.setVisible(True)
 
-    def __set_texts(self):
-        self.logger.debug("running")
-        self.__file_menu.setTitle("File")
-        self.__open_last_save_dir_action.setText("Open last save location")
-        self.__cam_list_menu.setTitle("Attached Camera")
-        self.__use_cams_action.setText("Use cameras")
-        self.__help_menu.setTitle("Help")
-        self.__about_app_action.setText("About RS Companion")
-        self.__about_company_action.setText("About Red Scientific")
-        self.__update_action.setText("Check For Updates")
-        self.__log_window_action.setText("Show log window")
-        self.logger.debug("done")
+    def _set_texts(self):
+        self._logger.debug("running")
+        self._file_menu.setTitle("File")
+        self._open_last_save_dir_action.setText("Open last save location")
+        self._cam_list_menu.setTitle("Attached Camera")
+        self._use_cams_action.setText("Use cameras")
+        self._help_menu.setTitle("Help")
+        self._about_app_action.setText("About RS Companion")
+        self._about_company_action.setText("About Red Scientific")
+        self._update_action.setText("Check For Updates")
+        self._log_window_action.setText("Show log window")
+        self._logger.debug("done")
 
     def empty_cam_actions(self):
-        for name in self.__cam_actions.keys():
-            self.__cam_list_menu.removeAction(self.__cam_actions[name])
-        self.__cam_actions = {}
+        for name in self._cam_actions.keys():
+            self._cam_list_menu.removeAction(self._cam_actions[name])
+        self._cam_actions = {}
 

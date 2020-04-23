@@ -34,45 +34,44 @@ class PortWorker:
     This code is used to continually check an AioSerial port for incoming data, send alerts and pass on said data.
     Also used to send data through said port.
     """
-    def __init__(self, name: str, port: AioSerial, msg_q: Queue, new_msg_cb: Event, cleanup_cb: Event, err_cb: Event):
-        self.__device_name = name
-        self.__port = port
-        self.__msg_q = msg_q
-        self.__new_msg_cb = new_msg_cb
-        self.__cleanup_cb = cleanup_cb
-        self.__err_cb = err_cb
-        self.__running = True
-        self.__loop = get_running_loop()
+    def __init__(self, port: AioSerial, msg_q: Queue, new_msg_cb: Event, cleanup_cb: Event, err_cb: Event):
+        self._port = port
+        self._msg_q = msg_q
+        self._new_msg_cb = new_msg_cb
+        self._cleanup_cb = cleanup_cb
+        self._err_cb = err_cb
+        self._running = True
+        self._loop = get_running_loop()
 
     def start(self) -> None:
         """
         Start running.
         :return: None.
         """
-        self.__loop.run_in_executor(None, self.__run)
+        self._loop.run_in_executor(None, self._run)
 
-    async def __run(self) -> None:
+    async def _run(self) -> None:
         """
         Run until signalled to stop.
         :return: None.
         """
-        while self.__running:
-            self.__check_for_msg()
-        self.cleanup(self.__err_cb.is_set())
+        while self._running:
+            self._check_for_msg()
+        self.cleanup(self._err_cb.is_set())
 
-    def __check_for_msg(self) -> None:
+    def _check_for_msg(self) -> None:
         """
         Check port for new message. If new message, put message and timestamp into queue and then set flag.
         If failure with port, stop and set error flag.
         :return: None.
         """
         try:
-            if self.__port.in_waiting > 0:
-                self.__msg_q.put((self.__port.readline().decode("utf-8"), datetime.now()))
-                self.__new_msg_cb.set()
+            if self._port.in_waiting > 0:
+                self._msg_q.put((self._port.readline().decode("utf-8"), datetime.now()))
+                self._new_msg_cb.set()
         except Exception as e:
-            self.__running = False
-            self.__err_cb.set()
+            self._running = False
+            self._err_cb.set()
 
     def send_msg(self, msg) -> None:
         """
@@ -80,15 +79,15 @@ class PortWorker:
         :param msg: The message to send.
         :return: None.
         """
-        if self.__port.is_open:
-            self.__port.write(str.encode(msg))
+        if self._port.is_open:
+            self._port.write(str.encode(msg))
 
     def cleanup(self, err: bool = False) -> None:
         """
         Close port and signal loops to stop. Set cleanup flag.
         :return:
         """
-        self.__running = False
-        self.__port.close()
+        self._running = False
+        self._port.close()
         if not err:
-            self.__cleanup_cb.set()
+            self._cleanup_cb.set()

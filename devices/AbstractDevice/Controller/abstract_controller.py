@@ -24,13 +24,29 @@ https://redscientific.com/index.html
 """
 
 from abc import ABC, abstractmethod
-from Model.app_helpers import NotDefinedException
 
 
 class AbstractController(ABC):
-    def __init__(self):
-        pass
+    def __init__(self, view):
+        self.view = view
 
     @abstractmethod
     def cleanup(self):
         pass
+
+    def get_view(self):
+        return self.view
+
+    def create_exp(self):
+        pass
+
+    def end_exp(self):
+        pass
+
+    def start_exp(self):
+        pass
+
+    def stop_exp(self):
+        pass
+
+

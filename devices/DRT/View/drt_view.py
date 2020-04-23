@@ -1,4 +1,4 @@
-"""
+""" 
 Licensed under GNU GPL-3.0-or-later
 
 This file is part of RS Companion.
@@ -17,25 +17,15 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
-Date: 2019
+Date: 2020
 Project: Companion App
 Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-import logging
-from PySide2.QtWidgets import QMessageBox
+from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
-class HelpWindow(QMessageBox):
-    """ This is to display small messages to the user. """
-    def __init__(self, name, text):
-        self._logger = logging.getLogger(__name__)
-        self._logger.debug("Initializing")
-        super().__init__()
-        self.setWindowTitle(name)
-        self.setText(text)
-        self.setStandardButtons(QMessageBox.Close)
-        self.setDefaultButton(QMessageBox.Close)
-        self.setEscapeButton(QMessageBox.Close)
-        self._logger.debug("Initialized")
+class DRTView(AbstractView):
+    def __init__(self, name):
+        super().__init__(name)

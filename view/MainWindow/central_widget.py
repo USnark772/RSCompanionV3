@@ -30,8 +30,8 @@ from PySide2.QtWidgets import QWidget, QVBoxLayout
 class CentralWidget(QWidget):
     """ This code is the overall frame inside the app main window. All other parts will go inside this. """
     def __init__(self, parent):
-        self.logger = getLogger(__name__)
-        self.logger.debug("Initializing")
+        self._logger = getLogger(__name__)
+        self._logger.debug("Initializing")
         super().__init__(parent)
         self.setLayout(QVBoxLayout(self))
-        self.logger.debug("Initialized")
+        self._logger.debug("Initialized")
