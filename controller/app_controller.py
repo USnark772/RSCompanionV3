@@ -37,7 +37,7 @@ from Model.strings_english import log_out_filename, company_name, app_name, logg
 from Model.rs_device_com_scanner import RSDeviceCommScanner
 from View.OutputLogWindow.output_window import OutputWindow
 from View.MainWindow.main_window import AppMainWindow
-from View.MenuBarWidget.menu_bar import AppMenuBar
+from View.MainWindow.menu_bar import AppMenuBar
 from View.MainWindow.button_box import ButtonBox
 from View.MainWindow.info_box import InfoBox
 from View.MainWindow.drive_info_box import DriveInfoBox
