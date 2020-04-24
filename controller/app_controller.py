@@ -60,7 +60,6 @@ def get_profiles() -> dict:
         to_import.append(imp_path_1 + devices[i] + imp_path_2 + files[i])
     profiles = []
     for imp in to_import:
-        print("Importing:", imp)
         profiles.append(import_module(imp).profile)
     ret = dict()
     for prof in profiles:
@@ -137,7 +136,7 @@ class AppController:
             # TODO: Handle new device here.
             dev_type, dev_port = self._new_device_queue.get()
             new_dev = (dev_type + "_" + dev_port.port.strip("COM"), dev_port)
-            print(new_dev)
+            print("A device was plugged in:", new_dev)
             self._new_device_flag.clear()
 
     async def handle_device_conn_error(self) -> None:
