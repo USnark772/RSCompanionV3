@@ -24,18 +24,15 @@ https://redscientific.com/index.html
 """
 
 import logging
-import os
 from importlib import import_module
 from asyncio import Event, create_task
 from queue import Queue
 from aioserial import AioSerial
-# from PySide2.QtWidgets import *
-# from PySide2.QtGui import *
 from PySide2.QtCore import QSettings, QSize
 from Model.app_model import AppModel
 from Model.app_defs import current_version, log_format
 from Model.app_helpers import setup_log_file
-from Model.strings_english import log_out_filename, company_name, app_name, log_version_id
+from Model.strings_english import log_out_filename, company_name, app_name, log_version_id, device_connection_error
 from Model.rs_device_com_scanner import RSDeviceCommScanner
 from View.HelpWidgets.output_window import OutputWindow
 from View.MainWindow.main_window import AppMainWindow
@@ -49,13 +46,22 @@ from View.DeviceDisplayWidgets.mdi_area import MDIArea
 
 
 def get_profiles() -> dict:
-    # TODO: Figure out a more dynamic way to do this.
-    #  pythoncentral.io/how-to-traverse-a-directory-tree-in-python-guide-to-os-walk/
-    from Devices.DRT.Model.drt_defs import profile as prof1
-    from Devices.wDRT.Model.w_drt_defs import profile as prof2
-    from Devices.VOG.Model.vog_defs import profile as prof3
-    from Devices.wVOG.Model.w_vog_defs import profile as prof4
-    profiles = [prof1, prof2, prof3, prof4]
+    """
+    Dynamically compile a list of device profiles.
+    :return: The device profiles.
+    """
+    # TODO: Figure this out better (best option seems to be os module)
+    imp_path_1 = "Devices."
+    imp_path_2 = ".Model."
+    devices = ["DRT", "wDRT", "VOG", "wVOG"]
+    files = ["drt_defs", "w_drt_defs", "vog_defs", "w_vog_defs"]
+    to_import = []
+    for i in range(len(devices)):
+        to_import.append(imp_path_1 + devices[i] + imp_path_2 + files[i])
+    profiles = []
+    for imp in to_import:
+        print("Importing:", imp)
+        profiles.append(import_module(imp).profile)
     ret = dict()
     for prof in profiles:
         for key in prof.keys():
@@ -141,7 +147,7 @@ class AppController:
         """
         while True:
             await self._device_conn_error_flag.wait()
-            print("Error connecting")
+            self.main_window.show_help_window("Error", device_connection_error)
             self._device_conn_error_flag.clear()
 
     def create_end_exp_handler(self) -> None:

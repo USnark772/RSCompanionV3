@@ -40,7 +40,7 @@ class DRTController(AbstractController):
         self._new_msg_e = Event()
         self._cleanup_e = Event()
         self._err_e = Event()
-        self._model = DRTModel(port, save_dir, ch)
+        self._model = DRTModel(port, save_dir, self._new_msg_e, self._cleanup_e, self._err_e, ch)
         super().__init__(DRTView(self._device_name))
         self._exp = False
         self._logger.debug("Initialized")
@@ -49,31 +49,47 @@ class DRTController(AbstractController):
         self._logger.debug("running")
         if self._exp:
             self.stop_exp()
+        self._model.cleanup()
         self._logger.debug("done")
+
+    async def msg_handler(self):
+        while True:
+            await self._new_msg_e.wait()
+            ret, msg = self._model.get_msg()
+            if ret:
+                pass  # TODO handle msg somehow
 
     def start_exp(self):
         self._logger.debug("running")
-        # TODO: Send message to device
+        self._model.send_start()
         self._logger.debug("done")
 
     def stop_exp(self):
         self._logger.debug("running")
-        # TODO: Send message to device
+        self._model.send_stop()
         self._logger.debug("done")
+
+    def _init_values(self):
+        self.logger.debug("running")
+        self._model.send_setup()
+        self.logger.debug("done")
 
     def _stim_dur_entry_changed_handler(self):
         self._logger.debug("running")
+        self.view.set_stim_dur_err(self._model.check_stim_dur_entry(self.view.get_stim_dur()))
         self._logger.debug("done")
 
     def _stim_int_entry_changed_handler(self):
         self._logger.debug("running")
+        self.view.set_stim_int_err(self._model.check_stim_int_entry(self.view.get_stim_int()))
         self._logger.debug("done")
 
-    def _upper_isi_entry_changed_handler(self):
+    def _isi_entry_changed_handler(self):
         self._logger.debug("running")
+        upper = self.view.get_upper_isi
+        lower = self.view.get_lower_isi
+        err_upper = self._model.check_upper_isi_entry(upper, lower)
+        err_lower = self._model.check_lower_isi_entry(upper, lower)
+        self.view.set_upper_isi_err(err_upper)
+        self.view.set_lower_isi_err(err_lower)
         self._logger.debug("done")
-
-    def _lower_isi_entry_changed_handler(self):
-        self._logger.debug("running")
-        self._logger.debug("done")
-

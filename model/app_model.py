@@ -24,11 +24,15 @@ https://redscientific.com/index.html
 """
 
 from asyncio import get_event_loop, all_tasks, current_task, gather
+from aioserial import AioSerial
 
 
 class AppModel:
     def __init__(self):
-        pass
+        self._devices = {}
+
+    def add_device(self, device: (str, AioSerial)):
+        self._devices[device[0]] = device[1]
 
     @staticmethod
     async def cleanup():

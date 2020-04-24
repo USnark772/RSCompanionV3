@@ -24,10 +24,12 @@ https://redscientific.com/index.html
 """
 
 from abc import ABC, abstractmethod
+from PySide2.QtWidgets import QMdiSubWindow
 
 
-class AbstractView(ABC):
-    def __init__(self, name):
+class AbstractView(ABC, QMdiSubWindow):
+    def __init__(self, parent, name):
+        super().__init__(parent)
         self._name = name
         pass
 
