@@ -31,22 +31,42 @@ class AbstractController(ABC):
         self.view = view
 
     @abstractmethod
-    def cleanup(self):
+    def cleanup(self) -> None:
+        """
+        Handle cleanup and shut down of this code.
+        :return: None.
+        """
         pass
 
     def get_view(self):
         return self.view
 
-    def create_exp(self):
+    def create_exp(self) -> None:
+        """
+        Logic for if this device needs to know about when an experiment is created.
+        :return: None.
+        """
         pass
 
-    def end_exp(self):
+    def end_exp(self) -> None:
+        """
+        Logic for if this device needs to know about when an experiment is ended.
+        :return: None.
+        """
         pass
 
-    def start_exp(self):
+    def start_exp(self) -> None:
+        """
+        Logic for if this device needs to know about when an experiment is running.
+        :return: None.
+        """
         pass
 
-    def stop_exp(self):
+    def stop_exp(self) -> None:
+        """
+        Logic for if this device needs to know about when an experiment is stopped.
+        :return: None.
+        """
         pass
 
 
