@@ -27,6 +27,8 @@ from logging import getLogger, StreamHandler
 from queue import Queue
 from aioserial import AioSerial
 from asyncio import Event
+from math import trunc, ceil
+from datetime import datetime
 from Devices.AbstractDevice.Model.abstract_model import AbstractModel
 from Devices.AbstractDevice.Model.port_worker import PortWorker
 from Devices.DRT.Model import drt_defs as defs
@@ -34,7 +36,7 @@ from Devices.DRT.Model import drt_defs as defs
 
 class DRTModel(AbstractModel):
     def __init__(self, port: AioSerial, save_dir: str, new_msg_cb: Event, cleanup_cb: Event, err_cb: Event,
-                ch: StreamHandler):
+                 ch: StreamHandler):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
@@ -46,7 +48,8 @@ class DRTModel(AbstractModel):
         self._errs = [False, False]
         self._logger.debug("Initialized")
 
-    def set_current_vals(self, duration, intensity, upper_isi, lower_isi) -> None:
+    def set_current_vals(self, duration: int = None, intensity: int = None, upper_isi: int = None,
+                         lower_isi: int = None) -> None:
         """
         Set the current values the device should have.
         :param duration: The stim duration value.
@@ -56,10 +59,14 @@ class DRTModel(AbstractModel):
         :return: None.
         """
         self._logger.debug("running")
-        self._current_vals[0] = duration
-        self._current_vals[1] = intensity
-        self._current_vals[2] = upper_isi
-        self._current_vals[3] = lower_isi
+        if duration:
+            self._current_vals[0] = duration
+        if intensity:
+            self._current_vals[1] = intensity
+        if upper_isi:
+            self._current_vals[2] = upper_isi
+        if lower_isi:
+            self._current_vals[3] = lower_isi
         self._logger.debug("done")
 
     def get_msg(self) -> (bool, dict):
@@ -79,7 +86,7 @@ class DRTModel(AbstractModel):
         self._port_worker.cleanup()
         self._logger.debug("done")
 
-    def send_setup(self):
+    def query_config(self):
         self._logger.debug("running")
         self._port_worker.send_msg(self._prepare_msg("get_config"))
         self._logger.debug("done")
@@ -136,6 +143,23 @@ class DRTModel(AbstractModel):
         self._logger.debug("done with false")
         return False
 
+    def save_data(self, data: dict, timestamp: datetime) -> None:
+        """
+        Save data to output file.
+        :return: None
+        """
+        self._logger.debug("running")
+        self._output_save_data(self._format_save_data(data, timestamp))
+        self._logger.debug("done")
+
+    def _output_save_data(self, line: str) -> None:
+        """
+        Write data to save file.
+        :param line: The data to write.
+        :return: None.
+        """
+        print("Implement DRTModel._output_save_data()")
+
     @staticmethod
     def _parse_msg(msg_string: str) -> dict:
         """
@@ -190,3 +214,37 @@ class DRTModel(AbstractModel):
         else:
             msg_to_send = cmd + "\n"
         return msg_to_send
+
+    @staticmethod
+    def calc_val_to_percent(val: int) -> int:
+        """
+        Calculate the value of stim intensity from device.
+        :param val: The value to be converted.
+        :return int: The converted percentage.
+        """
+        return trunc(val / defs.intensity_max * 100)
+
+    @staticmethod
+    def calc_percent_to_val(val: int) -> int:
+        """
+        Calculate the value of stim intensity for device.
+        :param val: The percentage to be converted.
+        :return int: The converted value.
+        """
+        return ceil(val / 100 * defs.intensity_max)
+
+    @staticmethod
+    def _format_save_data(values: dict, timestamp: datetime) -> str:
+        """
+        Format values from device into readable output for saving.
+        :param values: The values from the device.
+        :param timestamp: The timestamp the values were received.
+        :return: The formatted output.
+        """
+        line = ""
+        for i in defs.save_fields:
+            line += ", " + str(values[i])
+        line = line.rstrip("\r\n")
+        line = line + ", "
+        return line
+
