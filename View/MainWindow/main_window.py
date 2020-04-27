@@ -84,14 +84,24 @@ class AppMainWindow(QMainWindow):
         self.centralWidget().layout().addWidget(mdi_area)
         self._logger.debug("done")
 
-    def add_control_bar_widget(self, widget) -> None:
+    def add_control_bar_widget(self, widget, stretch: int=0) -> None:
         """
         Add widget to the control layout.
         :param widget: The widget to add.
+        :param stretch: stretch factor
         :return: None.
         """
         self._logger.debug("running")
-        self._control_layout.addWidget(widget)
+        self._control_layout.addWidget(widget, stretch)
+        self._logger.debug("done")
+
+    def add_spacer_item(self, stretch) -> None:
+        """
+        Add spacer item to maintain control bar format.
+        :return: None.
+        """
+        self._logger.debug("running")
+        self._control_layout.addStretch(stretch)
         self._logger.debug("done")
 
     def add_close_handler(self, func: classmethod) -> None:

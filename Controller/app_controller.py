@@ -251,7 +251,7 @@ class AppController:
         self.main_window.add_control_bar_widget(self.button_box)
         self.main_window.add_control_bar_widget(self.flag_box)
         self.main_window.add_control_bar_widget(self.note_box)
-        # TODO: Add spacer item
+        self.main_window.add_spacer_item(100000)
         self.main_window.add_control_bar_widget(self.info_box)
         self.main_window.add_control_bar_widget(self.d_info_box)
         self.main_window.add_mdi_area(self.mdi_area)
