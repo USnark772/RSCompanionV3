@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2020
 Project: Companion App
 Company: Red Scientific
@@ -29,3 +30,109 @@ from Devices.AbstractDevice.View.abstract_view import AbstractView
 class DRTView(AbstractView):
     def __init__(self, parent, name):
         super().__init__(parent, name)
+
+    def set_stim_dur_entry_changed_handler(self, func):
+        """
+
+        :param func:
+        :return:
+        """
+
+    def set_stim_int_entry_changed_handler(self, func):
+        """
+
+        :param func:
+        :return:
+        """
+
+    def set_upper_isi_entry_changed_handler(self, func):
+        """
+
+        :param func:
+        :return:
+        """
+
+    def set_lower_isi_entry_changed_handler(self, func):
+        """
+
+        :param func:
+        :return:
+        """
+
+    def set_stim_dur_val(self):
+        """
+
+        :return:
+        """
+
+    def set_stim_dur_err(self):
+        """
+
+        :return:
+        """
+
+    def set_stim_intens_val(self):
+        """
+
+        :return:
+        """
+
+    def set_upper_isi_val(self):
+        """
+
+        :return:
+        """
+
+    def set_lower_isi_err(self):
+        """
+
+        :return:
+        """
+
+    def set_stim_dur_err(self):
+        """
+
+        :return:
+        """
+
+    def set_stim_int_err(self):
+        """
+
+        :return:
+        """
+
+    def get_upper_isi(self):
+        """
+
+        :return:
+        """
+
+    def get_lower_isi(self):
+        """
+
+        :return:
+        """
+
+    def set_upper_isi_err(self):
+        """
+
+        :return:
+        """
+
+    def set_lower_isi_err(self):
+        """
+
+        :return:
+        """
+
+    def set_upload_button(self):
+        """
+
+        :return:
+        """
+
+    def set_upload_button(self):
+        """
+
+        :return:
+        """
