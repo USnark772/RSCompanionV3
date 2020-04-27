@@ -107,7 +107,6 @@ class AppController:
         dev_port: AioSerial
         while True:
             await self._new_dev_flag.wait()
-            # TODO: Handle new device here.
             self._model.add_new_device()
             self._new_dev_flag.clear()
 

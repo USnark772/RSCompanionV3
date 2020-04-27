@@ -29,12 +29,11 @@ from aioserial import AioSerial
 from asyncio import Event
 from math import trunc, ceil
 from datetime import datetime
-from Devices.AbstractDevice.Model.abstract_model import AbstractModel
 from Devices.AbstractDevice.Model.port_worker import PortWorker
 from Devices.DRT.Model import drt_defs as defs
 
 
-class DRTModel(AbstractModel):
+class DRTModel:
     def __init__(self, port: AioSerial, new_msg_cb: Event, cleanup_cb: Event, err_cb: Event,
                  ch: StreamHandler):
         self._logger = getLogger(__name__)
@@ -43,6 +42,7 @@ class DRTModel(AbstractModel):
         super().__init__()
         self._msg_q = Queue()
         self._port_worker = PortWorker(port, self._msg_q, new_msg_cb, cleanup_cb, err_cb)
+        self._port_worker.start()
         self._save_dir = str()
         self._current_vals = [0, 0, 0, 0]  # dur, int, upper, lower
         self._errs = [False, False, False, False]  # dur, upper, lower
@@ -84,6 +84,7 @@ class DRTModel(AbstractModel):
 
     def cleanup(self):
         self._logger.debug("running")
+        print("drt_model calling port_worker.cleanup")
         self._port_worker.cleanup()
         self._logger.debug("done")
 
@@ -101,6 +102,7 @@ class DRTModel(AbstractModel):
 
     def query_config(self):
         self._logger.debug("running")
+        print("Asking device for config")
         self._port_worker.send_msg(self._prepare_msg("get_config"))
         self._logger.debug("done")
 

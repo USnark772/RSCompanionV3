@@ -23,26 +23,5 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from Devices.DRT.Model import drt_strings_english as drt_strings
-
-profile = {"DRT": {"vid": 9114, "pid": 32798}}
-
-config_fields = ['lowerISI', 'upperISI', 'stimDur', 'intensity']
-output_fields = ['startMillis', 'trial', 'clicks', 'rt']
-save_fields = ['trial', 'clicks', 'startMillis', 'rt']
-ui_fields = ['Mills from block start', 'probe #', 'clicks', 'response time']
-
-iso_standards = {'upperISI': 5000, 'lowerISI': 3000, 'intensity': 255, 'stimDur': 1000}
-
-# drt v1.0 uses uint16_t for drt value storage
-max_val = 65535
-
-# All the following drt values must be between 0 and drt_max_val
-intensity_max = 255
-intensity_min = 0
-
-duration_max = max_val
-duration_min = 0
-
-ISI_max = max_val
-ISI_min = 0
+# settings
+custom_label = "Custom"

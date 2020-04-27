@@ -28,6 +28,7 @@ from abc import ABC, abstractmethod
 
 class AbstractController(ABC):
     def __init__(self, view):
+        super().__init__()
         self.view = view
 
     @abstractmethod

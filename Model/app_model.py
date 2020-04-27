@@ -62,25 +62,31 @@ class AppModel:
         """
         self._logger.debug("running")
         dev_type, connection = self._new_dev_q.get()
+        print("Got new device:", dev_type, connection)
+        self._make_device(dev_type, connection)
         self._logger.debug("done")
 
     def _make_device(self, dev_type: str, conn: AioSerial):
         self._logger.debug("running")
         if dev_type not in self._dev_inits.keys():
+            print("Couldn't find device controller for type:", dev_type)
             return
         controller = self._dev_inits[dev_type](conn)
         if not controller:
+            print("Failed making controller for type:", dev_type)
             return
         self._logger.debug("done")
 
-    def _make_drt(self, dev_name: str, conn: AioSerial) -> bool:
+    def _make_drt(self, conn: AioSerial) -> bool:
         self._logger.debug("running")
+        ret = True
         try:
             self._devs[conn.port] = DRTController(conn, self._ch)
-            return True
         except Exception as e:
-            return False
+            self._logger.exception("Problem making controller")
+            ret = False
         self._logger.debug("done")
+        return ret
 
     def start(self):
         self._logger.debug("running")
@@ -90,6 +96,8 @@ class AppModel:
     def cleanup(self):
         self._logger.debug("running")
         self._dev_scanner.cleanup()
+        for dev in self._devs.values():
+            dev.cleanup()
         create_task(self._end_tasks())
         self._logger.debug("done")
 

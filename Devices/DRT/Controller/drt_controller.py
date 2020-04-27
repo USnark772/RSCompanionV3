@@ -24,11 +24,12 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from asyncio import Event
+from asyncio import Event, create_task
 from aioserial import AioSerial
 from Devices.AbstractDevice.Controller.abstract_controller import AbstractController
 from Devices.DRT.View.drt_view import DRTView
 from Devices.DRT.Model.drt_model import DRTModel
+from Devices.DRT.Model import drt_strings_english as drt_strings
 
 
 class DRTController(AbstractController):
@@ -40,10 +41,13 @@ class DRTController(AbstractController):
         self._cleanup_e = Event()
         self._err_e = Event()
         self._model = DRTModel(conn, self._new_msg_e, self._cleanup_e, self._err_e, ch)
-        device_name = conn.port
+        device_name = "DRT_" + conn.port.strip("COM")
         super().__init__(DRTView(view_parent, device_name))
         self._exp = False
-        self._updating_config = False  # TODO: Finish using this.
+        self._updating_config = False
+        create_task(self.msg_handler())
+        # self._setup_handlers()
+        self._init_values()
         self._logger.debug("Initialized")
 
     def cleanup(self) -> None:
@@ -59,15 +63,18 @@ class DRTController(AbstractController):
         :return: None.
         """
         while True:
+            print("Awaiting message")
             await self._new_msg_e.wait()
+            print("Got msg")
             ret, (msg, timestamp) = self._model.get_msg()
             if ret:
                 msg_type = msg['type']
-                if msg_type == "data":
-                    # self._display_data(msg['values'], timestamp)
-                    self._model.save_data(msg['values'], timestamp)
-                elif msg_type == "settings":
-                    self._update_view(msg['values'])
+                print("got msg type:", msg_type)
+                # if msg_type == "data":
+                #     # self._display_data(msg['values'], timestamp)
+                #     self._model.save_data(msg['values'], timestamp)
+                # elif msg_type == "settings":
+                #     self._update_view(msg['values'])
 
     def start_exp(self) -> None:
         """
@@ -123,6 +130,7 @@ class DRTController(AbstractController):
             self._model.send_upper_isi(self.view.get_upper_isi())
         if self._model.lower_changed():
             self._model.send_lower_isi(self.view.get_lower_isi())
+        self.view.set_config_val(drt_strings.custom_label)
         self._logger.debug("done")
 
     def _update_view(self, msg: dict) -> None:
