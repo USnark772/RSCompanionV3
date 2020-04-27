@@ -23,19 +23,77 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
+from logging import StreamHandler, getLogger
 from asyncio import get_event_loop, all_tasks, current_task, gather
+from queue import Queue
+from asyncio import Event, create_task
 from aioserial import AioSerial
+from Model.rs_device_com_scanner import RSDeviceCommScanner
+from Devices.DRT.Controller.drt_controller import DRTController
+from Devices.DRT.Model.drt_defs import profile as drt_profile
+
+def get_profiles():
+    profs = [drt_profile]
+    ret = dict()
+    for prof in profs:
+        for key in prof.keys():
+            ret[key] = prof[key]
+    return ret
 
 
 class AppModel:
-    def __init__(self):
-        self._devices = {}
+    def __init__(self, new_dev_flag: Event, dev_conn_err_flag: Event, close_flag: Event, ch: StreamHandler):
+        self._logger = getLogger(__name__)
+        self._logger.addHandler(ch)
+        self._logger.debug("Initializing")
+        self._ch = ch
+        self._new_dev_q = Queue()
+        self._dev_scanner = RSDeviceCommScanner(get_profiles(), new_dev_flag, dev_conn_err_flag, self._new_dev_q)
+        self._devs = dict()
+        self._dev_inits = dict()
+        self._dev_inits['DRT'] = self._make_drt
+        self._logger.debug("Initialized")
 
-    def add_device(self, device: (str, AioSerial)):
-        self._devices[device[0]] = device[1]
+    def add_new_device(self) -> None:
+        """
+        Get new device info from new device queue and
+        :return:
+        """
+        self._logger.debug("running")
+        dev_type, connection = self._new_dev_q.get()
+        self._logger.debug("done")
+
+    def _make_device(self, dev_type: str, conn: AioSerial):
+        self._logger.debug("running")
+        if dev_type not in self._dev_inits.keys():
+            return
+        controller = self._dev_inits[dev_type](conn)
+        if not controller:
+            return
+        self._logger.debug("done")
+
+    def _make_drt(self, dev_name: str, conn: AioSerial) -> bool:
+        self._logger.debug("running")
+        try:
+            self._devs[conn.port] = DRTController(conn, self._ch)
+            return True
+        except Exception as e:
+            return False
+        self._logger.debug("done")
+
+    def start(self):
+        self._logger.debug("running")
+        self._dev_scanner.start()
+        self._logger.debug("done")
+
+    def cleanup(self):
+        self._logger.debug("running")
+        self._dev_scanner.cleanup()
+        create_task(self._end_tasks())
+        self._logger.debug("done")
 
     @staticmethod
-    async def cleanup():
+    async def _end_tasks():
         tasks = [t for t in all_tasks() if t is not current_task()]
         [task.cancel() for task in tasks]
         await gather(*tasks)

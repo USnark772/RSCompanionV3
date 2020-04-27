@@ -33,7 +33,6 @@ from Model.app_model import AppModel
 from Model.app_defs import current_version, log_format
 from Model.app_helpers import setup_log_file
 from Model.strings_english import log_out_filename, company_name, app_name, log_version_id, device_connection_error
-from Model.rs_device_com_scanner import RSDeviceCommScanner
 from View.HelpWidgets.output_window import OutputWindow
 from View.MainWindow.main_window import AppMainWindow
 from View.ControlWidgets.menu_bar import AppMenuBar
@@ -43,29 +42,6 @@ from View.InfoWidgets.drive_info_box import DriveInfoBox
 from View.InfoWidgets.flag_box import FlagBox
 from View.ControlWidgets.note_box import NoteBox
 from View.DeviceDisplayWidgets.mdi_area import MDIArea
-
-
-def get_profiles() -> dict:
-    """
-    Dynamically compile a list of device profiles.
-    :return: The device profiles.
-    """
-    # TODO: Figure this out better (best option seems to be os module)
-    imp_path_1 = "Devices."
-    imp_path_2 = ".Model."
-    devices = ["DRT", "wDRT", "VOG", "wVOG"]
-    files = ["drt_defs", "w_drt_defs", "vog_defs", "w_vog_defs"]
-    to_import = []
-    for i in range(len(devices)):
-        to_import.append(imp_path_1 + devices[i] + imp_path_2 + files[i])
-    profiles = []
-    for imp in to_import:
-        profiles.append(import_module(imp).profile)
-    ret = dict()
-    for prof in profiles:
-        for key in prof.keys():
-            ret[key] = prof[key]
-    return ret
 
 
 # TODO: Figure out logging for asyncio
@@ -91,16 +67,6 @@ class AppController:
         self._logger.info(log_version_id + str(current_version))
 
         self._logger.debug("Initializing")
-        # Flags
-        self._new_device_flag = Event()
-        self._device_conn_error_flag = Event()
-        self._close_event_flag = Event()
-
-        # Model
-        self._new_device_queue = Queue()
-        self._dev_com_scanner = RSDeviceCommScanner(get_profiles(), self._new_device_flag,
-                                                    self._device_conn_error_flag, self._new_device_queue)
-        self._model = AppModel()
 
         # View
         ui_min_size = QSize(950, 740)
@@ -118,6 +84,14 @@ class AppController:
         self.note_box = NoteBox(self.main_window, note_box_size, self.ch)
         self.mdi_area = MDIArea(self.main_window, self.ch)
 
+        # Flags
+        self._new_dev_flag = Event()
+        self._dev_conn_err_flag = Event()
+        self._close_flag = Event()
+
+        # Model
+        self._model = AppModel(self._new_dev_flag, self._dev_conn_err_flag, self._close_flag, self.mdi_area)
+
         self._setup_handlers()
         self._initialize_view()
         self._start()
@@ -132,12 +106,10 @@ class AppController:
         dev_type: str
         dev_port: AioSerial
         while True:
-            await self._new_device_flag.wait()
+            await self._new_dev_flag.wait()
             # TODO: Handle new device here.
-            dev_type, dev_port = self._new_device_queue.get()
-            new_dev = (dev_type + "_" + dev_port.port.strip("COM"), dev_port)
-            print("A device was plugged in:", new_dev)
-            self._new_device_flag.clear()
+            self._model.add_new_device()
+            self._new_dev_flag.clear()
 
     async def handle_device_conn_error(self) -> None:
         """
@@ -145,9 +117,9 @@ class AppController:
         :return: None.
         """
         while True:
-            await self._device_conn_error_flag.wait()
+            await self._dev_conn_err_flag.wait()
             self.main_window.show_help_window("Error", device_connection_error)
-            self._device_conn_error_flag.clear()
+            self._dev_conn_err_flag.clear()
 
     def create_end_exp_handler(self) -> None:
         """
@@ -291,12 +263,11 @@ class AppController:
         """
         create_task(self.handle_new_devices())
         create_task(self.handle_device_conn_error())
-        self._dev_com_scanner.start()
+        self._model.start()
 
     def _cleanup(self) -> None:
         """
         Cleanup any code that would cause problems for shutdown and prep for app closure.
         :return: None.
         """
-        self._dev_com_scanner.cleanup()
-        create_task(self._model.cleanup())
+        self._model.cleanup()

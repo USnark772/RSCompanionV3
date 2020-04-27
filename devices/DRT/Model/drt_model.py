@@ -35,7 +35,7 @@ from Devices.DRT.Model import drt_defs as defs
 
 
 class DRTModel(AbstractModel):
-    def __init__(self, port: AioSerial, save_dir: str, new_msg_cb: Event, cleanup_cb: Event, err_cb: Event,
+    def __init__(self, port: AioSerial, new_msg_cb: Event, cleanup_cb: Event, err_cb: Event,
                  ch: StreamHandler):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
@@ -43,7 +43,7 @@ class DRTModel(AbstractModel):
         super().__init__()
         self._msg_q = Queue()
         self._port_worker = PortWorker(port, self._msg_q, new_msg_cb, cleanup_cb, err_cb)
-        self._save_dir = save_dir
+        self._save_dir = str()
         self._current_vals = [0, 0, 0, 0]
         self._errs = [False, False]
         self._logger.debug("Initialized")
@@ -89,6 +89,26 @@ class DRTModel(AbstractModel):
     def query_config(self):
         self._logger.debug("running")
         self._port_worker.send_msg(self._prepare_msg("get_config"))
+        self._logger.debug("done")
+
+    def query_stim_dur(self):
+        self._logger.debug("running")
+        # self._port_worker.send_msg(self._prepare_msg("get_"))  # TODO: Get this command
+        self._logger.debug("done")
+
+    def query_stim_intesity(self):
+        self._logger.debug("running")
+        # self._port_worker.send_msg(self._prepare_msg("get_"))  # TODO: Get this command
+        self._logger.debug("done")
+
+    def query_upper_isi(self):
+        self._logger.debug("running")
+        # self._port_worker.send_msg(self._prepare_msg("get_"))  # TODO: Get this command
+        self._logger.debug("done")
+
+    def query_lower_isi(self):
+        self._logger.debug("running")
+        # self._port_worker.send_msg(self._prepare_msg("get_"))  # TODO: Get this command
         self._logger.debug("done")
 
     def send_start(self):
@@ -247,4 +267,3 @@ class DRTModel(AbstractModel):
         line = line.rstrip("\r\n")
         line = line + ", "
         return line
-

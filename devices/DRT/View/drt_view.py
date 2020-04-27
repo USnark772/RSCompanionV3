@@ -27,5 +27,5 @@ from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
 class DRTView(AbstractView):
-    def __init__(self, name):
-        super().__init__(name)
+    def __init__(self, parent, name):
+        super().__init__(parent, name)
