@@ -36,7 +36,7 @@ class InfoBox(QGroupBox):
         self.logger.addHandler(ch)
         self.logger.debug("Initializing")
         super().__init__(parent)
-        self.setMaximumSize(size)
+        self.setFixedSize(size)
         self.setLayout(QGridLayout())
 
         self.__start_time_label = QLabel()
