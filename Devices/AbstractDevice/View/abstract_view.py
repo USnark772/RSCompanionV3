@@ -27,9 +27,9 @@ from abc import ABC, abstractmethod
 from PySide2.QtWidgets import QMdiSubWindow
 
 
-class AbstractView(ABC, QMdiSubWindow):
+class AbstractView(ABC):
     def __init__(self, parent, name):
-        super().__init__(parent)
+        ABC.__init__(parent)
         self._name = name
         pass
 

@@ -90,7 +90,7 @@ class AppController:
         self._close_flag = Event()
 
         # Model
-        self._model = AppModel(self._new_dev_flag, self._dev_conn_err_flag, self._close_flag, self.mdi_area)
+        self._model = AppModel(self._new_dev_flag, self._dev_conn_err_flag, self._close_flag, self.mdi_area, self.ch)
 
         self._setup_handlers()
         self._initialize_view()
@@ -251,6 +251,7 @@ class AppController:
         self.main_window.add_control_bar_widget(self.button_box)
         self.main_window.add_control_bar_widget(self.flag_box)
         self.main_window.add_control_bar_widget(self.note_box)
+        # TODO: Add spacer item
         self.main_window.add_control_bar_widget(self.info_box)
         self.main_window.add_control_bar_widget(self.d_info_box)
         self.main_window.add_mdi_area(self.mdi_area)

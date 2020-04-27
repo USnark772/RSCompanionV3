@@ -43,7 +43,7 @@ def get_profiles():
 
 
 class AppModel:
-    def __init__(self, new_dev_flag: Event, dev_conn_err_flag: Event, close_flag: Event, ch: StreamHandler):
+    def __init__(self, new_dev_flag: Event, dev_conn_err_flag: Event, close_flag: Event, view_parent, ch: StreamHandler):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
