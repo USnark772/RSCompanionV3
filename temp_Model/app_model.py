@@ -32,6 +32,7 @@ from Model.rs_device_com_scanner import RSDeviceCommScanner
 from Devices.DRT.Controller.drt_controller import DRTController
 from Devices.DRT.Model.drt_defs import profile as drt_profile
 
+
 def get_profiles():
     profs = [drt_profile]
     ret = dict()

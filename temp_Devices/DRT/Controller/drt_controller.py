@@ -41,7 +41,7 @@ class DRTController(AbstractController):
         self._err_e = Event()
         self._model = DRTModel(conn, self._new_msg_e, self._cleanup_e, self._err_e, ch)
         device_name = conn.port
-        super().__init__(DRTView(view_parent, self._device_name))
+        super().__init__(DRTView(view_parent, device_name))
         self._exp = False
         self._updating_config = False  # TODO: Finish using this.
         self._logger.debug("Initialized")
@@ -141,7 +141,9 @@ class DRTController(AbstractController):
         :return: None.
         """
         self._logger.debug("running")
-        self.view.set_stim_dur_err(self._model.check_stim_dur_entry(self.view.get_stim_dur()))
+        if not self._updating_config:
+            self.view.set_stim_dur_err(self._model.check_stim_dur_entry(self.view.get_stim_dur()))
+            self._check_for_upload()
         self._logger.debug("done")
 
     def _stim_int_entry_changed_handler(self) -> None:
@@ -150,7 +152,9 @@ class DRTController(AbstractController):
         :return: None.
         """
         self._logger.debug("running")
-        self.view.set_stim_int_err(self._model.check_stim_int_entry(self.view.get_stim_int()))
+        if not self._updating_config:
+            self.view.set_stim_int_err(self._model.check_stim_int_entry(self.view.get_stim_int()))
+            self._check_for_upload()
         self._logger.debug("done")
 
     def _isi_entry_changed_handler(self) -> None:
@@ -159,10 +163,18 @@ class DRTController(AbstractController):
         :return: None.
         """
         self._logger.debug("running")
-        upper = self.view.get_upper_isi
-        lower = self.view.get_lower_isi
-        err_upper = self._model.check_upper_isi_entry(upper, lower)
-        err_lower = self._model.check_lower_isi_entry(upper, lower)
-        self.view.set_upper_isi_err(err_upper)
-        self.view.set_lower_isi_err(err_lower)
+        if not self._updating_config:
+            upper = self.view.get_upper_isi
+            lower = self.view.get_lower_isi
+            err_upper = self._model.check_upper_isi_entry(upper, lower)
+            err_lower = self._model.check_lower_isi_entry(upper, lower)
+            self.view.set_upper_isi_err(err_upper)
+            self.view.set_lower_isi_err(err_lower)
+            self._check_for_upload()
         self._logger.debug("done")
+
+    def _check_for_upload(self):
+        if self._model.valid_entries():
+            self.view.set_upload_button(True)
+        else:
+            self.view.set_upload_button(False)

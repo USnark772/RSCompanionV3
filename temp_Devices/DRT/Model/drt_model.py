@@ -46,6 +46,7 @@ class DRTModel(AbstractModel):
         self._save_dir = str()
         self._current_vals = [0, 0, 0, 0]
         self._errs = [False, False]
+        self._changed = [False, False, False, False]
         self._logger.debug("Initialized")
 
     def set_current_vals(self, duration: int = None, intensity: int = None, upper_isi: int = None,
@@ -162,6 +163,20 @@ class DRTModel(AbstractModel):
                 return True
         self._logger.debug("done with false")
         return False
+
+    def valid_entries(self) -> bool:
+        """
+        Check user input for validity.
+        :return: Whether the user input values are valid or not.
+        """
+        ret = False
+        for x in self._changed:  # Check for any changes first.
+            if x:
+                ret = True
+        for y in self._errs:  # If any errors, can't send changes.
+            if y:
+                ret = False
+        return ret
 
     def save_data(self, data: dict, timestamp: datetime) -> None:
         """
