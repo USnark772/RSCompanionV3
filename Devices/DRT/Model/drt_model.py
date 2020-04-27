@@ -44,8 +44,8 @@ class DRTModel(AbstractModel):
         self._msg_q = Queue()
         self._port_worker = PortWorker(port, self._msg_q, new_msg_cb, cleanup_cb, err_cb)
         self._save_dir = str()
-        self._current_vals = [0, 0, 0, 0]
-        self._errs = [False, False]
+        self._current_vals = [0, 0, 0, 0]  # dur, int, upper, lower
+        self._errs = [False, False, False, False]  # dur, upper, lower
         self._changed = [False, False, False, False]
         self._logger.debug("Initialized")
 
@@ -87,6 +87,18 @@ class DRTModel(AbstractModel):
         self._port_worker.cleanup()
         self._logger.debug("done")
 
+    def dur_changed(self):
+        return self._current_vals[0]
+
+    def int_changed(self):
+        return self._current_vals[1]
+
+    def upper_changed(self):
+        return self._current_vals[0]
+
+    def lower_changed(self):
+        return self._current_vals[1]
+
     def query_config(self):
         self._logger.debug("running")
         self._port_worker.send_msg(self._prepare_msg("get_config"))
@@ -97,9 +109,29 @@ class DRTModel(AbstractModel):
         # self._port_worker.send_msg(self._prepare_msg("get_"))  # TODO: Get this command
         self._logger.debug("done")
 
+    def send_stim_dur(self, val: str) -> None:
+        """
+        Send new value to device.
+        :param val: The new value.
+        :return: None.
+        """
+        self._logger.debug("running")
+        self._port_worker.send_msg(self._prepare_msg("set_stimDur", str(val)))
+        self._logger.debug("done")
+
     def query_stim_intesity(self):
         self._logger.debug("running")
         # self._port_worker.send_msg(self._prepare_msg("get_"))  # TODO: Get this command
+        self._logger.debug("done")
+
+    def send_stim_intensity(self, val: int) -> None:
+        """
+        Send new value to device.
+        :param val: The new value.
+        :return: None.
+        """
+        self._logger.debug("running")
+        self._port_worker.send_msg(self._prepare_msg("set_intensity", str(self.calc_percent_to_val(val))))
         self._logger.debug("done")
 
     def query_upper_isi(self):
@@ -107,9 +139,29 @@ class DRTModel(AbstractModel):
         # self._port_worker.send_msg(self._prepare_msg("get_"))  # TODO: Get this command
         self._logger.debug("done")
 
+    def send_upper_isi(self, val: str) -> None:
+        """
+        Send new value to device.
+        :param val: The new value.
+        :return: None.
+        """
+        self._logger.debug("running")
+        self._port_worker.send_msg(self._prepare_msg("set_upperISI", str(val)))
+        self._logger.debug("done")
+
     def query_lower_isi(self):
         self._logger.debug("running")
         # self._port_worker.send_msg(self._prepare_msg("get_"))  # TODO: Get this command
+        self._logger.debug("done")
+
+    def send_lower_isi(self, val: str) -> None:
+        """
+        Send new value to device.
+        :param val: The new value.
+        :return: None.
+        """
+        self._logger.debug("running")
+        self._port_worker.send_msg(self._prepare_msg("set_lowerISI", str(val)))
         self._logger.debug("done")
 
     def send_start(self):
@@ -124,45 +176,70 @@ class DRTModel(AbstractModel):
 
     def check_stim_dur_entry(self, entry: str) -> bool:
         self._logger.debug("running with entry: " + entry)
+        ret = False
         if entry.isdigit():
             val = int(entry)
             if defs.duration_max >= val >= defs.duration_min:
-                self._logger.debug("done with true")
-                return True
-        self._logger.debug("done with false")
-        return False
+                if val == self._current_vals[0]:
+                    changed = False
+                else:
+                    changed = True
+                self._changed[0] = changed
+                ret = True
+        self._errs[0] = ret
+        self._logger.debug("done with: " + str(ret))
+        return ret
 
     def check_stim_int_entry(self, entry: str) -> bool:
+        ret = False
         self._logger.debug("running with entry: " + entry)
         if entry.isdigit():
             val = int(entry)
             if defs.intensity_max >= val >= defs.intensity_min:
                 self._logger.debug("done with true")
-                return True
-        self._logger.debug("done with false")
-        return False
+                if val == self._current_vals[1]:
+                    changed = False
+                else:
+                    changed = True
+                self._changed[1] = changed
+                ret = True
+        self._errs[1] = ret
+        self._logger.debug("done with: " + str(ret))
+        return ret
 
     def check_upper_isi_entry(self, upper_entry: str, lower_entry: str) -> bool:
         self._logger.debug("running with upper: " + upper_entry + ", and lower: " + lower_entry)
+        ret = False
         if upper_entry.isdigit() and lower_entry.isdigit():
             upper_val = int(upper_entry)
             lower_val = int(lower_entry)
             if defs.ISI_max >= upper_val >= lower_val:
-                self._logger.debug("done with true")
-                return True
-        self._logger.debug("done with false")
-        return False
+                if upper_val == self._current_vals[2]:
+                    changed = False
+                else:
+                    changed = True
+                self._changed[2] = changed
+                ret = True
+        self._errs[2] = ret
+        self._logger.debug("done with: " + str(ret))
+        return ret
 
     def check_lower_isi_entry(self, upper_entry: str, lower_entry: str) -> bool:
         self._logger.debug("running with upper: " + upper_entry + ", and lower: " + lower_entry)
+        ret = False
         if upper_entry.isdigit() and lower_entry.isdigit():
             upper_val = int(upper_entry)
             lower_val = int(lower_entry)
             if upper_val >= lower_val >= defs.ISI_min:
-                self._logger.debug("done with true")
-                return True
-        self._logger.debug("done with false")
-        return False
+                if lower_val == self._current_vals[3]:
+                    changed = False
+                else:
+                    changed = True
+                self._changed[3] = changed
+                ret = True
+        self._errs[3] = ret
+        self._logger.debug("done with: " + str(ret))
+        return ret
 
     def valid_entries(self) -> bool:
         """

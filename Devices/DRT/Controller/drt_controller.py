@@ -67,7 +67,7 @@ class DRTController(AbstractController):
                     # self._display_data(msg['values'], timestamp)
                     self._model.save_data(msg['values'], timestamp)
                 elif msg_type == "settings":
-                    self._update_config(msg['values'])
+                    self._update_view(msg['values'])
 
     def start_exp(self) -> None:
         """
@@ -93,6 +93,11 @@ class DRTController(AbstractController):
         :return: None.
         """
         self._logger.debug("running")
+        # button handlers
+        self.view.add_iso_button_handler(self._iso)
+        self.view.add_upload_button_handler(self._update_device)
+
+        # value handlers
         self.view.set_stim_dur_entry_changed_handler(self._stim_dur_entry_changed_handler)
         self.view.set_stim_int_entry_changed_handler(self._stim_int_entry_changed_handler)
         self.view.set_upper_isi_entry_changed_handler(self._isi_entry_changed_handler)
@@ -108,15 +113,27 @@ class DRTController(AbstractController):
         self._model.query_config()
         self._logger.debug("done")
 
-    def _update_config(self, msg: dict) -> None:
+    def _update_device(self):
+        self._logger.debug("running")
+        if self._model.dur_changed():
+            self._model.send_stim_dur(self.view.get_stim_dur())
+        if self._model.int_changed():
+            self._model.send_stim_intensity(self.view.get_stim_int())
+        if self._model.upper_changed():
+            self._model.send_upper_isi(self.view.get_upper_isi())
+        if self._model.lower_changed():
+            self._model.send_lower_isi(self.view.get_lower_isi())
+        self._logger.debug("done")
+
+    def _update_view(self, msg: dict) -> None:
         self._logger.debug("running")
         self._updating_config = True
         for key in msg:
-            self._set_val(key, msg[key])
+            self._set_view_val(key, msg[key])
         self._updating_config = False
         self._logger.debug("done")
 
-    def _set_val(self, var: str, val: int) -> None:
+    def _set_view_val(self, var: str, val: int) -> None:
         self._logger.debug("running")
         if var == "stimDur":
             self._model.set_current_vals(duration=val)
@@ -173,8 +190,28 @@ class DRTController(AbstractController):
             self._check_for_upload()
         self._logger.debug("done")
 
-    def _check_for_upload(self):
+    def _check_for_upload(self) -> None:
+        """
+        Set view upload button depending on if upload is possible.
+        :return: None.
+        """
+        self._logger.debug("running")
         if self._model.valid_entries():
             self.view.set_upload_button(True)
         else:
             self.view.set_upload_button(False)
+        self._logger.debug("done")
+
+    def _iso(self) -> None:
+        """
+        Set the values of the device to iso standard.
+        :return: None.
+        """
+        self._logger.debug("running")
+        self.view.set_config_val("ISO")
+        self._model.send_stim_dur("1000")
+        self._model.send_stim_intensity(100)
+        self._model.send_upper_isi("5000")
+        self._model.send_lower_isi("3000")
+        self.view.set_upload_button(False)
+        self._logger.debug("done")
