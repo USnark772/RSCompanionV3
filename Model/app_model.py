@@ -62,18 +62,17 @@ class AppModel:
         """
         self._logger.debug("running")
         dev_type, connection = self._new_dev_q.get()
-        print("Got new device:", dev_type, connection)
         self._make_device(dev_type, connection)
         self._logger.debug("done")
 
     def _make_device(self, dev_type: str, conn: AioSerial):
         self._logger.debug("running")
         if dev_type not in self._dev_inits.keys():
-            print("Couldn't find device controller for type:", dev_type)
+            self._logger.warning("Could not recognize device type")
             return
         controller = self._dev_inits[dev_type](conn)
         if not controller:
-            print("Failed making controller for type:", dev_type)
+            self._logger.warning("Failed making controller for type: " + dev_type)
             return
         self._logger.debug("done")
 

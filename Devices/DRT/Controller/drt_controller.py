@@ -106,7 +106,7 @@ class DRTController(AbstractController):
 
         # value handlers
         self.view.set_stim_dur_entry_changed_handler(self._stim_dur_entry_changed_handler)
-        self.view.set_stim_int_entry_changed_handler(self._stim_int_entry_changed_handler)
+        self.view.set_stim_intens_entry_changed_handler(self._stim_int_entry_changed_handler)
         self.view.set_upper_isi_entry_changed_handler(self._isi_entry_changed_handler)
         self.view.set_lower_isi_entry_changed_handler(self._isi_entry_changed_handler)
         self._logger.debug("done")
@@ -145,18 +145,18 @@ class DRTController(AbstractController):
         self._logger.debug("running")
         if var == "stimDur":
             self._model.set_current_vals(duration=val)
-            self.view.set_stim_dur_val(val)
+            self.view.set_stim_dur(val)
             self.view.set_stim_dur_err(False)
         elif var == "intensity":
             self._model.set_current_vals(intensity=val)
-            self.view.set_stim_intens_val(self._model.calc_val_to_percent(val))
+            self.view.set_stim_intensens(self._model.calc_val_to_percent(val))
         elif var == "upperISI":
             self._model.set_current_vals(upper_isi=val)
-            self.view.set_upper_isi_val(val)
+            self.view.set_upper_isi(val)
             self.view.set_upper_isi_err(False)
         elif var == "lowerISI":
             self._model.set_current_vals(lower_isi=val)
-            self.view.set_lower_isi_val(val)
+            self.view.set_lower_isi(val)
             self.view.set_lower_isi_err(False)
         self._logger.debug("done")
 
@@ -178,7 +178,7 @@ class DRTController(AbstractController):
         """
         self._logger.debug("running")
         if not self._updating_config:
-            self.view.set_stim_int_err(self._model.check_stim_int_entry(self.view.get_stim_int()))
+            self.view.set_stim_intens_err(self._model.check_stim_int_entry(self.view.get_stim_int()))
             self._check_for_upload()
         self._logger.debug("done")
 
