@@ -23,7 +23,7 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from asyncio import get_running_loop, Event
+from asyncio import get_running_loop, Event, wait
 from aioserial import AioSerial
 from queue import Queue
 from datetime import datetime
@@ -49,9 +49,11 @@ class PortWorker:
         Start running.
         :return: None.
         """
+        print("awaiting port_worker._run()")
         self._loop.run_in_executor(None, self._run)
+        print("done awaiting port_worker._run()")
 
-    async def _run(self) -> None:
+    def _run(self) -> None:
         """
         Run until signalled to stop.
         :return: None.
