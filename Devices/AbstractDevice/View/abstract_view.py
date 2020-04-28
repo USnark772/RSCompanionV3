@@ -31,12 +31,17 @@ class AbstractMeta(ABCMeta, type(QMdiSubWindow)):
     pass
 
 
+class SubWindow(QMdiSubWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+
 # TODO: Figure out how to use multiple inheritance with ABC and QMdiSubWindow.
 #  Having issue with QMdiSubWindow or any QWidget apparently. 0xC0000409
-class AbstractView(ABC, QMdiSubWindow, metaclass=AbstractMeta):
+class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
     def __init__(self, parent, name):
         ABC.__init__(parent)
-        QMdiSubWindow.__init__(QMdiSubWindow())
+        SubWindow.__init__(parent)
         self._name = name
 
     def get_name(self):
