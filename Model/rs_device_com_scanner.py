@@ -23,11 +23,12 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from asyncio import Event, get_running_loop
+from asyncio import Event
+import asyncio
+from time import sleep
 from serial.serialutil import SerialException
 from serial.tools.list_ports import comports
 from serial.tools.list_ports_common import ListPortInfo
-from time import sleep
 from aioserial import AioSerial
 from queue import Queue
 
@@ -46,7 +47,7 @@ class RSDeviceCommScanner:
         self.q = q
         self._known_ports = []
         self._running = True
-        self._loop = get_running_loop()
+        self._loop = asyncio.get_running_loop()
 
     def start(self) -> None:
         """
@@ -85,7 +86,7 @@ class RSDeviceCommScanner:
             if port not in self._known_ports:
                 for device_type in self._device_ids:
                     if self._verify_port(port, self._device_ids[device_type]):
-                        ret_val, connection = self._try_open_port(port)
+                        ret_val, connection = asyncio.create_task(self._try_open_port(port))
                         if ret_val:
                             self.q.put((device_type, connection))
                             self.std_cb.set()
@@ -116,7 +117,7 @@ class RSDeviceCommScanner:
         return port.vid == profile['vid'] and port.pid == profile['pid']
 
     @staticmethod
-    def _try_open_port(port) -> (bool, AioSerial):
+    async def _try_open_port(port) -> (bool, AioSerial):
         """
         Try to connect to the given port.
         :param port: The port to connect to
@@ -130,7 +131,7 @@ class RSDeviceCommScanner:
             try:
                 new_connection.open()
             except SerialException as e:
-                sleep(1)
+                await asyncio.sleep(1)
         if not new_connection.is_open:  # Failed to connect
             return False, None
         return True, new_connection
