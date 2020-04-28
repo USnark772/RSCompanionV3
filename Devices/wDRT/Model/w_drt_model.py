@@ -23,9 +23,7 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from Devices.AbstractDevice.Model.abstract_model import AbstractModel
 
-
-class WDRTModel(AbstractModel):
+class WDRTModel:
     def __init__(self):
-        super().__init__()
+        pass

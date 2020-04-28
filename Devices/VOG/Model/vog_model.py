@@ -23,9 +23,7 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from Devices.AbstractDevice.Model.abstract_model import AbstractModel
 
-
-class VOGModel(AbstractModel):
+class VOGModel:
     def __init__(self):
-        super().__init__()
+        pass

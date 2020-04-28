@@ -29,7 +29,6 @@ from queue import Queue
 from datetime import datetime
 
 
-# TODO: Figure out how to close this cleanly.
 class PortWorker:
     """
     This code is used to continually check an AioSerial port for incoming data, send alerts and pass on said data.
@@ -49,9 +48,7 @@ class PortWorker:
         Start running.
         :return: None.
         """
-        print("awaiting port_worker._run()")
         self._loop.run_in_executor(None, self._run)
-        print("done awaiting port_worker._run()")
 
     def _run(self) -> None:
         """
@@ -92,7 +89,6 @@ class PortWorker:
         :return:
         """
         self._running = False
-        print("Port worker in cleanup")
         self._port.close()
         if not err:
             self._cleanup_cb.set()
