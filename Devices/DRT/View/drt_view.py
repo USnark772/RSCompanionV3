@@ -26,7 +26,7 @@ https://redscientific.com/index.html
 
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
-
+# TODO implement methods called from self
 class DRTView(AbstractView):
     def __init__(self, parent, name):
         super().__init__(parent, name)
