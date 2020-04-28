@@ -33,6 +33,7 @@ from aioserial import AioSerial
 from queue import Queue
 
 
+# TODO: Figure out if can use something other than Queue for passing device info around.
 class RSDeviceCommScanner:
     def __init__(self, device_ids: dict, std_cb: Event, err_cb: Event, q: Queue):
         """
@@ -52,21 +53,21 @@ class RSDeviceCommScanner:
     def start(self) -> None:
         """
         Begin working.
-        :return: None
+        :return: None.
         """
         self._loop.run_in_executor(None, self.scan_ports)
 
     def cleanup(self) -> None:
         """
         Cleanup this class and prep for app closure.
-        :return: None
+        :return: None.
         """
         self._running = False
 
     def scan_ports(self) -> None:
         """
         Check number of ports being used. If different than last checked, check for plug or unplug events.
-        :return: None
+        :return: None.
         """
         while self._running:
             ports = comports()
@@ -80,7 +81,7 @@ class RSDeviceCommScanner:
         """
         Check plug events for supported Devices.
         :param ports: The list of ports to check.
-        :return: None
+        :return: None.
         """
         for port in ports:
             if port not in self._known_ports:
@@ -100,7 +101,7 @@ class RSDeviceCommScanner:
         Check the list of ports against list of known ports for any ports that are no longer in use
         and disconnect them.
         :param ports: List of ports to check
-        :return: None
+        :return: None.
         """
         for known_port in self._known_ports:
             if known_port not in ports:

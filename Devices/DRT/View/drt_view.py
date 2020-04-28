@@ -27,9 +27,10 @@ https://redscientific.com/index.html
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 # TODO implement methods called from self
-class DRTView(AbstractView):
+class DRTView:
     def __init__(self, parent, name):
-        super().__init__(parent, name)
+        # super().__init__(parent, name)
+        pass
 
     def set_stim_dur_entry_changed_handler(self, func: classmethod) -> None:
         """

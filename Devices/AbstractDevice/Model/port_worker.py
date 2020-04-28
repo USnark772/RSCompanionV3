@@ -30,6 +30,7 @@ from queue import Queue
 from datetime import datetime
 
 
+# TODO: See about running this from just create_task instead of run_in_executor.
 class PortWorker:
     """
     This code is used to continually check an AioSerial port for incoming data, send alerts and pass on said data.
