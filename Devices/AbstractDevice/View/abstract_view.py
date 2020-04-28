@@ -23,15 +23,26 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from abc import ABC, abstractmethod
+from abc import ABCMeta, ABC, abstractmethod
 from PySide2.QtWidgets import QMdiSubWindow
 
 
-class AbstractView(ABC):
+class AbstractMeta(ABCMeta, type(QMdiSubWindow)):
+    pass
+
+
+# TODO: Figure out how to use multiple inheritance with ABC and QMdiSubWindow.
+#  Having issue with QMdiSubWindow or any QWidget apparently. 0xC0000409
+class AbstractView(ABC, QMdiSubWindow, metaclass=AbstractMeta):
     def __init__(self, parent, name):
         ABC.__init__(parent)
+        QMdiSubWindow.__init__(QMdiSubWindow())
         self._name = name
-        pass
 
     def get_name(self):
         return self._name
+
+
+if __name__ == '__main__':
+    test = AbstractView(None, "HI")
+    print(test.get_name())

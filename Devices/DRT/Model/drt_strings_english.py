@@ -23,5 +23,8 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
+""" English version strings for the DRT code. """
+
 # settings
 custom_label = "Custom"
+iso_label = "ISO"
