@@ -31,71 +31,65 @@ class DRTView(AbstractView):
     def __init__(self, parent, name):
         super().__init__(parent, name)
 
-    def set_stim_dur_entry_changed_handler(self, func):
+    def set_stim_dur_entry_changed_handler(self, func: classmethod) -> None:
         """
 
         :param func:
         :return:
         """
 
-    def set_stim_int_entry_changed_handler(self, func):
+    def set_stim_int_entry_changed_handler(self, func: classmethod) -> None:
         """
 
         :param func:
         :return:
         """
 
-    def set_upper_isi_entry_changed_handler(self, func):
+    def set_upper_isi_entry_changed_handler(self, func: classmethod) -> None:
         """
 
         :param func:
         :return:
         """
 
-    def set_lower_isi_entry_changed_handler(self, func):
+    def set_lower_isi_entry_changed_handler(self, func: classmethod) -> None:
         """
 
         :param func:
         :return:
         """
 
-    def set_stim_dur_val(self):
+    def get_stim_dur(self):
         """
 
         :return:
         """
 
-    def set_stim_dur_err(self):
+    def set_stim_dur(self) -> None:
         """
 
         :return:
         """
 
-    def set_stim_intens_val(self):
+    def set_stim_dur_err(self) -> None:
         """
 
         :return:
         """
 
-    def set_upper_isi_val(self):
+    def get_stim_intens(self):
         """
 
         :return:
         """
 
-    def set_lower_isi_err(self):
+    def set_stim_intens(self) -> None:
         """
 
         :return:
         """
 
-    def set_stim_dur_err(self):
-        """
-
-        :return:
-        """
-
-    def set_stim_int_err(self):
+    def set_stim_intens_err(self) -> None:
         """
 
         :return:
@@ -107,31 +101,43 @@ class DRTView(AbstractView):
         :return:
         """
 
+    def set_upper_isi(self) -> None:
+        """
+
+        :return:
+        """
+
+    def set_upper_isi_err(self) -> None:
+        """
+
+        :return:
+        """
+
     def get_lower_isi(self):
         """
 
         :return:
         """
 
-    def set_upper_isi_err(self):
+    def set_lower_isi(self) -> None:
         """
 
         :return:
         """
 
-    def set_lower_isi_err(self):
+    def set_lower_isi_err(self) -> None:
         """
 
         :return:
         """
 
-    def set_upload_button(self):
+    def get_upload_button(self):
         """
 
         :return:
         """
 
-    def set_upload_button(self):
+    def set_upload_button(self) -> None:
         """
 
         :return:
