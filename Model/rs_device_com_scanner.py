@@ -55,7 +55,7 @@ class RSDeviceCommScanner:
         Begin working.
         :return: None.
         """
-        self._loop.run_in_executor(None, self.scan_ports)
+        asyncio.create_task(self._scan_ports())
 
     def cleanup(self) -> None:
         """
@@ -64,20 +64,19 @@ class RSDeviceCommScanner:
         """
         self._running = False
 
-    def scan_ports(self) -> None:
+    async def _scan_ports(self) -> None:
         """
         Check number of ports being used. If different than last checked, check for plug or unplug events.
         :return: None.
         """
-        while self._running:
-            ports = comports()
+        while True:
+            ports = await self._loop.run_in_executor(None, comports)
             if len(ports) > len(self._known_ports):
-                self._loop.call_soon_threadsafe(self._check_for_new_devices, ports)
+                asyncio.create_task(self._check_for_new_devices(ports))
             elif len(ports) < len(self._known_ports):
                 self._check_for_disconnects(ports)
-            sleep(.5)
 
-    def _check_for_new_devices(self, ports: [ListPortInfo]) -> None:
+    async def _check_for_new_devices(self, ports: [ListPortInfo]) -> None:
         """
         Check plug events for supported Devices.
         :param ports: The list of ports to check.
@@ -87,7 +86,7 @@ class RSDeviceCommScanner:
             if port not in self._known_ports:
                 for device_type in self._device_ids:
                     if self._verify_port(port, self._device_ids[device_type]):
-                        ret_val, connection = asyncio.create_task(self._try_open_port(port))
+                        ret_val, connection = await asyncio.create_task(self._try_open_port(port))
                         if ret_val:
                             self.q.put((device_type, connection))
                             self.std_cb.set()
@@ -111,7 +110,7 @@ class RSDeviceCommScanner:
     def _verify_port(port: ListPortInfo, profile: dict) -> bool:
         """
         Check the port against the profile to tell if this is a supported device.
-        :param port: The incomming port to check.
+        :param port: The incoming port to check.
         :param profile: The device profile to match the port to.
         :return: Whether or not the port matches the profile.
         """
