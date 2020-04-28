@@ -23,7 +23,8 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from asyncio import get_running_loop, Event, wait
+from asyncio import get_running_loop
+from threading import Event
 from aioserial import AioSerial
 from queue import Queue
 from datetime import datetime
@@ -34,8 +35,8 @@ class PortWorker:
     This code is used to continually check an AioSerial port for incoming data, send alerts and pass on said data.
     Also used to send data through said port.
     """
-    def __init__(self, port: AioSerial, msg_q: Queue, new_msg_cb: Event, cleanup_cb: Event, err_cb: Event):
-        self._port = port
+    def __init__(self, conn: AioSerial, msg_q: Queue, new_msg_cb: Event, cleanup_cb: Event, err_cb: Event):
+        self._conn = conn
         self._msg_q = msg_q
         self._new_msg_cb = new_msg_cb
         self._cleanup_cb = cleanup_cb
@@ -67,8 +68,10 @@ class PortWorker:
         :return: None.
         """
         try:
-            if self._port.in_waiting > 0:
-                self._msg_q.put((self._port.readline().decode("utf-8"), datetime.now()))
+            if self._conn.in_waiting > 0:
+                msg = self._conn.readline().decode("utf-8")
+                print("port_worker: Got message from device:", msg)
+                self._msg_q.put((msg, datetime.now()))
                 self._new_msg_cb.set()
         except Exception as e:
             self._running = False
@@ -80,8 +83,8 @@ class PortWorker:
         :param msg: The message to send.
         :return: None.
         """
-        if self._port.is_open:
-            self._port.write(str.encode(msg))
+        if self._conn.is_open:
+            self._conn.write(str.encode(msg))
 
     def cleanup(self, err: bool = False) -> None:
         """
@@ -89,6 +92,6 @@ class PortWorker:
         :return:
         """
         self._running = False
-        self._port.close()
+        self._conn.close()
         if not err:
             self._cleanup_cb.set()

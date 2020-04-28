@@ -34,14 +34,14 @@ from Devices.DRT.Model import drt_defs as defs
 
 
 class DRTModel:
-    def __init__(self, port: AioSerial, new_msg_cb: Event, cleanup_cb: Event, err_cb: Event,
+    def __init__(self, conn: AioSerial, new_msg_cb: Event, cleanup_cb: Event, err_cb: Event,
                  ch: StreamHandler):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
         super().__init__()
         self._msg_q = Queue()
-        self._port_worker = PortWorker(port, self._msg_q, new_msg_cb, cleanup_cb, err_cb)
+        self._port_worker = PortWorker(conn, self._msg_q, new_msg_cb, cleanup_cb, err_cb)
         self._port_worker.start()
         self._save_dir = str()
         self._current_vals = [0, 0, 0, 0]  # dur, int, upper, lower
@@ -70,6 +70,14 @@ class DRTModel:
             self._current_vals[3] = lower_isi
         self._logger.debug("done")
 
+    def reset_changed(self) -> None:
+        """
+        Reset all changed bools to false.
+        :return: None.
+        """
+        for i in range(len(self._changed)):
+            self._changed[i] = False
+
     def get_msg(self) -> (bool, dict):
         """
         Get next message from device.
@@ -77,38 +85,63 @@ class DRTModel:
         """
         self._logger.debug("running")
         if not self._msg_q.empty():
+            msg, timestamp = self._msg_q.get()
+            print("drt_model: got msg. msg:", msg)
             self._logger.debug("done with msg")
-            return True, self._parse_msg(self._msg_q.get())
+            return True, self._parse_msg(msg), timestamp
         self._logger.debug("done with no msg")
-        return False, ''
+        return False, '', datetime(0, 0, 0)
 
-    def cleanup(self):
+    def cleanup(self) -> None:
+        """
+        Cleanup this code for code removal or app closure.
+        :return: None.
+        """
         self._logger.debug("running")
-        print("drt_model calling port_worker.cleanup")
         self._port_worker.cleanup()
         self._logger.debug("done")
 
-    def dur_changed(self):
-        return self._current_vals[0]
+    def dur_changed(self) -> bool:
+        """
+        :return: Whether or not there is an unsaved user change to this vaue.
+        """
+        return self._changed[0]
 
-    def int_changed(self):
-        return self._current_vals[1]
+    def int_changed(self) -> bool:
+        """
+        :return: Whether or not there is an unsaved user change to this vaue.
+        """
+        return self._changed[1]
 
-    def upper_changed(self):
-        return self._current_vals[0]
+    def upper_changed(self) -> bool:
+        """
+        :return: Whether or not there is an unsaved user change to this vaue.
+        """
+        return self._changed[2]
 
-    def lower_changed(self):
-        return self._current_vals[1]
+    def lower_changed(self) -> bool:
+        """
+        :return: Whether or not there is an unsaved user change to this vaue.
+        """
+        return self._changed[3]
 
-    def query_config(self):
+    def query_config(self) -> None:
+        """
+        Ask device for all current configurations.
+        :return: None.
+        """
         self._logger.debug("running")
         print("Asking device for config")
         self._port_worker.send_msg(self._prepare_msg("get_config"))
         self._logger.debug("done")
 
-    def query_stim_dur(self):
+    def query_stim_dur(self) -> None:
+        """
+        Ask device for current stim duration value.
+        :return: None.
+        """
         self._logger.debug("running")
-        # self._port_worker.send_msg(self._prepare_msg("get_"))  # TODO: Get this command
+        self._port_worker.send_msg(self._prepare_msg("get_stimDur"))
         self._logger.debug("done")
 
     def send_stim_dur(self, val: str) -> None:
@@ -121,9 +154,13 @@ class DRTModel:
         self._port_worker.send_msg(self._prepare_msg("set_stimDur", str(val)))
         self._logger.debug("done")
 
-    def query_stim_intesity(self):
+    def query_stim_intesity(self) -> None:
+        """
+        Ask device for current stim intensity value.
+        :return: None.
+        """
         self._logger.debug("running")
-        # self._port_worker.send_msg(self._prepare_msg("get_"))  # TODO: Get this command
+        self._port_worker.send_msg(self._prepare_msg("get_intensity"))
         self._logger.debug("done")
 
     def send_stim_intensity(self, val: int) -> None:
@@ -136,9 +173,13 @@ class DRTModel:
         self._port_worker.send_msg(self._prepare_msg("set_intensity", str(self.calc_percent_to_val(val))))
         self._logger.debug("done")
 
-    def query_upper_isi(self):
+    def query_upper_isi(self) -> None:
+        """
+        Ask device for current upper isi value.
+        :return: None.
+        """
         self._logger.debug("running")
-        # self._port_worker.send_msg(self._prepare_msg("get_"))  # TODO: Get this command
+        self._port_worker.send_msg(self._prepare_msg("get_upperISI"))
         self._logger.debug("done")
 
     def send_upper_isi(self, val: str) -> None:
@@ -151,9 +192,13 @@ class DRTModel:
         self._port_worker.send_msg(self._prepare_msg("set_upperISI", str(val)))
         self._logger.debug("done")
 
-    def query_lower_isi(self):
+    def query_lower_isi(self) -> None:
+        """
+        Ask device for current lower isi value.
+        :return: None.
+        """
         self._logger.debug("running")
-        # self._port_worker.send_msg(self._prepare_msg("get_"))  # TODO: Get this command
+        self._port_worker.send_msg(self._prepare_msg("get_lowerISI"))
         self._logger.debug("done")
 
     def send_lower_isi(self, val: str) -> None:
@@ -166,17 +211,30 @@ class DRTModel:
         self._port_worker.send_msg(self._prepare_msg("set_lowerISI", str(val)))
         self._logger.debug("done")
 
-    def send_start(self):
+    def send_start(self) -> None:
+        """
+        Tell device to start running experiment.
+        :return: None.
+        """
         self._logger.debug("running")
         self._port_worker.send_msg(self._prepare_msg("exp_start"))
         self._logger.debug("done")
 
-    def send_stop(self):
+    def send_stop(self) -> None:
+        """
+        Tel device to stop running experiment.
+        :return: None.
+        """
         self._logger.debug("running")
         self._port_worker.send_msg(self._prepare_msg("exp_stop"))
         self._logger.debug("done")
 
     def check_stim_dur_entry(self, entry: str) -> bool:
+        """
+        Check user input for validity.
+        :param entry: The user input.
+        :return: validity.
+        """
         self._logger.debug("running with entry: " + entry)
         ret = False
         if entry.isdigit():
@@ -193,6 +251,11 @@ class DRTModel:
         return ret
 
     def check_stim_int_entry(self, entry: str) -> bool:
+        """
+        Check user input for validity.
+        :param entry: The user input.
+        :return: validity.
+        """
         ret = False
         self._logger.debug("running with entry: " + entry)
         if entry.isdigit():
@@ -210,6 +273,12 @@ class DRTModel:
         return ret
 
     def check_upper_isi_entry(self, upper_entry: str, lower_entry: str) -> bool:
+        """
+        Check user input for validity.
+        :param upper_entry: The user input.
+        :param lower_entry: The current input for lower_isi.
+        :return: validity.
+        """
         self._logger.debug("running with upper: " + upper_entry + ", and lower: " + lower_entry)
         ret = False
         if upper_entry.isdigit() and lower_entry.isdigit():
@@ -227,6 +296,12 @@ class DRTModel:
         return ret
 
     def check_lower_isi_entry(self, upper_entry: str, lower_entry: str) -> bool:
+        """
+        Check user input for validity.
+        :param upper_entry: The current input for upper_isi
+        :param lower_entry: The user input.
+        :return: validity.
+        """
         self._logger.debug("running with upper: " + upper_entry + ", and lower: " + lower_entry)
         ret = False
         if upper_entry.isdigit() and lower_entry.isdigit():

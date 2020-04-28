@@ -24,7 +24,9 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from asyncio import Event, create_task
+from datetime import datetime
+from asyncio import create_task, sleep
+from threading import Event
 from aioserial import AioSerial
 from Devices.AbstractDevice.Controller.abstract_controller import AbstractController
 from Devices.DRT.View.drt_view import DRTView
@@ -46,11 +48,15 @@ class DRTController(AbstractController):
         self._exp = False
         self._updating_config = False
         create_task(self.msg_handler())
-        # self._setup_handlers()
+        # self._setup_handlers()  # TODO: Reconnect this when the view is implemented.
         self._init_values()
         self._logger.debug("Initialized")
 
     def cleanup(self) -> None:
+        """
+        Cleanup this code for removal or app closure.
+        :return: None.
+        """
         self._logger.debug("running")
         if self._exp:
             self.stop_exp()
@@ -64,17 +70,20 @@ class DRTController(AbstractController):
         """
         while True:
             print("Awaiting message")
-            await self._new_msg_e.wait()
-            print("Got msg")
-            ret, (msg, timestamp) = self._model.get_msg()
-            if ret:
-                msg_type = msg['type']
-                print("got msg type:", msg_type)
-                # if msg_type == "data":
-                #     # self._display_data(msg['values'], timestamp)
-                #     self._model.save_data(msg['values'], timestamp)
-                # elif msg_type == "settings":
-                #     self._update_view(msg['values'])
+            if self._new_msg_e.wait():
+                print("Got msg")
+                ret, msg, timestamp = self._model.get_msg()
+                print("drt_controller: ret, msg, timestamp:", ret, msg, timestamp)
+                if ret:
+                    msg_type = msg['type']
+                    print("got msg type:", msg_type)
+                    if msg_type == "data":
+                        self._update_view_data(msg['values'], timestamp)
+                        self._model.save_data(msg['values'], timestamp)
+                    elif msg_type == "settings":
+                        self._update_view_config(msg['values'])
+            else:
+                await sleep(1)
 
     def start_exp(self) -> None:
         """
@@ -120,28 +129,60 @@ class DRTController(AbstractController):
         self._model.query_config()
         self._logger.debug("done")
 
-    def _update_device(self):
+    def _update_device(self) -> None:
+        """
+        If user input has changed, send updates.
+        :return: None.
+        """
+        changed = False
         self._logger.debug("running")
         if self._model.dur_changed():
             self._model.send_stim_dur(self.view.get_stim_dur())
+            changed = True
         if self._model.int_changed():
             self._model.send_stim_intensity(self.view.get_stim_int())
+            changed = True
         if self._model.upper_changed():
             self._model.send_upper_isi(self.view.get_upper_isi())
+            changed = True
         if self._model.lower_changed():
             self._model.send_lower_isi(self.view.get_lower_isi())
-        self.view.set_config_val(drt_strings.custom_label)
+            changed = True
+        if changed:
+            self.view.set_config_val(drt_strings.custom_label)
+        self._model.reset_changed()
         self._logger.debug("done")
 
-    def _update_view(self, msg: dict) -> None:
+    def _update_view_data(self, values: dict, timestamp: datetime) -> None:
+        """
+        Display data from device on view.
+        :param values: The data to display.
+        :param timestamp: When the data was received.
+        :return: None.
+        """
+        print("Implement drt_controller._update_view_data(). values, timestamp:", values, timestamp)
+
+    def _update_view_config(self, msg: dict) -> None:
+        """
+        Send device config updates to the view.
+        :param msg: The current device settings.
+        :return: None.
+        """
         self._logger.debug("running")
         self._updating_config = True
         for key in msg:
-            self._set_view_val(key, msg[key])
+            # self._set_view_val(key, msg[key])
+            print("reconnect self._set_view_val. key, msg:", key, msg[key])
         self._updating_config = False
         self._logger.debug("done")
 
     def _set_view_val(self, var: str, val: int) -> None:
+        """
+        Set the value for the config field in the view.
+        :param var: The config field.
+        :param val: The new value.
+        :return: None.
+        """
         self._logger.debug("running")
         if var == "stimDur":
             self._model.set_current_vals(duration=val)
@@ -216,7 +257,7 @@ class DRTController(AbstractController):
         :return: None.
         """
         self._logger.debug("running")
-        self.view.set_config_val("ISO")
+        self.view.set_config_val(drt_strings.iso_label)
         self._model.send_stim_dur("1000")
         self._model.send_stim_intensity(100)
         self._model.send_upper_isi("5000")
