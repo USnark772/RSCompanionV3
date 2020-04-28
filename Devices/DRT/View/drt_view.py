@@ -37,13 +37,19 @@ class DRTView(AbstractView):
         :param func:
         :return:
         """
+        self.logger.debug("running")
+        self.stim_dur_line_edit.textChanged.connect(func)
+        self.logger.debug("done")
 
-    def set_stim_int_entry_changed_handler(self, func: classmethod) -> None:
+    def set_stim_intens_entry_changed_handler(self, func: classmethod) -> None:
         """
 
         :param func:
         :return:
         """
+        self.logger.debug("running")
+        self.stim_intens_slider.valueChanged.connect(func)
+        self.logger.debug("done")
 
     def set_upper_isi_entry_changed_handler(self, func: classmethod) -> None:
         """
@@ -51,6 +57,9 @@ class DRTView(AbstractView):
         :param func:
         :return:
         """
+        self.logger.debug("running")
+        self.upper_isi_line_edit.textChanged.connect(func)
+        self.logger.debug("done")
 
     def set_lower_isi_entry_changed_handler(self, func: classmethod) -> None:
         """
@@ -58,36 +67,57 @@ class DRTView(AbstractView):
         :param func:
         :return:
         """
+        self.logger.debug("running")
+        self.lower_isi_line_edit.textChanged.connect(func)
+        self.logger.debug("done")
 
     def get_stim_dur(self):
         """
 
         :return:
         """
+        return self.stim_dur_line_edit.text()
 
-    def set_stim_dur(self) -> None:
+    def set_stim_dur(self, val) -> None:
         """
-
+        Set display value of stim duration
+        :param val:
         :return:
         """
+        self.logger.debug("running")
+        self.stim_dur_line_edit.setText(str(val))
+        self.logger.debug("done")
 
-    def set_stim_dur_err(self) -> None:
+    def set_stim_dur_err(self, is_error) -> None:
         """
-
+        Set display of error in stim duration
+        :param is_error:
         :return:
         """
+        self.logger.debug("running")
+        if is_error:
+            self.stim_dur_line_edit.setStyleSheet(tab_line_edit_error_style)
+        else:
+            self.stim_dur_line_edit.setStyleSheet(tab_line_edit_compliant_style)
+        self.logger.debug("done")
 
     def get_stim_intens(self):
         """
 
         :return:
         """
+        return self.stim_intens_slider.value()
 
-    def set_stim_intens(self) -> None:
+    def set_stim_intens(self, val) -> None:
         """
-
+        Set display value of stim intensity
+        :param val:
         :return:
         """
+        self.logger.debug("running")
+        self.stim_intens_slider.setValue(int(val))
+        self.set_stim_intens_val_label(val)
+        self.logger.debug("done")
 
     def set_stim_intens_err(self) -> None:
         """
@@ -100,45 +130,66 @@ class DRTView(AbstractView):
 
         :return:
         """
+        return self.upper_isi_line_edit.text()
 
-    def set_upper_isi(self) -> None:
+    def set_upper_isi(self, val) -> None:
         """
-
+        Set display value of upper isi
+        :param val:
         :return:
         """
+        self.logger.debug("running")
+        self.upper_isi_line_edit.setText(str(val))
+        self.logger.debug("done")
 
-    def set_upper_isi_err(self) -> None:
+    def set_upper_isi_err(self, is_error) -> None:
         """
-
+        Set display of error in upper isi line edit
+        :param is_error:
         :return:
         """
+        self.logger.debug("running")
+        if is_error:
+            self.upper_isi_line_edit.setStyleSheet(tab_line_edit_error_style)
+        else:
+            self.upper_isi_line_edit.setStyleSheet(tab_line_edit_compliant_style)
+        self.logger.debug("done")
 
     def get_lower_isi(self):
         """
 
         :return:
         """
+        return self.lower_isi_line_edit.text()
 
-    def set_lower_isi(self) -> None:
+    def set_lower_isi(self, val) -> None:
+        """
+        Set display value of lower isi
+        :param val:
+        :return:
+        """
+        self.logger.debug("running")
+        self.lower_isi_line_edit.setText(str(val))
+        self.logger.debug("done")
+
+    def set_lower_isi_err(self, is_error) -> None:
+        """
+        Set display of error in lower isi line edit
+        :param is_error:
+        :return:
+        """
+        self.logger.debug("running")
+        if is_error:
+            self.lower_isi_line_edit.setStyleSheet(tab_line_edit_error_style)
+        else:
+            self.lower_isi_line_edit.setStyleSheet(tab_line_edit_compliant_style)
+        self.logger.debug("done")
+
+    def set_upload_button(self, is_active) -> None:
         """
 
         :return:
         """
-
-    def set_lower_isi_err(self) -> None:
-        """
-
-        :return:
-        """
-
-    def get_upload_button(self):
-        """
-
-        :return:
-        """
-
-    def set_upload_button(self) -> None:
-        """
-
-        :return:
-        """
+        self.logger.debug("running")
+        self.upload_settings_button.setEnabled(is_active)
+        self.logger.debug("done")
