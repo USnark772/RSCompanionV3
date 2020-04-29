@@ -39,6 +39,9 @@ class AbstractController(ABC):
         """
         pass
 
+    def set_lang(self, lang) -> None:
+        pass
+
     def get_view(self):
         return self.view
 

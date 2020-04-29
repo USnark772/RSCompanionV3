@@ -25,6 +25,7 @@ https://redscientific.com/index.html
 
 from abc import ABCMeta, ABC, abstractmethod
 from PySide2.QtWidgets import QMdiSubWindow, QWidget, QMdiArea
+from PySide2.QtGui import QCloseEvent
 
 
 class AbstractMeta(ABCMeta, type(QMdiSubWindow)):
@@ -42,6 +43,15 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
         ABC.__init__(self)
         SubWindow.__init__(self, parent, contents)
         self._name = name
+        self.setWindowTitle(self._name)
 
     def get_name(self):
         return self._name
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        """
+        Do not allow user to close window directly.
+        :param event: The close event.
+        :return: None
+        """
+        event.ignore()

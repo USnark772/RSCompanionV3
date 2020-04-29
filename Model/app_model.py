@@ -33,6 +33,7 @@ from queue import Queue
 from aioserial import AioSerial
 from PySide2.QtWidgets import QMdiArea
 from Model.rs_device_com_scanner import RSDeviceCommScanner
+from Model.app_defs import LangEnum
 
 
 # TODO: Figure out close_flag. How to remove views?
@@ -94,7 +95,7 @@ class AppModel:
         self._logger.debug("running")
         ret = True
         try:
-            controller = self._controllers[dev_type](conn, self._view_parent, self._ch)
+            controller = self._controllers[dev_type](conn, self._view_parent, LangEnum.ENG, self._ch)
             self._devs[conn.port] = controller
             self._new_dev_views.append(controller.get_view())
             self._new_dev_view_flag.set()

@@ -24,7 +24,8 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger
-from PySide2.QtWidgets import QMdiArea, QMdiSubWindow
+from PySide2.QtWidgets import QMdiArea
+from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
 class MDIArea(QMdiArea):
@@ -37,7 +38,7 @@ class MDIArea(QMdiArea):
         self.setMinimumSize(500, 300)
         self._logger.debug("Done")
 
-    def add_window(self, window: QMdiSubWindow) -> None:
+    def add_window(self, window: AbstractView) -> None:
         """
         Add given window to the MDI Area.
         :param window: The window to add.
@@ -48,7 +49,7 @@ class MDIArea(QMdiArea):
         window.show()
         self._logger.debug("done")
 
-    def remove_window(self, window: QMdiSubWindow) -> None:
+    def remove_window(self, window: AbstractView) -> None:
         """
         Remove the given window from the MDI Area.
         :param window: The window to remove.

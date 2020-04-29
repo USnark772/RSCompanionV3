@@ -26,30 +26,27 @@ https://redscientific.com/index.html
 from logging import getLogger, StreamHandler
 from datetime import datetime
 from asyncio import create_task
-from threading import Event
 from aioserial import AioSerial
 from Devices.AbstractDevice.Controller.abstract_controller import AbstractController
-from Devices.DRT.View.drt_view import DRTView
+from Devices.DRT.View.drt_view import DRTView, StringsEnum
 from Devices.DRT.Model.drt_model import DRTModel
-from Devices.DRT.Model import drt_strings as strings
 
 
 class Controller(AbstractController):
-    def __init__(self, conn: AioSerial, view_parent, ch: StreamHandler):
+    def __init__(self, conn: AioSerial, view_parent, lang: int, ch: StreamHandler):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
         device_name = "DRT_" + conn.port.strip("COM")
         super().__init__(DRTView(view_parent, device_name, ch))
-        self._new_msg_e = Event()
-        self._cleanup_e = Event()
-        self._err_e = Event()
-        self._model = DRTModel(conn, self._new_msg_e, self._cleanup_e, self._err_e, ch)
+        self._model = DRTModel(conn, ch)
         self._exp = False
         self._updating_config = False
         self._setup_handlers()
         self._init_values()
         self._msg_handler_task = create_task(self.msg_handler())
+        self._lang = lang
+        self.view.set_language(self._lang)
         self._logger.debug("Initialized")
 
     def cleanup(self) -> None:
@@ -70,9 +67,7 @@ class Controller(AbstractController):
         :return: None.
         """
         while True:
-            print(__name__, "Awaiting msg")
             msg, timestamp = await self._model.get_msg()
-            print(__name__, "got msg")
             msg_type = msg['type']
             if msg_type == "data":
                 self._update_view_data(msg['values'], timestamp)
@@ -144,8 +139,9 @@ class Controller(AbstractController):
             self._model.send_lower_isi(self.view.get_lower_isi())
             changed = True
         if changed:
-            self.view.set_config_val(strings.custom_label)  # TODO: Fix this.
+            self.view.set_config_val(self.view.strings[StringsEnum.CUSTOM_LABEL])
         self._model.reset_changed()
+        self._check_for_upload()
         self._logger.debug("done")
 
     def _update_view_data(self, values: dict, timestamp: datetime) -> None:
@@ -202,7 +198,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         if not self._updating_config:
-            self.view.set_stim_dur_err(self._model.check_stim_dur_entry(self.view.get_stim_dur()))
+            self.view.set_stim_dur_err(not self._model.check_stim_dur_entry(self.view.get_stim_dur()))
             self._check_for_upload()
         self._logger.debug("done")
 
@@ -225,10 +221,10 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         if not self._updating_config:
-            upper = self.view.get_upper_isi
-            lower = self.view.get_lower_isi
-            err_upper = self._model.check_upper_isi_entry(upper, lower)
-            err_lower = self._model.check_lower_isi_entry(upper, lower)
+            upper = self.view.get_upper_isi()
+            lower = self.view.get_lower_isi()
+            err_upper = not self._model.check_upper_isi_entry(upper, lower)
+            err_lower = not self._model.check_lower_isi_entry(upper, lower)
             self.view.set_upper_isi_err(err_upper)
             self.view.set_lower_isi_err(err_lower)
             self._check_for_upload()
@@ -240,10 +236,7 @@ class Controller(AbstractController):
         :return: None.
         """
         self._logger.debug("running")
-        if self._model.valid_entries():
-            self.view.set_upload_button(True)
-        else:
-            self.view.set_upload_button(False)
+        self.view.set_upload_button(self._model.check_current_input())
         self._logger.debug("done")
 
     def _iso(self) -> None:
@@ -252,7 +245,7 @@ class Controller(AbstractController):
         :return: None.
         """
         self._logger.debug("running")
-        self.view.set_config_val(strings.iso_label)
+        self.view.set_config_val(self.view.strings[StringsEnum.ISO_LABEL])
         self._model.send_stim_dur("1000")
         self._model.send_stim_intensity(100)
         self._model.send_upper_isi("5000")

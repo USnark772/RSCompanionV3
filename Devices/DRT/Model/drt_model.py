@@ -26,15 +26,13 @@ https://redscientific.com/index.html
 from logging import getLogger, StreamHandler
 from queue import Queue
 from aioserial import AioSerial
-from asyncio import Event
 from math import trunc, ceil
 from datetime import datetime
 from Devices.DRT.Model import drt_defs as defs
 
 
 class DRTModel:
-    def __init__(self, conn: AioSerial, new_msg_cb: Event, cleanup_cb: Event, err_cb: Event,
-                 ch: StreamHandler):
+    def __init__(self, conn: AioSerial, ch: StreamHandler):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
@@ -238,7 +236,7 @@ class DRTModel:
                     changed = True
                 self._changed[0] = changed
                 ret = True
-        self._errs[0] = ret
+        self._errs[0] = not ret
         self._logger.debug("done with: " + str(ret))
         return ret
 
@@ -249,17 +247,19 @@ class DRTModel:
         :return: validity.
         """
         ret = False
-        val = int(entry)
         self._logger.debug("running with entry: " + str(entry))
+        val = self.calc_percent_to_val(int(entry))
         if defs.intensity_max >= val >= defs.intensity_min:
+            print(__name__, val, self._current_vals[1])
             if val == self._current_vals[1]:
                 changed = False
             else:
                 changed = True
+            print(__name__, changed)
             self._changed[1] = changed
             self._logger.debug("done with true")
             ret = True
-        self._errs[1] = ret
+        self._errs[1] = not ret
         self._logger.debug("done with: " + str(ret))
         return ret
 
@@ -282,7 +282,7 @@ class DRTModel:
                     changed = True
                 self._changed[2] = changed
                 ret = True
-        self._errs[2] = ret
+        self._errs[2] = not ret
         self._logger.debug("done with: " + str(ret))
         return ret
 
@@ -305,11 +305,11 @@ class DRTModel:
                     changed = True
                 self._changed[3] = changed
                 ret = True
-        self._errs[3] = ret
+        self._errs[3] = not ret
         self._logger.debug("done with: " + str(ret))
         return ret
 
-    def valid_entries(self) -> bool:
+    def check_current_input(self) -> bool:
         """
         Check user input for validity.
         :return: Whether the user input values are valid or not.

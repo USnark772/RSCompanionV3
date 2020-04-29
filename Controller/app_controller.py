@@ -29,7 +29,7 @@ from asyncio import Event, create_task, gather
 from aioserial import AioSerial
 from PySide2.QtCore import QSettings, QSize
 from Model.app_model import AppModel
-from Model.app_defs import current_version, log_format
+from Model.app_defs import current_version, log_format, LangEnum
 from Model.app_helpers import setup_log_file
 from Model.app_strings import log_out_filename, company_name, app_name, log_version_id, device_connection_error
 from View.HelpWidgets.output_window import OutputWindow

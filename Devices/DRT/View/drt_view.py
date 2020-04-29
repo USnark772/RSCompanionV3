@@ -28,7 +28,7 @@ from logging import getLogger
 from PySide2.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QSlider, QGridLayout, QLineEdit
 from PySide2.QtCore import Qt, QSize
 from Model.app_helpers import ClickAnimationButton, EasyFrame
-from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style, LangEnum
+from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style
 from Devices.DRT.Model.drt_strings import strings, StringsEnum
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
@@ -122,19 +122,19 @@ class DRTView(AbstractView):
 
         # Set upload button selection area.
         self.upload_settings_button = ClickAnimationButton()
+        self.upload_settings_button.setEnabled(False)
         self.dev_sets_layout.addWidget(self.upload_settings_button)
 
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
-        self._strings = None
-        self.set_language(LangEnum.ENG)
+        self.strings = None
         self._logger.debug("Initialized")
 
     def set_stim_dur_entry_changed_handler(self, func: classmethod) -> None:
         """
-
-        :param func:
-        :return:
+        Add handler for when user changes input value in this field.
+        :param func: The handler.
+        :return: None.
         """
         self._logger.debug("running")
         self.stim_dur_line_edit.textChanged.connect(func)
@@ -142,9 +142,9 @@ class DRTView(AbstractView):
 
     def set_stim_intens_entry_changed_handler(self, func: classmethod) -> None:
         """
-
-        :param func:
-        :return:
+        Add handler for when user changes input value in this field.
+        :param func: The handler.
+        :return: None.
         """
         self._logger.debug("running")
         self.stim_intens_slider.valueChanged.connect(func)
@@ -152,9 +152,9 @@ class DRTView(AbstractView):
 
     def set_upper_isi_entry_changed_handler(self, func: classmethod) -> None:
         """
-
-        :param func:
-        :return:
+        Add handler for when user changes input value in this field.
+        :param func: The handler.
+        :return: None.
         """
         self._logger.debug("running")
         self.upper_isi_line_edit.textChanged.connect(func)
@@ -162,9 +162,9 @@ class DRTView(AbstractView):
 
     def set_lower_isi_entry_changed_handler(self, func: classmethod) -> None:
         """
-
-        :param func:
-        :return:
+        Add handler for when user changes input value in this field.
+        :param func: The handler.
+        :return: None.
         """
         self._logger.debug("running")
         self.lower_isi_line_edit.textChanged.connect(func)
@@ -172,21 +172,26 @@ class DRTView(AbstractView):
 
     def set_iso_button_handler(self, func: classmethod) -> None:
         """
-
-        :param func:
-        :return:
+        Add handler for when user clicks this button.
+        :param func: The handler.
+        :return: None.
         """
         self.iso_button.clicked.connect(func)
 
     def set_upload_button_handler(self, func: classmethod) -> None:
         """
-
-        :param func:
-        :return:
+        Add handler for when user clicks this button.
+        :param func: The handler.
+        :return: None.
         """
         self.upload_settings_button.clicked.connect(func)
 
-    def set_config_val(self, val: str):
+    def set_config_val(self, val: str) -> None:
+        """
+
+        :param val:
+        :return:
+        """
         self._logger.debug("running")
         self.config_val.setText(val)
         self._logger.debug("done")
@@ -318,30 +323,30 @@ class DRTView(AbstractView):
         self._logger.debug("done")
 
     def set_language(self, lang_enum_val) -> None:
-        self._strings = strings[lang_enum_val]
+        self.strings = strings[lang_enum_val]
         self._set_texts()
         self._set_tooltips()
 
     def _set_texts(self):
         self._logger.debug("running")
-        self.config_label.setText(self._strings[StringsEnum.CONFIG_LABEL])
-        self.config_val.setText(self._strings[StringsEnum.ISO_LABEL])
-        self.iso_button.setText(self._strings[StringsEnum.ISO_BUTTON_LABEL])
-        self.stim_dur_label.setText(self._strings[StringsEnum.DURATION_LABEL])
-        self.stim_intens_label.setText(self._strings[StringsEnum.INTENSITY_LABEL])
-        self.upper_isi_label.setText(self._strings[StringsEnum.UPPER_ISI_LABEL])
-        self.lower_isi_label.setText(self._strings[StringsEnum.LOWER_ISI_LABEL])
-        self.upload_settings_button.setText(self._strings[StringsEnum.UPLOAD_BUTTON_LABEL])
+        self.config_label.setText(self.strings[StringsEnum.CONFIG_LABEL])
+        self.config_val.setText(self.strings[StringsEnum.ISO_LABEL])
+        self.iso_button.setText(self.strings[StringsEnum.ISO_BUTTON_LABEL])
+        self.stim_dur_label.setText(self.strings[StringsEnum.DURATION_LABEL])
+        self.stim_intens_label.setText(self.strings[StringsEnum.INTENSITY_LABEL])
+        self.upper_isi_label.setText(self.strings[StringsEnum.UPPER_ISI_LABEL])
+        self.lower_isi_label.setText(self.strings[StringsEnum.LOWER_ISI_LABEL])
+        self.upload_settings_button.setText(self.strings[StringsEnum.UPLOAD_BUTTON_LABEL])
         self._logger.debug("done")
 
     def _set_tooltips(self):
         self._logger.debug("running")
-        self.config_label.setToolTip(self._strings[StringsEnum.CONFIG_LABEL_TOOLTIP])
-        self.iso_button.setToolTip(self._strings[StringsEnum.ISO_BUTTON_TOOLTIP])
-        self.upper_isi_label.setToolTip(self._strings[StringsEnum.UPPER_ISI_TOOLTIP])
-        self.lower_isi_label.setToolTip(self._strings[StringsEnum.LOWER_ISI_TOOLTIP])
-        self.stim_dur_label.setToolTip(self._strings[StringsEnum.DURATION_TOOLTIP])
-        self.stim_intens_label.setToolTip(self._strings[StringsEnum.INTENSITY_TOOLTIP])
-        self.upload_settings_button.setToolTip(self._strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
+        self.config_label.setToolTip(self.strings[StringsEnum.CONFIG_LABEL_TOOLTIP])
+        self.iso_button.setToolTip(self.strings[StringsEnum.ISO_BUTTON_TOOLTIP])
+        self.upper_isi_label.setToolTip(self.strings[StringsEnum.UPPER_ISI_TOOLTIP])
+        self.lower_isi_label.setToolTip(self.strings[StringsEnum.LOWER_ISI_TOOLTIP])
+        self.stim_dur_label.setToolTip(self.strings[StringsEnum.DURATION_TOOLTIP])
+        self.stim_intens_label.setToolTip(self.strings[StringsEnum.INTENSITY_TOOLTIP])
+        self.upload_settings_button.setToolTip(self.strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
         self.stim_intens_slider.setToolTip(str(self.stim_intens_slider.value()) + "%")
         self._logger.debug("done")
