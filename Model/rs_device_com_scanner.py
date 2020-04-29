@@ -87,7 +87,9 @@ class RSDeviceCommScanner:
                     if self._verify_port(port, self._device_ids[device_type]):
                         ret_val, connection = await asyncio.create_task(self._try_open_port(port))
                         if ret_val:
-                            #TODO - Remove the Q!
+                            # TODO - Remove the Q! Cannot, if user plugs in multiple devices then this q will have
+                            #  multiple devices before this function call finishes. If not queue then only last device
+                            #  is actually serviced.
                             self.q.put((device_type, connection))
                             self.std_cb.set()
                         else:

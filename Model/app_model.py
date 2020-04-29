@@ -23,6 +23,9 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
+import os
+import glob
+import importlib.util
 from logging import StreamHandler, getLogger
 from asyncio import get_event_loop, all_tasks, current_task, gather
 from queue import Queue
@@ -31,9 +34,6 @@ from aioserial import AioSerial
 from PySide2.QtWidgets import QMdiArea
 from Model.rs_device_com_scanner import RSDeviceCommScanner
 
-import os
-import glob
-import importlib.util
 
 # TODO: Figure out close_flag
 class AppModel:
@@ -52,9 +52,9 @@ class AppModel:
         self._devs = dict()
         self._dev_inits = dict()
 
-        #TODO - wrap get_controller and get_profiles in debuggin functionality
         self._logger.debug("Initialized")
 
+    # TODO add debugging
     @staticmethod
     def get_profiles():
         profs = {}
@@ -68,7 +68,7 @@ class AppModel:
                     profs.update(mod.profile)
         return profs
 
-
+    # TODO add debugging
     @staticmethod
     def get_controllers():
         controllers = {}
@@ -81,7 +81,6 @@ class AppModel:
                     spec.loader.exec_module(mod)
                     controllers.update({device: mod.Controller})
         return controllers
-
 
     def add_new_device(self) -> None:
         """

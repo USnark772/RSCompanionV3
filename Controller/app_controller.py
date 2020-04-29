@@ -99,7 +99,7 @@ class AppController:
         self._start()
         self._logger.debug("Initialized")
 
-    # TODO: Change this so it awaits a device view item and the model awaits the new devices.
+    # TODO: Change this so it awaits a device view item and the model awaits the new devices. Also change this so that it reads until queue is empty.
     async def handle_new_devices(self) -> None:
         """
         Check for and handle any new Devices from the com scanner.
