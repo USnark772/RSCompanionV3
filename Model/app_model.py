@@ -28,6 +28,7 @@ from asyncio import get_event_loop, all_tasks, current_task, gather
 from queue import Queue
 from asyncio import Event, create_task
 from aioserial import AioSerial
+from PySide2.QtWidgets import QMdiArea
 from Model.rs_device_com_scanner import RSDeviceCommScanner
 from Devices.DRT.Controller.drt_controller import DRTController
 from Devices.DRT.Model.drt_defs import profile as drt_profile
@@ -42,12 +43,15 @@ def get_profiles():
     return ret
 
 
+# TODO: Figure out close_flag
 class AppModel:
-    def __init__(self, new_dev_flag: Event, dev_conn_err_flag: Event, close_flag: Event, view_parent, ch: StreamHandler):
+    def __init__(self, new_dev_flag: Event, dev_conn_err_flag: Event, close_flag: Event, view_parent: QMdiArea,
+                 ch: StreamHandler):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
         self._ch = ch
+        self._view_parent = view_parent
         self._new_dev_q = Queue()
         self._dev_scanner = RSDeviceCommScanner(get_profiles(), new_dev_flag, dev_conn_err_flag, self._new_dev_q)
         self._devs = dict()
@@ -70,8 +74,8 @@ class AppModel:
         if dev_type not in self._dev_inits.keys():
             self._logger.warning("Could not recognize device type")
             return
-        controller = self._dev_inits[dev_type](conn)
-        if not controller:
+        ret = self._dev_inits[dev_type](conn)
+        if not ret:
             self._logger.warning("Failed making controller for type: " + dev_type)
             return
         self._logger.debug("done")
@@ -80,7 +84,7 @@ class AppModel:
         self._logger.debug("running")
         ret = True
         try:
-            self._devs[conn.port] = DRTController(conn, self._ch)
+            self._devs[conn.port] = DRTController(conn, self._view_parent, self._ch)
         except Exception as e:
             self._logger.exception("Problem making controller")
             ret = False
@@ -97,7 +101,7 @@ class AppModel:
         self._dev_scanner.cleanup()
         for dev in self._devs.values():
             dev.cleanup()
-        create_task(self._end_tasks())
+        # create_task(self._end_tasks())
         self._logger.debug("done")
 
     @staticmethod

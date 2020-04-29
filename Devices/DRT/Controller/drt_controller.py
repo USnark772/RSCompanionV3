@@ -35,21 +35,21 @@ from Devices.DRT.Model import drt_strings_english as drt_strings
 
 
 class DRTController(AbstractController):
-    def __init__(self, conn: AioSerial, ch: StreamHandler, view_parent=None):
+    def __init__(self, conn: AioSerial, view_parent, ch: StreamHandler):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
+        device_name = "DRT_" + conn.port.strip("COM")
+        super().__init__(DRTView(view_parent, device_name, ch))
         self._new_msg_e = Event()
         self._cleanup_e = Event()
         self._err_e = Event()
         self._model = DRTModel(conn, self._new_msg_e, self._cleanup_e, self._err_e, ch)
-        device_name = "DRT_" + conn.port.strip("COM")
-        super().__init__(DRTView(view_parent, device_name))
         self._exp = False
         self._updating_config = False
-        create_task(self.msg_handler())
-        # self._setup_handlers()  # TODO: Reconnect this when the view is implemented.
+        self._setup_handlers()
         self._init_values()
+        self._msg_handler_task = create_task(self.msg_handler())
         self._logger.debug("Initialized")
 
     def cleanup(self) -> None:
@@ -60,6 +60,7 @@ class DRTController(AbstractController):
         self._logger.debug("running")
         if self._exp:
             self.stop_exp()
+        self._msg_handler_task.cancel()
         self._model.cleanup()
         self._logger.debug("done")
 
@@ -69,21 +70,15 @@ class DRTController(AbstractController):
         :return: None.
         """
         while True:
-            print("Awaiting message")
-            if self._new_msg_e.wait():
-                print("Got msg")
-                ret, msg, timestamp = self._model.get_msg()
-                print("drt_controller: ret, msg, timestamp:", ret, msg, timestamp)
-                if ret:
-                    msg_type = msg['type']
-                    print("got msg type:", msg_type)
-                    if msg_type == "data":
-                        self._update_view_data(msg['values'], timestamp)
-                        self._model.save_data(msg['values'], timestamp)
-                    elif msg_type == "settings":
-                        self._update_view_config(msg['values'])
-            else:
-                await sleep(1)
+            print(__name__, "Awaiting msg")
+            msg, timestamp = await self._model.get_msg()
+            print(__name__, "got msg")
+            msg_type = msg['type']
+            if msg_type == "data":
+                self._update_view_data(msg['values'], timestamp)
+                self._model.save_data(msg['values'], timestamp)
+            elif msg_type == "settings":
+                self._update_view_config(msg['values'])
 
     def start_exp(self) -> None:
         """
@@ -110,8 +105,8 @@ class DRTController(AbstractController):
         """
         self._logger.debug("running")
         # button handlers
-        self.view.add_iso_button_handler(self._iso)
-        self.view.add_upload_button_handler(self._update_device)
+        self.view.set_iso_button_handler(self._iso)
+        self.view.set_upload_button_handler(self._update_device)
 
         # value handlers
         self.view.set_stim_dur_entry_changed_handler(self._stim_dur_entry_changed_handler)

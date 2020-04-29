@@ -69,5 +69,3 @@ class AbstractController(ABC):
         :return: None.
         """
         pass
-
-

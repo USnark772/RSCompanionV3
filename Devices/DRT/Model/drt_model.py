@@ -29,7 +29,6 @@ from aioserial import AioSerial
 from asyncio import Event
 from math import trunc, ceil
 from datetime import datetime
-from Devices.AbstractDevice.Model.port_worker import PortWorker
 from Devices.DRT.Model import drt_defs as defs
 
 
@@ -39,10 +38,8 @@ class DRTModel:
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
-        super().__init__()
         self._msg_q = Queue()
-        self._port_worker = PortWorker(conn, self._msg_q, new_msg_cb, cleanup_cb, err_cb)
-        self._port_worker.start()
+        self._conn = conn
         self._save_dir = str()
         self._current_vals = [0, 0, 0, 0]  # dur, int, upper, lower
         self._errs = [False, False, False, False]  # dur, upper, lower
@@ -78,19 +75,16 @@ class DRTModel:
         for i in range(len(self._changed)):
             self._changed[i] = False
 
-    def get_msg(self) -> (bool, dict):
+    async def get_msg(self) -> (dict, datetime):
         """
         Get next message from device.
-        :return: (success, The next message from device)
+        :return: (The next message from device, when the message was received.)
         """
         self._logger.debug("running")
-        if not self._msg_q.empty():
-            msg, timestamp = self._msg_q.get()
-            print("drt_model: got msg. msg:", msg)
-            self._logger.debug("done with msg")
-            return True, self._parse_msg(msg), timestamp
-        self._logger.debug("done with no msg")
-        return False, '', datetime(0, 0, 0)
+        line = await self._conn.readline_async()
+        msg = self._parse_msg(line.decode("utf-8"))
+        timestamp = datetime.now()
+        return msg, timestamp
 
     def cleanup(self) -> None:
         """
@@ -98,7 +92,6 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self._port_worker.cleanup()
         self._logger.debug("done")
 
     def dur_changed(self) -> bool:
@@ -131,8 +124,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        print("Asking device for config")
-        self._port_worker.send_msg(self._prepare_msg("get_config"))
+        self.send_msg(self._prepare_msg("get_config"))
         self._logger.debug("done")
 
     def query_stim_dur(self) -> None:
@@ -141,7 +133,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self._port_worker.send_msg(self._prepare_msg("get_stimDur"))
+        self.send_msg(self._prepare_msg("get_stimDur"))
         self._logger.debug("done")
 
     def send_stim_dur(self, val: str) -> None:
@@ -151,7 +143,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self._port_worker.send_msg(self._prepare_msg("set_stimDur", str(val)))
+        self.send_msg(self._prepare_msg("set_stimDur", str(val)))
         self._logger.debug("done")
 
     def query_stim_intesity(self) -> None:
@@ -160,7 +152,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self._port_worker.send_msg(self._prepare_msg("get_intensity"))
+        self.send_msg(self._prepare_msg("get_intensity"))
         self._logger.debug("done")
 
     def send_stim_intensity(self, val: int) -> None:
@@ -170,7 +162,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self._port_worker.send_msg(self._prepare_msg("set_intensity", str(self.calc_percent_to_val(val))))
+        self.send_msg(self._prepare_msg("set_intensity", str(self.calc_percent_to_val(val))))
         self._logger.debug("done")
 
     def query_upper_isi(self) -> None:
@@ -179,7 +171,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self._port_worker.send_msg(self._prepare_msg("get_upperISI"))
+        self.send_msg(self._prepare_msg("get_upperISI"))
         self._logger.debug("done")
 
     def send_upper_isi(self, val: str) -> None:
@@ -189,7 +181,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self._port_worker.send_msg(self._prepare_msg("set_upperISI", str(val)))
+        self.send_msg(self._prepare_msg("set_upperISI", str(val)))
         self._logger.debug("done")
 
     def query_lower_isi(self) -> None:
@@ -198,7 +190,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self._port_worker.send_msg(self._prepare_msg("get_lowerISI"))
+        self.send_msg(self._prepare_msg("get_lowerISI"))
         self._logger.debug("done")
 
     def send_lower_isi(self, val: str) -> None:
@@ -208,7 +200,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self._port_worker.send_msg(self._prepare_msg("set_lowerISI", str(val)))
+        self.send_msg(self._prepare_msg("set_lowerISI", str(val)))
         self._logger.debug("done")
 
     def send_start(self) -> None:
@@ -217,7 +209,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self._port_worker.send_msg(self._prepare_msg("exp_start"))
+        self.send_msg(self._prepare_msg("exp_start"))
         self._logger.debug("done")
 
     def send_stop(self) -> None:
@@ -226,7 +218,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self._port_worker.send_msg(self._prepare_msg("exp_stop"))
+        self.send_msg(self._prepare_msg("exp_stop"))
         self._logger.debug("done")
 
     def check_stim_dur_entry(self, entry: str) -> bool:
@@ -340,6 +332,10 @@ class DRTModel:
         self._logger.debug("running")
         self._output_save_data(self._format_save_data(data, timestamp))
         self._logger.debug("done")
+
+    def send_msg(self, msg):
+        if self._conn.is_open:
+            self._conn.write(str.encode(msg))
 
     def _output_save_data(self, line: str) -> None:
         """

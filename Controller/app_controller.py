@@ -26,7 +26,7 @@ https://redscientific.com/index.html
 
 import logging
 from importlib import import_module
-from asyncio import Event, create_task
+from asyncio import Event, create_task, gather
 from queue import Queue
 from aioserial import AioSerial
 from PySide2.QtCore import QSettings, QSize
@@ -93,11 +93,13 @@ class AppController:
         # Model
         self._model = AppModel(self._new_dev_flag, self._dev_conn_err_flag, self._close_flag, self.mdi_area, self.ch)
 
+        self._tasks = []
         self._setup_handlers()
         self._initialize_view()
         self._start()
         self._logger.debug("Initialized")
 
+    # TODO: Change this so it awaits a device view item and the model awaits the new devices.
     async def handle_new_devices(self) -> None:
         """
         Check for and handle any new Devices from the com scanner.
@@ -262,8 +264,8 @@ class AppController:
         Start all recurring functions.
         :return: None.
         """
-        create_task(self.handle_new_devices())
-        create_task(self.handle_device_conn_error())
+        self._tasks.append(create_task(self.handle_new_devices()))
+        self._tasks.append(create_task(self.handle_device_conn_error()))
         self._model.start()
 
     def _cleanup(self) -> None:
@@ -271,4 +273,10 @@ class AppController:
         Cleanup any code that would cause problems for shutdown and prep for app closure.
         :return: None.
         """
+        create_task(self.end_tasks())
         self._model.cleanup()
+
+    async def end_tasks(self):
+        for task in self._tasks:
+            task.cancel()
+            await gather(self._tasks)

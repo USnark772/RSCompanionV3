@@ -25,7 +25,6 @@ https://redscientific.com/index.html
 
 from asyncio import Event
 import asyncio
-from time import sleep
 from serial.serialutil import SerialException
 from serial.tools.list_ports import comports
 from serial.tools.list_ports_common import ListPortInfo

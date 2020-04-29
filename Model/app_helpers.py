@@ -25,7 +25,7 @@ https://redscientific.com/index.html
 
 from logging import getLogger
 from tempfile import gettempdir
-from PySide2.QtWidgets import QPushButton
+from PySide2.QtWidgets import QPushButton, QFrame
 from Model.app_defs import button_normal_style, button_pressed_style
 from Model.strings_english import program_output_hdr
 
@@ -43,20 +43,6 @@ def setup_log_file(file_name: str) -> str:
     return fname
 
 
-class NotDefinedException(Exception):
-    def __init__(self, *args):
-        if args:
-            self.message = args[0]
-        else:
-            self.message = None
-
-    def __str__(self):
-        if self.message:
-            return self.message
-        else:
-            return "Function or method not defined"
-
-
 class ClickAnimationButton(QPushButton):
     def __init__(self, parent=None):
         self.logger = getLogger(__name__)
@@ -72,3 +58,21 @@ class ClickAnimationButton(QPushButton):
 
     def released_state(self):
         self.setStyleSheet(button_normal_style)
+
+
+class EasyFrame(QFrame):
+    """ Creates a frame for display purposes depending on bools. """
+    def __init__(self, line=False, vert=False):
+        self.logger = getLogger(__name__)
+        self.logger.debug("Initializing")
+        super().__init__()
+        if line:
+            if vert:
+                self.setFrameShape(QFrame.VLine)
+            else:
+                self.setFrameShape(QFrame.HLine)
+            self.setFrameShadow(QFrame.Sunken)
+        else:
+            self.setFrameShape(QFrame.StyledPanel)
+            self.setFrameShadow(QFrame.Raised)
+        self.logger.debug("Initialized")

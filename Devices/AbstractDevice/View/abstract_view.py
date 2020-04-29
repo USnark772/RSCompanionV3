@@ -24,7 +24,7 @@ https://redscientific.com/index.html
 """
 
 from abc import ABCMeta, ABC, abstractmethod
-from PySide2.QtWidgets import QMdiSubWindow
+from PySide2.QtWidgets import QMdiSubWindow, QWidget, QMdiArea
 
 
 class AbstractMeta(ABCMeta, type(QMdiSubWindow)):
@@ -32,22 +32,16 @@ class AbstractMeta(ABCMeta, type(QMdiSubWindow)):
 
 
 class SubWindow(QMdiSubWindow):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, parent: QMdiArea, contents: QWidget = None):
+        QMdiSubWindow.__init__(self, parent)
+        self.setWidget(contents)
 
 
-# TODO: Figure out how to use multiple inheritance with ABC and QMdiSubWindow.
-#  Having issue with QMdiSubWindow or any QWidget apparently. 0xC0000409
 class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
-    def __init__(self, parent, name):
-        ABC.__init__(parent)
-        SubWindow.__init__(parent)
+    def __init__(self, parent: QMdiArea, name: str = "", contents: QWidget = None):
+        ABC.__init__(self)
+        SubWindow.__init__(self, parent, contents)
         self._name = name
 
     def get_name(self):
         return self._name
-
-
-if __name__ == '__main__':
-    test = AbstractView(None, "HI")
-    print(test.get_name())
