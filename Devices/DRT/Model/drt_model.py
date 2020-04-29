@@ -114,7 +114,7 @@ class DRTModel:
 
     def lower_changed(self) -> bool:
         """
-        :return: Whether or not there is an unsaved user change to this vaue.
+        :return: Whether or not there is an unsaved user change to this value.
         """
         return self._changed[3]
 

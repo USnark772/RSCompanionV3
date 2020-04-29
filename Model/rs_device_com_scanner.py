@@ -87,6 +87,7 @@ class RSDeviceCommScanner:
                     if self._verify_port(port, self._device_ids[device_type]):
                         ret_val, connection = await asyncio.create_task(self._try_open_port(port))
                         if ret_val:
+                            #TODO - Remove the Q!
                             self.q.put((device_type, connection))
                             self.std_cb.set()
                         else:

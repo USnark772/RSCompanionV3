@@ -34,7 +34,7 @@ from Devices.DRT.Model.drt_model import DRTModel
 from Devices.DRT.Model import drt_strings_english as drt_strings
 
 
-class DRTController(AbstractController):
+class Controller(AbstractController):
     def __init__(self, conn: AioSerial, view_parent, ch: StreamHandler):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
