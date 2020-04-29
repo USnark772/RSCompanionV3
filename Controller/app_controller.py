@@ -99,8 +99,9 @@ class AppController:
         self._start()
         self._logger.debug("Initialized")
 
-    # TODO: Change this so it awaits a device view item and the model awaits the new devices. Also change this so that it reads until queue is empty.
-    async def handle_new_devices(self) -> None:
+    # TODO: Change this so it awaits a device view item and the model awaits the new devices.
+    #  Also change this so that it reads until queue is empty.
+    async def handle_new_device_view(self) -> None:
         """
         Check for and handle any new Devices from the com scanner.
         :return: None.
@@ -109,9 +110,9 @@ class AppController:
         dev_type: str
         dev_port: AioSerial
         while True:
-            await self._new_dev_flag.wait()
-            self._model.add_new_device()
-            self._new_dev_flag.clear()
+            await self._new_dev_view_flag.wait()
+            # TODO handle new device view
+            self._new_dev_view_flag.clear()
 
     async def handle_device_conn_error(self) -> None:
         """
@@ -264,7 +265,7 @@ class AppController:
         Start all recurring functions.
         :return: None.
         """
-        self._tasks.append(create_task(self.handle_new_devices()))
+        self._tasks.append(create_task(self.handle_new_device_view()))
         self._tasks.append(create_task(self.handle_device_conn_error()))
         self._model.start()
 
