@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2019 - 2020
 Project: Companion App
 Company: Red Scientific
@@ -24,6 +25,8 @@ https://redscientific.com/index.html
 """
 
 from cv2 import VideoWriter_fourcc, CAP_DSHOW
+from enum import Enum, auto
+
 
 """ General definitions for the app """
 
@@ -70,6 +73,12 @@ button_pressed_style = "QPushButton:pressed { background-color: qlineargradient(
 # "background-color: rgb(230, 230, 230); " \
 button_normal_style = "QPushButton { border: 1px solid #8f8f91; background-color: qlineargradient(x1: 0, y1: 0, " \
                       "x2: 0, y2: 1, stop: 0 #f6f7fa, stop: 1 #dadbde); min-height: 22px; font: " + _font_size + "; }"
+
+
+class LangEnum(Enum):
+    ENG = auto()
+    FRE = auto()
+
 
 #################################################################################################################
 # Controller

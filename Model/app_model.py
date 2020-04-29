@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2020
 Project: Companion App
 Company: Red Scientific
@@ -34,7 +35,7 @@ from PySide2.QtWidgets import QMdiArea
 from Model.rs_device_com_scanner import RSDeviceCommScanner
 
 
-# TODO: Figure out close_flag
+# TODO: Figure out close_flag. How to remove views?
 class AppModel:
     def __init__(self, new_dev_view_flag: Event, dev_conn_err_flag: Event, close_flag: Event, view_parent: QMdiArea,
                  ch: StreamHandler):
@@ -46,12 +47,13 @@ class AppModel:
         self._new_dev_q = Queue()
         self._profiles = self.get_profiles()
         self._controllers = self.get_controllers()
+        self._new_dev_view_flag = new_dev_view_flag
         self._new_dev_flag = Event()
         self._dev_scanner = RSDeviceCommScanner(self._profiles, self._new_dev_flag, dev_conn_err_flag, self._new_dev_q)
         self._devs = dict()
         self._dev_inits = dict()
+        self._new_dev_views = []
         self._tasks = []
-        self._tasks.append(create_task(self.add_new_device()))
         self._logger.debug("Initialized")
 
     async def add_new_device(self) -> None:
@@ -70,14 +72,19 @@ class AppModel:
                 self._new_dev_flag.clear()
                 self._logger.debug("done")
 
+    def get_next_view(self):
+        if self.has_unhandled_views():
+            return self._new_dev_views.pop(0)
+
+    def has_unhandled_views(self):
+        return len(self._new_dev_views) > 0
+
     def _make_device(self, dev_type: str, conn: AioSerial):
         self._logger.debug("running")
         if dev_type not in self._controllers.keys():
             self._logger.warning("Could not recognize device type")
             return
-
         ret = self._make_controller(conn, dev_type)
-
         if not ret:
             self._logger.warning("Failed making controller for type: " + dev_type)
             return
@@ -87,7 +94,10 @@ class AppModel:
         self._logger.debug("running")
         ret = True
         try:
-            self._devs[conn.port] = self._controllers[dev_type](conn, self._view_parent, self._ch)
+            controller = self._controllers[dev_type](conn, self._view_parent, self._ch)
+            self._devs[conn.port] = controller
+            self._new_dev_views.append(controller.get_view())
+            self._new_dev_view_flag.set()
         except Exception as e:
             self._logger.exception("Problem making controller")
             ret = False
@@ -96,6 +106,7 @@ class AppModel:
 
     def start(self):
         self._logger.debug("running")
+        self._tasks.append(create_task(self.add_new_device()))
         self._dev_scanner.start()
         self._logger.debug("done")
 

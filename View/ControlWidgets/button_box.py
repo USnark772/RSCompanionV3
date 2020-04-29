@@ -30,7 +30,7 @@ from PySide2.QtGui import QIcon, QPixmap
 from PySide2.QtCore import QSize, Qt
 from Model.app_helpers import ClickAnimationButton
 from Model.app_defs import button_box_start_image_filepath, button_box_pause_image_filepath
-from Model.strings_english import button_box_create, button_box_create_tooltip, button_box_text_entry_placeholder, \
+from Model.app_strings import button_box_create, button_box_create_tooltip, button_box_text_entry_placeholder, \
     button_box_title, button_box_prog_bar_label, button_box_start_tooltip, button_box_resume_tooltip, \
     button_box_end_tooltip, button_box_end, button_box_pause_tooltip
 

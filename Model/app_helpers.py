@@ -27,7 +27,7 @@ from logging import getLogger
 from tempfile import gettempdir
 from PySide2.QtWidgets import QPushButton, QFrame
 from Model.app_defs import button_normal_style, button_pressed_style
-from Model.strings_english import program_output_hdr
+from Model.app_strings import program_output_hdr
 
 
 def setup_log_file(file_name: str) -> str:

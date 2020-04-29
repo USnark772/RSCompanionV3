@@ -30,7 +30,7 @@ from PySide2.QtGui import QFont, QIcon, QCloseEvent
 from View.HelpWidgets.help_window import HelpWindow
 from View.MainWindow.central_widget import CentralWidget
 from Model.app_defs import image_file_path
-from Model.strings_english import app_name, closing_app_text, close_confirmation_text
+from Model.app_strings import app_name, closing_app_text, close_confirmation_text
 
 
 class AppMainWindow(QMainWindow):

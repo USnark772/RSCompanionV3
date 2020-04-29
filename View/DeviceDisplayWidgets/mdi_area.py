@@ -45,6 +45,7 @@ class MDIArea(QMdiArea):
         """
         self._logger.debug("running")
         self.addSubWindow(window)
+        window.show()
         self._logger.debug("done")
 
     def remove_window(self, window: QMdiSubWindow) -> None:

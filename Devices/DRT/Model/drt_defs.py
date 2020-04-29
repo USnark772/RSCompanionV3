@@ -23,7 +23,6 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from Devices.DRT.Model import drt_strings_english as drt_strings
 
 profile = {"DRT": {"vid": 9114, "pid": 32798}}
 

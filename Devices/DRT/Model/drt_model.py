@@ -242,24 +242,23 @@ class DRTModel:
         self._logger.debug("done with: " + str(ret))
         return ret
 
-    def check_stim_int_entry(self, entry: str) -> bool:
+    def check_stim_int_entry(self, entry: int) -> bool:
         """
         Check user input for validity.
         :param entry: The user input.
         :return: validity.
         """
         ret = False
-        self._logger.debug("running with entry: " + entry)
-        if entry.isdigit():
-            val = int(entry)
-            if defs.intensity_max >= val >= defs.intensity_min:
-                self._logger.debug("done with true")
-                if val == self._current_vals[1]:
-                    changed = False
-                else:
-                    changed = True
-                self._changed[1] = changed
-                ret = True
+        val = int(entry)
+        self._logger.debug("running with entry: " + str(entry))
+        if defs.intensity_max >= val >= defs.intensity_min:
+            if val == self._current_vals[1]:
+                changed = False
+            else:
+                changed = True
+            self._changed[1] = changed
+            self._logger.debug("done with true")
+            ret = True
         self._errs[1] = ret
         self._logger.debug("done with: " + str(ret))
         return ret

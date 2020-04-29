@@ -25,15 +25,13 @@ https://redscientific.com/index.html
 """
 
 import logging
-from importlib import import_module
 from asyncio import Event, create_task, gather
-from queue import Queue
 from aioserial import AioSerial
 from PySide2.QtCore import QSettings, QSize
 from Model.app_model import AppModel
 from Model.app_defs import current_version, log_format
 from Model.app_helpers import setup_log_file
-from Model.strings_english import log_out_filename, company_name, app_name, log_version_id, device_connection_error
+from Model.app_strings import log_out_filename, company_name, app_name, log_version_id, device_connection_error
 from View.HelpWidgets.output_window import OutputWindow
 from View.MainWindow.main_window import AppMainWindow
 from View.ControlWidgets.menu_bar import AppMenuBar
@@ -86,12 +84,13 @@ class AppController:
         self.mdi_area = MDIArea(self.main_window, self.ch)
 
         # Flags
-        self._new_dev_flag = Event()
+        self._new_dev_view_flag = Event()
         self._dev_conn_err_flag = Event()
         self._close_flag = Event()
 
         # Model
-        self._model = AppModel(self._new_dev_flag, self._dev_conn_err_flag, self._close_flag, self.mdi_area, self.ch)
+        self._model = AppModel(self._new_dev_view_flag, self._dev_conn_err_flag, self._close_flag, self.mdi_area,
+                               self.ch)
 
         self._tasks = []
         self._setup_handlers()
@@ -99,8 +98,6 @@ class AppController:
         self._start()
         self._logger.debug("Initialized")
 
-    # TODO: Change this so it awaits a device view item and the model awaits the new devices.
-    #  Also change this so that it reads until queue is empty.
     async def handle_new_device_view(self) -> None:
         """
         Check for and handle any new Devices from the com scanner.
@@ -111,8 +108,9 @@ class AppController:
         dev_port: AioSerial
         while True:
             await self._new_dev_view_flag.wait()
-            # TODO handle new device view
-            self._new_dev_view_flag.clear()
+            self.mdi_area.add_window(self._model.get_next_view())
+            if not self._model.has_unhandled_views():
+                self._new_dev_view_flag.clear()
 
     async def handle_device_conn_error(self) -> None:
         """

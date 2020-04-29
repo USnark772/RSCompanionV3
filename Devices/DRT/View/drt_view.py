@@ -28,7 +28,8 @@ from logging import getLogger
 from PySide2.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QSlider, QGridLayout, QLineEdit
 from PySide2.QtCore import Qt, QSize
 from Model.app_helpers import ClickAnimationButton, EasyFrame
-from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style
+from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style, LangEnum
+from Devices.DRT.Model.drt_strings import strings, StringsEnum
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
@@ -125,6 +126,8 @@ class DRTView(AbstractView):
 
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
+        self._strings = None
+        self.set_language(LangEnum.ENG)
         self._logger.debug("Initialized")
 
     def set_stim_dur_entry_changed_handler(self, func: classmethod) -> None:
@@ -183,6 +186,11 @@ class DRTView(AbstractView):
         """
         self.upload_settings_button.clicked.connect(func)
 
+    def set_config_val(self, val: str):
+        self._logger.debug("running")
+        self.config_val.setText(val)
+        self._logger.debug("done")
+
     def get_stim_dur(self):
         """
 
@@ -190,7 +198,7 @@ class DRTView(AbstractView):
         """
         return self.stim_dur_line_edit.text()
 
-    def set_stim_dur(self, val) -> None:
+    def set_stim_dur(self, val: str) -> None:
         """
         Set display value of stim duration
         :param val:
@@ -220,7 +228,7 @@ class DRTView(AbstractView):
         """
         return self.stim_intens_slider.value()
 
-    def set_stim_intens(self, val) -> None:
+    def set_stim_intens(self, val: int) -> None:
         """
         Set display value of stim intensity
         :param val:
@@ -228,14 +236,17 @@ class DRTView(AbstractView):
         """
         self._logger.debug("running")
         self.stim_intens_slider.setValue(int(val))
-        self.set_stim_intens_val_label(val)
+        self.update_stim_intens_val_tooltip()
         self._logger.debug("done")
 
-    def set_stim_intens_err(self) -> None:
+    def update_stim_intens_val_tooltip(self) -> None:
         """
-
-        :return:
+        Update slider tooltip.
+        :return: None.
         """
+        self._logger.debug("running")
+        self.stim_intens_slider.setToolTip(str(self.stim_intens_slider.value()) + "%")
+        self._logger.debug("done")
 
     def get_upper_isi(self):
         """
@@ -244,7 +255,7 @@ class DRTView(AbstractView):
         """
         return self.upper_isi_line_edit.text()
 
-    def set_upper_isi(self, val) -> None:
+    def set_upper_isi(self, val: str) -> None:
         """
         Set display value of upper isi
         :param val:
@@ -274,7 +285,7 @@ class DRTView(AbstractView):
         """
         return self.lower_isi_line_edit.text()
 
-    def set_lower_isi(self, val) -> None:
+    def set_lower_isi(self, val: str) -> None:
         """
         Set display value of lower isi
         :param val:
@@ -304,4 +315,33 @@ class DRTView(AbstractView):
         """
         self._logger.debug("running")
         self.upload_settings_button.setEnabled(is_active)
+        self._logger.debug("done")
+
+    def set_language(self, lang_enum_val) -> None:
+        self._strings = strings[lang_enum_val]
+        self._set_texts()
+        self._set_tooltips()
+
+    def _set_texts(self):
+        self._logger.debug("running")
+        self.config_label.setText(self._strings[StringsEnum.CONFIG_LABEL])
+        self.config_val.setText(self._strings[StringsEnum.ISO_LABEL])
+        self.iso_button.setText(self._strings[StringsEnum.ISO_BUTTON_LABEL])
+        self.stim_dur_label.setText(self._strings[StringsEnum.DURATION_LABEL])
+        self.stim_intens_label.setText(self._strings[StringsEnum.INTENSITY_LABEL])
+        self.upper_isi_label.setText(self._strings[StringsEnum.UPPER_ISI_LABEL])
+        self.lower_isi_label.setText(self._strings[StringsEnum.LOWER_ISI_LABEL])
+        self.upload_settings_button.setText(self._strings[StringsEnum.UPLOAD_BUTTON_LABEL])
+        self._logger.debug("done")
+
+    def _set_tooltips(self):
+        self._logger.debug("running")
+        self.config_label.setToolTip(self._strings[StringsEnum.CONFIG_LABEL_TOOLTIP])
+        self.iso_button.setToolTip(self._strings[StringsEnum.ISO_BUTTON_TOOLTIP])
+        self.upper_isi_label.setToolTip(self._strings[StringsEnum.UPPER_ISI_TOOLTIP])
+        self.lower_isi_label.setToolTip(self._strings[StringsEnum.LOWER_ISI_TOOLTIP])
+        self.stim_dur_label.setToolTip(self._strings[StringsEnum.DURATION_TOOLTIP])
+        self.stim_intens_label.setToolTip(self._strings[StringsEnum.INTENSITY_TOOLTIP])
+        self.upload_settings_button.setToolTip(self._strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
+        self.stim_intens_slider.setToolTip(str(self.stim_intens_slider.value()) + "%")
         self._logger.debug("done")
