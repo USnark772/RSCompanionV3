@@ -34,17 +34,19 @@ from queue import Queue
 
 # TODO: Figure out if can use something other than Queue for passing device info around.
 class RSDeviceCommScanner:
-    def __init__(self, device_ids: dict, std_cb: Event, err_cb: Event, q: Queue):
+    def __init__(self, device_ids: dict, new_cb: Event, remove_cb: Event, err_cb: Event, new_q: Queue, remove_q: Queue):
         """
         Initialize scanner and run in thread.
         :param device_ids: The list of Devices to look for.
-        :param std_cb: The callback for when a device is plugged in or unplugged.
+        :param new_cb: The callback for when a device is plugged in or unplugged.
         :param err_cb: The callback for when an error is encountered while trying to connect to a new device.
         """
         self._device_ids = device_ids
-        self.std_cb = std_cb
+        self.new_cb = new_cb
+        self.remove_cb = remove_cb
         self.err_cb = err_cb
-        self.q = q
+        self.new_q = new_q
+        self.remove_q = remove_q
         self._known_ports = []
         self._running = True
         self._loop = asyncio.get_running_loop()
@@ -87,11 +89,8 @@ class RSDeviceCommScanner:
                     if self._verify_port(port, self._device_ids[device_type]):
                         ret_val, connection = await asyncio.create_task(self._try_open_port(port))
                         if ret_val:
-                            # TODO - Remove the Q! Cannot, if user plugs in multiple devices then this q will have
-                            #  multiple devices before this function call finishes. If not queue then only last device
-                            #  is actually serviced.
-                            self.q.put((device_type, connection))
-                            self.std_cb.set()
+                            self.new_q.put((device_type, connection))
+                            self.new_cb.set()
                         else:
                             self.err_cb.set()
                         break
@@ -107,6 +106,11 @@ class RSDeviceCommScanner:
         for known_port in self._known_ports:
             if known_port not in ports:
                 self._known_ports.remove(known_port)
+                for device_type in self._device_ids:
+                    if self._verify_port(known_port, self._device_ids[device_type]):
+                        self.remove_q.put(known_port)
+                        self.remove_cb.set()
+                        break
 
     @staticmethod
     def _verify_port(port: ListPortInfo, profile: dict) -> bool:

@@ -28,7 +28,7 @@ from logging import getLogger
 from PySide2.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QSlider, QGridLayout, QLineEdit
 from PySide2.QtCore import Qt, QSize
 from Model.app_helpers import ClickAnimationButton, EasyFrame
-from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style
+from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style, LangEnum
 from Devices.DRT.Model.drt_strings import strings, StringsEnum
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
@@ -322,8 +322,13 @@ class DRTView(AbstractView):
         self.upload_settings_button.setEnabled(is_active)
         self._logger.debug("done")
 
-    def set_language(self, lang_enum_val) -> None:
-        self.strings = strings[lang_enum_val]
+    def set_language(self, lang: LangEnum) -> None:
+        """
+        Set this view's language and reload the text and tooltips.
+        :param lang: The lang enum to use.
+        :return: None.
+        """
+        self.strings = strings[lang]
         self._set_texts()
         self._set_tooltips()
 

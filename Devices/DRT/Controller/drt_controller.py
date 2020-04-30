@@ -27,13 +27,14 @@ from logging import getLogger, StreamHandler
 from datetime import datetime
 from asyncio import create_task
 from aioserial import AioSerial
+from Model.app_defs import LangEnum
 from Devices.AbstractDevice.Controller.abstract_controller import AbstractController
 from Devices.DRT.View.drt_view import DRTView, StringsEnum
 from Devices.DRT.Model.drt_model import DRTModel
 
 
 class Controller(AbstractController):
-    def __init__(self, conn: AioSerial, view_parent, lang: int, ch: StreamHandler):
+    def __init__(self, conn: AioSerial, view_parent, lang: LangEnum, ch: StreamHandler):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
@@ -45,8 +46,7 @@ class Controller(AbstractController):
         self._setup_handlers()
         self._init_values()
         self._msg_handler_task = create_task(self.msg_handler())
-        self._lang = lang
-        self.view.set_language(self._lang)
+        self.view.set_language(lang)
         self._logger.debug("Initialized")
 
     def cleanup(self) -> None:
@@ -60,6 +60,20 @@ class Controller(AbstractController):
         self._msg_handler_task.cancel()
         self._model.cleanup()
         self._logger.debug("done")
+
+    def set_lang(self, lang: LangEnum) -> None:
+        """
+        Set this device's view language.
+        :param lang: The enum for the language.
+        :return: None.
+        """
+        self.view.set_language(lang)
+
+    def get_conn(self) -> AioSerial:
+        """
+        :return: The AioSerial connection passed in at creation.
+        """
+        return self._model.get_conn()
 
     async def msg_handler(self) -> None:
         """

@@ -56,7 +56,9 @@ class MDIArea(QMdiArea):
         :return: None.
         """
         self._logger.debug("running")
+        print(__name__, "Trying to remove:", window)
         self.removeSubWindow(window)
+        print(__name__, "Removed:", window)
         self._logger.debug("done")
 
     # TODO: Implement these

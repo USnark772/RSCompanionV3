@@ -24,6 +24,8 @@ https://redscientific.com/index.html
 """
 
 from abc import ABC, abstractmethod
+from Model.app_defs import LangEnum
+from aioserial import AioSerial
 
 
 class AbstractController(ABC):
@@ -39,7 +41,19 @@ class AbstractController(ABC):
         """
         pass
 
-    def set_lang(self, lang) -> None:
+    def get_conn(self) -> AioSerial:
+        """
+        Return this device's com port if it exists.
+        :return: This device's com port.
+        """
+        pass
+
+    def set_lang(self, lang: LangEnum) -> None:
+        """
+        Set this device's view language.
+        :param lang: The enum for the language.
+        :return: None.
+        """
         pass
 
     def get_view(self):

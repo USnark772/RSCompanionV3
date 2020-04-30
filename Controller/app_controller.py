@@ -86,11 +86,11 @@ class AppController:
         # Flags
         self._new_dev_view_flag = Event()
         self._dev_conn_err_flag = Event()
-        self._close_flag = Event()
+        self._remove_dev_view_flag = Event()
 
         # Model
-        self._model = AppModel(self._new_dev_view_flag, self._dev_conn_err_flag, self._close_flag, self.mdi_area,
-                               self.ch)
+        self._model = AppModel(self._new_dev_view_flag, self._dev_conn_err_flag, self._remove_dev_view_flag,
+                               self.mdi_area, self.ch)
 
         self._tasks = []
         self._setup_handlers()
@@ -100,7 +100,7 @@ class AppController:
 
     async def handle_new_device_view(self) -> None:
         """
-        Check for and handle any new Devices from the com scanner.
+        Check for and handle any new device view objects from model.
         :return: None.
         """
         self._logger.debug("running")
@@ -108,9 +108,20 @@ class AppController:
         dev_port: AioSerial
         while True:
             await self._new_dev_view_flag.wait()
-            self.mdi_area.add_window(self._model.get_next_view())
-            if not self._model.has_unhandled_views():
+            self.mdi_area.add_window(self._model.get_next_new_view())
+            if not self._model.has_unhandled_new_views():
                 self._new_dev_view_flag.clear()
+
+    async def remove_device_view(self) -> None:
+        """
+        Check for and handle any device views to remove from model.
+        :return: None.
+        """
+        while True:
+            await self._remove_dev_view_flag.wait()
+            self.mdi_area.remove_window(self._model.get_next_view_to_remove())
+            if not self._model.has_unhandled_views_to_remove():
+                self._remove_dev_view_flag.clear()
 
     async def handle_device_conn_error(self) -> None:
         """
@@ -121,6 +132,17 @@ class AppController:
             await self._dev_conn_err_flag.wait()
             self.main_window.show_help_window("Error", device_connection_error)
             self._dev_conn_err_flag.clear()
+
+    def set_language_handler(self) -> None:
+        """
+        Sets the app language to the user selection.
+        :return: None.
+        """
+        # TODO: Get language setting and pass it in to model.set_lang()
+        # self._model.set_lang()
+        self._logger.debug("running")
+        print("Implement handling for this button.")
+        self._logger.debug("done")
 
     def create_end_exp_handler(self) -> None:
         """
@@ -265,6 +287,7 @@ class AppController:
         """
         self._tasks.append(create_task(self.handle_new_device_view()))
         self._tasks.append(create_task(self.handle_device_conn_error()))
+        self._tasks.append(create_task(self.remove_device_view()))
         self._model.start()
 
     def _cleanup(self) -> None:

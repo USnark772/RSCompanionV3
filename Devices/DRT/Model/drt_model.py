@@ -44,6 +44,12 @@ class DRTModel:
         self._changed = [False, False, False, False]
         self._logger.debug("Initialized")
 
+    def get_conn(self) -> AioSerial:
+        """
+        :return: The AioSerial connection passed in at creation.
+        """
+        return self._conn
+
     def set_current_vals(self, duration: int = None, intensity: int = None, upper_isi: int = None,
                          lower_isi: int = None) -> None:
         """
@@ -250,12 +256,10 @@ class DRTModel:
         self._logger.debug("running with entry: " + str(entry))
         val = self.calc_percent_to_val(int(entry))
         if defs.intensity_max >= val >= defs.intensity_min:
-            print(__name__, val, self._current_vals[1])
             if val == self._current_vals[1]:
                 changed = False
             else:
                 changed = True
-            print(__name__, changed)
             self._changed[1] = changed
             self._logger.debug("done with true")
             ret = True
