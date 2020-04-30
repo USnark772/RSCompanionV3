@@ -49,7 +49,6 @@ class DRTView(AbstractView):
         self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
 
         self.config_horizontal_layout = QHBoxLayout()
-        # TODO: fix EasyFrame QLayout issue
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         # Set configuration value display area

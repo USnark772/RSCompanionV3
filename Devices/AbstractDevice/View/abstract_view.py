@@ -42,7 +42,6 @@ class SubWindow(QMdiSubWindow):
         QMdiSubWindow.__init__(self, parent)
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, False)
         self.setWindowFlag(Qt.WindowCloseButtonHint, False)  # TODO: Figure out how to do this at construction
-        self._done_init = False
         self.setLayout(QHBoxLayout())
         self.main_frame = EasyFrame()
         self.main_frame.setMouseTracking(True)

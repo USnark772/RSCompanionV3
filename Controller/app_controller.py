@@ -27,6 +27,7 @@ https://redscientific.com/index.html
 import logging
 from asyncio import Event, create_task, gather
 from aioserial import AioSerial
+from PySide2.QtGui import QKeyEvent
 from PySide2.QtCore import QSettings, QSize
 from Model.app_model import AppModel
 from Model.app_defs import current_version, log_format, LangEnum
@@ -150,6 +151,7 @@ class AppController:
         :return: None.
         """
         self._logger.debug("running")
+
         print("Implement handling for this button.")
         self._logger.debug("done")
 
@@ -238,16 +240,32 @@ class AppController:
     def stop_exp(self):
         pass
 
+    def _keypress_handler(self, event: QKeyEvent) -> None:
+        """
+        Handle any keypress event and accept only alphabetical keypresses, then set flag_box to that key.
+        :param event: The event to analyze and use.
+        :return: None.
+        """
+        self._logger.debug("running")
+        if type(event) == QKeyEvent:
+            if 0x41 <= event.key() <= 0x5a:
+                self.flag_box.set_flag(chr(event.key()))
+            event.accept()
+        else:
+            event.ignore()
+        self._logger.debug("done")
+
     def _setup_handlers(self) -> None:
         """
         Attach events to handlers
         :return: None.
         """
         self._logger.debug("running")
-        # Control bar
+        # Experiment controls
         self.button_box.add_create_button_handler(self.create_end_exp_handler)
         self.button_box.add_start_button_handler(self.start_stop_exp_handler)
         self.note_box.add_post_handler(self.post_handler)
+        self.main_window.keyPressEvent = self._keypress_handler
 
         # File menu
         self.menu_bar.add_open_last_save_dir_handler(self.last_save_dir_handler)
