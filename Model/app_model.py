@@ -168,6 +168,38 @@ class AppModel:
             self._logger.exception("Failed ending exp on a controller.")
             return False
 
+    def signal_start_exp(self) -> bool:
+        """
+        Starts an experiment.
+        :return bool: Return false if an experiment failed to start, otherwise return true.
+        """
+        self._logger.debug("running")
+        devices = list()
+        try:
+            for controller in self._devs.values():
+                controller.start_exp()
+                devices.append(controller)
+                return True
+        except Exception as e:
+            self._logger.exception("Failed trying to start exp on controller.")
+            for controller in devices:
+                controller.end_exp()
+                return False
+
+    def signal_stop_exp(self) -> bool:
+        """
+        Stops an experiment.
+        :return bool: Return false if an experiment failed to stop, otherwise return true.
+        """
+        self._logger.debug("running")
+        try:
+            for controller in self._devs.values():
+                controller.stop_exp()
+            return True
+        except Exception as e:
+            self._logger.exception("Failed trying to stop exp on controller")
+            return False
+
     def _make_device(self, dev_type: str, conn: AioSerial) -> None:
         """
         Make new controller for dev_type.
@@ -252,10 +284,3 @@ class AppModel:
                     spec.loader.exec_module(mod)
                     controllers.update({device: mod.Controller})
         return controllers
-
-    @staticmethod
-    async def _end_tasks():
-        tasks = [t for t in all_tasks() if t is not current_task()]
-        [task.cancel() for task in tasks]
-        await gather(*tasks)
-        get_event_loop().stop()

@@ -103,6 +103,8 @@ class AppController:
         self._initialize_view()
         self._start()
         self._logger.debug("Initialized")
+        self._exp_running = False
+        self._curr_cond_name = ""
 
     async def handle_new_device_view(self) -> None:
         """
@@ -177,7 +179,12 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        print("Implement handling for this button.")
+        if self._exp_running:
+            self._logger.debug("stopping experiment")
+            self._stop_exp()
+        else:
+            self._logger.debug("starting experiment")
+            self._start_exp()
         self._logger.debug("done")
 
     def post_handler(self) -> None:
@@ -283,11 +290,33 @@ class AppController:
         #     self.button_box.setEnabled(False)
         self._logger.debug("done")
 
-    def start_exp(self):
-        pass
+    def _start_exp(self) -> None:
+        """
+        Start an experiment.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._exp_running = self._model.signal_start_exp()
+        if not self._exp_running:
+            return
+        self.info_box.set_block_num(str(int(self.info_box.get_block_num()) + 1))
+        self._curr_cond_name = self.button_box.get_condition_name()
+        # TODO implement _add_break_in_graph_lines()?
+        self.button_box.toggle_start_button()
+        self.button_box.toggle_condition_name_box()
+        self._logger.debug("done")
 
-    def stop_exp(self):
-        pass
+    def _stop_exp(self) -> None:
+        """
+        Stop an experiment.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._exp_running = False
+        self._model.signal_stop_exp()
+        self.button_box.toggle_start_button()
+        self.button_box.toggle_condition_name_box()
+        self._logger.debug("done")
 
     def _update_drive_info_box(self, filename: str = '') -> None:
         """
