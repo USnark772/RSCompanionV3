@@ -39,7 +39,6 @@ class DRTView(AbstractView):
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
         super().__init__(parent, name)
-        self.setLayout(QHBoxLayout())
 
         # Data output display
         self.dev_data_layout = QVBoxLayout()

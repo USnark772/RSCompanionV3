@@ -27,9 +27,10 @@ https://redscientific.com/index.html
 # TODO reset cursor when leaving edge.
 
 from abc import ABCMeta, ABC, abstractmethod
-from PySide2.QtWidgets import QMdiSubWindow, QWidget, QMdiArea
-from PySide2.QtCore import QEvent
-from PySide2.QtGui import QCloseEvent, QMouseEvent, QCursor
+from Model.app_helpers import EasyFrame
+from PySide2.QtWidgets import QMdiSubWindow, QMdiArea, QHBoxLayout, QGridLayout, QLayout
+from PySide2.QtCore import Qt
+from PySide2.QtGui import QCloseEvent
 
 
 class AbstractMeta(ABCMeta, type(QMdiSubWindow)):
@@ -37,30 +38,32 @@ class AbstractMeta(ABCMeta, type(QMdiSubWindow)):
 
 
 class SubWindow(QMdiSubWindow):
-    def __init__(self, parent: QMdiArea, contents: QWidget = None):
+    def __init__(self, parent: QMdiArea):
         QMdiSubWindow.__init__(self, parent)
-        self.setWidget(contents)
+        self.setWindowFlag(Qt.WindowMaximizeButtonHint, False)
+        self.setWindowFlag(Qt.WindowCloseButtonHint, False)  # TODO: Figure out how to do this at construction
+        self._done_init = False
+        self.setLayout(QHBoxLayout())
+        self.main_frame = EasyFrame()
+        self.main_frame.setMouseTracking(True)
+        super().layout().addWidget(self.main_frame)
+        self.main_frame.setLayout(QGridLayout())
 
-    def mouseMoveEvent(self, mouseEvent: QMouseEvent):
-        super(SubWindow, self).mouseMoveEvent(mouseEvent)
-        mouse_pos = mouseEvent.pos()
-        print(__name__, mouse_pos)
-        print(__name__, self.size())
-        if 0 < mouse_pos.x() < self.size().width() and 0 < mouse_pos.y() < self.size().height():
-            QMdiSubWindow.unsetCursor(self)
+    def layout(self) -> QLayout:
+        return self.main_frame.layout()
 
-    # def enterEvent(self, event: QEvent) -> None:
-    #     print(__name__, "reached")
-    #     QMdiSubWindow.unsetCursor(self)
 
 class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
-    def __init__(self, parent: QMdiArea, name: str = "", contents: QWidget = None):
+    def __init__(self, parent: QMdiArea, name: str = ""):
         ABC.__init__(self)
-        SubWindow.__init__(self, parent, contents)
+        SubWindow.__init__(self, parent)
         self._name = name
         self.setWindowTitle(self._name)
 
-    def get_name(self):
+    def get_name(self) -> str:
+        """
+        :return: This object's device name.
+        """
         return self._name
 
     def closeEvent(self, event: QCloseEvent) -> None:
