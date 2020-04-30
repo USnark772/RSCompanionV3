@@ -90,7 +90,6 @@ class AppModel:
             dev_conn = self._remove_dev_q.get()
             for key in self._devs:
                 if self._devs[key].get_conn().port == dev_conn.device:
-                    print(__name__, "Have view, passing to controller. key is:", key)
                     self._remove_dev_views.append(self._devs[key].get_view())
                     self._devs[key].cleanup()
                     to_remove = key
@@ -107,7 +106,6 @@ class AppModel:
         :return: None.
         """
         for controller in self._devs.values():
-            print(__name__, "Passing lang:", lang, " to controller: ", controller)
             controller.set_lang(lang)
 
     def get_next_new_view(self) -> AbstractView:
