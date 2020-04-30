@@ -17,15 +17,19 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2020
 Project: Companion App
 Company: Red Scientific
 https://redscientific.com/index.html
 """
 
+# TODO reset cursor when leaving edge.
+
 from abc import ABCMeta, ABC, abstractmethod
 from PySide2.QtWidgets import QMdiSubWindow, QWidget, QMdiArea
-from PySide2.QtGui import QCloseEvent
+from PySide2.QtCore import QEvent
+from PySide2.QtGui import QCloseEvent, QMouseEvent, QCursor
 
 
 class AbstractMeta(ABCMeta, type(QMdiSubWindow)):
@@ -37,6 +41,17 @@ class SubWindow(QMdiSubWindow):
         QMdiSubWindow.__init__(self, parent)
         self.setWidget(contents)
 
+    def mouseMoveEvent(self, mouseEvent: QMouseEvent):
+        super(SubWindow, self).mouseMoveEvent(mouseEvent)
+        mouse_pos = mouseEvent.pos()
+        print(__name__, mouse_pos)
+        print(__name__, self.size())
+        if 0 < mouse_pos.x() < self.size().width() and 0 < mouse_pos.y() < self.size().height():
+            QMdiSubWindow.unsetCursor(self)
+
+    # def enterEvent(self, event: QEvent) -> None:
+    #     print(__name__, "reached")
+    #     QMdiSubWindow.unsetCursor(self)
 
 class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
     def __init__(self, parent: QMdiArea, name: str = "", contents: QWidget = None):
