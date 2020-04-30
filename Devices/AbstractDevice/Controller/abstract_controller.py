@@ -64,6 +64,7 @@ class AbstractController(ABC):
         Logic for if this device needs to know about when an experiment is created.
         :return: None.
         """
+        print(__name__, "Got create signal, creating.")
         pass
 
     def end_exp(self) -> None:
@@ -71,6 +72,7 @@ class AbstractController(ABC):
         Logic for if this device needs to know about when an experiment is ended.
         :return: None.
         """
+        print(__name__, "Got end signal, ending.")
         pass
 
     def start_exp(self) -> None:
@@ -78,6 +80,7 @@ class AbstractController(ABC):
         Logic for if this device needs to know about when an experiment is running.
         :return: None.
         """
+        print(__name__, "Got start signal, starting.")
         pass
 
     def stop_exp(self) -> None:
@@ -85,4 +88,5 @@ class AbstractController(ABC):
         Logic for if this device needs to know about when an experiment is stopped.
         :return: None.
         """
+        print(__name__, "Got stop signal, stopping.")
         pass

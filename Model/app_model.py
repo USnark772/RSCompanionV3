@@ -109,26 +109,72 @@ class AppModel:
             controller.set_lang(lang)
 
     def get_next_new_view(self) -> AbstractView:
+        """
+        :return AbstractView: The next unhandled new view
+        """
         if self.has_unhandled_new_views():
             return self._new_dev_views.pop(0)
 
     def has_unhandled_new_views(self) -> bool:
         """
-        :return: Whether or not there are new views to add.
+        :return bool: Whether or not there are new views to add.
         """
         return len(self._new_dev_views) > 0
 
     def get_next_view_to_remove(self) -> AbstractView:
+        """
+        :return AbstractView: The next unhandled view to remove.
+        """
         if self.has_unhandled_views_to_remove():
             return self._remove_dev_views.pop(0)
 
     def has_unhandled_views_to_remove(self) -> bool:
         """
-        :return: Whether or not there are unhandled views to remove.
+        :return bool: Whether or not there are unhandled views to remove.
         """
         return len(self._remove_dev_views) > 0
 
-    def _make_device(self, dev_type: str, conn: AioSerial):
+    def signal_create_exp(self) -> bool:
+        """
+        Call create_exp on all device controllers.
+        :return bool: If there was an error.
+        """
+        self._logger.debug("running")
+        devices_running = list()
+        try:
+            for controller in self._devs.values():
+                controller.create_exp()
+                devices_running.append(controller)
+            self._logger.debug("done")
+            return True
+        except Exception as e:
+            self._logger.exception("Failed creating exp on a controller.")
+            for controller in devices_running:
+                controller.end_exp()
+            return False
+
+    def signal_end_exp(self) -> bool:
+        """
+        Call end exp on all device controllers.
+        :return bool: If there was an error.
+        """
+        self._logger.debug("running")
+        try:
+            for controller in self._devs.values():
+                controller.end_exp()
+            self._logger.debug("done")
+            return True
+        except Exception as e:
+            self._logger.exception("Failed ending exp on a controller.")
+            return False
+
+    def _make_device(self, dev_type: str, conn: AioSerial) -> None:
+        """
+        Make new controller for dev_type.
+        :param dev_type: The type of device.
+        :param conn: The device connection.
+        :return None:
+        """
         self._logger.debug("running")
         if dev_type not in self._controllers.keys():
             self._logger.warning("Could not recognize device type")
@@ -140,6 +186,12 @@ class AppModel:
         self._logger.debug("done")
 
     def _make_controller(self, conn: AioSerial, dev_type) -> bool:
+        """
+        Create controller of type dev_type
+        :param conn:
+        :param dev_type:
+        :return:
+        """
         self._logger.debug("running")
         ret = True
         try:
