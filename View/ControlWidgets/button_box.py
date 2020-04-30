@@ -26,7 +26,7 @@ https://redscientific.com/index.html
 
 import logging
 from PySide2.QtWidgets import QGroupBox, QVBoxLayout, QHBoxLayout, QLineEdit, QProgressBar, QLabel
-from PySide2.QtGui import QIcon, QPixmap
+from PySide2.QtGui import QIcon
 from PySide2.QtCore import QSize, Qt
 from Model.app_helpers import ClickAnimationButton
 from Model.app_defs import button_box_start_image_filepath, button_box_pause_image_filepath
@@ -56,10 +56,8 @@ class ButtonBox(QGroupBox):
         self.layout().addLayout(self._button_layout)
         self.layout().addWidget(self._text_entry)
 
-        self._play_icon = QIcon()
-        self._play_icon.addPixmap(QPixmap(button_box_start_image_filepath))
-        self._pause_icon = QIcon()
-        self._pause_icon.addPixmap(QPixmap(button_box_pause_image_filepath))
+        self._play_icon = QIcon(button_box_start_image_filepath)
+        self._pause_icon = QIcon(button_box_pause_image_filepath)
         self._playing = False
 
         self.prog_bar_label = QLabel()

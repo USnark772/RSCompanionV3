@@ -276,7 +276,7 @@ class AppController:
         """
         self._logger.debug("running")
         self.__exp_created = False
-        self.menu_bar.set_cam_action_enabled(True)
+        # self.menu_bar.set_cam_action_enabled(True)
         self.button_box.toggle_create_button()
         # use_cams = eval(self.settings.value('Camera manager/active'))   # TODO: Implement cams
         # if use_cams:
