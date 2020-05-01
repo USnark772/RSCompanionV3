@@ -34,7 +34,7 @@ from queue import Queue
 
 # TODO: Figure out if can use something other than Queue for passing device info around.
 class RSDeviceCommScanner:
-    def __init__(self, device_ids: dict, new_cb: Event, remove_cb: Event, err_cb: Event, new_q: Queue, remove_q: Queue):
+    def __init__(self, device_ids: dict, new_q: Queue, remove_q: Queue):
         """
         Initialize scanner and run in thread.
         :param device_ids: The list of Devices to look for.
@@ -42,23 +42,20 @@ class RSDeviceCommScanner:
         :param err_cb: The callback for when an error is encountered while trying to connect to a new device.
         """
         self._device_ids = device_ids
-        self.new_cb = new_cb
-        self.remove_cb = remove_cb
-        self.err_cb = err_cb
         self.new_q = new_q
         self.remove_q = remove_q
         self._known_ports = []
         self._running = True
         self._loop = asyncio.get_running_loop()
 
-    def start(self) -> None:
+    def com_start(self) -> None:
         """
         Begin working.
         :return: None.
         """
         asyncio.create_task(self._scan_ports())
 
-    def cleanup(self) -> None:
+    def com_cleanup(self) -> None:
         """
         Cleanup this class and prep for app closure.
         :return: None.
@@ -70,7 +67,7 @@ class RSDeviceCommScanner:
         Check number of ports being used. If different than last checked, check for plug or unplug events.
         :return: None.
         """
-        while True:
+        while self._running:
             ports = await self._loop.run_in_executor(None, comports)
             if len(ports) > len(self._known_ports):
                 asyncio.create_task(self._check_for_new_devices(ports))
@@ -90,9 +87,9 @@ class RSDeviceCommScanner:
                         ret_val, connection = await asyncio.create_task(self._try_open_port(port))
                         if ret_val:
                             self.new_q.put((device_type, connection))
-                            self.new_cb.set()
+                            self.com_event_connect()
                         else:
-                            self.err_cb.set()
+                            self.com_event_error()
                         break
                 self._known_ports.append(port)
 
@@ -109,8 +106,26 @@ class RSDeviceCommScanner:
                 for device_type in self._device_ids:
                     if self._verify_port(known_port, self._device_ids[device_type]):
                         self.remove_q.put(known_port)
-                        self.remove_cb.set()
+                        self.com_event_remove()
                         break
+
+    def com_event_connect(self):
+        """
+        Called when a device is attached.
+        """
+        pass
+
+    def com_event_remove(self):
+        """
+        Called when a device is removed.
+        """
+        pass
+
+    def com_event_error(self):
+        """
+        Called an error is received.
+        """
+        pass
 
     @staticmethod
     def _verify_port(port: ListPortInfo, profile: dict) -> bool:
@@ -122,7 +137,7 @@ class RSDeviceCommScanner:
         """
         return port.vid == profile['vid'] and port.pid == profile['pid']
 
-    # TODO: Figure out why this sometimes throws error even when device is connected successfully.
+    # TODO: Figure out why this sometimes throws error even when device is connected successfully. I can't get an error here no matter how hard I try. It opens every time for me on the first try.
     @staticmethod
     async def _try_open_port(port) -> (bool, AioSerial):
         """
@@ -130,8 +145,11 @@ class RSDeviceCommScanner:
         :param port: The port to connect to
         :return: (success value, connection)
         """
+
         new_connection = AioSerial()
         new_connection.port = port.device
+        new_connection.open()
+
         i = 0
         while not new_connection.is_open and i < 5:  # Make multiple attempts in case device is busy
             i += 1
@@ -139,6 +157,7 @@ class RSDeviceCommScanner:
                 new_connection.open()
             except SerialException as e:
                 await asyncio.sleep(1)
+
         if not new_connection.is_open:  # Failed to connect
             return False, None
         return True, new_connection

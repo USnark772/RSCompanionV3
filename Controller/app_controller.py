@@ -88,12 +88,11 @@ class AppController:
 
         # Flags
         self._new_dev_view_flag = Event()
-        self._dev_conn_err_flag = Event()
+        # self._dev_conn_err_flag = Event()
         self._remove_dev_view_flag = Event()
 
         # Model
-        self._model = AppModel(self._new_dev_view_flag, self._dev_conn_err_flag, self._remove_dev_view_flag,
-                               self.mdi_area, self.ch)
+        self._model = AppModel(self._new_dev_view_flag, self._remove_dev_view_flag, self.mdi_area, self.ch)
 
         self._exp_created = False
         self._save_file_name = str()
@@ -131,6 +130,8 @@ class AppController:
             if not self._model.has_unhandled_views_to_remove():
                 self._remove_dev_view_flag.clear()
 
+    #TODO - Migrate this to app_model?? or migrate com connection to app_controller??
+    '''
     async def handle_device_conn_error(self) -> None:
         """
         Alert user to device connection error.
@@ -140,6 +141,7 @@ class AppController:
             await self._dev_conn_err_flag.wait()
             self.main_window.show_help_window("Error", device_connection_error)
             self._dev_conn_err_flag.clear()
+    '''
 
     def set_language_handler(self) -> None:
         """
@@ -435,7 +437,7 @@ class AppController:
         :return None:
         """
         self._tasks.append(create_task(self.handle_new_device_view()))
-        self._tasks.append(create_task(self.handle_device_conn_error()))
+        # self._tasks.append(create_task(self.handle_device_conn_error()))
         self._tasks.append(create_task(self.remove_device_view()))
         self._model.start()
 

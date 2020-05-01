@@ -38,24 +38,28 @@ from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
 # TODO: Figure out close_flag. How to remove views?
-class AppModel:
-    def __init__(self, new_dev_view_flag: Event, dev_conn_err_flag: Event, remove_dev_view_flag: Event,
+class AppModel(RSDeviceCommScanner):
+    def __init__(self, new_dev_view_flag: Event, remove_dev_view_flag: Event,
                  view_parent: QMdiArea, ch: StreamHandler):
+
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
         self._ch = ch
         self._view_parent = view_parent
-        self._remove_dev_flag = Event()
-        self._new_dev_flag = Event()
+        # self._remove_dev_flag = Event()
+        # self._new_dev_flag = Event()
         self._new_dev_q = Queue()
         self._remove_dev_q = Queue()
         self._profiles = self.get_profiles()
         self._controllers = self.get_controllers()
         self._new_dev_view_flag = new_dev_view_flag
         self._remove_dev_view_flag = remove_dev_view_flag
+        super().__init__(self._profiles, self._new_dev_q, self._remove_dev_q)
+        '''
         self._dev_scanner = RSDeviceCommScanner(self._profiles, self._new_dev_flag, self._remove_dev_flag,
                                                 dev_conn_err_flag, self._new_dev_q, self._remove_dev_q)
+        '''
         self._devs = dict()
         self._dev_inits = dict()
         self._new_dev_views = []
@@ -63,29 +67,26 @@ class AppModel:
         self._tasks = []
         self._logger.debug("Initialized")
 
-    async def add_new_device(self) -> None:
+    def com_event_error(self):
+        print("A COM ERROR HAS OCCURRED!")
+
+    def com_event_connect(self):
         """
         Get new device info from new device queue and make new device.
         :return: None.
         """
-        self._logger.debug("running")
-        dev_type: str
-        dev_port: AioSerial
-        while True:
-            await self._new_dev_flag.wait()
+        while not self._new_dev_q.empty():
             dev_type, connection = self._new_dev_q.get()
             self._make_device(dev_type, connection)
-            if self._new_dev_q.empty():
-                self._new_dev_flag.clear()
-                self._logger.debug("done")
 
-    async def remove_device(self) -> None:
+        self._logger.debug("done")
+
+    def com_event_remove(self):
         """
         Remove lost devices.
         :return: None.
         """
-        while True:
-            await self._remove_dev_flag.wait()
+        while not self._remove_dev_q.empty():
             to_remove = None
             dev_conn = self._remove_dev_q.get()
             for key in self._devs:
@@ -96,8 +97,6 @@ class AppModel:
                     self._remove_dev_view_flag.set()
             if to_remove:
                 del self._devs[to_remove]
-            if self._remove_dev_q.empty():
-                self._remove_dev_flag.clear()
 
     def set_lang(self, lang: LangEnum) -> None:
         """
@@ -239,14 +238,12 @@ class AppModel:
 
     def start(self):
         self._logger.debug("running")
-        self._tasks.append(create_task(self.add_new_device()))
-        self._tasks.append(create_task(self.remove_device()))
-        self._dev_scanner.start()
+        self.com_start()
         self._logger.debug("done")
 
     def cleanup(self):
         self._logger.debug("running")
-        self._dev_scanner.cleanup()
+        self.com_cleanup()
         for dev in self._devs.values():
             dev.cleanup()
         create_task(self.end_tasks())
