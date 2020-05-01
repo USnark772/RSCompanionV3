@@ -42,24 +42,17 @@ class AppModel(RSDeviceCommScanner):
     def __init__(self, new_dev_view_flag: Event, remove_dev_view_flag: Event,
                  view_parent: QMdiArea, ch: StreamHandler):
 
+        self._profiles = self.get_profiles()
+        self._controllers = self.get_controllers()
+        super().__init__(self._profiles)
+
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
         self._ch = ch
         self._view_parent = view_parent
-        # self._remove_dev_flag = Event()
-        # self._new_dev_flag = Event()
-        self._new_dev_q = Queue()
-        self._remove_dev_q = Queue()
-        self._profiles = self.get_profiles()
-        self._controllers = self.get_controllers()
         self._new_dev_view_flag = new_dev_view_flag
         self._remove_dev_view_flag = remove_dev_view_flag
-        super().__init__(self._profiles, self._new_dev_q, self._remove_dev_q)
-        '''
-        self._dev_scanner = RSDeviceCommScanner(self._profiles, self._new_dev_flag, self._remove_dev_flag,
-                                                dev_conn_err_flag, self._new_dev_q, self._remove_dev_q)
-        '''
         self._devs = dict()
         self._dev_inits = dict()
         self._new_dev_views = []
@@ -68,6 +61,10 @@ class AppModel(RSDeviceCommScanner):
         self._logger.debug("Initialized")
 
     def com_event_error(self):
+        """
+        Handles com errors.
+        :return: None.
+        """
         print("A COM ERROR HAS OCCURRED!")
 
     def com_event_connect(self):
@@ -75,8 +72,8 @@ class AppModel(RSDeviceCommScanner):
         Get new device info from new device queue and make new device.
         :return: None.
         """
-        while not self._new_dev_q.empty():
-            dev_type, connection = self._new_dev_q.get()
+        while not self.com_new_q.empty():
+            dev_type, connection = self.com_new_q.get()
             self._make_device(dev_type, connection)
 
         self._logger.debug("done")
@@ -86,9 +83,9 @@ class AppModel(RSDeviceCommScanner):
         Remove lost devices.
         :return: None.
         """
-        while not self._remove_dev_q.empty():
+        while not self.com_remove_q.empty():
             to_remove = None
-            dev_conn = self._remove_dev_q.get()
+            dev_conn = self.com_remove_q.get()
             for key in self._devs:
                 if self._devs[key].get_conn().port == dev_conn.device:
                     self._remove_dev_views.append(self._devs[key].get_view())

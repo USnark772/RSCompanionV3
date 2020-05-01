@@ -34,7 +34,7 @@ from queue import Queue
 
 # TODO: Figure out if can use something other than Queue for passing device info around.
 class RSDeviceCommScanner:
-    def __init__(self, device_ids: dict, new_q: Queue, remove_q: Queue):
+    def __init__(self, device_ids: dict):
         """
         Initialize scanner and run in thread.
         :param device_ids: The list of Devices to look for.
@@ -42,8 +42,8 @@ class RSDeviceCommScanner:
         :param err_cb: The callback for when an error is encountered while trying to connect to a new device.
         """
         self._device_ids = device_ids
-        self.new_q = new_q
-        self.remove_q = remove_q
+        self.com_new_q = Queue()
+        self.com_remove_q = Queue()
         self._known_ports = []
         self._running = True
         self._loop = asyncio.get_running_loop()
@@ -86,7 +86,7 @@ class RSDeviceCommScanner:
                     if self._verify_port(port, self._device_ids[device_type]):
                         ret_val, connection = await asyncio.create_task(self._try_open_port(port))
                         if ret_val:
-                            self.new_q.put((device_type, connection))
+                            self.com_new_q.put((device_type, connection))
                             self.com_event_connect()
                         else:
                             self.com_event_error()
@@ -105,7 +105,7 @@ class RSDeviceCommScanner:
                 self._known_ports.remove(known_port)
                 for device_type in self._device_ids:
                     if self._verify_port(known_port, self._device_ids[device_type]):
-                        self.remove_q.put(known_port)
+                        self.com_remove_q.put(known_port)
                         self.com_event_remove()
                         break
 
