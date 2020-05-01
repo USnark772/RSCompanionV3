@@ -28,8 +28,7 @@ import os
 import glob
 import importlib.util
 from logging import StreamHandler, getLogger
-from asyncio import get_event_loop, all_tasks, current_task, gather, Event, create_task
-from queue import Queue
+from asyncio import gather, Event, create_task
 from aioserial import AioSerial
 from PySide2.QtWidgets import QMdiArea
 from Model.rs_device_com_scanner import RSDeviceCommScanner
@@ -39,8 +38,7 @@ from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 # TODO: Figure out close_flag. How to remove views?
 class AppModel(RSDeviceCommScanner):
-    def __init__(self, new_dev_view_flag: Event, remove_dev_view_flag: Event,
-                 view_parent: QMdiArea, ch: StreamHandler):
+    def __init__(self, view_parent: QMdiArea, ch: StreamHandler):
 
         self._profiles = self.get_profiles()
         self._controllers = self.get_controllers()
@@ -51,8 +49,8 @@ class AppModel(RSDeviceCommScanner):
         self._logger.debug("Initializing")
         self._ch = ch
         self._view_parent = view_parent
-        self._new_dev_view_flag = new_dev_view_flag
-        self._remove_dev_view_flag = remove_dev_view_flag
+        self._new_dev_view_flag = Event()
+        self._remove_dev_view_flag = Event()
         self._devs = dict()
         self._dev_inits = dict()
         self._new_dev_views = []

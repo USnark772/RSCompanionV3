@@ -25,7 +25,7 @@ https://redscientific.com/index.html
 """
 
 import logging
-from asyncio import Event, create_task, gather
+from asyncio import create_task, gather
 from aioserial import AioSerial
 from PySide2.QtWidgets import QFileDialog
 from PySide2.QtGui import QKeyEvent
@@ -86,13 +86,8 @@ class AppController:
         self.mdi_area = MDIArea(self.main_window, self.ch)
         self._file_dialog = QFileDialog(self.main_window)
 
-        # Flags
-        self._new_dev_view_flag = Event()
-        # self._dev_conn_err_flag = Event()
-        self._remove_dev_view_flag = Event()
-
         # Model
-        self._model = AppModel(self._new_dev_view_flag, self._remove_dev_view_flag, self.mdi_area, self.ch)
+        self._model = AppModel(self.mdi_area, self.ch)
 
         self._exp_created = False
         self._save_file_name = str()
@@ -114,10 +109,10 @@ class AppController:
         dev_type: str
         dev_port: AioSerial
         while True:
-            await self._new_dev_view_flag.wait()
+            await self._model._new_dev_view_flag.wait()
             self.mdi_area.add_window(self._model.get_next_new_view())
             if not self._model.has_unhandled_new_views():
-                self._new_dev_view_flag.clear()
+                self._model._new_dev_view_flag.clear()
 
     async def remove_device_view(self) -> None:
         """
@@ -125,10 +120,10 @@ class AppController:
         :return None:
         """
         while True:
-            await self._remove_dev_view_flag.wait()
+            await self._model._remove_dev_view_flag.wait()
             self.mdi_area.remove_window(self._model.get_next_view_to_remove())
             if not self._model.has_unhandled_views_to_remove():
-                self._remove_dev_view_flag.clear()
+                self._model._remove_dev_view_flag.clear()
 
     #TODO - Migrate this to app_model?? or migrate com connection to app_controller??
     '''
