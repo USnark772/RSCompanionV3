@@ -96,26 +96,26 @@ class RSDeviceCommScanner:
         self._logger.debug("done with false")
         return False, None
 
-    async def await_connect(self) -> futures:
+    def await_connect(self) -> futures:
         """
         Signal when there is a connect event.
         :return futures: If the flag is set.
         """
-        return await await_event(self._connect_event)
+        return await_event(self._connect_event)
 
-    async def await_disconnect(self) -> futures:
+    def await_disconnect(self) -> futures:
         """
         Signal when there is a disconnect event.
         :return futures: If the flag is set.
         """
-        return await await_event(self._disconnect_event)
+        return await_event(self._disconnect_event)
 
-    async def await_err(self) -> futures:
+    def await_err(self) -> futures:
         """
         Signal when there is an error with device connection.
         :return futures: If the flag is set.
         """
-        return await await_event(self._connect_err_event)
+        return await_event(self._connect_err_event)
 
     async def _scan_ports(self) -> None:
         """
@@ -138,17 +138,27 @@ class RSDeviceCommScanner:
         """
         self._logger.debug("running")
         for port in ports:
+            print(__name__, "Looking at next port")
             if port not in self._known_ports:
+                print(__name__, "Port is new, continuing looking at it.")
                 self._known_ports.append(port)
                 for device_type in self._device_ids:
+                    print(__name__, "Comparing port to profile:", port, self._device_ids[device_type])
                     if self._verify_port(port, self._device_ids[device_type]):
+                        print(__name__, "Valid port, trying to create connection")
                         ret_val, connection = await create_task(self._try_open_port(port))
+                        print(__name__, "Result of connection is:", ret_val)
                         if ret_val:
+                            print(__name__, "Putting new stuff in self._new_coms")
                             self._new_coms.append((device_type, connection))
+                            print(__name__, "Setting self._connect_event")
                             self._connect_event.set()
                         else:
+                            print(__name__, "Setting self._connect_err_event")
                             self._connect_err_event.set()
                         break
+                print(__name__, "End of loop\n")
+        print(__name__, "Done with function")
         self._logger.debug("done")
 
     async def _check_for_disconnects(self, ports: [ListPortInfo]) -> None:
@@ -188,15 +198,26 @@ class RSDeviceCommScanner:
         :param port: The port to connect to
         :return: (success value, connection)
         """
+        print(__name__, "Starting _try_open_port")
         new_connection = AioSerial()
+        print(__name__, "new_connection.port == port.device")
         new_connection.port = port.device
+        print(__name__, "new_connection.open()")
+        # TODO: Figure out why it sometimes hangs here. Seems to happen when a device is replugged.
+        new_connection.open()
+        print(__name__, "Done with new_connection.open()")
         i = 0
         while not new_connection.is_open and i < 5:  # Make multiple attempts in case device is busy
+            print(__name__, "i:", i)
             i += 1
             try:
+                print(__name__, "Worked, should be done with loop.")
                 new_connection.open()
             except SerialException as e:
+                print(__name__, "Didn't work, sleeping")
                 await sleep(1)
         if not new_connection.is_open:  # Failed to connect
+            print(__name__, "Nope, returning False")
             return False, None
+        print(__name__, "Yep, returning True")
         return True, new_connection
