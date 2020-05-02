@@ -24,19 +24,20 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-import logging
+from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QMainWindow, QHBoxLayout, QMessageBox, QMdiArea
 from PySide2.QtGui import QFont, QIcon, QCloseEvent
+from PySide2.QtCore import QSize
 from View.HelpWidgets.help_window import HelpWindow
 from View.MainWindow.central_widget import CentralWidget
 from Model.app_defs import image_file_path
-from Model.app_strings import app_name, closing_app_text, close_confirmation_text
+from Resources.Strings.main_window_strings import strings, StringsEnum, LangEnum
 
 
 class AppMainWindow(QMainWindow):
     """ The main window the app will be displayed in. """
-    def __init__(self, min_size, ch):
-        self._logger = logging.getLogger(__name__)
+    def __init__(self, min_size: QSize, ch: StreamHandler, lang: LangEnum):
+        self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
         super().__init__()
@@ -55,9 +56,20 @@ class AppMainWindow(QMainWindow):
         self._checker = QMessageBox()
         self._close_callback = None
         self._help_window = None
-        self._set_texts()
+
+        self._strings = dict()
+        self.set_lang(lang)
         self._setup_checker_buttons()
         self._logger.debug("Initialized")
+
+    def set_lang(self, lang: LangEnum) -> None:
+        """
+        Set the language of this view item.
+        :param lang: The language enum to use.
+        :return None:
+        """
+        self._strings = strings[lang]
+        self._set_texts()
 
     def closeEvent(self, event: QCloseEvent) -> None:
         """
@@ -144,9 +156,9 @@ class AppMainWindow(QMainWindow):
         :return: None.
         """
         self._logger.debug("running")
-        self.setWindowTitle(app_name)
-        self._checker.setWindowTitle(closing_app_text)
-        self._checker.setText(close_confirmation_text)
+        self.setWindowTitle(self._strings[StringsEnum.TITLE])
+        self._checker.setWindowTitle(self._strings[StringsEnum.CLOSE_TITLE])
+        self._checker.setText(self._strings[StringsEnum.CLOSE_APP_CONFIRM])
         self._logger.debug("done")
 
     def _setup_checker_buttons(self) -> None:

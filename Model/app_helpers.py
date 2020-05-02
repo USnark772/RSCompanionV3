@@ -31,22 +31,21 @@ from tempfile import gettempdir
 from datetime import datetime
 from PySide2.QtWidgets import QPushButton, QFrame
 from Model.app_defs import button_normal_style, button_pressed_style
-from Resources.Strings.app_strings import program_output_hdr
 
 logger = getLogger(__name__)
 
 
-def setup_log_file(file_name: str) -> str:
+def setup_log_file(file_name: str, output_hdr: str) -> str:
     """
     Create program output file to save log.
+    :param output_hdr: The header line.
     :param file_name: Name of the save log
     :return str: full directory to the save log, including the save log name
     """
-
-    fname = gettempdir() + "\\" + file_name
-    with open(fname, "w") as temp:
-        temp.write(program_output_hdr)
-    return fname
+    ret = gettempdir() + "\\" + file_name
+    with open(ret, "w") as temp:
+        temp.write(output_hdr)
+    return ret
 
 
 def get_remaining_disk_size(path: str = ''):

@@ -25,15 +25,16 @@ https://redscientific.com/index.html
 """
 
 
-import logging
+from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QLabel, QGridLayout, QGroupBox
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, QSize
+from Resources.Strings.info_box_strings import strings, StringsEnum, LangEnum
 
 
 class InfoBox(QGroupBox):
     """ This code is for displaying information about the current experiment. """
-    def __init__(self, parent, size, ch):
-        self.logger = logging.getLogger(__name__)
+    def __init__(self, parent, size: QSize, ch: StreamHandler, lang: LangEnum):
+        self.logger = getLogger(__name__)
         self.logger.addHandler(ch)
         self.logger.debug("Initializing")
         super().__init__(parent)
@@ -56,8 +57,18 @@ class InfoBox(QGroupBox):
         self.__block_num_val.setAlignment(Qt.AlignRight)
         self.layout().addWidget(self.__block_num_val, 2, 1, 1, 1)
 
-        self.__set_texts()
+        self._strings = dict()
+        self.set_lang(lang)
         self.logger.debug("Initialized")
+
+    def set_lang(self, lang: LangEnum) -> None:
+        """
+        Set the language of this view item.
+        :param lang: The language enum to use.
+        :return None:
+        """
+        self._strings = strings[lang]
+        self._set_texts()
 
     def set_start_time(self, time):
         self.logger.debug("running")
@@ -77,11 +88,11 @@ class InfoBox(QGroupBox):
     def get_block_num(self):
         return self.__block_num_val.text()
 
-    def __set_texts(self):
+    def _set_texts(self):
         self.logger.debug("running")
-        self.setTitle("Information")
-        self.__start_time_label.setText("Experiment start time:")
-        self.__block_num_label.setText("Block number:")
+        self.setTitle(self._strings[StringsEnum.TITLE])
+        self.__start_time_label.setText(self._strings[StringsEnum.START_TIME])
+        self.__block_num_label.setText(self._strings[StringsEnum.BLOCK_NO])
         self.__block_num_val.setText("0")
         self.reset_start_time()
         self.logger.debug("done")

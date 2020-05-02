@@ -27,11 +27,12 @@ https://redscientific.com/index.html
 import logging
 from PySide2.QtWidgets import QGroupBox, QGridLayout, QTextEdit
 from Model.app_helpers import ClickAnimationButton
+from Resources.Strings.note_box_strings import strings, StringsEnum, LangEnum
 
 
 class NoteBox(QGroupBox):
     """ This code is for the user to input notes as desired. """
-    def __init__(self, parent, size, ch):
+    def __init__(self, parent, size, ch, lang: LangEnum):
         self.logger = logging.getLogger(__name__)
         self.logger.addHandler(ch)
         self.logger.debug("Initializing")
@@ -43,10 +44,20 @@ class NoteBox(QGroupBox):
         self._post_button = ClickAnimationButton()
         self.layout().addWidget(self._post_button, 1, 1, 1, 1)
 
-        self._set_texts()
+        self._strings = dict()
+        self.set_lang(lang)
         self._set_button_state()
-        self._set_tooltips()
         self.logger.debug("Initialized")
+
+    def set_lang(self, lang: LangEnum) -> None:
+        """
+        Set the language of this view item.
+        :param lang: The language enum to use.
+        :return None:
+        """
+        self._strings = strings[lang]
+        self._set_texts()
+        self._set_tooltips()
 
     def get_note(self):
         return self._text_edit.toPlainText()
@@ -56,7 +67,7 @@ class NoteBox(QGroupBox):
         self._text_edit.clear()
         self.logger.debug("done")
 
-    def toggle_post_button(self, is_active):
+    def set_post_button_enabled(self, is_active):
         self.logger.debug("running")
         self._post_button.setEnabled(is_active)
         self.logger.debug("done")
@@ -73,9 +84,9 @@ class NoteBox(QGroupBox):
 
     def _set_texts(self):
         self.logger.debug("running")
-        self.setTitle("Note")
-        self._post_button.setText("Post")
-        self._text_edit.setPlaceholderText("Enter note here")
+        self.setTitle(self._strings[StringsEnum.TITLE])
+        self._post_button.setText(self._strings[StringsEnum.POST])
+        self._text_edit.setPlaceholderText(self._strings[StringsEnum.SHADOW])
         self.logger.debug("done")
 
     def _set_button_state(self):
@@ -85,5 +96,5 @@ class NoteBox(QGroupBox):
 
     def _set_tooltips(self):
         self.logger.debug("running")
-        self._post_button.setToolTip("Post note")
+        self._post_button.setToolTip(self._strings[StringsEnum.POST_TT])
         self.logger.debug("done")

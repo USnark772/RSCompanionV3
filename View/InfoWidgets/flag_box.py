@@ -24,16 +24,17 @@ https://redscientific.com/index.html
 """
 
 
-import logging
+from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QGroupBox, QVBoxLayout, QLabel
 from PySide2.QtGui import QFont
-from PySide2.QtCore import Qt
+from PySide2.QtCore import Qt, QSize
+from Resources.Strings.flag_box_strings import strings, StringsEnum, LangEnum
 
 
 class FlagBox(QGroupBox):
     """ This code is for showing and storing the keyflag which in this case is the last letter key the user pressed. """
-    def __init__(self, parent, size, ch):
-        self._logger = logging.getLogger(__name__)
+    def __init__(self, parent, size: QSize, ch: StreamHandler, lang: LangEnum):
+        self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
         super().__init__(parent)
@@ -45,9 +46,19 @@ class FlagBox(QGroupBox):
         self._flag.setFont(font)
         self.layout().addWidget(self._flag, 0, Qt.AlignHCenter)
 
+        self._strings = dict()
+        self.set_lang(lang)
+        self._logger.debug("Initialized")
+
+    def set_lang(self, lang: LangEnum) -> None:
+        """
+        Set the language for this view object.
+        :param lang: The enum for the language.
+        :return None:
+        """
+        self._strings = strings[lang]
         self._set_texts()
         self._set_tooltips()
-        self._logger.debug("Initialized")
 
     def set_flag(self, text):
         self._logger.debug("running")
@@ -59,11 +70,11 @@ class FlagBox(QGroupBox):
 
     def _set_texts(self):
         self._logger.debug("running")
-        self.setTitle("Key Flag")
+        self.setTitle(self._strings[StringsEnum.TITLE])
         self._flag.setText("")
         self._logger.debug("done")
 
     def _set_tooltips(self):
         self._logger.debug("running")
-        self._flag.setToolTip("The most recent key pressed for reference in save file")
+        self._flag.setToolTip(self._strings[StringsEnum.FLAG_TT])
         self._logger.debug("done")

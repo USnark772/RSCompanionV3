@@ -25,19 +25,30 @@ https://redscientific.com/index.html
 
 from PySide2.QtWidgets import QWidget, QVBoxLayout, QTextEdit
 from PySide2.QtGui import QTextCursor
+from Resources.Strings.output_window_strings import strings, StringsEnum, LangEnum
 
 
 class OutputWindow(QWidget):
     """ This is to display small messages to the user. """
-    def __init__(self):
+    def __init__(self, lang: LangEnum):
         super().__init__()
         self.resize(400, 200)
         self.move(100, 100)
-        self.setWindowTitle('Program Output')
         self.setLayout(QVBoxLayout())
         self._textBox = QTextEdit()
         self.layout().addWidget(self._textBox)
+        self._strings = dict()
+        self.set_lang(lang)
         self._textBox.setReadOnly(True)
+
+    def set_lang(self, lang: LangEnum) -> None:
+        """
+        Set the language for this view object.
+        :param lang: The enum for the language.
+        :return None:
+        """
+        self._strings = strings[lang]
+        self.setWindowTitle(self._strings[StringsEnum.TITLE])
 
     def write(self, message) -> None:
         """

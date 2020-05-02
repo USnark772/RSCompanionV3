@@ -24,14 +24,15 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from logging import getLogger, Handler
+from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QLabel, QGridLayout, QGroupBox
 from PySide2.QtCore import Qt
+from Resources.Strings.drive_info_strings import strings, StringsEnum, LangEnum
 
 
 class DriveInfoBox(QGroupBox):
     """ This code is for displaying information about storage usage. """
-    def __init__(self, parent, size: (int, int), ch: Handler):
+    def __init__(self, parent, size: (int, int), ch: StreamHandler, lang: LangEnum):
         """
         Initialize this view module.
         :param parent: parent of this view module.
@@ -77,8 +78,18 @@ class DriveInfoBox(QGroupBox):
         self._drive_mb_val.setAlignment(Qt.AlignRight)
         self.layout().addWidget(self._drive_mb_val, 3, 1, 1, 1)
 
-        self._set_texts()
+        self._strings = dict()
+        self.set_lang(lang)
         self._logger.debug("Initialized")
+
+    def set_lang(self, lang: LangEnum) -> None:
+        """
+        Set the language for this view object.
+        :param lang: The enum for the language.
+        :return None:
+        """
+        self._strings = strings[lang]
+        self._set_texts()
 
     def set_name_val(self, value: str) -> None:
         """
@@ -118,12 +129,12 @@ class DriveInfoBox(QGroupBox):
         :return: None
         """
         self._logger.debug("running")
-        self.setTitle("Storage Information")
-        self._drive_name_label.setText('Storage ID:')
-        self._drive_percent_label.setText("Percent free:")
-        self._drive_gb_label.setText("GB free:")
-        self._drive_mb_label.setText("MB free:")
-        self._drive_name_val.setText('None')
+        self.setTitle(self._strings[StringsEnum.TITLE])
+        self._drive_name_label.setText(self._strings[StringsEnum.STORAGE_ID])
+        self._drive_percent_label.setText(self._strings[StringsEnum.PERC_FREE])
+        self._drive_gb_label.setText(self._strings[StringsEnum.GB_FREE])
+        self._drive_mb_label.setText(self._strings[StringsEnum.MB_FREE])
+        self._drive_name_val.setText('-')
         self._drive_percent_val.setText('0%')
         self._drive_gb_val.setText('0')
         self._drive_mb_val.setText('0')

@@ -37,7 +37,7 @@ from enum import Enum, auto
 version_url = "https://raw.githubusercontent.com/redscientific/CompanionApp/master/Version.txt"
 log_format = '%(levelname)s - %(name)s - %(funcName)s: %(message)s'
 # TODO: Switch image_file_path for build
-image_file_path = '../asyncCompanion/View/Images/'
+image_file_path = '../asyncCompanion/Resources/Images/'
 # image_file_path = 'Images/'
 # TODO: Increment version number for build
 current_version = 2.0

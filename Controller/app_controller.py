@@ -34,7 +34,7 @@ from PySide2.QtCore import QSettings, QSize
 from Model.app_model import AppModel
 from Model.app_defs import current_version, log_format, LangEnum
 from Model.app_helpers import setup_log_file, get_remaining_disk_size, format_current_time, end_tasks
-from Model.app_strings import log_out_filename, company_name, app_name, log_version_id, device_connection_error
+from Resources.Strings.app_strings import strings, StringsEnum, company_name, app_name
 from View.HelpWidgets.output_window import OutputWindow
 from View.MainWindow.main_window import AppMainWindow
 from View.ControlWidgets.menu_bar import AppMenuBar
@@ -52,21 +52,29 @@ class AppController:
     def __init__(self):
         # App settings and logging.
         self._settings = QSettings(company_name, app_name)
-        self._settings.beginGroup("logging")
+
+        if not self._settings.contains("language"):
+            self._settings.setValue("language", LangEnum.ENG)
+        self._lang = self._settings.value("language")
+        self._strings = strings[self._lang]
+
         # TODO: Give user control over logging level
+        self._settings.beginGroup("logging")
         if not self._settings.contains("level"):
             self._settings.setValue("level", "DEBUG")
         log_level = eval('logging.' + self._settings.value('level'))
         self._settings.endGroup()
-        logging.basicConfig(filename=setup_log_file(log_out_filename), filemode='w', level=log_level, format=log_format)
+
+        log_file = setup_log_file(self._strings[StringsEnum.LOG_OUT_NAME], self._strings[StringsEnum.PROG_OUT_HDR])
+        logging.basicConfig(filename=log_file, filemode='w', level=log_level, format=log_format)
         self._logger = logging.getLogger(__name__)
-        self.log_output = OutputWindow()
+        self.log_output = OutputWindow(self._lang)
         self.formatter = logging.Formatter(log_format)
         self.ch = logging.StreamHandler(self.log_output)
         self.ch.setLevel(log_level)
         self.ch.setFormatter(self.formatter)
         self._logger.addHandler(self.ch)
-        self._logger.info(log_version_id + str(current_version))
+        self._logger.info(self._strings[StringsEnum.LOG_VER_ID] + str(current_version))
 
         self._logger.debug("Initializing")
 
@@ -77,18 +85,18 @@ class AppController:
         flag_box_size = QSize(80, 120)
         note_box_size = QSize(250, 120)
         drive_info_box_size = QSize(200, 120)
-        self.main_window = AppMainWindow(ui_min_size, self.ch)
-        self.menu_bar = AppMenuBar(self.main_window, self.ch)
-        self.button_box = ButtonBox(self.main_window, button_box_size, self.ch)
-        self.info_box = InfoBox(self.main_window, info_box_size, self.ch)
-        self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, self.ch)
-        self.flag_box = FlagBox(self.main_window, flag_box_size, self.ch)
-        self.note_box = NoteBox(self.main_window, note_box_size, self.ch)
+        self.main_window = AppMainWindow(ui_min_size, self.ch, self._lang)
+        self.menu_bar = AppMenuBar(self.main_window, self.ch, self._lang)
+        self.button_box = ButtonBox(self.main_window, button_box_size, self.ch, self._lang)
+        self.info_box = InfoBox(self.main_window, info_box_size, self.ch, self._lang)
+        self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, self.ch, self._lang)
+        self.flag_box = FlagBox(self.main_window, flag_box_size, self.ch, self._lang)
+        self.note_box = NoteBox(self.main_window, note_box_size, self.ch, self._lang)
         self.mdi_area = MDIArea(self.main_window, self.ch)
         self._file_dialog = QFileDialog(self.main_window)
 
         # Model
-        self._model = AppModel(self.ch)
+        self._model = AppModel(self.ch, self._lang)
 
         self._exp_created = False
         self._save_file_name = str()
@@ -107,7 +115,10 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        self._model.change_lang(self.menu_bar.get_lang())  # TODO: Implement menu_bar.get_lang()
+        lang = self.menu_bar.get_lang()
+        self._settings.setValue("language", lang)
+        self._strings = strings[lang]
+        self._model.change_lang(lang)
         self._logger.debug("done")
 
     def create_end_exp_handler(self) -> None:
@@ -177,7 +188,7 @@ class AppController:
         """
         while True:
             await self._model.await_dev_con_err()
-            self.main_window.show_help_window("Error", device_connection_error)
+            self.main_window.show_help_window("Error", self._strings[StringsEnum.DEV_CON_ERR])
 
     # TODO: Implement
     def post_handler(self) -> None:
@@ -255,15 +266,13 @@ class AppController:
         """
         self._logger.debug("running")
         self._update_drive_info_box()
-        # self.menu_bar.set_cam_action_enabled(False)  # TODO: Implement cams
-        self.button_box.toggle_create_button()
         self._exp_created = self._model.signal_create_exp()
         if self._exp_created:
+            self.button_box.set_create_button_state(1)
             self._check_toggle_post_button()
             self.info_box.set_start_time(format_current_time(datetime.now(), time=True))
         else:
-            self.button_box.toggle_create_button()
-            self._exp_created = False
+            self.button_box.set_create_button_state(0)
         self._logger.debug("done")
 
     def _end_exp(self) -> None:
@@ -273,18 +282,11 @@ class AppController:
         """
         self._logger.debug("running")
         self.__exp_created = False
-        # self.menu_bar.set_cam_action_enabled(True)
-        self.button_box.toggle_create_button()
-        # use_cams = eval(self.settings.value('Camera manager/active'))   # TODO: Implement cams
-        # if use_cams:
-        #     self.__show_video_save_prog_bar()
+        self.button_box.set_create_button_state(0)
         self._model.signal_end_exp()
         self._check_toggle_post_button()
         self.info_box.set_block_num(0)
-        # self._check_device_backlog()  # TODO Add this functionality?
         self._update_drive_info_box()
-        # if eval(self.settings.value("Camera manager/active")):
-        #     self.button_box.setEnabled(False)
         self._logger.debug("done")
 
     def _start_exp(self) -> None:
@@ -300,7 +302,7 @@ class AppController:
         self._curr_cond_name = self.button_box.get_condition_name()
         # TODO implement _add_break_in_graph_lines()?
         self.button_box.toggle_start_button()
-        self.button_box.toggle_condition_name_box()
+        self.button_box.set_condition_name_box_enabled(False)
         self._logger.debug("done")
 
     def _stop_exp(self) -> None:
@@ -312,7 +314,7 @@ class AppController:
         self._exp_running = False
         self._model.signal_stop_exp()
         self.button_box.toggle_start_button()
-        self.button_box.toggle_condition_name_box()
+        self.button_box.set_condition_name_box_enabled(True)
         self._logger.debug("done")
 
     def _update_drive_info_box(self, filename: str = '') -> None:
@@ -337,10 +339,10 @@ class AppController:
         self._logger.debug("running")
         if self._exp_created and len(self.note_box.get_note()) > 0:  # and self.__exp_running:
             self._logger.debug("button = true")
-            self.note_box.toggle_post_button(True)
+            self.note_box.set_post_button_enabled(True)
         else:
             self._logger.debug("button = false")
-            self.note_box.toggle_post_button(False)
+            self.note_box.set_post_button_enabled(False)
         self._logger.debug("done")
 
     def _get_save_file_name(self) -> bool:

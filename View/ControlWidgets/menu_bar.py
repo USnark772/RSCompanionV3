@@ -23,15 +23,16 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-import logging
+from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QMenuBar, QMenu, QAction
 from PySide2.QtCore import QRect
+from Resources.Strings.menu_bar_strings import strings, StringsEnum, LangEnum
 
 
 class AppMenuBar(QMenuBar):
     """ This code is for the menu bar at the top of the main window. File, help, etc. """
-    def __init__(self, parent, ch):
-        self._logger = logging.getLogger(__name__)
+    def __init__(self, parent, ch: StreamHandler, lang: LangEnum):
+        self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
         super().__init__(parent)
@@ -69,14 +70,26 @@ class AppMenuBar(QMenuBar):
 
         self._cam_actions = {}
 
-        # self.add_cam_action('test action', self.temp_handler)
-        # self.remove_cam_action('test action')
-
-        self._set_texts()
+        self._strings = dict()
+        self.set_lang(lang)
         self._logger.debug("Initialized")
 
-    # def temp_handler(self, is_active: bool):
-    #     print('test action is now:', is_active)
+    def set_lang(self, lang: LangEnum) -> None:
+        """
+        Set the language of this view item.
+        :param lang: The language enum to use.
+        :return None:
+        """
+        self._strings = strings[lang]
+        self._set_texts()
+
+    # TODO: Implement this
+    def get_lang(self) -> LangEnum:
+        """
+        Get user's choice of language.
+        :return LangEnum: The user's choice.
+        """
+        return LangEnum.ENG
 
     def set_cam_action_enabled(self, is_active: bool) -> None:
         """
@@ -153,7 +166,6 @@ class AppMenuBar(QMenuBar):
         new_cam_action.toggled.connect(handler)
         self._cam_actions[name] = new_cam_action
         self._cam_list_menu.addAction(new_cam_action)
-        # self._default_cam_option.setVisible(False)
 
     def remove_cam_action(self, name: str) -> None:
         """
@@ -165,20 +177,18 @@ class AppMenuBar(QMenuBar):
         if name in self._cam_actions.keys():
             self._cam_list_menu.removeAction(self._cam_actions[name])
             del self._cam_actions[name]
-        # if len(self._cam_selectors) == 0:
-        #     self._default_cam_option.setVisible(True)
 
     def _set_texts(self):
         self._logger.debug("running")
-        self._file_menu.setTitle("File")
-        self._open_last_save_dir_action.setText("Open last save location")
-        self._cam_list_menu.setTitle("Attached Camera")
-        self._use_cams_action.setText("Use cameras")
-        self._help_menu.setTitle("Help")
-        self._about_app_action.setText("About RS Companion")
-        self._about_company_action.setText("About Red Scientific")
-        self._update_action.setText("Check For Updates")
-        self._log_window_action.setText("Show log window")
+        self._file_menu.setTitle(self._strings[StringsEnum.FILE])
+        self._open_last_save_dir_action.setText(self._strings[StringsEnum.LAST_DIR])
+        self._cam_list_menu.setTitle(self._strings[StringsEnum.ATTACHED_CAMS])
+        self._use_cams_action.setText(self._strings[StringsEnum.USE_CAMS])
+        self._help_menu.setTitle(self._strings[StringsEnum.HELP])
+        self._about_app_action.setText(self._strings[StringsEnum.ABOUT_APP])
+        self._about_company_action.setText(self._strings[StringsEnum.ABOUT_COMPANY])
+        self._update_action.setText(self._strings[StringsEnum.UPDATE_CHECK])
+        self._log_window_action.setText(self._strings[StringsEnum.SHOW_LOG_WINDOW])
         self._logger.debug("done")
 
     def empty_cam_actions(self):

@@ -37,7 +37,7 @@ from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
 class AppModel:
-    def __init__(self, ch: StreamHandler):
+    def __init__(self, ch: StreamHandler, lang: LangEnum):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
@@ -46,7 +46,7 @@ class AppModel:
         self._ch = ch
         self._new_dev_view_flag = Event()
         self._remove_dev_view_flag = Event()
-        self._current_lang = LangEnum.ENG
+        self._current_lang = lang
         self._devs = dict()
         self._dev_inits = dict()
         self._new_dev_views = []
@@ -54,26 +54,26 @@ class AppModel:
         self._tasks = []
         self._logger.debug("Initialized")
 
-    async def await_new_view(self) -> futures:
+    def await_new_view(self) -> futures:
         """
         Signal when there is a new view event.
         :return futures: If the flag is set.
         """
-        return await await_event(self._new_dev_view_flag)
+        return await_event(self._new_dev_view_flag)
 
-    async def await_remove_view(self) -> futures:
+    def await_remove_view(self) -> futures:
         """
         Signal when there is a remove view event.
         :return futures: If the flag is set.
         """
-        return await await_event(self._remove_dev_view_flag)
+        return await_event(self._remove_dev_view_flag)
 
-    async def await_dev_con_err(self) -> futures:
+    def await_dev_con_err(self) -> futures:
         """
         Signal when there is a remove view event.
         :return futures: If the flag is set.
         """
-        return await self._scanner.await_err()
+        return self._scanner.await_err()
 
     def change_lang(self, lang: LangEnum) -> None:
         """
