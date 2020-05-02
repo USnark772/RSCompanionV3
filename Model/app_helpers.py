@@ -31,7 +31,7 @@ from tempfile import gettempdir
 from datetime import datetime
 from PySide2.QtWidgets import QPushButton, QFrame
 from Model.app_defs import button_normal_style, button_pressed_style
-from Model.app_strings import program_output_hdr
+from Resources.Strings.app_strings import program_output_hdr
 
 logger = getLogger(__name__)
 
@@ -97,13 +97,13 @@ def format_current_time(to_format: datetime, day=False, time=False, mil=False, s
         return to_format.strftime("%Y-%m-%d-%H-%M-%S")
 
 
-def await_event(event: Event) -> futures:
+async def await_event(event: Event) -> futures:
     """
     Await and then reset an event.
     :param event: The event to await.
     :return futures:
     """
-    ret = event.wait()
+    ret = await event.wait()
     event.clear()
     return ret
 
