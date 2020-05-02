@@ -38,8 +38,8 @@ class AbstractMeta(ABCMeta, type(QMdiSubWindow)):
 
 
 class SubWindow(QMdiSubWindow):
-    def __init__(self, parent: QMdiArea):
-        QMdiSubWindow.__init__(self, parent)
+    def __init__(self):
+        QMdiSubWindow.__init__(self)
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, False)
         self.setWindowFlag(Qt.WindowCloseButtonHint, False)  # TODO: Figure out how to do this at construction
         self.setLayout(QHBoxLayout())
@@ -53,9 +53,9 @@ class SubWindow(QMdiSubWindow):
 
 
 class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
-    def __init__(self, parent: QMdiArea, name: str = ""):
+    def __init__(self, name: str = ""):
         ABC.__init__(self)
-        SubWindow.__init__(self, parent)
+        SubWindow.__init__(self)
         self._name = name
         self.setWindowTitle(self._name)
 

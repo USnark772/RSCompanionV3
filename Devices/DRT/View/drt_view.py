@@ -34,11 +34,11 @@ from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
 class DRTView(AbstractView):
-    def __init__(self, parent, name, ch):
+    def __init__(self, name, ch):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
-        super().__init__(parent, name)
+        super().__init__(name)
 
         # Data output display
         self.dev_data_layout = QVBoxLayout()

@@ -34,12 +34,12 @@ from Devices.DRT.Model.drt_model import DRTModel
 
 
 class Controller(AbstractController):
-    def __init__(self, conn: AioSerial, view_parent, lang: LangEnum, ch: StreamHandler):
+    def __init__(self, conn: AioSerial, lang: LangEnum, ch: StreamHandler):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
         device_name = "DRT_" + conn.port.strip("COM")
-        super().__init__(DRTView(view_parent, device_name, ch))
+        super().__init__(DRTView(device_name, ch))
         self._model = DRTModel(conn, ch)
         self._exp = False
         self._updating_config = False

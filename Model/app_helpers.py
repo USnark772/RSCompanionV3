@@ -24,6 +24,7 @@ https://redscientific.com/index.html
 """
 
 import os
+from asyncio import futures, Event, gather
 from shutil import disk_usage
 from logging import getLogger
 from tempfile import gettempdir
@@ -49,6 +50,11 @@ def setup_log_file(file_name: str) -> str:
 
 
 def get_remaining_disk_size(path: str = ''):
+    """
+    Get the remaining disk size of the given path.
+    :param path: The path to inspect
+    :return (str, float, float, float): volume name, percentage used, gigs free, megs free.
+    """
     if path == '':
         path = os.path.abspath(os.sep)
     drive_name = os.path.splitdrive(path)[0]
@@ -59,38 +65,61 @@ def get_remaining_disk_size(path: str = ''):
     return drive_name, percentage, gb, mb
 
 
-def get_current_time(day=False, time=False, mil=False, save=False, graph=False, device=False, date_time=None):
+def format_current_time(to_format: datetime, day=False, time=False, mil=False, save=False):
     """
-    Returns a datetime string with day, time, and milliseconds options. Also available, save is formatted for when
-    colons are not acceptable and graph is for the graphing utility which requires a datetime object
+    Returns a datetime string with day, time, and milliseconds options. If save then returned string has dashes
+    instead of periods for use in filenames.
+    :param to_format: The datetime object to stringify.
+    :param day: If day should be included in the returned string.
+    :param time: If time should be included in the returned string.
+    :param mil: If milliseconds should be included in the returned string.
+    :param save: If the format should include . or - between values.
+    :return str: The formatted datetime string.
     """
     logger.debug("running")
-    if not date_time:
-        date_time = datetime.now()
     if day and time and mil:
         logger.debug("day, time, mil. done")
-        return date_time.strftime("%Y-%m-%d %H:%M:%S.%f")
+        return to_format.strftime("%Y-%m-%d %H:%M:%S.%f")
     elif day and time and not mil:
         logger.debug("day, time. done")
-        return date_time.strftime("%Y-%m-%d %H:%M:%S")
+        return to_format.strftime("%Y-%m-%d %H:%M:%S")
     elif day and not time and not mil:
         logger.debug("day. done")
-        return date_time.strftime("%Y-%m-%d")
+        return to_format.strftime("%Y-%m-%d")
     elif not day and time and not mil:
         logger.debug("time, done")
-        return date_time.strftime("%H:%M:%S")
+        return to_format.strftime("%H:%M:%S")
     elif not day and time and mil:
         logger.debug("time, mil. done")
-        return date_time.strftime("%H:%M:%S.%f")
+        return to_format.strftime("%H:%M:%S.%f")
     elif save:
         logger.debug("save. done")
-        return date_time.strftime("%Y-%m-%d-%H-%M-%S")
-    elif graph or device:
-        logger.debug("graph or device. done")
-        return date_time
+        return to_format.strftime("%Y-%m-%d-%H-%M-%S")
+
+
+async def await_event(event: Event) -> futures:
+    """
+    Await and then reset an event.
+    :param event: The event to await.
+    :return futures:
+    """
+    ret = await event.wait()
+    event.clear()
+    return ret
+
+
+async def end_tasks(tasks: list) -> None:
+    """
+    Cleanup all async loops
+    :return None:
+    """
+    for task in tasks:
+        task.cancel()
+        await gather(tasks)
 
 
 class ClickAnimationButton(QPushButton):
+    """ A button that shows better click and release animation. """
     def __init__(self, parent=None):
         self.logger = getLogger(__name__)
         self.logger.debug("Initializing")
@@ -100,10 +129,18 @@ class ClickAnimationButton(QPushButton):
         self.setStyleSheet(button_normal_style)
         self.logger.debug("Initialized")
 
-    def pressed_color(self):
+    def pressed_color(self) -> None:
+        """
+        Set this button style to clicked.
+        :return None:
+        """
         self.setStyleSheet(button_pressed_style)
 
-    def released_state(self):
+    def released_state(self) -> None:
+        """
+        Set this button style to normal.
+        :return None:
+        """
         self.setStyleSheet(button_normal_style)
 
 

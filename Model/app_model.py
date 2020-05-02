@@ -28,29 +28,25 @@ import os
 import glob
 import importlib.util
 from logging import StreamHandler, getLogger
-from asyncio import gather, Event, create_task
+from asyncio import Event, create_task, futures
 from aioserial import AioSerial
-from PySide2.QtWidgets import QMdiArea
 from Model.rs_device_com_scanner import RSDeviceCommScanner
 from Model.app_defs import LangEnum
+from Model.app_helpers import await_event, end_tasks
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
-# TODO: Figure out close_flag. How to remove views?
-class AppModel(RSDeviceCommScanner):
-    def __init__(self, view_parent: QMdiArea, ch: StreamHandler):
-
-        self._profiles = self.get_profiles()
-        self._controllers = self.get_controllers()
-        super().__init__(self._profiles)
-
+class AppModel:
+    def __init__(self, ch: StreamHandler):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
         self._logger.debug("Initializing")
+        self._controllers = self.get_controllers()
+        self._scanner = RSDeviceCommScanner(self.get_profiles(), ch)
         self._ch = ch
-        self._view_parent = view_parent
         self._new_dev_view_flag = Event()
         self._remove_dev_view_flag = Event()
+        self._current_lang = LangEnum.ENG
         self._devs = dict()
         self._dev_inits = dict()
         self._new_dev_views = []
@@ -58,40 +54,35 @@ class AppModel(RSDeviceCommScanner):
         self._tasks = []
         self._logger.debug("Initialized")
 
-    def com_event_error(self):
+    async def await_new_view(self) -> futures:
         """
-        Handles com errors.
-        :return: None.
+        Signal when there is a new view event.
+        :return futures: If the flag is set.
         """
-        print("A COM ERROR HAS OCCURRED!")
+        return await await_event(self._new_dev_view_flag)
 
-    def com_event_connect(self):
+    async def await_remove_view(self) -> futures:
         """
-        Get new device info from new device queue and make new device.
-        :return: None.
+        Signal when there is a remove view event.
+        :return futures: If the flag is set.
         """
-        while not self.com_new_q.empty():
-            dev_type, connection = self.com_new_q.get()
-            self._make_device(dev_type, connection)
+        return await await_event(self._remove_dev_view_flag)
 
-        self._logger.debug("done")
+    async def await_dev_con_err(self) -> futures:
+        """
+        Signal when there is a remove view event.
+        :return futures: If the flag is set.
+        """
+        return await self._scanner.await_err()
 
-    def com_event_remove(self):
+    def change_lang(self, lang: LangEnum) -> None:
         """
-        Remove lost devices.
-        :return: None.
+        Change the language new devices are initialized with.
+        :param lang: The enum to use.
+        :return None:
         """
-        while not self.com_remove_q.empty():
-            to_remove = None
-            dev_conn = self.com_remove_q.get()
-            for key in self._devs:
-                if self._devs[key].get_conn().port == dev_conn.device:
-                    self._remove_dev_views.append(self._devs[key].get_view())
-                    self._devs[key].cleanup()
-                    to_remove = key
-                    self._remove_dev_view_flag.set()
-            if to_remove:
-                del self._devs[to_remove]
+        self._current_lang = lang
+        self._signal_lang_change()
 
     def set_lang(self, lang: LangEnum) -> None:
         """
@@ -102,31 +93,23 @@ class AppModel(RSDeviceCommScanner):
         for controller in self._devs.values():
             controller.set_lang(lang)
 
-    def get_next_new_view(self) -> AbstractView:
+    def get_next_new_view(self) -> (bool, AbstractView):
         """
-        :return AbstractView: The next unhandled new view
+        Return the next new view if there is one.
+        :return bool, AbstractView: If there is an element to return, The next element to return.
         """
-        if self.has_unhandled_new_views():
-            return self._new_dev_views.pop(0)
+        if len(self._new_dev_views) > 0:
+            return True, self._new_dev_views.pop(0)
+        return False, None
 
-    def has_unhandled_new_views(self) -> bool:
+    def get_next_view_to_remove(self) -> (bool, AbstractView):
         """
-        :return bool: Whether or not there are new views to add.
+        Return the next view to remove if there is one.
+        :return bool, AbstractView: If there is an element to return, The next element to return.
         """
-        return len(self._new_dev_views) > 0
-
-    def get_next_view_to_remove(self) -> AbstractView:
-        """
-        :return AbstractView: The next unhandled view to remove.
-        """
-        if self.has_unhandled_views_to_remove():
-            return self._remove_dev_views.pop(0)
-
-    def has_unhandled_views_to_remove(self) -> bool:
-        """
-        :return bool: Whether or not there are unhandled views to remove.
-        """
-        return len(self._remove_dev_views) > 0
+        if len(self._remove_dev_views) > 0:
+            return True, self._remove_dev_views.pop(0)
+        return False, None
 
     def signal_create_exp(self) -> bool:
         """
@@ -194,6 +177,38 @@ class AppModel(RSDeviceCommScanner):
             self._logger.exception("Failed trying to stop exp on controller")
             return False
 
+    async def _await_new_devs(self) -> None:
+        """
+        Wait for and handle new devices.
+        :return None:
+        """
+        while True:
+            await self._scanner.await_connect()
+            self._setup_new_devices()
+
+    async def _await_remove_devs(self) -> None:
+        """
+        Wait for and handle devices to remove.
+        :return None:
+        """
+        while True:
+            await self._scanner.await_disconnect()
+            self._remove_lost_devices()
+
+    def _signal_lang_change(self) -> bool:
+        """
+        Change language each device is using.
+        :return None:
+        """
+        self._logger.debug("running")
+        try:
+            for controller in self._devs.values():
+                controller.set_lang(self._current_lang)
+            return True
+        except Exception as e:
+            self._logger.exception("Failed trying to stop exp on controller")
+            return False
+
     def _make_device(self, dev_type: str, conn: AioSerial) -> None:
         """
         Make new controller for dev_type.
@@ -221,7 +236,7 @@ class AppModel(RSDeviceCommScanner):
         self._logger.debug("running")
         ret = True
         try:
-            controller = self._controllers[dev_type](conn, self._view_parent, LangEnum.ENG, self._ch)
+            controller = self._controllers[dev_type](conn, self._current_lang, self._ch)
             self._devs[conn.port] = controller
             self._new_dev_views.append(controller.get_view())
             self._new_dev_view_flag.set()
@@ -231,23 +246,55 @@ class AppModel(RSDeviceCommScanner):
         self._logger.debug("done")
         return ret
 
+    def _setup_new_devices(self):
+        """
+        Get new device info from new device queue and make new device.
+        :return: None.
+        """
+        self._logger.debug("running")
+        ret, item = self._scanner.get_next_new_com()
+        while ret:
+            dev_type, connection = item[0], item[1]
+            self._make_device(dev_type, connection)
+            ret, item = self._scanner.get_next_new_com()
+        self._logger.debug("done")
+
+    def _remove_lost_devices(self):
+        """
+        For any lost device, destroy controller and signal view removal to controller.
+        :return: None.
+        """
+        self._logger.debug("running")
+        ret, item = self._scanner.get_next_lost_com()
+        to_remove = []
+        while ret:
+            for key in self._devs:
+                if self._devs[key].get_conn().port == item.device:
+                    self._remove_dev_views.append(self._devs[key].get_view())
+                    self._devs[key].cleanup()
+                    to_remove.append(key)
+                    self._remove_dev_view_flag.set()
+                    break
+            ret, item = self._scanner.get_next_lost_com()
+        if len(to_remove) > 0:
+            for ele in to_remove:
+                del self._devs[ele]
+        self._logger.debug("done")
+
     def start(self):
         self._logger.debug("running")
-        self.com_start()
+        self._tasks.append(create_task(self._await_new_devs()))
+        self._tasks.append(create_task(self._await_remove_devs()))
+        self._scanner.start()
         self._logger.debug("done")
 
     def cleanup(self):
         self._logger.debug("running")
-        self.com_cleanup()
+        self._scanner.cleanup()
         for dev in self._devs.values():
             dev.cleanup()
-        create_task(self.end_tasks())
+        create_task(end_tasks(self._tasks))
         self._logger.debug("done")
-
-    async def end_tasks(self):
-        for task in self._tasks:
-            task.cancel()
-            await gather(self._tasks)
 
     # TODO add debugging
     @staticmethod

@@ -26,12 +26,19 @@ https://redscientific.com/index.html
 from abc import ABC, abstractmethod
 from Model.app_defs import LangEnum
 from aioserial import AioSerial
+from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
 class AbstractController(ABC):
     def __init__(self, view):
         super().__init__()
         self.view = view
+
+    def get_view(self) -> AbstractView:
+        """
+        :return AbstractView: This device's view object.
+        """
+        return self.view
 
     @abstractmethod
     def cleanup(self) -> None:
@@ -54,10 +61,8 @@ class AbstractController(ABC):
         :param lang: The enum for the language.
         :return: None.
         """
+        print(__name__, "Got new language to use:", lang)
         pass
-
-    def get_view(self):
-        return self.view
 
     def create_exp(self) -> None:
         """

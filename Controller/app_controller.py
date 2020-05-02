@@ -25,14 +25,15 @@ https://redscientific.com/index.html
 """
 
 import logging
-from asyncio import create_task, gather
+from datetime import datetime
+from asyncio import create_task
 from aioserial import AioSerial
 from PySide2.QtWidgets import QFileDialog
 from PySide2.QtGui import QKeyEvent
 from PySide2.QtCore import QSettings, QSize
 from Model.app_model import AppModel
 from Model.app_defs import current_version, log_format, LangEnum
-from Model.app_helpers import setup_log_file, get_remaining_disk_size, get_current_time
+from Model.app_helpers import setup_log_file, get_remaining_disk_size, format_current_time, end_tasks
 from Model.app_strings import log_out_filename, company_name, app_name, log_version_id, device_connection_error
 from View.HelpWidgets.output_window import OutputWindow
 from View.MainWindow.main_window import AppMainWindow
@@ -87,7 +88,7 @@ class AppController:
         self._file_dialog = QFileDialog(self.main_window)
 
         # Model
-        self._model = AppModel(self.mdi_area, self.ch)
+        self._model = AppModel(self.ch)
 
         self._exp_created = False
         self._save_file_name = str()
@@ -100,53 +101,13 @@ class AppController:
         self._exp_running = False
         self._curr_cond_name = ""
 
-    async def handle_new_device_view(self) -> None:
-        """
-        Check for and handle any new device view objects from model.
-        :return None:
-        """
-        self._logger.debug("running")
-        dev_type: str
-        dev_port: AioSerial
-        while True:
-            await self._model._new_dev_view_flag.wait()
-            self.mdi_area.add_window(self._model.get_next_new_view())
-            if not self._model.has_unhandled_new_views():
-                self._model._new_dev_view_flag.clear()
-
-    async def remove_device_view(self) -> None:
-        """
-        Check for and handle any device views to remove from model.
-        :return None:
-        """
-        while True:
-            await self._model._remove_dev_view_flag.wait()
-            self.mdi_area.remove_window(self._model.get_next_view_to_remove())
-            if not self._model.has_unhandled_views_to_remove():
-                self._model._remove_dev_view_flag.clear()
-
-    #TODO - Migrate this to app_model?? or migrate com connection to app_controller??
-    '''
-    async def handle_device_conn_error(self) -> None:
-        """
-        Alert user to device connection error.
-        :return None:
-        """
-        while True:
-            await self._dev_conn_err_flag.wait()
-            self.main_window.show_help_window("Error", device_connection_error)
-            self._dev_conn_err_flag.clear()
-    '''
-
     def set_language_handler(self) -> None:
         """
         Sets the app language to the user selection.
         :return None:
         """
-        # TODO: Get language setting and pass it in to model.set_lang()
-        # self._model.set_lang()
         self._logger.debug("running")
-        print("Implement handling for this button.")
+        self._model.change_lang(self.menu_bar.get_lang())  # TODO: Implement menu_bar.get_lang()
         self._logger.debug("done")
 
     def create_end_exp_handler(self) -> None:
@@ -155,11 +116,9 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        print(__name__, "create_end_exp_handler running")
         if not self._exp_created:
             self._logger.debug("creating experiment")
             if not self._get_save_file_name():
-                print(__name__, "You didn't select a save directory.")
                 self._logger.debug("no save directory selected, done running _create_end_exp_handler()")
                 return
             self._create_exp()
@@ -184,6 +143,43 @@ class AppController:
             self._start_exp()
         self._logger.debug("done")
 
+    async def new_device_view_handler(self) -> None:
+        """
+        Check for and handle any new device view objects from model.
+        :return None:
+        """
+        self._logger.debug("running")
+        dev_type: str
+        dev_port: AioSerial
+        while True:
+            await self._model.await_new_view()
+            ret, view = self._model.get_next_new_view()
+            while ret:
+                self.mdi_area.add_window(view)
+                ret, view = self._model.get_next_new_view()
+
+    async def remove_device_view_handler(self) -> None:
+        """
+        Check for and handle any device views to remove from model.
+        :return None:
+        """
+        while True:
+            await self._model.await_remove_view()
+            ret, view = self._model.get_next_view_to_remove()
+            while ret:
+                self.mdi_area.remove_window(view)
+                ret, view = self._model.get_next_view_to_remove()
+
+    async def device_conn_error_handler(self) -> None:
+        """
+        Alert user to device connection error.
+        :return None:
+        """
+        while True:
+            await self._model.await_dev_con_err()
+            self.main_window.show_help_window("Error", device_connection_error)
+
+    # TODO: Implement
     def post_handler(self) -> None:
         """
         Handler for post button.
@@ -193,6 +189,7 @@ class AppController:
         print("Implement handling for this button.")
         self._logger.debug("done")
 
+    # TODO: Implement
     def about_rs_handler(self) -> None:
         """
         Handler for about company button.
@@ -202,6 +199,7 @@ class AppController:
         print("Implement handling for this button")
         self._logger.debug("done")
 
+    # TODO: Implement
     def about_app_handler(self) -> None:
         """
         Handler for about app button.
@@ -211,6 +209,7 @@ class AppController:
         print("Implement handling for this button")
         self._logger.debug("done")
 
+    # TODO: Implement
     def check_for_updates_handler(self) -> None:
         """
         Handler for update button.
@@ -229,6 +228,7 @@ class AppController:
         self.log_output.show()
         self._logger.debug("done")
 
+    # TODO: Implement
     def last_save_dir_handler(self) -> None:
         """
         Handler for last save dir button.
@@ -238,6 +238,7 @@ class AppController:
         print("Implement handling for this button")
         self._logger.debug("done")
 
+    # TODO: Implement
     def toggle_cam_handler(self) -> None:
         """
         Handler for use cam button.
@@ -255,12 +256,11 @@ class AppController:
         self._logger.debug("running")
         self._update_drive_info_box()
         # self.menu_bar.set_cam_action_enabled(False)  # TODO: Implement cams
-        date_time = get_current_time(device=True)
         self.button_box.toggle_create_button()
         self._exp_created = self._model.signal_create_exp()
         if self._exp_created:
             self._check_toggle_post_button()
-            self.info_box.set_start_time(get_current_time(time=True, date_time=date_time))
+            self.info_box.set_start_time(format_current_time(datetime.now(), time=True))
         else:
             self.button_box.toggle_create_button()
             self._exp_created = False
@@ -431,9 +431,9 @@ class AppController:
         Start all recurring functions.
         :return None:
         """
-        self._tasks.append(create_task(self.handle_new_device_view()))
-        # self._tasks.append(create_task(self.handle_device_conn_error()))
-        self._tasks.append(create_task(self.remove_device_view()))
+        self._tasks.append(create_task(self.new_device_view_handler()))
+        self._tasks.append(create_task(self.device_conn_error_handler()))
+        self._tasks.append(create_task(self.remove_device_view_handler()))
         self._model.start()
 
     def _cleanup(self) -> None:
@@ -441,14 +441,5 @@ class AppController:
         Cleanup any code that would cause problems for shutdown and prep for app closure.
         :return None:
         """
-        create_task(self.end_tasks())
+        create_task(end_tasks(self._tasks))
         self._model.cleanup()
-
-    async def end_tasks(self) -> None:
-        """
-        Cleanup all async loops
-        :return None:
-        """
-        for task in self._tasks:
-            task.cancel()
-            await gather(self._tasks)
