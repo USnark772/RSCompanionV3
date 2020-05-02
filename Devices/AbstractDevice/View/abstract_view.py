@@ -24,7 +24,6 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-# TODO reset cursor when leaving edge.
 
 from abc import ABCMeta, ABC, abstractmethod
 from Model.app_helpers import EasyFrame
