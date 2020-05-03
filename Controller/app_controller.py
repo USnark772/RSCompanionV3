@@ -59,7 +59,6 @@ class AppController:
         self._lang = self._settings.value("language")
         self._strings = strings[self._lang]
 
-        # TODO: Give user control over logging level
         self._settings.beginGroup("logging")
         if not self._settings.contains("level"):
             self._settings.setValue("level", DEBUG)
@@ -99,7 +98,6 @@ class AppController:
         # Model
         self._model = AppModel(self.ch, self._lang)
 
-        self._exp_created = False
         self._save_file_name = str()
         self._save_dir = str()
         self._tasks = []
@@ -107,6 +105,7 @@ class AppController:
         self._initialize_view()
         self._start()
         self._logger.debug("Initialized")
+        self._exp_created = False
         self._exp_running = False
         self._curr_cond_name = ""
 
@@ -278,15 +277,16 @@ class AppController:
 
     def _create_exp(self) -> None:
         """
-        Create an experiment.
+        Create an experiment. Signal devices and update view.
         :return None:
         """
         self._logger.debug("running")
-        self._update_drive_info_box()
         self._exp_created = self._model.signal_create_exp()
         if self._exp_created:
+            self.button_box.set_start_button_enabled(True)
             self.button_box.set_create_button_state(1)
             self._check_toggle_post_button()
+            self._update_drive_info_box()  # TODO: Make sure this is updating periodically during experiments.
             self.info_box.set_start_time(format_current_time(datetime.now(), time=True))
         else:
             self.button_box.set_create_button_state(0)
@@ -294,21 +294,26 @@ class AppController:
 
     def _end_exp(self) -> None:
         """
-        End an experiment.
+        End an experiment. Stop experiment if running then signal devices and update view.
         :return None:
         """
         self._logger.debug("running")
         self.__exp_created = False
-        self.button_box.set_create_button_state(0)
+        if self._exp_running:
+            self._stop_exp()
         self._model.signal_end_exp()
         self._check_toggle_post_button()
-        self.info_box.set_block_num(0)
         self._update_drive_info_box()
+        self.info_box.set_block_num(0)
+        self.button_box.set_create_button_state(0)
+        self.button_box.set_start_button_enabled(False)
+        self.button_box.set_start_button_state(0)
         self._logger.debug("done")
 
+    # TODO implement _add_break_in_graph_lines()?
     def _start_exp(self) -> None:
         """
-        Start an experiment.
+        Start an experiment if one has been created. Signal devices and update view.
         :return None:
         """
         self._logger.debug("running")
@@ -316,21 +321,20 @@ class AppController:
         if not self._exp_running:
             return
         self.info_box.set_block_num(str(int(self.info_box.get_block_num()) + 1))
-        self._curr_cond_name = self.button_box.get_condition_name()
-        # TODO implement _add_break_in_graph_lines()?
-        self.button_box.toggle_start_button()
+        self.button_box.set_start_button_state(1)
         self.button_box.set_condition_name_box_enabled(False)
+        self._curr_cond_name = self.button_box.get_condition_name()
         self._logger.debug("done")
 
     def _stop_exp(self) -> None:
         """
-        Stop an experiment.
+        Stop an experiment. Signal devices and update view.
         :return None:
         """
         self._logger.debug("running")
         self._exp_running = False
         self._model.signal_stop_exp()
-        self.button_box.toggle_start_button()
+        self.button_box.set_start_button_state(2)
         self.button_box.set_condition_name_box_enabled(True)
         self._logger.debug("done")
 
@@ -354,7 +358,7 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        if self._exp_created and len(self.note_box.get_note()) > 0:  # and self.__exp_running:
+        if self._exp_created and len(self.note_box.get_note()) > 0:
             self._logger.debug("button = true")
             self.note_box.set_post_button_enabled(True)
         else:

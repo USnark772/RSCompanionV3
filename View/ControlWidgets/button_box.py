@@ -151,7 +151,7 @@ class ButtonBox(QGroupBox):
         """
         self._start_button.setEnabled(is_active)
 
-    def toggle_start_button(self, button_state: int = 0) -> None:
+    def set_start_button_state(self, button_state: int = 0) -> None:
         """
         Set start button state to given state. 0: Start. 1: Pause. 2: Resume.
         :param button_state: The state to show on this button.
