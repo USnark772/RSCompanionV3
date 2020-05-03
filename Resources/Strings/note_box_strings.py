@@ -40,6 +40,7 @@ english = {StringsEnum.TITLE: "Note",
            StringsEnum.SHADOW: "Enter note here",
            }
 
+# TODO: Add French version
 french = english
 
 strings = {LangEnum.ENG: english,

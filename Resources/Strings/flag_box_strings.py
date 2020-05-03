@@ -36,6 +36,7 @@ english = {StringsEnum.TITLE: "Key Flag",
            StringsEnum.FLAG_TT: "The most recent key pressed for reference in save file",
            }
 
+# TODO: Add French version
 french = english
 
 strings = {LangEnum.ENG: english,

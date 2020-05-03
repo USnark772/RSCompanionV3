@@ -42,6 +42,7 @@ english = {StringsEnum.TITLE: "Storage Information",
            StringsEnum.MB_FREE: "MB free:",
            }
 
+# TODO: Add French version
 french = english
 
 strings = {LangEnum.ENG: english,

@@ -29,7 +29,7 @@ from PySide2.QtWidgets import QHBoxLayout, QVBoxLayout, QLabel, QSlider, QGridLa
 from PySide2.QtCore import Qt, QSize
 from Model.app_helpers import ClickAnimationButton, EasyFrame
 from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style, LangEnum
-from Devices.DRT.Model.drt_strings import strings, StringsEnum
+from Devices.DRT.Resources.drt_strings import strings, StringsEnum
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 

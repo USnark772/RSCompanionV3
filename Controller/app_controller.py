@@ -25,6 +25,7 @@ https://redscientific.com/index.html
 """
 
 import logging
+from logging import DEBUG
 from datetime import datetime
 from asyncio import create_task
 from aioserial import AioSerial
@@ -61,8 +62,8 @@ class AppController:
         # TODO: Give user control over logging level
         self._settings.beginGroup("logging")
         if not self._settings.contains("level"):
-            self._settings.setValue("level", "DEBUG")
-        log_level = eval('logging.' + self._settings.value('level'))
+            self._settings.setValue("level", DEBUG)
+        log_level = self._settings.value('level')
         self._settings.endGroup()
 
         log_file = setup_log_file(self._strings[StringsEnum.LOG_OUT_NAME], self._strings[StringsEnum.PROG_OUT_HDR])
@@ -117,8 +118,25 @@ class AppController:
         self._logger.debug("running")
         self._settings.setValue("language", lang)
         self._strings = strings[lang]
+        self.main_window.set_lang(lang)
+        self.menu_bar.set_lang(lang)
+        self.button_box.set_lang(lang)
+        self.info_box.set_lang(lang)
+        self.d_info_box.set_lang(lang)
+        self.flag_box.set_lang(lang)
+        self.note_box.set_lang(lang)
         self._model.change_lang(lang)
         self._logger.debug("done")
+
+    def debug_change_handler(self, debug_level: str) -> None:
+        """
+        Sets the app debug level.
+        :param debug_level: The debug level
+        :return None:
+        """
+        print(__name__, "debug level changed")
+        self._settings.setValue("logging/level", debug_level)
+        self.main_window.show_help_window(self._strings[StringsEnum.APP_NAME], self._strings[StringsEnum.RESTART_PROG])
 
     def create_end_exp_handler(self) -> None:
         """
@@ -399,7 +417,10 @@ class AppController:
         # File menu
         self.menu_bar.add_open_last_save_dir_handler(self.last_save_dir_handler)
         # self.menu_bar.add_cam_bool_handler(self.toggle_cam_handler)
+
+        # Settings menu
         self.menu_bar.add_lang_select_handler(self.language_change_handler)
+        self.menu_bar.add_debug_select_handler(self.debug_change_handler)
 
         # Help menu
         self.menu_bar.add_about_company_handler(self.about_rs_handler)
@@ -418,6 +439,7 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
+        self.menu_bar.set_debug_action(self._settings.value("logging/level"))
         self.main_window.add_menu_bar(self.menu_bar)
         self.main_window.add_control_bar_widget(self.button_box)
         self.main_window.add_control_bar_widget(self.flag_box)
@@ -445,3 +467,4 @@ class AppController:
         """
         create_task(end_tasks(self._tasks))
         self._model.cleanup()
+        self.log_output.close()

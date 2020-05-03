@@ -23,9 +23,9 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-# *******************************************************
-# A template for how to setup the strings for the device.
-# *******************************************************
+# ***********************************************************
+# A template for how to setup the strings.py for your device.
+# ***********************************************************
 
 from Model.app_defs import LangEnum
 from enum import Enum, auto
@@ -41,6 +41,6 @@ english = {StringsEnum.EXAMPLE_ENTRY: "Implement this language."}
 
 french = {StringsEnum.EXAMPLE_ENTRY: "Implémentez ce langage."}
 
-# Add defined languages to this dictionary.
+# Add defined languages to strings dictionary.
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}

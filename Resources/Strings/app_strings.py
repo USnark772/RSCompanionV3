@@ -39,6 +39,7 @@ class StringsEnum(Enum):
     ERR_UPDATE_CHECK = auto()
     DEV_CON_ERR = auto()
     LOG_OUT_NAME = auto()
+    RESTART_PROG = auto()
 
 
 company_name = "Red Scientific"
@@ -76,8 +77,10 @@ english = {StringsEnum.COMPANY_NAME: company_name,
                                          " https://redscientific.com/downloads.html manually or contact Red Scientific"
                                          " directly.",
            StringsEnum.DEV_CON_ERR: "There was a problem connecting the device, please retry connection.",
+           StringsEnum.RESTART_PROG: "This app must restart for changes to take effect."
            }
 
+# TODO: Add French version
 french = english
 
 strings = {LangEnum.ENG: english,

@@ -38,6 +38,7 @@ english = {StringsEnum.TITLE: "Information",
            StringsEnum.BLOCK_NO: "Block number:"
            }
 
+# TODO: Add French version
 french = english
 
 strings = {LangEnum.ENG: english,

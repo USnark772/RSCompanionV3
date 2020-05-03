@@ -34,6 +34,7 @@ class StringsEnum(Enum):
 
 english = {StringsEnum.TITLE: app_name}
 
+# TODO: Add French version
 french = english
 
 strings = {LangEnum.ENG: english,

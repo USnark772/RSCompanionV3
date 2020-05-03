@@ -72,6 +72,7 @@ english = {StringsEnum.CUSTOM_LABEL: "Custom",
            StringsEnum.LOWER_ISI_TOOLTIP: "Milliseconds. Range: " + str(defs.ISI_min) + "-" + upper_isi_eng,
            }
 
+# TODO: Verify French version
 iso = "ISO"
 lower_isi_fre = "Inférieur ISI"
 upper_isi_fre = "Supérieur ISI"

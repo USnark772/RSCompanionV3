@@ -24,6 +24,7 @@ https://redscientific.com/index.html
 """
 
 from Model.app_defs import LangEnum
+from Resources.Strings.app_strings import company_name, app_name
 from enum import Enum, auto
 
 
@@ -37,6 +38,10 @@ class StringsEnum(Enum):
     SHOW_LOG_WINDOW = auto()
     USE_CAMS = auto
     ATTACHED_CAMS = auto()
+    SETTINGS = auto()
+    DEBUG_MENU = auto()
+    DEBUG = auto()
+    WARNING = auto()
     LANG = auto()
     ENG = auto()
     FRE = auto()
@@ -45,18 +50,38 @@ class StringsEnum(Enum):
 english = {StringsEnum.FILE: "File",
            StringsEnum.LAST_DIR: "Open last save location",
            StringsEnum.HELP: "Help",
-           StringsEnum.ABOUT_APP: "About RS Companion",
-           StringsEnum.ABOUT_COMPANY: "About Red Scientific",
+           StringsEnum.ABOUT_APP: "About " + app_name,
+           StringsEnum.ABOUT_COMPANY: "About " + company_name,
            StringsEnum.UPDATE_CHECK: "Check For Updates",
            StringsEnum.SHOW_LOG_WINDOW: "Show log window",
            StringsEnum.USE_CAMS: "Use cameras",
            StringsEnum.ATTACHED_CAMS: "Attached Camera",
+           StringsEnum.SETTINGS: "Settings",
+           StringsEnum.DEBUG_MENU: "Debug level",
+           StringsEnum.DEBUG: "Debugging mode",
+           StringsEnum.WARNING: "Normal mode",
            StringsEnum.LANG: "Language:",
            StringsEnum.ENG: "English",
            StringsEnum.FRE: "French",
            }
 
-french = english
-
+# TODO: Verify French version
+french = {StringsEnum.FILE: "Fichier",
+          StringsEnum.LAST_DIR: "Ouvrir le dernier emplacement d'enregistrement",
+          StringsEnum.HELP: "Assistance",
+          StringsEnum.ABOUT_APP: "À propos de " + app_name,
+          StringsEnum.ABOUT_COMPANY: "À propos de " + company_name,
+          StringsEnum.UPDATE_CHECK: "Vérifier les mises à jour",
+          StringsEnum.SHOW_LOG_WINDOW: "Afficher la fenêtre du journal",
+          StringsEnum.USE_CAMS: "Utiliser des caméras",
+          StringsEnum.ATTACHED_CAMS: "Caméra attachée",
+          StringsEnum.SETTINGS: "Réglages",
+          StringsEnum.DEBUG_MENU: "Niveau de débogage",
+          StringsEnum.DEBUG: "Mode de débogage",
+          StringsEnum.WARNING: "Mode normal",
+          StringsEnum.LANG: "Langue:",
+          StringsEnum.ENG: "Anglais",
+          StringsEnum.FRE: "Français",
+          }
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}

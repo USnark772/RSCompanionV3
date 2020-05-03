@@ -23,7 +23,7 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from logging import getLogger, StreamHandler
+from logging import getLogger, StreamHandler, DEBUG, WARNING
 from PySide2.QtWidgets import QMenuBar, QMenu, QAction
 from PySide2.QtCore import QRect, Signal
 from Resources.Strings.menu_bar_strings import strings, StringsEnum, LangEnum
@@ -31,8 +31,6 @@ from Resources.Strings.menu_bar_strings import strings, StringsEnum, LangEnum
 
 class AppMenuBar(QMenuBar):
     """ This code is for the menu bar at the top of the main window. File, help, etc. """
-    lang_clicked_sig = Signal(int)
-
     def __init__(self, parent, ch: StreamHandler, lang: LangEnum):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
@@ -41,23 +39,10 @@ class AppMenuBar(QMenuBar):
         self.setGeometry(QRect(0, 0, 840, 22))
 
         self._file_menu = QMenu(self)
-        self.addAction((self._file_menu.menuAction()))
+        self.addAction(self._file_menu.menuAction())
 
         self._open_last_save_dir_action = QAction(self)
         self._file_menu.addAction(self._open_last_save_dir_action)
-
-        self._language_menu = QMenu(self)
-        self._file_menu.addMenu(self._language_menu)
-
-        self._english_action = QAction(self, 0)
-        self._english_action.setCheckable(True)
-        self._english_action.toggled.connect(self._eng_clicked)
-        self._language_menu.addAction(self._english_action)
-
-        self._french_action = QAction(self)
-        self._french_action.setCheckable(True)
-        self._french_action.toggled.connect(self._fre_clicked)
-        self._language_menu.addAction(self._french_action)
 
         # self._cam_list_menu = QMenu(self)
         # self._file_menu.addMenu(self._cam_list_menu)
@@ -67,6 +52,41 @@ class AppMenuBar(QMenuBar):
         # self._cam_list_menu.addAction(self._use_cams_action)
 
         # sep = self._cam_list_menu.addSeparator()
+
+        self._settings_menu = QMenu(self)
+        self.addAction(self._settings_menu.menuAction())
+
+        self._debug_actions = []
+        self._debug_menu = QMenu(self)
+        self._settings_menu.addMenu(self._debug_menu)
+
+        self._debug_action = QAction(self)
+        self._debug_action.setCheckable(True)
+        self._debug_action.triggered.connect(self._debug_clicked)
+        self._debug_actions.append(self._debug_action)
+        self._debug_menu.addAction(self._debug_action)
+
+        self._warning_action = QAction(self)
+        self._warning_action.setCheckable(True)
+        self._warning_action.triggered.connect(self._warning_clicked)
+        self._debug_actions.append(self._warning_action)
+        self._debug_menu.addAction(self._warning_action)
+
+        self._lang_actions = []
+        self._language_menu = QMenu(self)
+        self._settings_menu.addMenu(self._language_menu)
+
+        self._english_action = QAction(self)
+        self._lang_actions.append(self._english_action)
+        self._english_action.setCheckable(True)
+        self._english_action.triggered.connect(self._eng_clicked)
+        self._language_menu.addAction(self._english_action)
+
+        self._french_action = QAction(self)
+        self._lang_actions.append(self._french_action)
+        self._french_action.setCheckable(True)
+        self._french_action.triggered.connect(self._fre_clicked)
+        self._language_menu.addAction(self._french_action)
 
         self._help_menu = QMenu(self)
         self.addAction(self._help_menu.menuAction())
@@ -85,6 +105,7 @@ class AppMenuBar(QMenuBar):
 
         self._cam_actions = {}
 
+        self._debug_callback = None
         self._lang_callback = None
         self._strings = dict()
         self.set_lang(lang)
@@ -98,23 +119,37 @@ class AppMenuBar(QMenuBar):
         """
         self._strings = strings[lang]
         self._set_texts()
-
-    # TODO: Implement this
-    def get_lang(self) -> LangEnum:
-        """
-        Get user's choice of language.
-        :return LangEnum: The user's choice.
-        """
-
-        return LangEnum.ENG
+        if lang == LangEnum.ENG:
+            self._reset_lang_actions(self._english_action)
+        elif lang == LangEnum.FRE:
+            self._reset_lang_actions(self._french_action)
 
     def add_lang_select_handler(self, func: classmethod) -> None:
         """
-        Add handler to this selectable.
+        Add handler for these selectable. Handler must take a LangEnum
         :param func: The handler.
         :return None:
         """
         self._lang_callback = func
+
+    def set_debug_action(self, level) -> None:
+        """
+        Set which debug action is checked.
+        :param level: The debug level.
+        :return None:
+        """
+        if level == DEBUG:
+            self._reset_debug_actions(self._debug_action)
+        elif level == WARNING:
+            self._reset_debug_actions(self._warning_action)
+
+    def add_debug_select_handler(self, func: classmethod) -> None:
+        """
+        Add handler for these selectables. Handler must take a string.
+        :param func: The handler.
+        :return None:
+        """
+        self._debug_callback = func
 
     def set_cam_action_enabled(self, is_active: bool) -> None:
         """
@@ -249,6 +284,44 @@ class AppMenuBar(QMenuBar):
         if self._lang_callback:
             self._lang_callback(LangEnum.FRE)
 
+    def _debug_clicked(self) -> None:
+        """
+        Private handler for self._french_action
+        :return None:
+        """
+        if self._debug_callback:
+            self._debug_callback(DEBUG)
+        self._reset_debug_actions(self._debug_action)
+
+    def _warning_clicked(self) -> None:
+        """
+        Private handler for self._french_action
+        :return None:
+        """
+        if self._debug_callback:
+            self._debug_callback(WARNING)
+        self._reset_debug_actions(self._warning_action)
+
+    def _reset_debug_actions(self, keep_checked: QAction) -> None:
+        """
+        Unset all except for keep_checked QAction.
+        :param keep_checked: The QAction to keep checked.
+        :return None:
+        """
+        for action in self._debug_actions:
+            action.setChecked(False)
+        keep_checked.setChecked(True)
+
+    def _reset_lang_actions(self, keep_checked: QAction) -> None:
+        """
+        Unset all except for keep_checked QAction.
+        :param keep_checked: The QAction to keep checked.
+        :return None:
+        """
+        for action in self._lang_actions:
+            action.setChecked(False)
+        keep_checked.setChecked(True)
+
     def _set_texts(self) -> None:
         """
         Set the texts of this view object.
@@ -257,6 +330,10 @@ class AppMenuBar(QMenuBar):
         self._logger.debug("running")
         self._file_menu.setTitle(self._strings[StringsEnum.FILE])
         self._open_last_save_dir_action.setText(self._strings[StringsEnum.LAST_DIR])
+        self._settings_menu.setTitle(self._strings[StringsEnum.SETTINGS])
+        self._debug_menu.setTitle(self._strings[StringsEnum.DEBUG_MENU])
+        self._debug_action.setText(self._strings[StringsEnum.DEBUG])
+        self._warning_action.setText(self._strings[StringsEnum.WARNING])
         # self._cam_list_menu.setTitle(self._strings[StringsEnum.ATTACHED_CAMS])
         # self._use_cams_action.setText(self._strings[StringsEnum.USE_CAMS])
         self._language_menu.setTitle(self._strings[StringsEnum.LANG])

@@ -39,6 +39,7 @@ english = {StringsEnum.TITLE: app_name,
            StringsEnum.CLOSE_APP_CONFIRM: "Close app? Any unsaved progress will be lost!",
            }
 
+# TODO: Add French version
 french = english
 
 strings = {LangEnum.ENG: english,

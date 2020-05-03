@@ -50,6 +50,7 @@ english = {StringsEnum.TITLE: "Experiment",
            StringsEnum.COND_NAME_SHADOW: "Optional condition name",
            }
 
+# TODO: Add French version
 french = english
 
 strings = {LangEnum.ENG: english,
