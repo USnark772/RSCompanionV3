@@ -60,25 +60,30 @@ class MDIArea(QMdiArea):
         self.removeSubWindow(window)
         self._logger.debug("done")
 
-    # TODO: Implement these
+    # TODO: Implement this
     def set_window_order(self):
         # order = QMdiArea.ActivationHistoryOrder
         # order = QMdiArea.StackingOrder
         order = QMdiArea.CreationOrder
         self.setActivationOrder(order)
 
+    # TODO: Implement this
     def sort_windows_cascade(self):
         self.cascadeSubWindows()
 
+    # TODO: Implement this
     def sort_windows_tiled(self):
         self.tileSubWindows()
 
+    # TODO: Implement this
     def sort_windows_horizontal(self):
         pass
 
+    # TODO: Implement this
     def sort_windows_vertical(self):
         pass
 
+    # TODO: Implement this
     def set_window_view_mode(self):
         # QMdiArea.SubWindowView
         # QMdiArea.TabbedView
