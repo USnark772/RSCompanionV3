@@ -37,6 +37,9 @@ class StringsEnum(Enum):
     SHOW_LOG_WINDOW = auto()
     USE_CAMS = auto
     ATTACHED_CAMS = auto()
+    LANG = auto()
+    ENG = auto()
+    FRE = auto()
 
 
 english = {StringsEnum.FILE: "File",
@@ -47,7 +50,10 @@ english = {StringsEnum.FILE: "File",
            StringsEnum.UPDATE_CHECK: "Check For Updates",
            StringsEnum.SHOW_LOG_WINDOW: "Show log window",
            StringsEnum.USE_CAMS: "Use cameras",
-           StringsEnum.ATTACHED_CAMS: "Attached Camera"
+           StringsEnum.ATTACHED_CAMS: "Attached Camera",
+           StringsEnum.LANG: "Language:",
+           StringsEnum.ENG: "English",
+           StringsEnum.FRE: "French",
            }
 
 french = english

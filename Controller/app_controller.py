@@ -109,13 +109,12 @@ class AppController:
         self._exp_running = False
         self._curr_cond_name = ""
 
-    def set_language_handler(self) -> None:
+    def language_change_handler(self, lang: LangEnum) -> None:
         """
         Sets the app language to the user selection.
         :return None:
         """
         self._logger.debug("running")
-        lang = self.menu_bar.get_lang()
         self._settings.setValue("language", lang)
         self._strings = strings[lang]
         self._model.change_lang(lang)
@@ -399,7 +398,8 @@ class AppController:
 
         # File menu
         self.menu_bar.add_open_last_save_dir_handler(self.last_save_dir_handler)
-        self.menu_bar.add_cam_bool_handler(self.toggle_cam_handler)
+        # self.menu_bar.add_cam_bool_handler(self.toggle_cam_handler)
+        self.menu_bar.add_lang_select_handler(self.language_change_handler)
 
         # Help menu
         self.menu_bar.add_about_company_handler(self.about_rs_handler)

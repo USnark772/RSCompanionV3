@@ -25,12 +25,14 @@ https://redscientific.com/index.html
 
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QMenuBar, QMenu, QAction
-from PySide2.QtCore import QRect
+from PySide2.QtCore import QRect, Signal
 from Resources.Strings.menu_bar_strings import strings, StringsEnum, LangEnum
 
 
 class AppMenuBar(QMenuBar):
     """ This code is for the menu bar at the top of the main window. File, help, etc. """
+    lang_clicked_sig = Signal(int)
+
     def __init__(self, parent, ch: StreamHandler, lang: LangEnum):
         self._logger = getLogger(__name__)
         self._logger.addHandler(ch)
@@ -44,14 +46,27 @@ class AppMenuBar(QMenuBar):
         self._open_last_save_dir_action = QAction(self)
         self._file_menu.addAction(self._open_last_save_dir_action)
 
-        self._cam_list_menu = QMenu(self)
-        self._file_menu.addMenu(self._cam_list_menu)
+        self._language_menu = QMenu(self)
+        self._file_menu.addMenu(self._language_menu)
 
-        self._use_cams_action = QAction(self)
-        self._use_cams_action.setCheckable(True)
-        self._cam_list_menu.addAction(self._use_cams_action)
+        self._english_action = QAction(self, 0)
+        self._english_action.setCheckable(True)
+        self._english_action.toggled.connect(self._eng_clicked)
+        self._language_menu.addAction(self._english_action)
 
-        sep = self._cam_list_menu.addSeparator()
+        self._french_action = QAction(self)
+        self._french_action.setCheckable(True)
+        self._french_action.toggled.connect(self._fre_clicked)
+        self._language_menu.addAction(self._french_action)
+
+        # self._cam_list_menu = QMenu(self)
+        # self._file_menu.addMenu(self._cam_list_menu)
+
+        # self._use_cams_action = QAction(self)
+        # self._use_cams_action.setCheckable(True)
+        # self._cam_list_menu.addAction(self._use_cams_action)
+
+        # sep = self._cam_list_menu.addSeparator()
 
         self._help_menu = QMenu(self)
         self.addAction(self._help_menu.menuAction())
@@ -70,6 +85,7 @@ class AppMenuBar(QMenuBar):
 
         self._cam_actions = {}
 
+        self._lang_callback = None
         self._strings = dict()
         self.set_lang(lang)
         self._logger.debug("Initialized")
@@ -89,13 +105,22 @@ class AppMenuBar(QMenuBar):
         Get user's choice of language.
         :return LangEnum: The user's choice.
         """
+
         return LangEnum.ENG
+
+    def add_lang_select_handler(self, func: classmethod) -> None:
+        """
+        Add handler to this selectable.
+        :param func: The handler.
+        :return None:
+        """
+        self._lang_callback = func
 
     def set_cam_action_enabled(self, is_active: bool) -> None:
         """
         Set whether or not the camera actions can be used.
         :param is_active: can be used.
-        :return: None
+        :return None:
         """
 
         self._use_cams_action.setEnabled(is_active)
@@ -106,12 +131,17 @@ class AppMenuBar(QMenuBar):
         """
         Set whether or not this action is checked.
         :param is_active: whether or not this action should be checked.
-        :return: None
+        :return None:
         """
         self._use_cams_action.setChecked(is_active)
         self.empty_cam_actions()
 
-    def add_cam_bool_handler(self, func):
+    def add_cam_bool_handler(self, func: classmethod) -> None:
+        """
+        Add handler to this selectable.
+        :param func: The handler.
+        :return None:
+        """
         self._logger.debug("running")
         self._use_cams_action.toggled.connect(func)
         self._logger.debug("done")
@@ -120,32 +150,57 @@ class AppMenuBar(QMenuBar):
         """
         Set whether or not this action is usable.
         :param is_active: whether or not to let this action be usable.
-        :return: None
+        :return None:
         """
 
         self._use_cams_action.setEnabled(is_active)
 
-    def add_open_last_save_dir_handler(self, func):
+    def add_open_last_save_dir_handler(self, func: classmethod) -> None:
+        """
+        Add handler to this selectable.
+        :param func: The handler.
+        :return None:
+        """
         self._logger.debug("running")
         self._open_last_save_dir_action.triggered.connect(func)
         self._logger.debug("done")
 
-    def add_about_app_handler(self, func):
+    def add_about_app_handler(self, func: classmethod) -> None:
+        """
+        Add handler to this selectable.
+        :param func: The handler.
+        :return None:
+        """
         self._logger.debug("running")
         self._about_app_action.triggered.connect(func)
         self._logger.debug("done")
 
-    def add_about_company_handler(self, func):
+    def add_about_company_handler(self, func: classmethod) -> None:
+        """
+        Add handler to this selectable.
+        :param func: The handler.
+        :return None:
+        """
         self._logger.debug("running")
         self._about_company_action.triggered.connect(func)
         self._logger.debug("done")
 
-    def add_update_handler(self, func):
+    def add_update_handler(self, func: classmethod) -> None:
+        """
+        Add handler to this selectable.
+        :param func: The handler.
+        :return None:
+        """
         self._logger.debug("running")
         self._update_action.triggered.connect(func)
         self._logger.debug("done")
 
-    def add_log_window_handler(self, func):
+    def add_log_window_handler(self, func: classmethod) -> None:
+        """
+        Add handler to this selectable.
+        :param func: The handler.
+        :return None:
+        """
         self._logger.debug("running")
         self._log_window_action.triggered.connect(func)
         self._logger.debug("done")
@@ -156,7 +211,7 @@ class AppMenuBar(QMenuBar):
         :param name: The name of the camera being added.
         :param handler: The button handler.
         :param is_active: Whether or not this camera is considered active.
-        :return: None
+        :return None:
         """
 
         new_cam_action = QAction(self)
@@ -171,19 +226,42 @@ class AppMenuBar(QMenuBar):
         """
         Remove a cam action by name.
         :param name: The name of the camera being removed.
-        :return:
+        :return None:
         """
 
         if name in self._cam_actions.keys():
             self._cam_list_menu.removeAction(self._cam_actions[name])
             del self._cam_actions[name]
 
-    def _set_texts(self):
+    def _eng_clicked(self) -> None:
+        """
+        Private handler for self._english_action
+        :return None:
+        """
+        if self._lang_callback:
+            self._lang_callback(LangEnum.ENG)
+
+    def _fre_clicked(self) -> None:
+        """
+        Private handler for self._french_action
+        :return None:
+        """
+        if self._lang_callback:
+            self._lang_callback(LangEnum.FRE)
+
+    def _set_texts(self) -> None:
+        """
+        Set the texts of this view object.
+        :return None:
+        """
         self._logger.debug("running")
         self._file_menu.setTitle(self._strings[StringsEnum.FILE])
         self._open_last_save_dir_action.setText(self._strings[StringsEnum.LAST_DIR])
-        self._cam_list_menu.setTitle(self._strings[StringsEnum.ATTACHED_CAMS])
-        self._use_cams_action.setText(self._strings[StringsEnum.USE_CAMS])
+        # self._cam_list_menu.setTitle(self._strings[StringsEnum.ATTACHED_CAMS])
+        # self._use_cams_action.setText(self._strings[StringsEnum.USE_CAMS])
+        self._language_menu.setTitle(self._strings[StringsEnum.LANG])
+        self._english_action.setText(self._strings[StringsEnum.ENG])
+        self._french_action.setText(self._strings[StringsEnum.FRE])
         self._help_menu.setTitle(self._strings[StringsEnum.HELP])
         self._about_app_action.setText(self._strings[StringsEnum.ABOUT_APP])
         self._about_company_action.setText(self._strings[StringsEnum.ABOUT_COMPANY])
@@ -191,8 +269,10 @@ class AppMenuBar(QMenuBar):
         self._log_window_action.setText(self._strings[StringsEnum.SHOW_LOG_WINDOW])
         self._logger.debug("done")
 
-    def empty_cam_actions(self):
+    def empty_cam_actions(self) -> None:
+        """
+        :return None:
+        """
         for name in self._cam_actions.keys():
             self._cam_list_menu.removeAction(self._cam_actions[name])
         self._cam_actions = {}
-
