@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2020
 Project: Companion App
 Company: Red Scientific
@@ -42,8 +43,13 @@ english = {StringsEnum.TITLE: "Storage Information",
            StringsEnum.MB_FREE: "MB free:",
            }
 
-# TODO: Add French version
-french = english
+# TODO: Verify French version
+french = {StringsEnum.TITLE: "Informations de Stockage",
+           StringsEnum.STORAGE_ID: 'ID de Stockage:',
+           StringsEnum.PERC_FREE: "Pourcentage inutilisé:",
+           StringsEnum.GB_FREE: "GB Inutilisé:",
+           StringsEnum.MB_FREE: "MB Inutilisé:",
+           }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}

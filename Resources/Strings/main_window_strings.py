@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2020
 Project: Companion App
 Company: Red Scientific
@@ -39,8 +40,11 @@ english = {StringsEnum.TITLE: app_name,
            StringsEnum.CLOSE_APP_CONFIRM: "Close app? Any unsaved progress will be lost!",
            }
 
-# TODO: Add French version
-french = english
+# TODO: Verify French version
+french = {StringsEnum.TITLE: app_name,
+           StringsEnum.CLOSE_TITLE: "Fermer " + company_name,
+           StringsEnum.CLOSE_APP_CONFIRM: "Fermer l'application? Tout progrès non enregistré sera perdu!",
+           }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}

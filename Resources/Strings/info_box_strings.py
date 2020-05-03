@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2020
 Project: Companion App
 Company: Red Scientific
@@ -38,8 +39,11 @@ english = {StringsEnum.TITLE: "Information",
            StringsEnum.BLOCK_NO: "Block number:"
            }
 
-# TODO: Add French version
-french = english
+# TODO: Verify French version
+french = {StringsEnum.TITLE: "Information",
+           StringsEnum.START_TIME: "Heure de début de l'expérience:",
+           StringsEnum.BLOCK_NO: "Numéro de bloc:"
+           }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}

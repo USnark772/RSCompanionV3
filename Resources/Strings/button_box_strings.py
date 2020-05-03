@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2020
 Project: Companion App
 Company: Red Scientific
@@ -50,8 +51,17 @@ english = {StringsEnum.TITLE: "Experiment",
            StringsEnum.COND_NAME_SHADOW: "Optional condition name",
            }
 
-# TODO: Add French version
-french = english
+# TODO: Verify French version
+french = {StringsEnum.TITLE: "Expérience",
+           StringsEnum.CREATE: "Créer",
+           StringsEnum.END: "Fin",
+           StringsEnum.CREATE_TT: "Créer une nouvelle expérience",
+           StringsEnum.END_TT: "Fin de l'expérience",
+           StringsEnum.START_TT: "Commencer l'expérience",
+           StringsEnum.RESUME_TT: "Reprendre l'expérience",
+           StringsEnum.PAUSE_TT: "Suspendre l'expérience",
+           StringsEnum.COND_NAME_SHADOW: "Nom de condition facultatif",
+           }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}

@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2020
 Project: Companion App
 Company: Red Scientific
@@ -40,8 +41,12 @@ english = {StringsEnum.TITLE: "Note",
            StringsEnum.SHADOW: "Enter note here",
            }
 
-# TODO: Add French version
-french = english
+# TODO: Verify French version
+french = {StringsEnum.TITLE: "Remarque",
+           StringsEnum.POST: "Publier",
+           StringsEnum.POST_TT: "Poster une note",
+           StringsEnum.SHADOW: "Entrez une note ici",
+           }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}

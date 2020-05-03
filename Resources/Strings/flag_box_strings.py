@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2020
 Project: Companion App
 Company: Red Scientific
@@ -36,8 +37,10 @@ english = {StringsEnum.TITLE: "Key Flag",
            StringsEnum.FLAG_TT: "The most recent key pressed for reference in save file",
            }
 
-# TODO: Add French version
-french = english
+# TODO: Verify French version
+french = {StringsEnum.TITLE: "Drapeau clé",
+           StringsEnum.FLAG_TT: "La touche la plus récente appuyée pour référence dans le fichier de sauvegarde",
+           }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}
