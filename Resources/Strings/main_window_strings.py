@@ -42,9 +42,9 @@ english = {StringsEnum.TITLE: app_name,
 
 # TODO: Verify French version
 french = {StringsEnum.TITLE: app_name,
-           StringsEnum.CLOSE_TITLE: "Fermer " + company_name,
-           StringsEnum.CLOSE_APP_CONFIRM: "Fermer l'application? Tout progrès non enregistré sera perdu!",
-           }
+          StringsEnum.CLOSE_TITLE: "Fermer " + company_name,
+          StringsEnum.CLOSE_APP_CONFIRM: "Fermer l'application? Tout progrès non enregistré sera perdu!",
+          }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}

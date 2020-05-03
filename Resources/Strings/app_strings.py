@@ -83,41 +83,41 @@ english = {StringsEnum.COMPANY_NAME: company_name,
 
 # TODO: Verify French version
 french = {StringsEnum.COMPANY_NAME: company_name,
-           StringsEnum.APP_NAME: app_name,
-           StringsEnum.LOG_OUT_NAME: log_out_filename,
-           StringsEnum.LOG_VER_ID: company_name + " Version de l'application: ",
-           StringsEnum.PROG_OUT_HDR: "Horodatage, Auteur, Emplacement, Message\n",
-           StringsEnum.ABOUT_COMPANY: "Red Scientific Inc a été fondée en 2015 par Joel Cooper PhD\n\n"
-                                      " Informations de contact:\n"
-                                      " joel@redscientific.com\n"
-                                      " 1-801-520-5408",
-           StringsEnum.ABOUT_APP: "- La plupart des éléments de cette application comportent des info-bulles."
-                                  " Passez la souris sur différentes parties pour voir les info-bulles respectives"
-                                  " pour plus d'informations.\n\n"
-                                  " En haut de l'application, vous trouverez une barre de contrôle contenant les"
-                                  " éléments suivants:\n"
-                                  " - Bouton Créer/Fin: créez ou terminez une expérience. Choisissez un dossier"
-                                  " d'emplacement pour l'application pour enregistrer les données de l'appareil.\n"
-                                  " - Bouton Lecture / Pause: commence / reprend ou suspend une expérience en cours.\n"
-                                  " - Nom de condition facultatif: nom facultatif qui sera associé à la nouvelle"
-                                  " expérience créée.\n\n"
-                                  " - Indicateur de touche: appuyez sur une touche de lettre à tout moment pour créer"
-                                  " une touche de référence rapide qui sera associée aux données provenant des"
-                                  " appareils pendant une expérience.\n\n"
-                                  " - Remarque: entrez une note dans la case et appuyez sur Publier pour appliquer"
-                                  " cette note à tous les fichiers de données de l'appareil dans l'expérience"
-                                  " en cours.\n\n"
-                                  " - Informations: affiche des informations concernant l'expérience en cours.\n\n"
-                                  " - Informations sur le lecteur: affiche des informations concernant le volume"
-                                  " actuel sur lequel les données sont enregistrées.",
-           StringsEnum.UPDATE_AVAILABLE: "Une mise à jour est disponible.",
-           StringsEnum.NO_UPDATE: "Votre programme est à jour.",
-           StringsEnum.ERR_UPDATE_CHECK: "Une erreur inattendue s'est produite lors de la connexion au référentiel."
-                                         " Veuillez vérifier https://redscientific.com/downloads.html manuellement"
-                                         " ou contacter directement Red Scientific.",
-           StringsEnum.DEV_CON_ERR: "Un problème est survenu lors de la connexion de l'appareil. Veuillez réessayer.",
-           StringsEnum.RESTART_PROG: "Cette application doit redémarrer pour que les modifications prennent effet."
-           }
+          StringsEnum.APP_NAME: app_name,
+          StringsEnum.LOG_OUT_NAME: log_out_filename,
+          StringsEnum.LOG_VER_ID: company_name + " Version de l'application: ",
+          StringsEnum.PROG_OUT_HDR: "Horodatage, Auteur, Emplacement, Message\n",
+          StringsEnum.ABOUT_COMPANY: "Red Scientific Inc a été fondée en 2015 par Joel Cooper PhD\n\n"
+                                     " Informations de contact:\n"
+                                     " joel@redscientific.com\n"
+                                     " 1-801-520-5408",
+          StringsEnum.ABOUT_APP: "- La plupart des éléments de cette application comportent des info-bulles."
+                                 " Passez la souris sur différentes parties pour voir les info-bulles respectives"
+                                 " pour plus d'informations.\n\n"
+                                 " En haut de l'application, vous trouverez une barre de contrôle contenant les"
+                                 " éléments suivants:\n"
+                                 " - Bouton Créer/Fin: créez ou terminez une expérience. Choisissez un dossier"
+                                 " d'emplacement pour l'application pour enregistrer les données de l'appareil.\n"
+                                 " - Bouton Lecture / Pause: commence / reprend ou suspend une expérience en cours.\n"
+                                 " - Nom de condition facultatif: nom facultatif qui sera associé à la nouvelle"
+                                 " expérience créée.\n\n"
+                                 " - Indicateur de touche: appuyez sur une touche de lettre à tout moment pour créer"
+                                 " une touche de référence rapide qui sera associée aux données provenant des"
+                                 " appareils pendant une expérience.\n\n"
+                                 " - Remarque: entrez une note dans la case et appuyez sur Publier pour appliquer"
+                                 " cette note à tous les fichiers de données de l'appareil dans l'expérience"
+                                 " en cours.\n\n"
+                                 " - Informations: affiche des informations concernant l'expérience en cours.\n\n"
+                                 " - Informations sur le lecteur: affiche des informations concernant le volume"
+                                 " actuel sur lequel les données sont enregistrées.",
+          StringsEnum.UPDATE_AVAILABLE: "Une mise à jour est disponible.",
+          StringsEnum.NO_UPDATE: "Votre programme est à jour.",
+          StringsEnum.ERR_UPDATE_CHECK: "Une erreur inattendue s'est produite lors de la connexion au référentiel."
+                                        " Veuillez vérifier https://redscientific.com/downloads.html manuellement"
+                                        " ou contacter directement Red Scientific.",
+          StringsEnum.DEV_CON_ERR: "Un problème est survenu lors de la connexion de l'appareil. Veuillez réessayer.",
+          StringsEnum.RESTART_PROG: "Cette application doit redémarrer pour que les modifications prennent effet."
+          }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}

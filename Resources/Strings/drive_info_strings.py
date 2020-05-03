@@ -45,11 +45,11 @@ english = {StringsEnum.TITLE: "Storage Information",
 
 # TODO: Verify French version
 french = {StringsEnum.TITLE: "Informations de Stockage",
-           StringsEnum.STORAGE_ID: 'ID de Stockage:',
-           StringsEnum.PERC_FREE: "Pourcentage inutilisé:",
-           StringsEnum.GB_FREE: "GB Inutilisé:",
-           StringsEnum.MB_FREE: "MB Inutilisé:",
-           }
+          StringsEnum.STORAGE_ID: 'ID de Stockage:',
+          StringsEnum.PERC_FREE: "Pourcentage inutilisé:",
+          StringsEnum.GB_FREE: "GB Inutilisé:",
+          StringsEnum.MB_FREE: "MB Inutilisé:",
+          }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}

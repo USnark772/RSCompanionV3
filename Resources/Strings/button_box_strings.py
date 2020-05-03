@@ -53,15 +53,15 @@ english = {StringsEnum.TITLE: "Experiment",
 
 # TODO: Verify French version
 french = {StringsEnum.TITLE: "Expérience",
-           StringsEnum.CREATE: "Créer",
-           StringsEnum.END: "Fin",
-           StringsEnum.CREATE_TT: "Créer une nouvelle expérience",
-           StringsEnum.END_TT: "Fin de l'expérience",
-           StringsEnum.START_TT: "Commencer l'expérience",
-           StringsEnum.RESUME_TT: "Reprendre l'expérience",
-           StringsEnum.PAUSE_TT: "Suspendre l'expérience",
-           StringsEnum.COND_NAME_SHADOW: "Nom de condition facultatif",
-           }
+          StringsEnum.CREATE: "Créer",
+          StringsEnum.END: "Fin",
+          StringsEnum.CREATE_TT: "Créer une nouvelle expérience",
+          StringsEnum.END_TT: "Fin de l'expérience",
+          StringsEnum.START_TT: "Commencer l'expérience",
+          StringsEnum.RESUME_TT: "Reprendre l'expérience",
+          StringsEnum.PAUSE_TT: "Suspendre l'expérience",
+          StringsEnum.COND_NAME_SHADOW: "Nom de condition facultatif",
+          }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}

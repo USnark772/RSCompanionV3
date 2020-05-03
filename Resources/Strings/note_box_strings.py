@@ -43,10 +43,10 @@ english = {StringsEnum.TITLE: "Note",
 
 # TODO: Verify French version
 french = {StringsEnum.TITLE: "Remarque",
-           StringsEnum.POST: "Publier",
-           StringsEnum.POST_TT: "Poster une note",
-           StringsEnum.SHADOW: "Entrez une note ici",
-           }
+          StringsEnum.POST: "Publier",
+          StringsEnum.POST_TT: "Poster une note",
+          StringsEnum.SHADOW: "Entrez une note ici",
+          }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}

@@ -41,9 +41,9 @@ english = {StringsEnum.TITLE: "Information",
 
 # TODO: Verify French version
 french = {StringsEnum.TITLE: "Information",
-           StringsEnum.START_TIME: "Heure de début de l'expérience:",
-           StringsEnum.BLOCK_NO: "Numéro de bloc:"
-           }
+          StringsEnum.START_TIME: "Heure de début de l'expérience:",
+          StringsEnum.BLOCK_NO: "Numéro de bloc:"
+          }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}

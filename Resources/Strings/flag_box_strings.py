@@ -39,8 +39,8 @@ english = {StringsEnum.TITLE: "Key Flag",
 
 # TODO: Verify French version
 french = {StringsEnum.TITLE: "Drapeau clé",
-           StringsEnum.FLAG_TT: "La touche la plus récente appuyée pour référence dans le fichier de sauvegarde",
-           }
+          StringsEnum.FLAG_TT: "La touche la plus récente appuyée pour référence dans le fichier de sauvegarde",
+          }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french}
