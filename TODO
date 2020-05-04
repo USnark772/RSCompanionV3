@@ -1,6 +1,18 @@
 # TODO:
     - Implement handlers in app_controller.py.
     - Finish fine tuning MDI subwindows.
+        - Make subwindows rearrange/resize/move on main window resize.
+        - Make subwindows not able to move outside the main window size.
     - Implement subwindow arranging in mdi_area.py.
     - Implement data saving.
     - Implement data display.
+    - Change percent free to percent used.
+
+Languages:
+    - German
+    - Spanish
+    - Mandarin (- Chinese simplified/formal)
+    - Dutch
+    - Australian
+    - European languages
+    - 10 most spoken languages would be nice.
