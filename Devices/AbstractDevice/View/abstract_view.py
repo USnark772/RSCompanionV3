@@ -27,7 +27,7 @@ https://redscientific.com/index.html
 
 from abc import ABCMeta, ABC, abstractmethod
 from Model.app_helpers import EasyFrame
-from PySide2.QtWidgets import QMdiSubWindow, QMdiArea, QHBoxLayout, QGridLayout, QLayout
+from PySide2.QtWidgets import QMdiSubWindow, QHBoxLayout, QGridLayout, QLayout
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QCloseEvent
 
@@ -48,6 +48,10 @@ class SubWindow(QMdiSubWindow):
         self.main_frame.setLayout(QGridLayout())
 
     def layout(self) -> QLayout:
+        """
+        Returns a QGridLayout.
+        :return QLayout: The grid layout.
+        """
         return self.main_frame.layout()
 
 

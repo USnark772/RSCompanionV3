@@ -32,9 +32,10 @@ from Devices.DRT.Model import drt_defs as defs
 
 
 class DRTModel:
-    def __init__(self, conn: AioSerial, ch: StreamHandler):
+    def __init__(self, conn: AioSerial, log_handlers: [StreamHandler]):
         self._logger = getLogger(__name__)
-        self._logger.addHandler(ch)
+        for h in log_handlers:
+            self._logger.addHandler(h)
         self._logger.debug("Initializing")
         self._msg_q = Queue()
         self._conn = conn
@@ -346,7 +347,7 @@ class DRTModel:
         :param line: The data to write.
         :return: None.
         """
-        print("Implement DRTModel._output_save_data()")
+        print(__name__, "Implement DRTModel._output_save_data()", line)
 
     @staticmethod
     def _parse_msg(msg_string: str) -> dict:
@@ -421,6 +422,7 @@ class DRTModel:
         """
         return ceil(val / 100 * defs.intensity_max)
 
+    # TODO: Add timestamp to this line?
     @staticmethod
     def _format_save_data(values: dict, timestamp: datetime) -> str:
         """

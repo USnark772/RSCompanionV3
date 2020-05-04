@@ -23,16 +23,19 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
+from logging import getLogger, DEBUG
 from abc import ABC, abstractmethod
 from Model.app_defs import LangEnum
 from aioserial import AioSerial
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
+# TODO: remove print statements at release.
 class AbstractController(ABC):
     def __init__(self, view):
         super().__init__()
         self.view = view
+        self._debugging = (getLogger(__name__).getEffectiveLevel() == DEBUG)
 
     def get_view(self) -> AbstractView:
         """
@@ -45,6 +48,15 @@ class AbstractController(ABC):
         """
         Handle cleanup and shut down of this code.
         :return: None.
+        """
+        pass
+
+    @abstractmethod
+    def set_output_path(self, path: str) -> None:
+        """
+        Set the output path for this device to save data to.
+        :param path: The path to save data to.
+        :return None:
         """
         pass
 
@@ -61,7 +73,8 @@ class AbstractController(ABC):
         :param lang: The enum for the language.
         :return: None.
         """
-        print(__name__, "Got new language to use:", lang)
+        if self._debugging:
+            print(__name__, "Got new language to use:", lang)
         pass
 
     def create_exp(self) -> None:
@@ -69,7 +82,8 @@ class AbstractController(ABC):
         Logic for if this device needs to know about when an experiment is created.
         :return: None.
         """
-        print(__name__, "Got create signal, creating.")
+        if self._debugging:
+            print(__name__, "Got create signal, creating.")
         pass
 
     def end_exp(self) -> None:
@@ -77,7 +91,8 @@ class AbstractController(ABC):
         Logic for if this device needs to know about when an experiment is ended.
         :return: None.
         """
-        print(__name__, "Got end signal, ending.")
+        if self._debugging:
+            print(__name__, "Got end signal, ending.")
         pass
 
     def start_exp(self) -> None:
@@ -85,7 +100,8 @@ class AbstractController(ABC):
         Logic for if this device needs to know about when an experiment is running.
         :return: None.
         """
-        print(__name__, "Got start signal, starting.")
+        if self._debugging:
+            print(__name__, "Got start signal, starting.")
         pass
 
     def stop_exp(self) -> None:
@@ -93,5 +109,6 @@ class AbstractController(ABC):
         Logic for if this device needs to know about when an experiment is stopped.
         :return: None.
         """
-        print(__name__, "Got stop signal, stopping.")
+        if self._debugging:
+            print(__name__, "Got stop signal, stopping.")
         pass

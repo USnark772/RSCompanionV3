@@ -32,15 +32,16 @@ from Resources.Strings.drive_info_strings import strings, StringsEnum, LangEnum
 
 class DriveInfoBox(QGroupBox):
     """ This code is for displaying information about storage usage. """
-    def __init__(self, parent, size: (int, int), ch: StreamHandler, lang: LangEnum):
+    def __init__(self, parent, size: (int, int), log_handlers: [StreamHandler], lang: LangEnum):
         """
         Initialize this view module.
         :param parent: parent of this view module.
         :param size: size this view module should occupy
-        :param ch:
+        :param log_handlers:
         """
         self._logger = getLogger(__name__)
-        self._logger.addHandler(ch)
+        for h in log_handlers:
+            self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(parent)
         self.setFixedSize(size)

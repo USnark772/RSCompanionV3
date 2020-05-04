@@ -37,13 +37,14 @@ from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
 class AppModel:
-    def __init__(self, ch: StreamHandler, lang: LangEnum):
+    def __init__(self, log_handlers: [StreamHandler], lang: LangEnum):
         self._logger = getLogger(__name__)
-        self._logger.addHandler(ch)
+        for h in log_handlers:
+            self._logger.addHandler(h)
         self._logger.debug("Initializing")
         self._controllers = self.get_controllers()
-        self._scanner = RSDeviceCommScanner(self.get_profiles(), ch)
-        self._ch = ch
+        self._scanner = RSDeviceCommScanner(self.get_profiles(), log_handlers)
+        self._log_handlers = log_handlers
         self._new_dev_view_flag = Event()
         self._remove_dev_view_flag = Event()
         self._current_lang = lang
@@ -236,7 +237,7 @@ class AppModel:
         self._logger.debug("running")
         ret = True
         try:
-            controller = self._controllers[dev_type](conn, self._current_lang, self._ch)
+            controller = self._controllers[dev_type](conn, self._current_lang, self._log_handlers)
             self._devs[conn.port] = controller
             self._new_dev_views.append(controller.get_view())
             self._new_dev_view_flag.set()

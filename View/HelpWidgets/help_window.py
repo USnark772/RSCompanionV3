@@ -27,6 +27,7 @@ import logging
 from PySide2.QtWidgets import QMessageBox
 
 
+# TODO: Proper logging for this file?
 class HelpWindow(QMessageBox):
     """ This is to display small messages to the user. """
     def __init__(self, name, text):

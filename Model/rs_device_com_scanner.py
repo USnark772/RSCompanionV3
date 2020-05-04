@@ -34,13 +34,14 @@ from Model.app_helpers import await_event, end_tasks
 
 
 class RSDeviceCommScanner:
-    def __init__(self, device_ids: dict, ch: StreamHandler):
+    def __init__(self, device_ids: dict, log_handlers: [StreamHandler]):
         """
         Initialize scanner and prep for run.
         :param device_ids: The list of devices to look for.
         """
         self._logger = getLogger(__name__)
-        self._logger.addHandler(ch)
+        for h in log_handlers:
+            self._logger.addHandler(h)
         self._logger.debug("Initializing")
         self._device_ids = device_ids
         self._connect_event = Event()

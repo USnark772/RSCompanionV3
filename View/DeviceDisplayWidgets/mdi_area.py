@@ -23,16 +23,17 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from logging import getLogger
+from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QMdiArea
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
 class MDIArea(QMdiArea):
     """ The area to show device specific views. """
-    def __init__(self, parent, ch):
+    def __init__(self, parent, log_handlers: [StreamHandler]):
         self._logger = getLogger(__name__)
-        self._logger.addHandler(ch)
+        for h in log_handlers:
+            self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(parent)
         self.setMinimumSize(500, 300)

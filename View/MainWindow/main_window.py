@@ -36,9 +36,10 @@ from Resources.Strings.main_window_strings import strings, StringsEnum, LangEnum
 
 class AppMainWindow(QMainWindow):
     """ The main window the app will be displayed in. """
-    def __init__(self, min_size: QSize, ch: StreamHandler, lang: LangEnum):
+    def __init__(self, min_size: QSize, log_handlers: [StreamHandler], lang: LangEnum):
         self._logger = getLogger(__name__)
-        self._logger.addHandler(ch)
+        for h in log_handlers:
+            self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__()
         self._icon = QIcon(image_file_path + "rs_icon.png")

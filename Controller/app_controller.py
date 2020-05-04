@@ -73,7 +73,11 @@ class AppController:
         self.ch = logging.StreamHandler(self.log_output)
         self.ch.setLevel(log_level)
         self.ch.setFormatter(self.formatter)
+        self.ch2 = logging.StreamHandler()
+        self.ch2.setLevel(logging.WARNING)
+        self.ch2.setFormatter(self.formatter)
         self._logger.addHandler(self.ch)
+        self._logger.addHandler(self.ch2)
         self._logger.info(self._strings[StringsEnum.LOG_VER_ID] + str(current_version))
 
         self._logger.debug("Initializing")
@@ -85,18 +89,18 @@ class AppController:
         flag_box_size = QSize(80, 120)
         note_box_size = QSize(250, 120)
         drive_info_box_size = QSize(200, 120)
-        self.main_window = AppMainWindow(ui_min_size, self.ch, self._lang)
-        self.menu_bar = AppMenuBar(self.main_window, self.ch, self._lang)
-        self.button_box = ButtonBox(self.main_window, button_box_size, self.ch, self._lang)
-        self.info_box = InfoBox(self.main_window, info_box_size, self.ch, self._lang)
-        self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, self.ch, self._lang)
-        self.flag_box = FlagBox(self.main_window, flag_box_size, self.ch, self._lang)
-        self.note_box = NoteBox(self.main_window, note_box_size, self.ch, self._lang)
-        self.mdi_area = MDIArea(self.main_window, self.ch)
+        self.main_window = AppMainWindow(ui_min_size, [self.ch, self.ch2], self._lang)
+        self.menu_bar = AppMenuBar(self.main_window, [self.ch, self.ch2], self._lang)
+        self.button_box = ButtonBox(self.main_window, button_box_size, [self.ch, self.ch2], self._lang)
+        self.info_box = InfoBox(self.main_window, info_box_size, [self.ch, self.ch2], self._lang)
+        self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, [self.ch, self.ch2], self._lang)
+        self.flag_box = FlagBox(self.main_window, flag_box_size, [self.ch, self.ch2], self._lang)
+        self.note_box = NoteBox(self.main_window, note_box_size, [self.ch, self.ch2], self._lang)
+        self.mdi_area = MDIArea(self.main_window, [self.ch, self.ch2])
         self._file_dialog = QFileDialog(self.main_window)
 
         # Model
-        self._model = AppModel(self.ch, self._lang)
+        self._model = AppModel([self.ch, self.ch2], self._lang)
 
         # from PySide2.QtWidgets import QMdiSubWindow
         # for i in range(6):
@@ -489,6 +493,8 @@ class AppController:
         Cleanup any code that would cause problems for shutdown and prep for app closure.
         :return None:
         """
+        if self._exp_created:
+            self._end_exp()
         create_task(end_tasks(self._tasks))
         self._model.cleanup()
         self.log_output.close()

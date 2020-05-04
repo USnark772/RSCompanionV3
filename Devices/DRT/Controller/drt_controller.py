@@ -28,19 +28,21 @@ from datetime import datetime
 from asyncio import create_task
 from aioserial import AioSerial
 from Model.app_defs import LangEnum
+from Model.app_helpers import format_current_time
 from Devices.AbstractDevice.Controller.abstract_controller import AbstractController
 from Devices.DRT.View.drt_view import DRTView, StringsEnum
 from Devices.DRT.Model.drt_model import DRTModel
 
 
 class Controller(AbstractController):
-    def __init__(self, conn: AioSerial, lang: LangEnum, ch: StreamHandler):
+    def __init__(self, conn: AioSerial, lang: LangEnum, log_handlers: [StreamHandler]):
         self._logger = getLogger(__name__)
-        self._logger.addHandler(ch)
+        for h in log_handlers:
+            self._logger.addHandler(h)
         self._logger.debug("Initializing")
         device_name = "DRT_" + conn.port.strip("COM")
-        super().__init__(DRTView(device_name, ch))
-        self._model = DRTModel(conn, ch)
+        super().__init__(DRTView(device_name, log_handlers))
+        self._model = DRTModel(conn, log_handlers)
         self._exp = False
         self._updating_config = False
         self._setup_handlers()
@@ -165,7 +167,12 @@ class Controller(AbstractController):
         :param timestamp: When the data was received.
         :return: None.
         """
-        print("Implement drt_controller._update_view_data(). values, timestamp:", values, timestamp)
+        line = ""
+        for val in values.values():
+            line += str(val) + ", "
+        line += format_current_time(timestamp, day=True, time=True, mil=True) + "\n"
+        self.view.write(line)
+        print(__name__, "Implement drt_controller._update_view_data(). values, timestamp:", values, timestamp)
 
     def _update_view_config(self, msg: dict) -> None:
         """

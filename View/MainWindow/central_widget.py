@@ -27,6 +27,7 @@ from logging import getLogger
 from PySide2.QtWidgets import QWidget, QVBoxLayout
 
 
+# TODO: Proper logging for this file?
 class CentralWidget(QWidget):
     """ This code is the overall frame inside the app main window. All other parts will go inside this. """
     def __init__(self, parent):

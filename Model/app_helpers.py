@@ -32,6 +32,7 @@ from datetime import datetime
 from PySide2.QtWidgets import QPushButton, QFrame
 from Model.app_defs import button_normal_style, button_pressed_style
 
+# TODO: Proper logging in this file?
 logger = getLogger(__name__)
 
 
