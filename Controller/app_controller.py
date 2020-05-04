@@ -27,7 +27,7 @@ https://redscientific.com/index.html
 import logging
 from logging import DEBUG
 from datetime import datetime
-from asyncio import create_task
+from asyncio import create_task, sleep
 from aioserial import AioSerial
 from PySide2.QtWidgets import QFileDialog
 from PySide2.QtGui import QKeyEvent
@@ -98,6 +98,12 @@ class AppController:
         # Model
         self._model = AppModel(self.ch, self._lang)
 
+        # from PySide2.QtWidgets import QMdiSubWindow
+        # for i in range(6):
+        #     window = QMdiSubWindow()
+        #     window.setFixedSize(300, 200)
+        #     self.mdi_area.add_window(window)
+
         self._save_file_name = str()
         self._save_dir = str()
         self._tasks = []
@@ -107,6 +113,7 @@ class AppController:
         self._logger.debug("Initialized")
         self._exp_created = False
         self._exp_running = False
+        self._updater_task = None
         self._curr_cond_name = ""
 
     def language_change_handler(self, lang: LangEnum) -> None:
@@ -275,6 +282,15 @@ class AppController:
         print("Implement handling for this button")
         self._logger.debug("done")
 
+    async def _update_drive_info_box(self):
+        while True:
+            info = get_remaining_disk_size(self._drive_path)
+            self.d_info_box.set_name_val(str(info[0]))
+            self.d_info_box.set_perc_val(str(info[1]))
+            self.d_info_box.set_gb_val(str(info[2]))
+            self.d_info_box.set_mb_val(str(info[3]))
+            await sleep(2)
+
     def _create_exp(self) -> None:
         """
         Create an experiment. Signal devices and update view.
@@ -286,7 +302,8 @@ class AppController:
             self.button_box.set_start_button_enabled(True)
             self.button_box.set_create_button_state(1)
             self._check_toggle_post_button()
-            self._update_drive_info_box()  # TODO: Make sure this is updating periodically during experiments.
+            if self._set_drive_updater():
+                self._updater_task = create_task(self._update_drive_info_box())
             self.info_box.set_start_time(format_current_time(datetime.now(), time=True))
         else:
             self.button_box.set_create_button_state(0)
@@ -298,12 +315,14 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        self.__exp_created = False
+        self._exp_created = False
         if self._exp_running:
             self._stop_exp()
         self._model.signal_end_exp()
         self._check_toggle_post_button()
-        self._update_drive_info_box()
+        if self._updater_task:
+            self._updater_task.cancel()
+            self._updater_task = None
         self.info_box.set_block_num(0)
         self.button_box.set_create_button_state(0)
         self.button_box.set_start_button_enabled(False)
@@ -338,19 +357,20 @@ class AppController:
         self.button_box.set_condition_name_box_enabled(True)
         self._logger.debug("done")
 
-    def _update_drive_info_box(self, filename: str = '') -> None:
+    def _set_drive_updater(self, filename: str = None) -> bool:
         """
         Update drive info display with drive information.
         :param filename: The drive to look at.
         :return None:
         """
-        if filename == '' and not self._save_dir == "":
-            filename = self._save_dir
-        info = get_remaining_disk_size(filename)
-        self.d_info_box.set_name_val(str(info[0]))
-        self.d_info_box.set_perc_val(str(info[1]))
-        self.d_info_box.set_gb_val(str(info[2]))
-        self.d_info_box.set_mb_val(str(info[3]))
+        ret = True
+        if not filename and not self._save_dir == "":
+            self._drive_path = self._save_dir
+        elif len(filename) > 0:
+            self._drive_path = filename
+        else:
+            ret = False
+        return ret
 
     def _check_toggle_post_button(self) -> None:
         """
