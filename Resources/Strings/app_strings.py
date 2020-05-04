@@ -53,10 +53,10 @@ english = {StringsEnum.COMPANY_NAME: company_name,
            StringsEnum.LOG_OUT_NAME: log_out_filename,
            StringsEnum.LOG_VER_ID: company_name + " app version: ",
            StringsEnum.PROG_OUT_HDR: "Timestamp, Author, Location, Message\n",
-           StringsEnum.ABOUT_COMPANY: "Red Scientific Inc was founded in 2015 by Joel Cooper PhD\n\n"
-                                      " Contact Information:\n"
-                                      " joel@redscientific.com\n"
-                                      " 1-801-520-5408",
+           StringsEnum.ABOUT_COMPANY: company_name + " Inc was founded in 2015 by Joel Cooper PhD\n\n"
+                                                     " Contact Information:\n"
+                                                     " joel@redscientific.com\n"
+                                                     " 1-801-520-5408",
            StringsEnum.ABOUT_APP: "- Most things in this app have tooltips. Mouse over different parts to see"
                                   " respective tooltips for more information\n\n"
                                   " Along the top of the app you will find a control bar containing the following:\n"
@@ -87,10 +87,10 @@ french = {StringsEnum.COMPANY_NAME: company_name,
           StringsEnum.LOG_OUT_NAME: log_out_filename,
           StringsEnum.LOG_VER_ID: company_name + " Version de l'application: ",
           StringsEnum.PROG_OUT_HDR: "Horodatage, Auteur, Emplacement, Message\n",
-          StringsEnum.ABOUT_COMPANY: "Red Scientific Inc a été fondée en 2015 par Joel Cooper PhD\n\n"
-                                     " Informations de contact:\n"
-                                     " joel@redscientific.com\n"
-                                     " 1-801-520-5408",
+          StringsEnum.ABOUT_COMPANY: company_name + " Inc a été fondée en 2015 par Joel Cooper PhD\n\n"
+                                                    " Informations de contact:\n"
+                                                    " joel@redscientific.com\n"
+                                                    " 1-801-520-5408",
           StringsEnum.ABOUT_APP: "- La plupart des éléments de cette application comportent des info-bulles."
                                  " Passez la souris sur différentes parties pour voir les info-bulles respectives"
                                  " pour plus d'informations.\n\n"
