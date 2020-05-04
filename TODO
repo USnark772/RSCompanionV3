@@ -4,4 +4,3 @@
     - Implement subwindow arranging in mdi_area.py.
     - Implement data saving.
     - Implement data display.
-    - Make drive info update periodically.
