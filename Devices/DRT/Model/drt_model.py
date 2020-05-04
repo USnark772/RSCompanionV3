@@ -51,6 +51,14 @@ class DRTModel:
         """
         return self._conn
 
+    def set_save_dir(self, path: str) -> None:
+        """
+        Set this device's output path to path.
+        :param path: The output path to use.
+        :return None:
+        """
+        self._save_dir = path
+
     def set_current_vals(self, duration: int = None, intensity: int = None, upper_isi: int = None,
                          lower_isi: int = None) -> None:
         """
@@ -347,6 +355,7 @@ class DRTModel:
         :param line: The data to write.
         :return: None.
         """
+        print(__name__, "Current save dir:", self._save_dir)
         print(__name__, "Implement DRTModel._output_save_data()", line)
 
     @staticmethod

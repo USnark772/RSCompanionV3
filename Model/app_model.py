@@ -112,16 +112,17 @@ class AppModel:
             return True, self._remove_dev_views.pop(0)
         return False, None
 
-    def signal_create_exp(self) -> bool:
+    def signal_create_exp(self, path: str) -> bool:
         """
         Call create_exp on all device controllers.
+        :param path: The save dir for this experiment.
         :return bool: If there was an error.
         """
         self._logger.debug("running")
         devices_running = list()
         try:
             for controller in self._devs.values():
-                controller.create_exp()
+                controller.create_exp(path)
                 devices_running.append(controller)
             self._logger.debug("done")
             return True

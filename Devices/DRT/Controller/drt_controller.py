@@ -63,6 +63,14 @@ class Controller(AbstractController):
         self._model.cleanup()
         self._logger.debug("done")
 
+    def set_output_path(self, path: str) -> None:
+        """
+        Set this device's output path to path.
+        :param path: The output path to use.
+        :return None:
+        """
+        self._model.set_save_dir(path)
+
     def set_lang(self, lang: LangEnum) -> None:
         """
         Set this device's view language.
@@ -90,6 +98,14 @@ class Controller(AbstractController):
                 self._model.save_data(msg['values'], timestamp)
             elif msg_type == "settings":
                 self._update_view_config(msg['values'])
+
+    def create_exp(self, path: str) -> None:
+        """
+        Set this devices save dir.
+        :param path: The save dir.
+        :return None:
+        """
+        self._model.set_save_dir(path)
 
     def start_exp(self) -> None:
         """

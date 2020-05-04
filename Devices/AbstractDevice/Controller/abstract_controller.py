@@ -77,13 +77,14 @@ class AbstractController(ABC):
             print(__name__, "Got new language to use:", lang)
         pass
 
-    def create_exp(self) -> None:
+    def create_exp(self, path: str) -> None:
         """
+        Set the current experiment save directory for this device if this devices needs to know it.
         Logic for if this device needs to know about when an experiment is created.
         :return: None.
         """
         if self._debugging:
-            print(__name__, "Got create signal, creating.")
+            print(__name__, "Got create signal, creating. path:", path)
         pass
 
     def end_exp(self) -> None:
