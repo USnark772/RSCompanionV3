@@ -247,7 +247,6 @@ class AppController:
         print("Implement handling for this button")
         self._logger.debug("done")
 
-    # TODO: Implement
     def check_for_updates_handler(self) -> None:
         """
         Handler for update button.
