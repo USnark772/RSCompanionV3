@@ -254,7 +254,16 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        print("Implement handling for this button")
+        ret = self._model.check_version()
+        if ret == 1:
+            self.main_window.show_help_window(self._strings[StringsEnum.UPDATE_HDR],
+                                              self._strings[StringsEnum.UPDATE_AVAILABLE])
+        elif ret == 0:
+            self.main_window.show_help_window(self._strings[StringsEnum.UPDATE_HDR],
+                                              self._strings[StringsEnum.NO_UPDATE])
+        elif ret == -1:
+            self.main_window.show_help_window(self._strings[StringsEnum.UPDATE_HDR_ERR],
+                                              self._strings[StringsEnum.ERR_UPDATE_CHECK])
         self._logger.debug("done")
 
     def log_window_handler(self) -> None:

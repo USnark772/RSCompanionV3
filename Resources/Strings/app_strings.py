@@ -41,6 +41,8 @@ class StringsEnum(Enum):
     DEV_CON_ERR = auto()
     LOG_OUT_NAME = auto()
     RESTART_PROG = auto()
+    UPDATE_HDR = auto()
+    UPDATE_HDR_ERR = auto()
 
 
 company_name = "Red Scientific"
@@ -72,6 +74,8 @@ english = {StringsEnum.COMPANY_NAME: company_name,
                                   " - Information: Displays information in regards to the current experiment.\n\n"
                                   " - Drive Info: Displays information in regards to the current volume where data is"
                                   " being saved to.",
+           StringsEnum.UPDATE_HDR: "Update",
+           StringsEnum.UPDATE_HDR_ERR: "Error",
            StringsEnum.UPDATE_AVAILABLE: "An update is available.",
            StringsEnum.NO_UPDATE: "Your program is up to date.",
            StringsEnum.ERR_UPDATE_CHECK: "There was an unexpected error connecting to the repository. Please check"
@@ -110,6 +114,8 @@ french = {StringsEnum.COMPANY_NAME: company_name,
                                  " - Informations: affiche des informations concernant l'expérience en cours.\n\n"
                                  " - Informations sur le lecteur: affiche des informations concernant le volume"
                                  " actuel sur lequel les données sont enregistrées.",
+          StringsEnum.UPDATE_HDR: "Mise à jour",
+          StringsEnum.UPDATE_HDR_ERR: "Erreur",
           StringsEnum.UPDATE_AVAILABLE: "Une mise à jour est disponible.",
           StringsEnum.NO_UPDATE: "Votre programme est à jour.",
           StringsEnum.ERR_UPDATE_CHECK: "Une erreur inattendue s'est produite lors de la connexion au référentiel."

@@ -33,6 +33,7 @@ from aioserial import AioSerial
 from Model.rs_device_com_scanner import RSDeviceCommScanner
 from Model.app_defs import LangEnum
 from Model.app_helpers import await_event, end_tasks
+from Model.version_checker import VersionChecker
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
@@ -44,6 +45,7 @@ class AppModel:
         self._logger.debug("Initializing")
         self._controllers = self.get_controllers()
         self._scanner = RSDeviceCommScanner(self.get_profiles(), log_handlers)
+        self._ver_check = VersionChecker(log_handlers)
         self._log_handlers = log_handlers
         self._new_dev_view_flag = Event()
         self._remove_dev_view_flag = Event()
@@ -93,6 +95,13 @@ class AppModel:
         """
         for controller in self._devs.values():
             controller.set_lang(lang)
+
+    def check_version(self) -> int:
+        """
+
+        :return bool: 1: update available, 0: up to date, -1: error checking.
+        """
+        return self._ver_check.check_version()
 
     def get_next_new_view(self) -> (bool, AbstractView):
         """
