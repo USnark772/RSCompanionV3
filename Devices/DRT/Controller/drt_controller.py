@@ -42,7 +42,7 @@ class Controller(AbstractController):
         self._logger.debug("Initializing")
         device_name = "DRT_" + conn.port.strip("COM")
         super().__init__(DRTView(device_name, log_handlers))
-        self._model = DRTModel(conn, log_handlers)
+        self._model = DRTModel(device_name, conn, log_handlers)
         self._exp = False
         self._updating_config = False
         self._setup_handlers()
@@ -69,7 +69,7 @@ class Controller(AbstractController):
         :param path: The output path to use.
         :return None:
         """
-        self._model.set_save_dir(path)
+        self._model.update_save_info(path)
 
     def set_lang(self, lang: LangEnum) -> None:
         """
@@ -105,7 +105,7 @@ class Controller(AbstractController):
         :param path: The save dir.
         :return None:
         """
-        self._model.set_save_dir(path)
+        self._model.update_save_info(path)
 
     def start_exp(self) -> None:
         """

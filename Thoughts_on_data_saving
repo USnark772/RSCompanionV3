@@ -1,5 +1,4 @@
-Build an encoder/decoder that writes/reads a given file per experiment.
-    - Write under a given header for a given device. All data from device A goes under header A, B under B etc.
-    - What to write? Bytes, strings, json, etc.?
-    - How to save video files in this package?
-    - Take a look at .ma files as a possible example?
+- Using python's zipfile we can create/write/read a .rs item which is simply a zip file.
+- Can we do this from multiple places or do we need to have a multiple producer/ single consumer type situation?
+- How to save video files in this package?
+- See Tests/zip_testing.py

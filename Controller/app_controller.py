@@ -25,6 +25,7 @@ https://redscientific.com/index.html
 """
 
 import logging
+from os import mkdir
 from logging import DEBUG
 from datetime import datetime
 from asyncio import create_task, sleep
@@ -404,22 +405,27 @@ class AppController:
         :return bool: True if the file name is longer than 1 character
         """
         self._logger.debug("running")
-        self._save_file_name = self._file_dialog.getSaveFileName(filter="*.txt")[0]
+        self._save_file_name = self._file_dialog.getSaveFileName(filter="*.rs")[0]
         valid = len(self._save_file_name) > 1
         if valid:
-            self._save_dir = self._get_save_dir_from_file_name(self._save_file_name)
+            self._save_dir = self.create_new_dir_from_filename(self._save_file_name)
+            print(__name__, self._save_dir)
+            try:
+                mkdir(self._save_dir)
+            except OSError as e:
+                pass
         self._logger.debug("done")
         return valid
 
-    def _get_save_dir_from_file_name(self, filename: str) -> str:
+    def create_new_dir_from_filename(self, filename: str) -> str:
         """
-        Return the path part only of the given absolute path filename.
+        Make directory from filename.
         :param filename: The absolute path filename.
-        :return str: The path only part of the filename.
+        :return str: The resulting directory.
         """
         self._logger.debug("running")
-        end_index = filename.rfind('/')
-        dir_name = filename[:end_index + 1]
+        dir_name = filename.rstrip(".rs")
+        dir_name += "/"
         self._logger.debug("done")
         return dir_name
 

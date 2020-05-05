@@ -28,17 +28,20 @@ from queue import Queue
 from aioserial import AioSerial
 from math import trunc, ceil
 from datetime import datetime
+from Model.app_helpers import write_line_to_file, format_current_time
 from Devices.DRT.Model import drt_defs as defs
 
 
 class DRTModel:
-    def __init__(self, conn: AioSerial, log_handlers: [StreamHandler]):
+    def __init__(self, dev_name: str, conn: AioSerial, log_handlers: [StreamHandler]):
         self._logger = getLogger(__name__)
         for h in log_handlers:
             self._logger.addHandler(h)
         self._logger.debug("Initializing")
+        self._dev_name = dev_name
         self._msg_q = Queue()
         self._conn = conn
+        self._save_filename = str()
         self._save_dir = str()
         self._current_vals = [0, 0, 0, 0]  # dur, int, upper, lower
         self._errs = [False, False, False, False]  # dur, upper, lower
@@ -51,13 +54,14 @@ class DRTModel:
         """
         return self._conn
 
-    def set_save_dir(self, path: str) -> None:
+    def update_save_info(self, path: str) -> None:
         """
         Set this device's output path to path.
         :param path: The output path to use.
         :return None:
         """
-        self._save_dir = path
+        self.save_dir = path
+        self._save_filename = self._dev_name + "_" + format_current_time(datetime.now(), save=True) + ".csv"
 
     def set_current_vals(self, duration: int = None, intensity: int = None, upper_isi: int = None,
                          lower_isi: int = None) -> None:
@@ -355,7 +359,8 @@ class DRTModel:
         :param line: The data to write.
         :return: None.
         """
-        print(__name__, "Current save dir:", self._save_dir)
+        write_line_to_file(self._save_filename, line)
+        print(__name__, "Current save dir:", self._save_filename)
         print(__name__, "Implement DRTModel._output_save_data()", line)
 
     @staticmethod

@@ -65,6 +65,19 @@ def get_remaining_disk_size(path: str = ''):
     return drive_name, percentage, gb, mb
 
 
+def write_line_to_file(fname, line, new=False):
+    logger.debug("running")
+    if not line.endswith("\n"):
+        line = line + "\n"
+    if new:
+        condition = 'w'
+    else:
+        condition = 'a+'
+    with open(fname, condition) as file:
+        file.write(line)
+    logger.debug("done")
+
+
 def format_current_time(to_format: datetime, day=False, time=False, mil=False, save=False):
     """
     Returns a datetime string with day, time, and milliseconds options. If save then returned string has dashes
@@ -73,7 +86,7 @@ def format_current_time(to_format: datetime, day=False, time=False, mil=False, s
     :param day: If day should be included in the returned string.
     :param time: If time should be included in the returned string.
     :param mil: If milliseconds should be included in the returned string.
-    :param save: If the format should include . or - between values.
+    :param save: Changes the output to include - instead of . between values. Mills are removed from return value.
     :return str: The formatted datetime string.
     """
     logger.debug("running")
