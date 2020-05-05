@@ -176,6 +176,7 @@ class Controller(AbstractController):
         self._check_for_upload()
         self._logger.debug("done")
 
+    # TODO: Finish implementing this.
     def _update_view_data(self, values: dict, timestamp: datetime) -> None:
         """
         Display data from device on view.
@@ -188,7 +189,6 @@ class Controller(AbstractController):
             line += str(val) + ", "
         line += format_current_time(timestamp, day=True, time=True, mil=True) + "\n"
         self.view.write(line)
-        print(__name__, "Implement drt_controller._update_view_data(). values, timestamp:", values, timestamp)
 
     def _update_view_config(self, msg: dict) -> None:
         """

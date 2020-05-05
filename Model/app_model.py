@@ -27,6 +27,8 @@ https://redscientific.com/index.html
 import os
 import glob
 import importlib.util
+import zipfile
+import tempfile
 from logging import StreamHandler, getLogger
 from asyncio import Event, create_task, futures
 from aioserial import AioSerial
@@ -50,11 +52,14 @@ class AppModel:
         self._new_dev_view_flag = Event()
         self._remove_dev_view_flag = Event()
         self._current_lang = lang
+        self._temp_save_dir = str()
+        self._save_path = str()
         self._devs = dict()
         self._dev_inits = dict()
         self._new_dev_views = []
         self._remove_dev_views = []
-        self._tasks = []
+        self._gather_tasks = []
+        self._cancel_tasks = []
         self._logger.debug("Initialized")
 
     def await_new_view(self) -> futures:
@@ -129,9 +134,11 @@ class AppModel:
         """
         self._logger.debug("running")
         devices_running = list()
+        self._temp_save_dir = tempfile.TemporaryDirectory(dir=tempfile.tempdir)
+        self._save_path = path
         try:
             for controller in self._devs.values():
-                controller.create_exp(path)
+                controller.create_exp(self._temp_save_dir)
                 devices_running.append(controller)
             self._logger.debug("done")
             return True
@@ -139,6 +146,7 @@ class AppModel:
             self._logger.exception("Failed creating exp on a controller.")
             for controller in devices_running:
                 controller.end_exp()
+            self._temp_save_dir.cleanup()
             return False
 
     def signal_end_exp(self) -> bool:
@@ -151,6 +159,7 @@ class AppModel:
             for controller in self._devs.values():
                 controller.end_exp()
             self._logger.debug("done")
+            self._convert_to_rs_file()
             return True
         except Exception as e:
             self._logger.exception("Failed ending exp on a controller.")
@@ -205,6 +214,17 @@ class AppModel:
         while True:
             await self._scanner.await_disconnect()
             self._remove_lost_devices()
+
+    def _convert_to_rs_file(self) -> None:
+        """
+        Transfer latest experiment data to .rs file.
+        :return None:
+        """
+        print(__name__, "Trying to create zip:", self._save_path)
+        with zipfile.ZipFile(self._save_path, "w") as zipper:
+            for file in self._temp_save_dir:
+                zipper.write(file)
+        print(__name__, "Implement _convert_to_rs_file")
 
     def _signal_lang_change(self) -> bool:
         """
@@ -294,17 +314,20 @@ class AppModel:
 
     def start(self):
         self._logger.debug("running")
-        self._tasks.append(create_task(self._await_new_devs()))
-        self._tasks.append(create_task(self._await_remove_devs()))
+        self._gather_tasks.append(create_task(self._await_new_devs()))
+        self._gather_tasks.append(create_task(self._await_remove_devs()))
         self._scanner.start()
         self._logger.debug("done")
 
     def cleanup(self):
         self._logger.debug("running")
         self._scanner.cleanup()
+        # TODO: Figure out how to know that all data has been saved and use as a check when user wants to close app.
         for dev in self._devs.values():
             dev.cleanup()
-        create_task(end_tasks(self._tasks))
+        for task in self._cancel_tasks:
+            task.cancel()
+        create_task(end_tasks(self._gather_tasks))
         self._logger.debug("done")
 
     # TODO add debugging

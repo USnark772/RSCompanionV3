@@ -24,7 +24,6 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from queue import Queue
 from aioserial import AioSerial
 from math import trunc, ceil
 from datetime import datetime
@@ -39,7 +38,6 @@ class DRTModel:
             self._logger.addHandler(h)
         self._logger.debug("Initializing")
         self._dev_name = dev_name
-        self._msg_q = Queue()
         self._conn = conn
         self._save_filename = str()
         self._save_dir = str()
@@ -60,7 +58,7 @@ class DRTModel:
         :param path: The output path to use.
         :return None:
         """
-        self.save_dir = path
+        self._save_dir = path
         self._save_filename = self._dev_name + "_" + format_current_time(datetime.now(), save=True) + ".csv"
 
     def set_current_vals(self, duration: int = None, intensity: int = None, upper_isi: int = None,
@@ -359,9 +357,9 @@ class DRTModel:
         :param line: The data to write.
         :return: None.
         """
-        write_line_to_file(self._save_filename, line)
-        print(__name__, "Current save dir:", self._save_filename)
+        print(__name__, "Current save path + filename:", self._save_dir + self._save_filename)
         print(__name__, "Implement DRTModel._output_save_data()", line)
+        write_line_to_file(self._save_dir + self._save_filename, line)
 
     @staticmethod
     def _parse_msg(msg_string: str) -> dict:

@@ -310,7 +310,7 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        self._exp_created = self._model.signal_create_exp(self._save_dir)
+        self._exp_created = self._model.signal_create_exp(self._save_file_name)
         if self._exp_created:
             self.button_box.set_start_button_enabled(True)
             self.button_box.set_create_button_state(1)
@@ -370,6 +370,7 @@ class AppController:
         self.button_box.set_condition_name_box_enabled(True)
         self._logger.debug("done")
 
+    # TODO: cleanup self._save_dir and self._drive_path. Maybe can combine them.
     def _set_drive_updater(self, filename: str = None) -> bool:
         """
         Update drive info display with drive information.
@@ -410,10 +411,6 @@ class AppController:
         if valid:
             self._save_dir = self.create_new_dir_from_filename(self._save_file_name)
             print(__name__, self._save_dir)
-            try:
-                mkdir(self._save_dir)
-            except OSError as e:
-                pass
         self._logger.debug("done")
         return valid
 
