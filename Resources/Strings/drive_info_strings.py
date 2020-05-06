@@ -32,23 +32,32 @@ class StringsEnum(Enum):
     TITLE = auto()
     STORAGE_ID = auto()
     PERC_FREE = auto()
+    PERC_USED = auto()
     GB_FREE = auto()
+    GB_USED = auto()
     MB_FREE = auto()
+    MB_USED = auto()
 
 
 english = {StringsEnum.TITLE: "Storage Information",
            StringsEnum.STORAGE_ID: 'Storage ID:',
            StringsEnum.PERC_FREE: "Percent free:",
+           StringsEnum.PERC_USED: "Percent used:",
            StringsEnum.GB_FREE: "GB free:",
+           StringsEnum.GB_USED: "GB used:",
            StringsEnum.MB_FREE: "MB free:",
+           StringsEnum.MB_USED: "MB used:",
            }
 
 # TODO: Verify French version
 french = {StringsEnum.TITLE: "Informations de Stockage",
           StringsEnum.STORAGE_ID: 'ID de Stockage:',
           StringsEnum.PERC_FREE: "Pourcentage inutilisé:",
-          StringsEnum.GB_FREE: "GB Inutilisé:",
-          StringsEnum.MB_FREE: "MB Inutilisé:",
+          StringsEnum.PERC_USED: "Pourcentage utilisé:",
+          StringsEnum.GB_FREE: "GB inutilisé:",
+          StringsEnum.GB_USED: "GB utilisé:",
+          StringsEnum.MB_FREE: "MB inutilisé:",
+          StringsEnum.MB_USED: "MB utilisé:",
           }
 
 strings = {LangEnum.ENG: english,

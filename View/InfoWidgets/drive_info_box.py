@@ -132,7 +132,7 @@ class DriveInfoBox(QGroupBox):
         self._logger.debug("running")
         self.setTitle(self._strings[StringsEnum.TITLE])
         self._drive_name_label.setText(self._strings[StringsEnum.STORAGE_ID])
-        self._drive_percent_label.setText(self._strings[StringsEnum.PERC_FREE])
+        self._drive_percent_label.setText(self._strings[StringsEnum.PERC_USED])
         self._drive_gb_label.setText(self._strings[StringsEnum.GB_FREE])
         self._drive_mb_label.setText(self._strings[StringsEnum.MB_FREE])
         self._drive_name_val.setText('-')

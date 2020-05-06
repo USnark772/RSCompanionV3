@@ -6,7 +6,6 @@
     - Implement subwindow arranging in mdi_area.py.
     - Implement data saving.
     - Implement data display.
-    - Change percent free to percent used.
 
 Languages:
     - German

@@ -34,7 +34,7 @@ from PySide2.QtGui import QKeyEvent
 from PySide2.QtCore import QSettings, QSize
 from Model.app_model import AppModel
 from Model.app_defs import current_version, log_format, LangEnum
-from Model.app_helpers import setup_log_file, get_remaining_disk_size, format_current_time, end_tasks
+from Model.app_helpers import setup_log_file, get_disk_usage_stats, format_current_time, end_tasks
 from Resources.Strings.app_strings import strings, StringsEnum, company_name, app_name
 from View.HelpWidgets.output_window import OutputWindow
 from View.MainWindow.main_window import AppMainWindow
@@ -297,12 +297,12 @@ class AppController:
 
     async def _update_drive_info_box(self):
         while True:
-            info = get_remaining_disk_size(self._drive_path)
+            info = get_disk_usage_stats(self._drive_path)
             self.d_info_box.set_name_val(str(info[0]))
-            self.d_info_box.set_perc_val(str(info[1]))
+            self.d_info_box.set_perc_val(str(info[4]))
             self.d_info_box.set_gb_val(str(info[2]))
             self.d_info_box.set_mb_val(str(info[3]))
-            await sleep(2)
+            await sleep(3)
 
     def _create_exp(self) -> None:
         """

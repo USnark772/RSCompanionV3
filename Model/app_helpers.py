@@ -49,7 +49,7 @@ def setup_log_file(file_name: str, output_hdr: str) -> str:
     return ret
 
 
-def get_remaining_disk_size(path: str = ''):
+def get_disk_usage_stats(path: str = ''):
     """
     Get the remaining disk size of the given path.
     :param path: The path to inspect
@@ -58,11 +58,14 @@ def get_remaining_disk_size(path: str = ''):
     if path == '':
         path = os.path.abspath(os.sep)
     drive_name = os.path.splitdrive(path)[0]
-    info = disk_usage(path)
-    mb = round(info[2] / (1024 ** 2))
-    gb = round(info[2] / (1024 ** 3))
-    percentage = round(info[2] / info[0] * 100)
-    return drive_name, percentage, gb, mb
+    info = disk_usage(drive_name)
+    mb_used = round(info[1] / (1024 ** 2))
+    gb_used = round(info[1] / (1024 ** 3))
+    mb_free = round(info[2] / (1024 ** 2))
+    gb_free = round(info[2] / (1024 ** 3))
+    perc_free = round(info[2] / info[0] * 100)
+    perc_used = round(info[1] / info[0] * 100)
+    return drive_name, perc_free, gb_free, mb_free, perc_used, gb_used, mb_used
 
 
 def write_line_to_file(fname, line, new=False):
