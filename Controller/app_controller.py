@@ -47,7 +47,6 @@ from View.ControlWidgets.note_box import NoteBox
 from View.DeviceDisplayWidgets.mdi_area import MDIArea
 
 
-# TODO: Figure out logging for asyncio
 class AppController:
     """ The main controller for this app. """
     def __init__(self):
@@ -227,24 +226,24 @@ class AppController:
         print("Implement handling for this button.")
         self._logger.debug("done")
 
-    # TODO: Implement
     def about_rs_handler(self) -> None:
         """
         Handler for about company button.
         :return None:
         """
         self._logger.debug("running")
-        print("Implement handling for this button")
+        self.main_window.show_help_window(self._strings[StringsEnum.APP_NAME],
+                                          self._strings[StringsEnum.ABOUT_COMPANY])
         self._logger.debug("done")
 
-    # TODO: Implement
     def about_app_handler(self) -> None:
         """
         Handler for about app button.
         :return None:
         """
         self._logger.debug("running")
-        print("Implement handling for this button")
+        self.main_window.show_help_window(self._strings[StringsEnum.APP_NAME],
+                                          self._strings[StringsEnum.ABOUT_APP])
         self._logger.debug("done")
 
     def check_for_updates_handler(self) -> None:
@@ -369,7 +368,6 @@ class AppController:
         self.button_box.set_condition_name_box_enabled(True)
         self._logger.debug("done")
 
-    # TODO: cleanup self._save_dir and self._drive_path. Maybe can combine them.
     def _set_drive_updater(self, filename: str = None) -> bool:
         """
         Update drive info display with drive information.
@@ -401,23 +399,23 @@ class AppController:
 
     def _get_save_file_name(self) -> bool:
         """
-        Saves a save directory from a given file
+        Gets a new filename from the user for the current experiment to be saved as.
         :return bool: True if the file name is longer than 1 character
         """
         self._logger.debug("running")
         self._save_file_name = self._file_dialog.getSaveFileName(filter="*.rs")[0]
         valid = len(self._save_file_name) > 1
         if valid:
-            self._save_dir = self.create_new_dir_from_filename(self._save_file_name)
+            self._save_dir = self._dir_name_from_file_name(self._save_file_name)
             print(__name__, self._save_dir)
         self._logger.debug("done")
         return valid
 
-    def create_new_dir_from_filename(self, filename: str) -> str:
+    def _dir_name_from_file_name(self, filename: str) -> str:
         """
-        Make directory from filename.
+        Get directory name from filename.
         :param filename: The absolute path filename.
-        :return str: The resulting directory.
+        :return str: The resulting directory name.
         """
         self._logger.debug("running")
         dir_name = filename.rstrip(".rs")

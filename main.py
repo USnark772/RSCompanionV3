@@ -24,6 +24,7 @@ https://redscientific.com/index.html
 """
 
 import sys
+import cProfile  # TODO: Remove this before release.
 from asyncio import set_event_loop, run
 from asyncqt import QEventLoop
 from PySide2.QtWidgets import QApplication
@@ -42,4 +43,6 @@ async def main():
 
 
 if __name__ == '__main__':
+    # Swap these two lines to profile program.
     run(main())
+    # cProfile.run('run(main())')

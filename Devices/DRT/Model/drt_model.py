@@ -455,7 +455,6 @@ class DRTModel:
         """
         return ceil(val / 100 * defs.intensity_max)
 
-    # TODO: Add timestamp to this line?
     @staticmethod
     def _format_save_data(values: dict, timestamp: datetime) -> str:
         """
@@ -465,11 +464,8 @@ class DRTModel:
         :return: The formatted output.
         """
         line = format_current_time(timestamp, True, True, True) + ", "
-        print("Line at start", line)
         for i in defs.save_fields:
             line += str(values[i]) + ", "
-            print("Line so far", line)
         line = line.rstrip("\r\n")
         # line = line + ", "
-        print("Line at end", line)
         return line
