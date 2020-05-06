@@ -25,7 +25,6 @@ https://redscientific.com/index.html
 """
 
 import logging
-from os import mkdir
 from logging import DEBUG
 from datetime import datetime
 from asyncio import create_task, sleep

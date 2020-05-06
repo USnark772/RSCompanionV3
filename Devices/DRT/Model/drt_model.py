@@ -29,6 +29,7 @@ from math import trunc, ceil
 from datetime import datetime
 from Model.app_helpers import write_line_to_file, format_current_time
 from Devices.DRT.Model import drt_defs as defs
+from Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
 
 
 class DRTModel:
@@ -41,6 +42,7 @@ class DRTModel:
         self._conn = conn
         self._save_filename = str()
         self._save_dir = str()
+        self._strings = dict()
         self._current_vals = [0, 0, 0, 0]  # dur, int, upper, lower
         self._errs = [False, False, False, False]  # dur, upper, lower
         self._changed = [False, False, False, False]
@@ -89,6 +91,27 @@ class DRTModel:
         """
         for i in range(len(self._changed)):
             self._changed[i] = False
+
+    def add_save_hdr(self) -> None:
+        self._output_save_data(self._strings[StringsEnum.SAVE_HDR])
+
+    def set_lang(self, lang: LangEnum) -> None:
+        """
+        Set the language for this device's data output.
+        :param lang: The lang enum to use.
+        :return None:
+        """
+        self._strings = strings[lang]
+
+    def send_iso(self) -> None:
+        """
+        Reset device to ISO standards
+        :return None:
+        """
+        self.send_stim_dur(str(defs.iso_standards["stimDur"]))
+        self.send_stim_intensity(100)
+        self.send_upper_isi(str(defs.iso_standards["upperISI"]))
+        self.send_lower_isi(str(defs.iso_standards["lowerISI"]))
 
     async def get_msg(self) -> (dict, datetime):
         """
@@ -357,8 +380,6 @@ class DRTModel:
         :param line: The data to write.
         :return: None.
         """
-        print(__name__, "Current save path + filename:", self._save_dir + self._save_filename)
-        print(__name__, "Implement DRTModel._output_save_data()", line)
         write_line_to_file(self._save_dir + self._save_filename, line)
 
     @staticmethod
@@ -443,9 +464,12 @@ class DRTModel:
         :param timestamp: The timestamp the values were received.
         :return: The formatted output.
         """
-        line = ""
+        line = format_current_time(timestamp, True, True, True) + ", "
+        print("Line at start", line)
         for i in defs.save_fields:
-            line += ", " + str(values[i])
+            line += str(values[i]) + ", "
+            print("Line so far", line)
         line = line.rstrip("\r\n")
-        line = line + ", "
+        # line = line + ", "
+        print("Line at end", line)
         return line

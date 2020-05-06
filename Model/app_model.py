@@ -52,7 +52,7 @@ class AppModel:
         self._new_dev_view_flag = Event()
         self._remove_dev_view_flag = Event()
         self._current_lang = lang
-        self._temp_save_dir = str()
+        self._temp_folder = None
         self._save_path = str()
         self._devs = dict()
         self._dev_inits = dict()
@@ -134,11 +134,11 @@ class AppModel:
         """
         self._logger.debug("running")
         devices_running = list()
-        self._temp_save_dir = tempfile.TemporaryDirectory(dir=tempfile.tempdir)
+        self._temp_folder = tempfile.TemporaryDirectory()
         self._save_path = path
         try:
             for controller in self._devs.values():
-                controller.create_exp(self._temp_save_dir)
+                controller.create_exp(self._temp_folder.name + "/")
                 devices_running.append(controller)
             self._logger.debug("done")
             return True
@@ -146,7 +146,7 @@ class AppModel:
             self._logger.exception("Failed creating exp on a controller.")
             for controller in devices_running:
                 controller.end_exp()
-            self._temp_save_dir.cleanup()
+            self._temp_folder.cleanup()
             return False
 
     def signal_end_exp(self) -> bool:
@@ -215,16 +215,16 @@ class AppModel:
             await self._scanner.await_disconnect()
             self._remove_lost_devices()
 
+    # TODO: Look into async implementation. https://pypi.org/project/aiofile/
     def _convert_to_rs_file(self) -> None:
         """
         Transfer latest experiment data to .rs file.
         :return None:
         """
-        print(__name__, "Trying to create zip:", self._save_path)
         with zipfile.ZipFile(self._save_path, "w") as zipper:
-            for file in self._temp_save_dir:
-                zipper.write(file)
-        print(__name__, "Implement _convert_to_rs_file")
+            for file in os.listdir(self._temp_folder.name):
+                zipper.write(self._temp_folder.name + "/" + file, file)
+        self._temp_folder.cleanup()
 
     def _signal_lang_change(self) -> bool:
         """

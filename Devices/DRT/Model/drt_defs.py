@@ -36,7 +36,7 @@ iso_standards = {'upperISI': 5000, 'lowerISI': 3000, 'intensity': 255, 'stimDur'
 # drt v1.0 uses uint16_t for drt value storage
 max_val = 65535
 
-# All the following drt values must be between 0 and drt_max_val
+# All the following drt values must be between 0 and max_val
 intensity_max = 255
 intensity_min = 0
 

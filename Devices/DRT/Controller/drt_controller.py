@@ -48,7 +48,8 @@ class Controller(AbstractController):
         self._setup_handlers()
         self._init_values()
         self._msg_handler_task = create_task(self.msg_handler())
-        self.view.set_language(lang)
+        self.view.set_lang(lang)
+        self._model.set_lang(lang)
         self._logger.debug("Initialized")
 
     def cleanup(self) -> None:
@@ -77,7 +78,8 @@ class Controller(AbstractController):
         :param lang: The enum for the language.
         :return: None.
         """
-        self.view.set_language(lang)
+        self._model.set_lang(lang)
+        self.view.set_lang(lang)
 
     def get_conn(self) -> AioSerial:
         """
@@ -101,11 +103,12 @@ class Controller(AbstractController):
 
     def create_exp(self, path: str) -> None:
         """
-        Set this devices save dir.
+        Set this device's save dir.
         :param path: The save dir.
         :return None:
         """
         self._model.update_save_info(path)
+        self._model.add_save_hdr()
 
     def start_exp(self) -> None:
         """
@@ -185,8 +188,8 @@ class Controller(AbstractController):
         :return: None.
         """
         line = ""
-        for val in values.values():
-            line += str(val) + ", "
+        for key in values:
+            line += key + ": " + str(values[key]) + ", "
         line += format_current_time(timestamp, day=True, time=True, mil=True) + "\n"
         self.view.write(line)
 
@@ -283,9 +286,6 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self.view.set_config_val(self.view.strings[StringsEnum.ISO_LABEL])
-        self._model.send_stim_dur("1000")
-        self._model.send_stim_intensity(100)
-        self._model.send_upper_isi("5000")
-        self._model.send_lower_isi("3000")
+        self._model.send_iso()
         self.view.set_upload_button(False)
         self._logger.debug("done")

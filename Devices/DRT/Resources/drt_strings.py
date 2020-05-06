@@ -47,6 +47,7 @@ class StringsEnum(Enum):
     INTENSITY_TOOLTIP = auto()
     UPPER_ISI_TOOLTIP = auto()
     LOWER_ISI_TOOLTIP = auto()
+    SAVE_HDR = auto()
 
 
 # English strings
@@ -70,6 +71,7 @@ english = {StringsEnum.CUSTOM_LABEL: "Custom",
            StringsEnum.INTENSITY_TOOLTIP: "Intensity of the stimulus",
            StringsEnum.UPPER_ISI_TOOLTIP: "Milliseconds. Range: " + lower_isi_eng + "-" + str(defs.ISI_max),
            StringsEnum.LOWER_ISI_TOOLTIP: "Milliseconds. Range: " + str(defs.ISI_min) + "-" + upper_isi_eng,
+           StringsEnum.SAVE_HDR: "timestamp, probe #, clicks, milliseconds from experiment start, response time"
            }
 
 # TODO: Verify French version
@@ -93,6 +95,8 @@ french = {StringsEnum.CUSTOM_LABEL: "Douane",
           StringsEnum.INTENSITY_TOOLTIP: "Intensité du stim",
           StringsEnum.UPPER_ISI_TOOLTIP: "Millisecondes. Intervalle: " + lower_isi_fre + "-" + str(defs.ISI_max),
           StringsEnum.LOWER_ISI_TOOLTIP: "Millisecondes. Intervalle: " + str(defs.ISI_min) + "-" + upper_isi_fre,
+          StringsEnum.SAVE_HDR: "horodatage, millisecondes depuis le début de l'expérience, sonde #, clics, "
+                                "temp de réponse"
           }
 
 strings = {LangEnum.ENG: english,

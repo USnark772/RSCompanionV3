@@ -1,24 +1,30 @@
+import os
 import zipfile
 import tempfile
 
-temp_folder_name = "C:/Users/phill/Companion App Save Folder/test_name/"
-x = tempfile.TemporaryDirectory(dir=tempfile.tempdir)
-print(x.name)
+# Setup foldername and filename
+zip_filename = "C:/Users/phill/Companion App Save Folder/exp3.rs"
+output_folder = zip_filename[:zip_filename.rfind("/")]
 #
-# foldername = "C:/Users/phill/Companion App Save Folder/testZip1.rs"
+# # Make a temporary directory to put data into. This temporary directory will be removed by calling temp.cleanup()
+# temp = tempfile.TemporaryDirectory()
+#
+# # Create .csv file and write text to it.
 # filename = "testoutput1.csv"
 # text = "Hello World!"
-# x = zipfile.ZipFile(foldername, "w")
-# print(x)
-# x.writestr(filename, text)
-# x.close()
-# a = zipfile.ZipFile(foldername, "a")
-# print(a)
-# a.writestr(filename, ", this is more text")
+# file = open(temp.name + "/" + filename, "w")
+# file.write(text)
+# file.close()
 #
-# x.close()
+# # Add files from temp directory to .rs file
+# with zipfile.ZipFile(zip_filename, "w") as zipper:
+#     for file in os.listdir(temp.name):
+#         print("Adding:", file, " to .rs")
+#         zipper.write(temp.name + "/" + file, file)
 #
-# y = zipfile.ZipFile(foldername, "r")
-# z = zipfile.ZipFile(foldername, "r")
-# outtext = y.read(filename)
-# finaltext = outtext.decode("utf-8")
+# # remove temp folder
+# temp.cleanup()
+
+# Extract .rs to output_folder
+zipper2 = zipfile.ZipFile(zip_filename, "r")
+zipper2.extractall(output_folder)

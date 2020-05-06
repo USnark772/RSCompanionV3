@@ -29,8 +29,8 @@ from PySide2.QtWidgets import QHBoxLayout, QLabel, QSlider, QGridLayout, QLineEd
 from PySide2.QtGui import QTextCursor
 from PySide2.QtCore import Qt, QSize
 from Model.app_helpers import ClickAnimationButton, EasyFrame
-from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style, LangEnum
-from Devices.DRT.Resources.drt_strings import strings, StringsEnum
+from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style
+from Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
@@ -132,7 +132,7 @@ class DRTView(AbstractView):
 
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
-        self.strings = None
+        self.strings = dict()
         self._logger.debug("Initialized")
 
     def write(self, message) -> None:
@@ -337,7 +337,7 @@ class DRTView(AbstractView):
         self.upload_settings_button.setEnabled(is_active)
         self._logger.debug("done")
 
-    def set_language(self, lang: LangEnum) -> None:
+    def set_lang(self, lang: LangEnum) -> None:
         """
         Set this view's language and reload the text and tooltips.
         :param lang: The lang enum to use.
