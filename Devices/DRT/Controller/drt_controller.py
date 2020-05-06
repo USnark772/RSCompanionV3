@@ -64,14 +64,6 @@ class Controller(AbstractController):
         self._model.cleanup()
         self._logger.debug("done")
 
-    def set_output_path(self, path: str) -> None:
-        """
-        Set this device's output path to path.
-        :param path: The output path to use.
-        :return None:
-        """
-        self._model.update_save_info(path)
-
     def set_lang(self, lang: LangEnum) -> None:
         """
         Set this device's view language.

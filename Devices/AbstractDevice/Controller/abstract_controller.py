@@ -51,15 +51,6 @@ class AbstractController(ABC):
         """
         pass
 
-    @abstractmethod
-    def set_output_path(self, path: str) -> None:
-        """
-        Set the output path for this device to save data to.
-        :param path: The path to save data to.
-        :return None:
-        """
-        pass
-
     def get_conn(self) -> AioSerial:
         """
         Return this device's com port if it exists.
