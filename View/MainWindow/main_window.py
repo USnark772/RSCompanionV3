@@ -53,7 +53,7 @@ class AppMainWindow(QMainWindow):
         self._control_layout = QHBoxLayout()
         self.centralWidget().layout().addLayout(self._control_layout)
 
-        self.unsaved = False
+        self.close_check = False
         self._checker = QMessageBox()
         self._close_callback = None
         self._help_window = None
@@ -72,6 +72,14 @@ class AppMainWindow(QMainWindow):
         self._strings = strings[lang]
         self._set_texts()
 
+    def set_close_check(self, check: bool) -> None:
+        """
+        Set whether to check with user before closing app.
+        :param check:
+        :return:
+        """
+        self.close_check = check
+
     def closeEvent(self, event: QCloseEvent) -> None:
         """
         Check if user really wants to close the app and only if so alert close and close.
@@ -79,8 +87,9 @@ class AppMainWindow(QMainWindow):
         :return: None.
         """
         self._logger.debug("running")
-        if self.unsaved:
-            if not self._checker.exec_() == QMessageBox.Yes:
+        if self.close_check:
+            user_input = self._checker.exec_() == QMessageBox.Yes
+            if not user_input:
                 event.ignore()
                 return
         if self._close_callback:

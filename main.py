@@ -46,7 +46,7 @@ async def main():
 
 
 if __name__ == '__main__':
-    profile = True  # True: Profile code. False: Run normally.
+    profile = False  # True: Profile code. False: Run normally.
     if profile:
         filename = tempfile.gettempdir() + "/companion_app_profile.stats"
         cProfile.run('run(main())', filename)

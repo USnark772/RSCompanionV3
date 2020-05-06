@@ -149,7 +149,7 @@ class AppModel:
             self._temp_folder.cleanup()
             return False
 
-    def signal_end_exp(self) -> bool:
+    def signal_end_exp(self, save: bool = True) -> bool:
         """
         Call end exp on all device controllers.
         :return bool: If there was an error.
@@ -159,7 +159,7 @@ class AppModel:
             for controller in self._devs.values():
                 controller.end_exp()
             self._logger.debug("done")
-            self._convert_to_rs_file()
+            self._convert_to_rs_file(save)
             return True
         except Exception as e:
             self._logger.exception("Failed ending exp on a controller.")
@@ -216,14 +216,16 @@ class AppModel:
             self._remove_lost_devices()
 
     # TODO: Look into async implementation. https://pypi.org/project/aiofile/
-    def _convert_to_rs_file(self) -> None:
+    def _convert_to_rs_file(self, save: bool = True) -> None:
         """
-        Transfer latest experiment data to .rs file.
+        Transfer latest experiment data to .rs file and cleanup temp data.
+        :param save: Should experiment data be saved.
         :return None:
         """
-        with zipfile.ZipFile(self._save_path, "w") as zipper:
-            for file in os.listdir(self._temp_folder.name):
-                zipper.write(self._temp_folder.name + "/" + file, file)
+        if save:
+            with zipfile.ZipFile(self._save_path, "w") as zipper:
+                for file in os.listdir(self._temp_folder.name):
+                    zipper.write(self._temp_folder.name + "/" + file, file)
         self._temp_folder.cleanup()
 
     def _signal_lang_change(self) -> bool:
@@ -322,7 +324,6 @@ class AppModel:
     def cleanup(self):
         self._logger.debug("running")
         self._scanner.cleanup()
-        # TODO: Figure out how to know that all data has been saved and use as a check when user wants to close app.
         for dev in self._devs.values():
             dev.cleanup()
         for task in self._cancel_tasks:

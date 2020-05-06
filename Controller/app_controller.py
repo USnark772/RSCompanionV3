@@ -69,14 +69,14 @@ class AppController:
         self._logger = logging.getLogger(__name__)
         self.log_output = OutputWindow(self._lang)
         self.formatter = logging.Formatter(log_format)
-        self.ch = logging.StreamHandler(self.log_output)
-        self.ch.setLevel(log_level)
-        self.ch.setFormatter(self.formatter)
-        self.ch2 = logging.StreamHandler()
-        self.ch2.setLevel(logging.WARNING)
-        self.ch2.setFormatter(self.formatter)
-        self._logger.addHandler(self.ch)
-        self._logger.addHandler(self.ch2)
+        self.app_lh = logging.StreamHandler(self.log_output)
+        self.app_lh.setLevel(log_level)
+        self.app_lh.setFormatter(self.formatter)
+        self.stderr_lh = logging.StreamHandler()
+        self.stderr_lh.setLevel(logging.WARNING)
+        self.stderr_lh.setFormatter(self.formatter)
+        self._logger.addHandler(self.app_lh)
+        self._logger.addHandler(self.stderr_lh)
         self._logger.info(self._strings[StringsEnum.LOG_VER_ID] + str(current_version))
 
         self._logger.debug("Initializing")
@@ -88,18 +88,18 @@ class AppController:
         flag_box_size = QSize(80, 120)
         note_box_size = QSize(250, 120)
         drive_info_box_size = QSize(200, 120)
-        self.main_window = AppMainWindow(ui_min_size, [self.ch, self.ch2], self._lang)
-        self.menu_bar = AppMenuBar(self.main_window, [self.ch, self.ch2], self._lang)
-        self.button_box = ButtonBox(self.main_window, button_box_size, [self.ch, self.ch2], self._lang)
-        self.info_box = InfoBox(self.main_window, info_box_size, [self.ch, self.ch2], self._lang)
-        self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, [self.ch, self.ch2], self._lang)
-        self.flag_box = FlagBox(self.main_window, flag_box_size, [self.ch, self.ch2], self._lang)
-        self.note_box = NoteBox(self.main_window, note_box_size, [self.ch, self.ch2], self._lang)
-        self.mdi_area = MDIArea(self.main_window, [self.ch, self.ch2])
+        self.main_window = AppMainWindow(ui_min_size, [self.app_lh, self.stderr_lh], self._lang)
+        self.menu_bar = AppMenuBar(self.main_window, [self.app_lh, self.stderr_lh], self._lang)
+        self.button_box = ButtonBox(self.main_window, button_box_size, [self.app_lh, self.stderr_lh], self._lang)
+        self.info_box = InfoBox(self.main_window, info_box_size, [self.app_lh, self.stderr_lh], self._lang)
+        self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, [self.app_lh, self.stderr_lh], self._lang)
+        self.flag_box = FlagBox(self.main_window, flag_box_size, [self.app_lh, self.stderr_lh], self._lang)
+        self.note_box = NoteBox(self.main_window, note_box_size, [self.app_lh, self.stderr_lh], self._lang)
+        self.mdi_area = MDIArea(self.main_window, [self.app_lh, self.stderr_lh])
         self._file_dialog = QFileDialog(self.main_window)
 
         # Model
-        self._model = AppModel([self.ch, self.ch2], self._lang)
+        self._model = AppModel([self.app_lh, self.stderr_lh], self._lang)
 
         # from PySide2.QtWidgets import QMdiSubWindow
         # for i in range(6):
@@ -159,10 +159,12 @@ class AppController:
                 self._logger.debug("no save directory selected, done running _create_end_exp_handler()")
                 return
             self._create_exp()
+            self.main_window.set_close_check(True)
             self._logger.debug("done")
         else:
             self._logger.debug("ending experiment")
             self._end_exp()
+            self.main_window.set_close_check(False)
             self._save_file_name = ""
         self._logger.debug("done")
 
@@ -320,16 +322,17 @@ class AppController:
             self.button_box.set_create_button_state(0)
         self._logger.debug("done")
 
-    def _end_exp(self) -> None:
+    def _end_exp(self, save: bool = True) -> None:
         """
         End an experiment. Stop experiment if running then signal devices and update view.
+        :param save: Save exp data.
         :return None:
         """
         self._logger.debug("running")
         self._exp_created = False
         if self._exp_running:
             self._stop_exp()
-        self._model.signal_end_exp()
+        self._model.signal_end_exp(save)
         self._check_toggle_post_button()
         if self._updater_task:
             self._updater_task.cancel()
@@ -501,8 +504,9 @@ class AppController:
         Cleanup any code that would cause problems for shutdown and prep for app closure.
         :return None:
         """
+        # TODO: Figure out how to not save if user closes app during experiment.
         if self._exp_created:
-            self._end_exp()
+            self._end_exp(False)
         create_task(end_tasks(self._tasks))
         self._model.cleanup()
         self.log_output.close()
