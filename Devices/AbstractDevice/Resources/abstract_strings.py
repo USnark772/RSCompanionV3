@@ -34,12 +34,17 @@ from enum import Enum, auto
 # Define enum like this.
 class StringsEnum(Enum):
     EXAMPLE_ENTRY = auto()
+    GRAPH_TS = auto()
 
 
 # Define languages like this.
-english = {StringsEnum.EXAMPLE_ENTRY: "Implement this language."}
+english = {StringsEnum.EXAMPLE_ENTRY: "Implement this language.",
+           StringsEnum.GRAPH_TS: "Timestamp",
+           }
 
-french = {StringsEnum.EXAMPLE_ENTRY: "Implémentez ce langage."}
+french = {StringsEnum.EXAMPLE_ENTRY: "Implémentez ce langage.",
+          StringsEnum.GRAPH_TS: "Horodatage",
+          }
 
 # Add defined languages to strings dictionary.
 strings = {LangEnum.ENG: english,
