@@ -24,7 +24,10 @@ https://redscientific.com/index.html
 """
 
 import sys
+import tempfile
 import cProfile  # TODO: Remove this before release.
+import pstats
+from os import remove
 from asyncio import set_event_loop, run
 from asyncqt import QEventLoop
 from PySide2.QtWidgets import QApplication
@@ -43,6 +46,20 @@ async def main():
 
 
 if __name__ == '__main__':
-    # Swap these two lines to profile program.
-    run(main())
-    # cProfile.run('run(main())')
+    profile = True  # True: Profile code. False: Run normally.
+    if profile:
+        filename = tempfile.gettempdir() + "/companion_app_profile.stats"
+        cProfile.run('run(main())', filename)
+        stats = pstats.Stats(filename)
+
+        # Pick sorting order for stat output.
+        stats.sort_stats(pstats.SortKey.CALLS)  # Sort by total calls to code.
+        # stats.sort_stats(pstats.SortKey.CUMULATIVE)  # Sort by time spent in code.
+
+        # Pick print filter
+        stats.print_stats("asyncCompanion")  # Only show project files.
+        # stats.print_stats()  # Show all files.
+
+        remove(filename)  # cleanup
+    else:
+        run(main())
