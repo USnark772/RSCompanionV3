@@ -130,6 +130,7 @@ class RSDeviceCommScanner:
                 create_task(self._check_for_new_devices(ports))
             elif len(ports) < len(self._known_ports):
                 create_task(self._check_for_disconnects(ports))
+            await sleep(1)
 
     async def _check_for_new_devices(self, ports: [ListPortInfo]) -> None:
         """
