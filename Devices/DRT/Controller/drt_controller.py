@@ -30,8 +30,12 @@ from aioserial import AioSerial
 from Model.app_defs import LangEnum
 from Model.app_helpers import format_current_time
 from Devices.AbstractDevice.Controller.abstract_controller import AbstractController
-from Devices.DRT.View.drt_view import DRTView, StringsEnum
+from Devices.AbstractDevice.View.graph_frame import GraphFrame
+from Devices.DRT.View.drt_view import DRTView
+from Devices.DRT.View.drt_graph import DRTGraph
 from Devices.DRT.Model.drt_model import DRTModel
+from Devices.DRT.Model import drt_defs as defs
+from Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
 
 
 class Controller(AbstractController):
@@ -43,13 +47,15 @@ class Controller(AbstractController):
         device_name = "DRT_" + conn.port.strip("COM")
         super().__init__(DRTView(device_name, log_handlers))
         self._model = DRTModel(device_name, conn, log_handlers)
+        self._graph = DRTGraph(None, device_name, log_handlers)
+        self.view.add_graph(GraphFrame(None, self._graph, log_handlers))
         self._exp = False
         self._updating_config = False
         self._setup_handlers()
         self._init_values()
         self._msg_handler_task = create_task(self.msg_handler())
-        self.view.set_lang(lang)
-        self._model.set_lang(lang)
+        self._strings = dict()
+        self.set_lang(lang)
         self._logger.debug("Initialized")
 
     def cleanup(self) -> None:
@@ -70,8 +76,12 @@ class Controller(AbstractController):
         :param lang: The enum for the language.
         :return: None.
         """
+        self._logger.debug("running")
+        self._strings = strings[lang]
         self._model.set_lang(lang)
         self.view.set_lang(lang)
+        self._graph.set_lang(lang)
+        self._logger.debug("done")
 
     def get_conn(self) -> AioSerial:
         """
@@ -84,6 +94,7 @@ class Controller(AbstractController):
         Handle messages sent from device.
         :return: None.
         """
+        self._logger.debug("running")
         while True:
             msg, timestamp = await self._model.get_msg()
             msg_type = msg['type']
@@ -99,8 +110,10 @@ class Controller(AbstractController):
         :param path: The save dir.
         :return None:
         """
+        self._logger.debug("running")
         self._model.update_save_info(path)
         self._model.add_save_hdr()
+        self._logger.debug("done")
 
     def start_exp(self) -> None:
         """
@@ -171,7 +184,6 @@ class Controller(AbstractController):
         self._check_for_upload()
         self._logger.debug("done")
 
-    # TODO: Finish implementing this.
     def _update_view_data(self, values: dict, timestamp: datetime) -> None:
         """
         Display data from device on view.
@@ -179,11 +191,12 @@ class Controller(AbstractController):
         :param timestamp: When the data was received.
         :return: None.
         """
-        line = ""
-        for key in values:
-            line += key + ": " + str(values[key]) + ", "
-        line += format_current_time(timestamp, day=True, time=True, mil=True) + "\n"
-        self.view.write(line)
+        self._logger.debug("running")
+        data1 = [self._strings[StringsEnum.PLOT_NAME_RT], timestamp, values[defs.output_fields[3]]]
+        self._graph.add_data(data1)
+        data2 = [self._strings[StringsEnum.PLOT_NAME_CLICKS], timestamp, values[defs.output_fields[2]]]
+        self._graph.add_data(data2)
+        self._logger.debug("done")
 
     def _update_view_config(self, msg: dict) -> None:
         """

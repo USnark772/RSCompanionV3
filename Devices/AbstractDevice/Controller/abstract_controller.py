@@ -23,19 +23,16 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from logging import getLogger, DEBUG
 from abc import ABC, abstractmethod
 from Model.app_defs import LangEnum
 from aioserial import AioSerial
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
-# TODO: remove print statements at release.
 class AbstractController(ABC):
     def __init__(self, view):
         super().__init__()
         self.view = view
-        self._debugging = (getLogger(__name__).getEffectiveLevel() == DEBUG)
 
     def get_view(self) -> AbstractView:
         """
@@ -60,22 +57,18 @@ class AbstractController(ABC):
 
     def set_lang(self, lang: LangEnum) -> None:
         """
-        Set this device's view language.
+        Set this device's language.
         :param lang: The enum for the language.
         :return: None.
         """
-        if self._debugging:
-            print(__name__, "Got new language to use:", lang)
         pass
 
     def create_exp(self, path: str) -> None:
         """
-        Set the current experiment save directory for this device if this devices needs to know it.
+        Set the current experiment save directory for this device if this device needs to save data to file.
         Logic for if this device needs to know about when an experiment is created.
         :return: None.
         """
-        if self._debugging:
-            print(__name__, "Got create signal, creating. path:", path)
         pass
 
     def end_exp(self) -> None:
@@ -83,8 +76,6 @@ class AbstractController(ABC):
         Logic for if this device needs to know about when an experiment is ended.
         :return: None.
         """
-        if self._debugging:
-            print(__name__, "Got end signal, ending.")
         pass
 
     def start_exp(self) -> None:
@@ -92,8 +83,6 @@ class AbstractController(ABC):
         Logic for if this device needs to know about when an experiment is running.
         :return: None.
         """
-        if self._debugging:
-            print(__name__, "Got start signal, starting.")
         pass
 
     def stop_exp(self) -> None:
@@ -101,6 +90,4 @@ class AbstractController(ABC):
         Logic for if this device needs to know about when an experiment is stopped.
         :return: None.
         """
-        if self._debugging:
-            print(__name__, "Got stop signal, stopping.")
         pass

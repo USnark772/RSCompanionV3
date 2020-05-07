@@ -25,8 +25,7 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from PySide2.QtWidgets import QHBoxLayout, QLabel, QSlider, QGridLayout, QLineEdit, QTextEdit, QVBoxLayout
-from PySide2.QtGui import QTextCursor
+from PySide2.QtWidgets import QHBoxLayout, QLabel, QSlider, QGridLayout, QLineEdit, QVBoxLayout
 from PySide2.QtCore import Qt, QSize
 from Model.app_helpers import ClickAnimationButton, EasyFrame
 from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style
@@ -34,6 +33,7 @@ from Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
+# TODO: Parent EasyFrames properly.
 class DRTView(AbstractView):
     def __init__(self, name, log_handlers: [StreamHandler]):
         self._logger = getLogger(__name__)
@@ -41,14 +41,6 @@ class DRTView(AbstractView):
             self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(name)
-
-        # Data output display
-        self.dev_data_frame = EasyFrame()
-        self.dev_data_layout = QVBoxLayout(self.dev_data_frame)
-        self.layout().addWidget(self.dev_data_frame, 0, 0)
-        self._textBox = QTextEdit()
-        self._textBox.setMinimumSize(350, 100)
-        self.dev_data_layout.addWidget(self._textBox)
 
         # device settings display
         self.dev_sets_frame = EasyFrame()
@@ -135,15 +127,8 @@ class DRTView(AbstractView):
         self.strings = dict()
         self._logger.debug("Initialized")
 
-    def write(self, message) -> None:
-        """
-        Add text to output window.
-        :param message: The text to add.
-        :return: None.
-        """
-        self._textBox.moveCursor(QTextCursor.End)
-        self._textBox.insertPlainText(message)
-        self._textBox.moveCursor(QTextCursor.End)
+    def add_graph(self, graph):
+        self.layout().addWidget(graph, 0, 0)
 
     def set_stim_dur_entry_changed_handler(self, func: classmethod) -> None:
         """

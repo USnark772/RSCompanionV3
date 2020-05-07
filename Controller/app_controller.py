@@ -143,7 +143,6 @@ class AppController:
         :param debug_level: The debug level
         :return None:
         """
-        print(__name__, "debug level changed")
         self._settings.setValue("logging/level", debug_level)
         self.main_window.show_help_window(self._strings[StringsEnum.APP_NAME], self._strings[StringsEnum.RESTART_PROG])
 
@@ -410,7 +409,6 @@ class AppController:
         valid = len(self._save_file_name) > 1
         if valid:
             self._save_dir = self._dir_name_from_file_name(self._save_file_name)
-            print(__name__, self._save_dir)
         self._logger.debug("done")
         return valid
 

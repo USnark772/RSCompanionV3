@@ -36,26 +36,31 @@ class AbstractMeta(ABCMeta, type(Canvas)):
     pass
 
 
-class BaseGraphObj(Canvas, ABC, metaclass=AbstractMeta):
+class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
     """ Generic device data graphing class. """
-    def __init__(self, parent, title: str, plot_names: [str], log_handlers: [StreamHandler]):
+    def __init__(self, parent, log_handlers: [StreamHandler]):
         self._logger = getLogger(__name__)
         for h in log_handlers:
             self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(Figure(figsize=(5, 5)))
         self.setParent(parent)
-        self._title = title
-        self._plot_names = [name for name in plot_names]
         self._new = True
         self._nav_bar = NavBar(self, parent)
         self._nav_bar.update()
         self._leg_plot_links = dict()
-        self._plots = list()  # coords, active
+        self._plots = list()  # name, coords, active
         self._v_lines = list()
-        self._strings = dict()
+        self._base_strings = dict()
         self.figure.canvas.mpl_connect('pick_event', self._onpick)
         self._logger.debug("Initialized")
+
+    def get_nav_bar(self) -> NavBar:
+        """
+        Get this graph's nav bar.
+        :return NavBar: This graph's nav bar.
+        """
+        return self._nav_bar
 
     def refresh_self(self):
         """ Redraw the canvas. """
@@ -68,27 +73,22 @@ class BaseGraphObj(Canvas, ABC, metaclass=AbstractMeta):
 
     def set_lang(self, lang: LangEnum) -> None:
         """
-        Set this graph's language.
+        Set this base graph's language.
         :param lang: The lang enum to use.
         :return None:
         """
-        self._strings = strings[lang]
+        self._logger.debug("running")
+        self._base_strings = strings[lang]
+        self._logger.debug("done")
 
-    def change_plot_names(self, names: [str]) -> None:
-        """
-        set plot names to names.
-        :param names: The new names to use.
-        :return None:
-        """
-
-    def set_new(self, is_new):
+    def set_new(self, is_new: bool) -> None:
         """ If graph is new then there is no data to display. """
-        self.logger.debug("running")
+        self._logger.debug("running")
         self._new = is_new
-        self.logger.debug("done")
+        self._logger.debug("done")
 
     def get_new(self):
-        return self.__new
+        return self._new
 
     @abstractmethod
     def plot_device_data(self, axes, name, show_in_legend) -> []:
@@ -110,21 +110,22 @@ class BaseGraphObj(Canvas, ABC, metaclass=AbstractMeta):
         self.figure.set_tight_layout(True)
         num_plots = len(self._plots)
         for i in range(num_plots):
-            name = self._plot_names[i]
-            active = self._plots[1]
+            plot = self._plots[i]
+            name = plot[0]
+            active = plot[2]
             lines[name] = []
-            if active[1]:
-                coords = self._plots[0]
+            if active:
+                coords = plot[1]
+                print(coords)
                 axes = self.figure.add_subplot(coords[0], coords[1], coords[2])
                 axes.tick_params(axis='x', labelrotation=30)
                 axes.set_ylabel(name)
                 if i == 0:
                     show_in_legend = True
-                    axes.set_title(self._title)
                 else:
                     show_in_legend = False
                 if i == num_plots - 1:
-                    axes.set_xlabel(self._strings[StringsEnum.GRAPH_TS])
+                    axes.set_xlabel(self._base_strings[StringsEnum.GRAPH_TS])
                 if not new:
                     lines[name] = self.plot_device_data(axes, name, show_in_legend)
         if not new:
@@ -136,6 +137,7 @@ class BaseGraphObj(Canvas, ABC, metaclass=AbstractMeta):
         self._logger.debug("done")
 
     def add_vert_lines(self, timestamp: datetime = None):
+        self._logger.debug("running")
         for axes in self.figure.get_axes():
             if timestamp:
                 self._vlines.append(timestamp)
@@ -144,15 +146,16 @@ class BaseGraphObj(Canvas, ABC, metaclass=AbstractMeta):
             else:
                 for line in self._vlines:
                     axes.axvline(line)
+        self._logger.debug("done")
 
-    def _set_subplots(self):
+    def set_subplots(self, names: [str]):
         self._logger.debug("running")
-        if len(self._plot_names) < 1:
+        if len(names) < 1:
             return
-        r = len(self._plot_names)
+        r = len(names)
         c = 1
         for i in range(0, r):
-            self._plots[i] = [(r, c, i + 1), True]
+            self._plots.append((names[i], (r, c, i + 1), True))
         self._logger.debug("done")
 
     def _match_legend_plot_lines(self, legend, lines):

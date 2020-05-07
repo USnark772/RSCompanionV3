@@ -159,10 +159,10 @@ class ClickAnimationButton(QPushButton):
         """
         self.setStyleSheet(button_normal_style)
 
-
+# TODO: Add proper parenting for EasyFrame wherever it is used.
 class EasyFrame(QFrame):
     """ Creates a frame for display purposes depending on bools. """
-    def __init__(self, line=False, vert=False):
+    def __init__(self, parent=None, line=False, vert=False):
         self.logger = getLogger(__name__)
         self.logger.debug("Initializing")
         super().__init__()
