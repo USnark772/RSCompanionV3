@@ -75,3 +75,8 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
         :return: None
         """
         event.ignore()
+        self.setWindowState(Qt.WindowMinimized)
+        if self.windowState() == Qt.WindowMinimized:
+            self.setWindowState(Qt.WindowNoState)
+        elif self.windowState() == Qt.WindowNoState:
+            self.setWindowState(Qt.WindowMinimized)
