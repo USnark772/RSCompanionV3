@@ -113,6 +113,7 @@ class Controller(AbstractController):
         self._logger.debug("running")
         self._model.update_save_info(path)
         self._model.add_save_hdr()
+        self._graph.clear_graph()
         self._logger.debug("done")
 
     def start_exp(self) -> None:

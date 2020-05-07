@@ -47,6 +47,15 @@ class DRTGraph(BaseGraph):
         self.set_subplots([x[0] for x in self._data])
         await create_task(self.plot(self.get_new()))
 
+    def clear_graph(self) -> None:
+        """
+        Clear this graph of any device data.
+        :return None:
+        """
+        for i in range(len(self._data)):
+            self._data[i] = [self._data[i][0], [], []]
+        create_task(self.show())
+
     def set_lang(self, lang: LangEnum) -> None:
         """
         Set this device graph's language.
