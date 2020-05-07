@@ -40,7 +40,6 @@ class SubWindow(QMdiSubWindow):
     def __init__(self):
         QMdiSubWindow.__init__(self)
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, False)
-        self.setWindowFlag(Qt.WindowCloseButtonHint, False)  # TODO: Figure out how to do this at construction
         self.setLayout(QHBoxLayout())
         self.main_frame = EasyFrame()
         self.main_frame.setMouseTracking(True)
@@ -68,6 +67,7 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
         """
         return self._name
 
+    # TODO: Repurpose this to minimize window.
     def closeEvent(self, event: QCloseEvent) -> None:
         """
         Do not allow user to close window directly.

@@ -499,7 +499,6 @@ class AppController:
         Cleanup any code that would cause problems for shutdown and prep for app closure.
         :return None:
         """
-        # TODO: Figure out how to not save if user closes app during experiment.
         if self._model.exp_created:
             self._end_exp(False)
         create_task(end_tasks(self._tasks))
