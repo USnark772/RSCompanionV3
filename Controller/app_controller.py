@@ -115,9 +115,7 @@ class AppController:
         self._initialize_view()
         self._start()
         self._logger.debug("Initialized")
-        self._exp_created = False
-        self._exp_running = False
-        self._updater_task = None
+        self._drive_updater_task = None
         self._curr_cond_name = ""
 
     def language_change_handler(self, lang: LangEnum) -> None:
@@ -153,7 +151,7 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        if not self._exp_created:
+        if not self._model.exp_created:
             self._logger.debug("creating experiment")
             if not self._get_save_file_name():
                 self._logger.debug("no save directory selected, done running _create_end_exp_handler()")
@@ -174,7 +172,7 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        if self._exp_running:
+        if self._model.exp_running:
             self._logger.debug("stopping experiment")
             self._stop_exp()
         else:
@@ -218,14 +216,15 @@ class AppController:
             await self._model.await_dev_con_err()
             self.main_window.show_help_window("Error", self._strings[StringsEnum.DEV_CON_ERR])
 
-    # TODO: Implement
     def post_handler(self) -> None:
         """
         Handler for post button.
         :return:
         """
         self._logger.debug("running")
-        print("Implement handling for this button.")
+        note = self.note_box.get_note()
+        self.note_box.clear_note()
+        self._model.save_note(note)
         self._logger.debug("done")
 
     def about_rs_handler(self) -> None:
@@ -312,13 +311,13 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        self._exp_created = self._model.signal_create_exp(self._save_file_name)
-        if self._exp_created:
+        self._model.signal_create_exp(self._save_file_name)
+        if self._model.exp_created:
             self.button_box.set_start_button_enabled(True)
             self.button_box.set_create_button_state(1)
             self._check_toggle_post_button()
             if self._set_drive_updater():
-                self._updater_task = create_task(self._update_drive_info_box())
+                self._drive_updater_task = create_task(self._update_drive_info_box())
             self.info_box.set_start_time(format_current_time(datetime.now(), time=True))
         else:
             self.button_box.set_create_button_state(0)
@@ -331,14 +330,13 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        self._exp_created = False
-        if self._exp_running:
+        if self._model.exp_running:
             self._stop_exp()
         self._model.signal_end_exp(save)
         self._check_toggle_post_button()
-        if self._updater_task:
-            self._updater_task.cancel()
-            self._updater_task = None
+        if self._drive_updater_task:
+            self._drive_updater_task.cancel()
+            self._drive_updater_task = None
         self.info_box.set_block_num(0)
         self.button_box.set_create_button_state(0)
         self.button_box.set_start_button_enabled(False)
@@ -351,8 +349,8 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        self._exp_running = self._model.signal_start_exp()
-        if not self._exp_running:
+        self._model.signal_start_exp()
+        if not self._model.exp_running:
             return
         self.info_box.set_block_num(str(int(self.info_box.get_block_num()) + 1))
         self.button_box.set_start_button_state(1)
@@ -366,7 +364,6 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        self._exp_running = False
         self._model.signal_stop_exp()
         self.button_box.set_start_button_state(2)
         self.button_box.set_condition_name_box_enabled(True)
@@ -393,7 +390,7 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        if self._exp_created and len(self.note_box.get_note()) > 0:
+        if self._model.exp_created and len(self.note_box.get_note()) > 0:
             self._logger.debug("button = true")
             self.note_box.set_post_button_enabled(True)
         else:
@@ -427,17 +424,15 @@ class AppController:
 
     def _keypress_handler(self, event: QKeyEvent) -> None:
         """
-        Handle any keypress event and accept only alphabetical keypresses, then set flag_box to that key.
-        :param event: The event to analyze and use.
+        Handle any keypress event and intercept alphabetical keypresses, then set flag_box to that key.
+        :param event: The keypress event.
         :return None:
         """
         self._logger.debug("running")
-        if type(event) == QKeyEvent:
-            if 0x41 <= event.key() <= 0x5a:
-                self.flag_box.set_flag(chr(event.key()))
-            event.accept()
-        else:
-            event.ignore()
+        if 0x41 <= event.key() <= 0x5a:
+            self.flag_box.set_flag(chr(event.key()))
+            self._model.save_flag(self.flag_box.get_flag())
+        event.accept()
         self._logger.debug("done")
 
     def _setup_handlers(self) -> None:
@@ -449,6 +444,7 @@ class AppController:
         # Experiment controls
         self.button_box.add_create_button_handler(self.create_end_exp_handler)
         self.button_box.add_start_button_handler(self.start_stop_exp_handler)
+        self.note_box.add_note_box_changed_handler(self._check_toggle_post_button)
         self.note_box.add_post_handler(self.post_handler)
         self.main_window.keyPressEvent = self._keypress_handler
 
@@ -504,7 +500,7 @@ class AppController:
         :return None:
         """
         # TODO: Figure out how to not save if user closes app during experiment.
-        if self._exp_created:
+        if self._model.exp_created:
             self._end_exp(False)
         create_task(end_tasks(self._tasks))
         self._model.cleanup()

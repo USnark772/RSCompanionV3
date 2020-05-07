@@ -30,11 +30,12 @@ import importlib.util
 import zipfile
 import tempfile
 from logging import StreamHandler, getLogger
+from datetime import datetime
 from asyncio import Event, create_task, futures
 from aioserial import AioSerial
 from Model.rs_device_com_scanner import RSDeviceCommScanner
 from Model.app_defs import LangEnum
-from Model.app_helpers import await_event, end_tasks
+from Model.app_helpers import await_event, end_tasks, write_line_to_file, format_current_time
 from Model.version_checker import VersionChecker
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
@@ -60,6 +61,10 @@ class AppModel:
         self._remove_dev_views = []
         self._gather_tasks = []
         self._cancel_tasks = []
+        self._note_filename = "notes.csv"
+        self._flag_filename = "flags.csv"
+        self.exp_created = False
+        self.exp_running = False
         self._logger.debug("Initialized")
 
     def await_new_view(self) -> futures:
@@ -126,7 +131,30 @@ class AppModel:
             return True, self._remove_dev_views.pop(0)
         return False, None
 
-    def signal_create_exp(self, path: str) -> bool:
+    def save_note(self, note: str) -> None:
+        """
+        Save note to experiment note file if experiment created.
+        :param note: The text to save.
+        :return None:
+        """
+        if self.exp_created:
+            print(__name__, "Got note:", note, " Saving note to:", self._temp_folder.name + self._note_filename)
+            timestamp = format_current_time(datetime.now(), True, True, True)
+            line = timestamp + ", " + note
+            write_line_to_file(self._temp_folder.name + "/" + self._note_filename, line)
+
+    def save_flag(self, flag: str) -> None:
+        """
+        Save flag to experiment flag file if experiment created.
+        :param flag: The flag to save.
+        :return None:
+        """
+        if self.exp_created:
+            timestamp = format_current_time(datetime.now(), True, True, True)
+            line = timestamp + ", " + flag
+            write_line_to_file(self._temp_folder.name + "/" + self._flag_filename, line)
+
+    def signal_create_exp(self, path: str) -> None:
         """
         Call create_exp on all device controllers.
         :param path: The save dir for this experiment.
@@ -141,15 +169,15 @@ class AppModel:
                 controller.create_exp(self._temp_folder.name + "/")
                 devices_running.append(controller)
             self._logger.debug("done")
-            return True
+            self.exp_created = True
         except Exception as e:
             self._logger.exception("Failed creating exp on a controller.")
             for controller in devices_running:
                 controller.end_exp()
             self._temp_folder.cleanup()
-            return False
+            self.exp_created = False
 
-    def signal_end_exp(self, save: bool = True) -> bool:
+    def signal_end_exp(self, save: bool = True) -> None:
         """
         Call end exp on all device controllers.
         :return bool: If there was an error.
@@ -160,12 +188,11 @@ class AppModel:
                 controller.end_exp()
             self._logger.debug("done")
             self._convert_to_rs_file(save)
-            return True
         except Exception as e:
             self._logger.exception("Failed ending exp on a controller.")
-            return False
+        self.exp_running = False
 
-    def signal_start_exp(self) -> bool:
+    def signal_start_exp(self) -> None:
         """
         Starts an experiment.
         :return bool: Return false if an experiment failed to start, otherwise return true.
@@ -176,14 +203,14 @@ class AppModel:
             for controller in self._devs.values():
                 controller.start_exp()
                 devices.append(controller)
-                return True
+                self.exp_running = True
         except Exception as e:
             self._logger.exception("Failed trying to start exp on controller.")
             for controller in devices:
                 controller.end_exp()
-                return False
+                self.exp_running = False
 
-    def signal_stop_exp(self) -> bool:
+    def signal_stop_exp(self) -> None:
         """
         Stops an experiment.
         :return bool: Return false if an experiment failed to stop, otherwise return true.
@@ -192,10 +219,9 @@ class AppModel:
         try:
             for controller in self._devs.values():
                 controller.stop_exp()
-            return True
         except Exception as e:
             self._logger.exception("Failed trying to stop exp on controller")
-            return False
+        self.exp_running = False
 
     async def _await_new_devs(self) -> None:
         """
