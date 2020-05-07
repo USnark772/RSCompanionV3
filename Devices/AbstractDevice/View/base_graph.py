@@ -24,6 +24,7 @@ https://redscientific.com/index.html
 """
 
 from abc import ABCMeta, ABC, abstractmethod
+from asyncio import create_task, sleep
 from logging import getLogger, StreamHandler
 from datetime import datetime
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavBar
@@ -48,11 +49,11 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
         self._new = True
         self._nav_bar = NavBar(self, parent)
         self._nav_bar.update()
-        self._leg_plot_links = dict()
+        # self._leg_plot_links = dict()
         self._plots = list()  # name, coords, active
         self._v_lines = list()
         self._base_strings = dict()
-        self.figure.canvas.mpl_connect('pick_event', self._onpick)
+        # self.figure.canvas.mpl_connect('pick_event', self._onpick)
         self._logger.debug("Initialized")
 
     def get_nav_bar(self) -> NavBar:
@@ -91,7 +92,7 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
         return self._new
 
     @abstractmethod
-    def plot_device_data(self, axes, name, show_in_legend) -> []:
+    async def plot_device_data(self, axes, name) -> []:  #, show_in_legend) -> []:
         """
         How this specific device should plot its data.
         :param axes: The current graph.
@@ -101,11 +102,12 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
         """
         pass
 
-    def plot(self, new=False):
+    # TODO: This being called twice causes warning with matplotlib, can we fix it?
+    async def plot(self, new=False):
         """ Reset all subplots to empty then call subclass's plot function for each subplot """
         self._logger.debug("running")
         lines = {}
-        self._leg_plot_links = {}
+        # self._leg_plot_links = {}
         self.figure.clear()
         self.figure.set_tight_layout(True)
         num_plots = len(self._plots)
@@ -116,23 +118,26 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
             lines[name] = []
             if active:
                 coords = plot[1]
-                print(coords)
                 axes = self.figure.add_subplot(coords[0], coords[1], coords[2])
                 axes.tick_params(axis='x', labelrotation=30)
                 axes.set_ylabel(name)
-                if i == 0:
-                    show_in_legend = True
-                else:
-                    show_in_legend = False
+                await sleep(.001)
+                # if i == 0:
+                #     show_in_legend = False
+                # else:
+                #     show_in_legend = False
                 if i == num_plots - 1:
+                    await sleep(.001)
                     axes.set_xlabel(self._base_strings[StringsEnum.GRAPH_TS])
+                    await sleep(.001)
                 if not new:
-                    lines[name] = self.plot_device_data(axes, name, show_in_legend)
+                    lines[name] = await create_task(self.plot_device_data(axes, name))  #, show_in_legend))
         if not new:
-            legend = self.figure.legend(loc='upper left', framealpha=0.4)
-            legend.set_draggable(True)
-            self._match_legend_plot_lines(legend, lines)
+            # legend = self.figure.legend(loc='upper left', framealpha=0.4)
+            # legend.set_draggable(True)
+            # self._match_legend_plot_lines(legend, lines)
             self.add_vert_lines()
+        await sleep(.001)
         self.figure.canvas.draw()
         self._logger.debug("done")
 
@@ -144,11 +149,12 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
                 axes.axvline(timestamp)
                 self.refresh_self()
             else:
-                for line in self._vlines:
+                for line in self._v_lines:
                     axes.axvline(line)
         self._logger.debug("done")
 
     def set_subplots(self, names: [str]):
+        self._plots = list()
         self._logger.debug("running")
         if len(names) < 1:
             return
@@ -177,7 +183,6 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
         :return None:
         """
         self._logger.debug("running")
-        print(__name__, "type of event is:", type(event))
         legend_line = event.artist
         if legend_line in self._legend_plot_links:
             plot_lines = self._legend_plot_links[legend_line]

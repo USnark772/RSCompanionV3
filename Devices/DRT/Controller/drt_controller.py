@@ -193,9 +193,8 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         data1 = [self._strings[StringsEnum.PLOT_NAME_RT], timestamp, values[defs.output_fields[3]]]
-        self._graph.add_data(data1)
         data2 = [self._strings[StringsEnum.PLOT_NAME_CLICKS], timestamp, values[defs.output_fields[2]]]
-        self._graph.add_data(data2)
+        self._graph.add_data([data1, data2])
         self._logger.debug("done")
 
     def _update_view_config(self, msg: dict) -> None:

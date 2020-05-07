@@ -24,6 +24,7 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
+from asyncio import create_task, sleep
 from datetime import datetime, timedelta
 from Devices.AbstractDevice.View.base_graph import BaseGraph
 from Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
@@ -42,9 +43,9 @@ class DRTGraph(BaseGraph):
         self._dev_name = dev_name
         self._logger.debug("Initialized")
 
-    def show(self) -> None:
+    async def show(self) -> None:
         self.set_subplots([x[0] for x in self._data])
-        self.plot(self.get_new())
+        await create_task(self.plot(self.get_new()))
 
     def set_lang(self, lang: LangEnum) -> None:
         """
@@ -56,33 +57,38 @@ class DRTGraph(BaseGraph):
         super(DRTGraph, self).set_lang(lang)
         self._strings = strings[lang]
         self._change_plot_names([self._strings[StringsEnum.PLOT_NAME_RT], self._strings[StringsEnum.PLOT_NAME_CLICKS]])
-        self.show()
+        create_task(self.show())
         self.set_texts()
         self._logger.debug("done")
 
-    def plot_device_data(self, axes, name, show_in_legend) -> []:
+    async def plot_device_data(self, axes, name) -> []:  #, show_in_legend) -> []:
         self._logger.debug("running")
-        data = str()
+        data = list()
         for x in self._data:
             if x[0] == name:
                 data = x
         lines = []
         left = datetime.now()
         right = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        if show_in_legend:
-            the_label = self._dev_name
-        else:
-            the_label = "_nolegend_"
-        line, = axes.plot(data[1], data[2], label=the_label, marker='o')
+        # if show_in_legend:
+        #     the_label = self._dev_name
+        # else:
+        #     the_label = "_nolegend_"
+        await sleep(.001)
+        line, = axes.plot(data[1], data[2], marker='o')  #, label=the_label)
+        await sleep(.001)
         lines.append((self._dev_name, line))
         if len(data[1]) > 0:
             if right < data[1][-1]:
                 right = data[1][-1]
             if left > data[1][0]:
                 left = data[1][0]
-        if left < right - timedelta(minutes=2):
-            left = right - timedelta(minutes=2)
+        temp_left = right - timedelta(minutes=2)
+        if left < temp_left:
+            left = temp_left
+        await sleep(.001)
         axes.set_xlim(left=left - timedelta(seconds=10), right=right + timedelta(seconds=10))
+        await sleep(.001)
         self._logger.debug("done")
         return lines
 
@@ -90,9 +96,13 @@ class DRTGraph(BaseGraph):
         """ Ensure data comes in as type, x, y """
         self._logger.debug("running")
         self.set_new(False)
-        self._data[data[0]][0].append(data[1])
-        self._data[data[0]][1].append(data[2])
-        self.plot()
+        for item in data:
+            for i in range(len(self._data)):
+                if item[0] == self._data[i][0]:
+                    self._data[i][1].append(item[1])
+                    self._data[i][2].append(item[2])
+                    break
+        create_task(self.plot())
         self._logger.debug("done")
 
     def add_empty_point(self, timestamp):

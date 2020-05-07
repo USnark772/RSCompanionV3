@@ -25,18 +25,19 @@ https://redscientific.com/index.html
 
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QMdiArea
+from PySide2.QtCore import QSize
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
 class MDIArea(QMdiArea):
     """ The area to show device specific views. """
-    def __init__(self, parent, log_handlers: [StreamHandler]):
+    def __init__(self, parent, size: QSize, log_handlers: [StreamHandler]):
         self._logger = getLogger(__name__)
         for h in log_handlers:
             self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(parent)
-        self.setMinimumSize(500, 300)
+        self.setMinimumSize(size)
         self._logger.debug("Done")
 
     def add_window(self, window: AbstractView) -> None:
