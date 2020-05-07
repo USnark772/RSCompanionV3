@@ -33,6 +33,7 @@ from Model.app_defs import LangEnum
 class StringsEnum(Enum):
     CUSTOM_LABEL = auto()
     ISO_LABEL = auto()
+    CONFIG_TAB_LABEL = auto()
     CONFIG_LABEL = auto()
     ISO_BUTTON_LABEL = auto()
     UPLOAD_BUTTON_LABEL = auto()
@@ -59,6 +60,7 @@ lower_isi_eng = "Lower ISI"
 upper_isi_eng = "Upper ISI"
 english = {StringsEnum.CUSTOM_LABEL: "Custom",
            StringsEnum.ISO_LABEL: iso,
+           StringsEnum.CONFIG_TAB_LABEL: "Configuration",
            StringsEnum.CONFIG_LABEL: "Current configuration:",
            StringsEnum.ISO_BUTTON_LABEL: iso,
            StringsEnum.UPLOAD_BUTTON_LABEL: "Upload settings",
@@ -85,6 +87,7 @@ lower_isi_fre = "Inférieur ISI"
 upper_isi_fre = "Supérieur ISI"
 french = {StringsEnum.CUSTOM_LABEL: "Douane",
           StringsEnum.ISO_LABEL: iso,
+          StringsEnum.CONFIG_TAB_LABEL: "Configuration",
           StringsEnum.CONFIG_LABEL: "Configuration actuelle:",
           StringsEnum.ISO_BUTTON_LABEL: iso,
           StringsEnum.UPLOAD_BUTTON_LABEL: "Importer les paramètres",

@@ -25,7 +25,7 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from PySide2.QtWidgets import QHBoxLayout, QLabel, QSlider, QGridLayout, QLineEdit, QVBoxLayout
+from PySide2.QtWidgets import QHBoxLayout, QLabel, QSlider, QGridLayout, QLineEdit, QVBoxLayout, QTabWidget
 from PySide2.QtCore import Qt, QSize
 from Model.app_helpers import ClickAnimationButton, EasyFrame
 from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style
@@ -41,11 +41,15 @@ class DRTView(AbstractView):
         self._logger.debug("Initializing")
         super().__init__(name)
 
+        self.graphWidth = 0
+
+        # TODO change back to 0, 1 when tabs implemented
         # device settings display
         self.dev_sets_frame = EasyFrame()
-        self.layout().addWidget(self.dev_sets_frame, 0, 1)
-        self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
+        # self.layout().addWidget(self.dev_sets_frame, 0, 1)
+        self.dev_sets_frame.setMaximumSize(250, 350)
 
+        self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
         self.config_horizontal_layout = QHBoxLayout()
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
@@ -123,9 +127,30 @@ class DRTView(AbstractView):
 
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
+        # Show/Hide Configuration tab
+        self._config_visible = True
+        self.config_tab = QTabWidget(self)
+        self.config_tab.setTabPosition(QTabWidget.East)
+        self.config_tab.addTab(self.dev_sets_frame, "Configuration")
+        self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
+        self.tab_extended_width = 350
+        self.tab_collapsed_width = 20
+
         self.strings = dict()
+        self._setup_handlers()
+        self.setMinimumSize(760, 540)
         self._logger.debug("Initialized")
 
+    def _setup_handlers(self) -> None:
+        """
+        Handler method for buttons
+        :return None:
+        """
+        self._logger.debug("running")
+        self.config_tab.tabBarClicked.connect(self._set_config_visibility)
+        self._logger.debug("done")
+
+    # TODO change back to 0, 0 when tabs implemented
     def add_graph(self, graph):
         self.layout().addWidget(graph, 0, 0)
 
@@ -341,6 +366,7 @@ class DRTView(AbstractView):
         self.upper_isi_label.setText(self.strings[StringsEnum.UPPER_ISI_LABEL])
         self.lower_isi_label.setText(self.strings[StringsEnum.LOWER_ISI_LABEL])
         self.upload_settings_button.setText(self.strings[StringsEnum.UPLOAD_BUTTON_LABEL])
+        self.config_tab.setTabText(0, self.strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
     def _set_tooltips(self):
@@ -353,4 +379,21 @@ class DRTView(AbstractView):
         self.stim_intens_label.setToolTip(self.strings[StringsEnum.INTENSITY_TOOLTIP])
         self.upload_settings_button.setToolTip(self.strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
         self.stim_intens_slider.setToolTip(str(self.stim_intens_slider.value()) + "%")
+        self._logger.debug("done")
+
+    def _set_config_visibility(self):
+        """
+        Show or hide configuration options
+        :return None:
+        """
+        self._logger.debug("running")
+        # self.dev_sets_frame.setVisible(not self.dev_sets_frame.isVisible())
+        self._config_visible = not self._config_visible
+        if self._config_visible:
+            self.dev_sets_frame.show()
+            self.config_tab.setMaximumWidth(self.tab_extended_width)
+
+        else:
+            self.dev_sets_frame.hide()
+            self.config_tab.setMaximumWidth(self.tab_collapsed_width)
         self._logger.debug("done")
