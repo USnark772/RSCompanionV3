@@ -102,7 +102,6 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
         """
         pass
 
-    # TODO: This being called twice causes warning with matplotlib, can we fix it?
     async def plot(self, new=False):
         """ Reset all subplots to empty then call subclass's plot function for each subplot """
         self._logger.debug("running")

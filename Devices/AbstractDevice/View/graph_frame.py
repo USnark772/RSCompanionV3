@@ -29,7 +29,6 @@ from PySide2.QtWidgets import QFrame, QVBoxLayout, QSizePolicy
 from Model.app_helpers import ClickAnimationButton
 
 
-# TODO: Add dynamic language to this.
 class GraphFrame(QFrame):
     """ This code is to contain and properly size graph widgets. """
     def __init__(self, parent, graph: BaseGraph, log_handlers: [StreamHandler]):

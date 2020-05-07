@@ -33,7 +33,6 @@ from Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
-# TODO: Parent EasyFrames properly.
 class DRTView(AbstractView):
     def __init__(self, name, log_handlers: [StreamHandler]):
         self._logger = getLogger(__name__)

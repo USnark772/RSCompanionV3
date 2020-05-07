@@ -27,8 +27,6 @@ from logging import getLogger, StreamHandler
 from datetime import datetime
 from asyncio import create_task
 from aioserial import AioSerial
-from Model.app_defs import LangEnum
-from Model.app_helpers import format_current_time
 from Devices.AbstractDevice.Controller.abstract_controller import AbstractController
 from Devices.AbstractDevice.View.graph_frame import GraphFrame
 from Devices.DRT.View.drt_view import DRTView
@@ -123,6 +121,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self._model.send_start()
+        self._graph.add_empty_point(datetime.now())
         self._logger.debug("done")
 
     def stop_exp(self) -> None:

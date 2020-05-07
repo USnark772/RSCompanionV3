@@ -30,7 +30,6 @@ from Devices.AbstractDevice.View.base_graph import BaseGraph
 from Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
 
 
-# TODO: Figure out why it plots the same graph multiple times when changing language.
 class DRTGraph(BaseGraph):
     def __init__(self, parent, dev_name: str, log_handlers: [StreamHandler]):
         self._logger = getLogger(__name__)
@@ -54,6 +53,7 @@ class DRTGraph(BaseGraph):
         """
         for i in range(len(self._data)):
             self._data[i] = [self._data[i][0], [], []]
+        self.set_new(True)
         create_task(self.show())
 
     def set_lang(self, lang: LangEnum) -> None:
@@ -67,7 +67,6 @@ class DRTGraph(BaseGraph):
         self._strings = strings[lang]
         self._change_plot_names([self._strings[StringsEnum.PLOT_NAME_RT], self._strings[StringsEnum.PLOT_NAME_CLICKS]])
         create_task(self.show())
-        self.set_texts()
         self._logger.debug("done")
 
     async def plot_device_data(self, axes, name) -> []:  #, show_in_legend) -> []:
@@ -117,9 +116,9 @@ class DRTGraph(BaseGraph):
     def add_empty_point(self, timestamp):
         if self.get_new():
             return
-        for data in self._data.values():
-            data[0].append(timestamp)
-            data[1].append(None)
+        for data in self._data:
+            data[1].append(timestamp)
+            data[2].append(None)
         self.refresh_self()
 
     def _change_plot_names(self, names) -> None:
@@ -129,7 +128,3 @@ class DRTGraph(BaseGraph):
         else:
             for i in range(len(names)):
                 self._data[i][0] = names[i]
-
-    # TODO: Implement.
-    def set_texts(self):
-        pass

@@ -30,8 +30,8 @@ from datetime import datetime
 from asyncio import create_task, sleep
 from aioserial import AioSerial
 from PySide2.QtWidgets import QFileDialog
-from PySide2.QtGui import QKeyEvent
-from PySide2.QtCore import QSettings, QSize
+from PySide2.QtGui import QKeyEvent, QDesktopServices
+from PySide2.QtCore import QSettings, QSize, QUrl, QDir
 from Model.app_model import AppModel
 from Model.app_defs import current_version, log_format, LangEnum
 from Model.app_helpers import setup_log_file, get_disk_usage_stats, format_current_time, end_tasks
@@ -275,14 +275,16 @@ class AppController:
         self.log_output.show()
         self._logger.debug("done")
 
-    # TODO: Implement
     def last_save_dir_handler(self) -> None:
         """
         Handler for last save dir button.
         :return None:
         """
         self._logger.debug("running")
-        print("Implement handling for this button")
+        if self._save_dir == "":
+            QDesktopServices.openUrl(QUrl.fromLocalFile(QDir().homePath()))
+        else:
+            QDesktopServices.openUrl(QUrl.fromLocalFile(self._save_dir))
         self._logger.debug("done")
 
     # TODO: Implement
@@ -343,7 +345,6 @@ class AppController:
         self.button_box.set_start_button_state(0)
         self._logger.debug("done")
 
-    # TODO implement _add_break_in_graph_lines()?
     def _start_exp(self) -> None:
         """
         Start an experiment if one has been created. Signal devices and update view.
@@ -420,8 +421,7 @@ class AppController:
         :return str: The resulting directory name.
         """
         self._logger.debug("running")
-        dir_name = filename.rstrip(".rs")
-        dir_name += "/"
+        dir_name = filename[:filename.rindex("/")]
         self._logger.debug("done")
         return dir_name
 
