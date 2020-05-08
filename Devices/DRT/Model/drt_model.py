@@ -24,6 +24,7 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
+from asyncio import create_task
 from aioserial import AioSerial
 from math import trunc, ceil
 from datetime import datetime
@@ -380,7 +381,7 @@ class DRTModel:
         :param line: The data to write.
         :return: None.
         """
-        write_line_to_file(self._save_dir + self._save_filename, line)
+        create_task(write_line_to_file(self._save_dir + self._save_filename, line))
 
     @staticmethod
     def _parse_msg(msg_string: str) -> dict:

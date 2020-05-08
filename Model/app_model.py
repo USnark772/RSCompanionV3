@@ -142,7 +142,7 @@ class AppModel:
             print(__name__, "Got note:", note, " Saving note to:", self._temp_folder.name + self._note_filename)
             timestamp = format_current_time(datetime.now(), True, True, True)
             line = timestamp + ", " + note
-            write_line_to_file(self._temp_folder.name + "/" + self._note_filename, line)
+            create_task(write_line_to_file(self._temp_folder.name + "/" + self._note_filename, line))
 
     def save_flag(self, flag: str) -> None:
         """
@@ -153,7 +153,7 @@ class AppModel:
         if self.exp_created:
             timestamp = format_current_time(datetime.now(), True, True, True)
             line = timestamp + ", " + flag
-            write_line_to_file(self._temp_folder.name + "/" + self._flag_filename, line)
+            create_task(write_line_to_file(self._temp_folder.name + "/" + self._flag_filename, line))
 
     def signal_create_exp(self, path: str) -> None:
         """

@@ -66,6 +66,7 @@ class VersionChecker:
         return 0
 
     # TODO: Figure out if urllib3 is blocking. Check out https://docs.aiohttp.org/en/stable/ for ideas.
+    #  This is probably overkill since this function is only called once at app startup.
     def get_latest_version(self) -> float:
         """
         Connect to site at version_url and retrieve latest version number.
