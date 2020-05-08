@@ -25,13 +25,17 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from PySide2.QtWidgets import QMainWindow, QHBoxLayout, QMessageBox, QMdiArea
+from PySide2.QtWidgets import QMainWindow, QHBoxLayout, QMessageBox, QMdiArea, QSplitter, QFrame
 from PySide2.QtGui import QFont, QIcon, QCloseEvent
-from PySide2.QtCore import QSize
+from PySide2.QtCore import QSize, Qt, QSettings
 from View.HelpWidgets.help_window import HelpWindow
 from View.MainWindow.central_widget import CentralWidget
 from Model.app_defs import image_file_path
+from Resources.Strings.app_strings import company_name, app_name
 from Resources.Strings.main_window_strings import strings, StringsEnum, LangEnum
+
+window_geometry = "mw_geo"
+window_state = "mw_state"
 
 
 class AppMainWindow(QMainWindow):
@@ -50,8 +54,13 @@ class AppMainWindow(QMainWindow):
         self.setWindowIcon(self._icon)
         self.setCentralWidget(CentralWidget(self))
 
-        self._control_layout = QHBoxLayout()
-        self.centralWidget().layout().addLayout(self._control_layout)
+        self._control_frame = QFrame(self)
+        self._control_frame.setFrameShape(QFrame.NoFrame)
+        self._control_layout = QHBoxLayout(self._control_frame)
+        self._splitter = QSplitter(Qt.Vertical, self)
+        # self.centralWidget().layout().addLayout(self._control_layout)
+        self.centralWidget().layout().addWidget(self._splitter)
+        self._splitter.addWidget(self._control_frame)
 
         self.close_check = False
         self._checker = QMessageBox()
@@ -61,6 +70,7 @@ class AppMainWindow(QMainWindow):
         self._strings = dict()
         self.set_lang(lang)
         self._setup_checker_buttons()
+        self._restore_window()
         self._logger.debug("Initialized")
 
     def set_lang(self, lang: LangEnum) -> None:
@@ -92,6 +102,9 @@ class AppMainWindow(QMainWindow):
             if not user_input:
                 event.ignore()
                 return
+        settings = QSettings(company_name, app_name)
+        settings.setValue(window_geometry, self.saveGeometry())
+        settings.setValue(window_state, self.saveState())
         if self._close_callback:
             self._close_callback()
         event.accept()
@@ -104,7 +117,7 @@ class AppMainWindow(QMainWindow):
         :return: None.
         """
         self._logger.debug("running")
-        self.centralWidget().layout().addWidget(mdi_area)
+        self._splitter.addWidget(mdi_area)
         self._logger.debug("done")
 
     def add_control_bar_widget(self, widget, stretch: int=0) -> None:
@@ -159,6 +172,19 @@ class AppMainWindow(QMainWindow):
         self._help_window.setWindowIcon(self._icon)
         self._help_window.show()
         self._logger.debug("done")
+
+    def _restore_window(self) -> None:
+        """
+        Restore window state and geometry from previous session if exists.
+        :return None:
+        """
+        settings = QSettings(company_name, app_name)
+        if not settings.contains(window_geometry):
+            settings.setValue(window_geometry, self.saveGeometry())
+        if not settings.contains(window_state):
+            settings.setValue(window_state, self.saveState())
+        self.restoreGeometry(settings.value(window_geometry))
+        self.restoreState(settings.value(window_state))
 
     def _set_texts(self) -> None:
         """
