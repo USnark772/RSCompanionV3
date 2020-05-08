@@ -31,7 +31,7 @@ import zipfile
 import tempfile
 from logging import StreamHandler, getLogger
 from datetime import datetime
-from asyncio import Event, create_task, futures
+from asyncio import Event, create_task, futures, get_running_loop
 from aioserial import AioSerial
 from Model.rs_device_com_scanner import RSDeviceCommScanner
 from Model.app_defs import LangEnum
@@ -59,12 +59,13 @@ class AppModel:
         self._dev_inits = dict()
         self._new_dev_views = []
         self._remove_dev_views = []
-        self._gather_tasks = []
-        self._cancel_tasks = []
+        self._gatherable_tasks = []
+        self._cancelable_tasks = []
         self._note_filename = "notes.csv"
         self._flag_filename = "flags.csv"
         self.exp_created = False
         self.exp_running = False
+        self.saving = False
         self._logger.debug("Initialized")
 
     def await_new_view(self) -> futures:
@@ -187,7 +188,7 @@ class AppModel:
             for controller in self._devs.values():
                 controller.end_exp()
             self._logger.debug("done")
-            self._convert_to_rs_file(save)
+            create_task(self._save_exp(save))
         except Exception as e:
             self._logger.exception("Failed ending exp on a controller.")
         self.exp_running = False
@@ -241,18 +242,27 @@ class AppModel:
             await self._scanner.await_disconnect()
             self._remove_lost_devices()
 
-    # TODO: Look into async implementation. https://pypi.org/project/aiofile/
-    def _convert_to_rs_file(self, save: bool = True) -> None:
+    async def _save_exp(self, save: bool) -> None:
         """
-        Transfer latest experiment data to .rs file and cleanup temp data.
+        Save the latest exp and cleanup temp folder.
         :param save: Should experiment data be saved.
         :return None:
         """
         if save:
-            with zipfile.ZipFile(self._save_path, "w") as zipper:
-                for file in os.listdir(self._temp_folder.name):
-                    zipper.write(self._temp_folder.name + "/" + file, file)
+            self.saving = True
+            await get_running_loop().run_in_executor(None, self._convert_to_rs_file)
+            self.saving = False
         self._temp_folder.cleanup()
+
+    # TODO: Look into async implementation. https://pypi.org/project/aiofile/
+    def _convert_to_rs_file(self) -> None:
+        """
+        Transfer latest experiment data to .rs file.
+        :return None:
+        """
+        with zipfile.ZipFile(self._save_path, "w") as zipper:
+            for file in os.listdir(self._temp_folder.name):
+                zipper.write(self._temp_folder.name + "/" + file, file)
 
     def _signal_lang_change(self) -> bool:
         """
@@ -342,19 +352,21 @@ class AppModel:
 
     def start(self):
         self._logger.debug("running")
-        self._gather_tasks.append(create_task(self._await_new_devs()))
-        self._gather_tasks.append(create_task(self._await_remove_devs()))
+        self._gatherable_tasks.append(create_task(self._await_new_devs()))
+        self._gatherable_tasks.append(create_task(self._await_remove_devs()))
         self._scanner.start()
         self._logger.debug("done")
 
     def cleanup(self):
         self._logger.debug("running")
         self._scanner.cleanup()
+        while self.saving:
+            continue
         for dev in self._devs.values():
             dev.cleanup()
-        for task in self._cancel_tasks:
+        for task in self._cancelable_tasks:
             task.cancel()
-        create_task(end_tasks(self._gather_tasks))
+        create_task(end_tasks(self._gatherable_tasks))
         self._logger.debug("done")
 
     # TODO add debugging

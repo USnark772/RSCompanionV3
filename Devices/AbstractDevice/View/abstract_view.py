@@ -25,7 +25,7 @@ https://redscientific.com/index.html
 """
 
 
-from abc import ABCMeta, ABC, abstractmethod
+from abc import ABCMeta, ABC
 from Model.app_helpers import EasyFrame
 from PySide2.QtWidgets import QMdiSubWindow, QHBoxLayout, QGridLayout, QLayout
 from PySide2.QtCore import Qt
@@ -67,7 +67,6 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
         """
         return self._name
 
-    # TODO: Repurpose this to minimize window.
     def closeEvent(self, event: QCloseEvent) -> None:
         """
         Do not allow user to close window directly.

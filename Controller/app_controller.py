@@ -82,21 +82,21 @@ class AppController:
         self._logger.debug("Initializing")
 
         # View
-        ui_size = QSize(950, 740)
+        ui_min_size = QSize(950, 740)
         button_box_size = QSize(205, 120)
         info_box_size = QSize(230, 120)
         flag_box_size = QSize(80, 120)
         note_box_size = QSize(250, 120)
         drive_info_box_size = QSize(200, 120)
-        mdi_area_size = QSize(500, 300)
-        self.main_window = AppMainWindow(ui_size, [self.app_lh, self.stderr_lh], self._lang)
+        mdi_area_min_size = QSize(500, 300)
+        self.main_window = AppMainWindow(ui_min_size, [self.app_lh, self.stderr_lh], self._lang)
         self.menu_bar = AppMenuBar(self.main_window, [self.app_lh, self.stderr_lh], self._lang)
         self.button_box = ButtonBox(self.main_window, button_box_size, [self.app_lh, self.stderr_lh], self._lang)
         self.info_box = InfoBox(self.main_window, info_box_size, [self.app_lh, self.stderr_lh], self._lang)
         self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, [self.app_lh, self.stderr_lh], self._lang)
         self.flag_box = FlagBox(self.main_window, flag_box_size, [self.app_lh, self.stderr_lh], self._lang)
         self.note_box = NoteBox(self.main_window, note_box_size, [self.app_lh, self.stderr_lh], self._lang)
-        self.mdi_area = MDIArea(self.main_window, mdi_area_size, [self.app_lh, self.stderr_lh])
+        self.mdi_area = MDIArea(self.main_window, mdi_area_min_size, [self.app_lh, self.stderr_lh])
         self._file_dialog = QFileDialog(self.main_window)
 
         # Model
@@ -501,6 +501,6 @@ class AppController:
         """
         if self._model.exp_created:
             self._end_exp(False)
-        create_task(end_tasks(self._tasks))
         self._model.cleanup()
+        create_task(end_tasks(self._tasks))
         self.log_output.close()

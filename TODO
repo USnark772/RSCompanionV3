@@ -4,12 +4,11 @@
         - Make subwindows rearrange/resize/move on main window resize.
         - Make subwindows not able to move outside the main window size.
     - Implement subwindow arranging in mdi_area.py.
-    - Make device settings area fancy
 
 Languages:
     - German
     - Spanish
-    - Mandarin (- Chinese simplified/formal)
+    - Mandarin (Chinese simplified/formal)
     - Dutch
     - Australian
     - European languages

@@ -43,10 +43,8 @@ class DRTView(AbstractView):
 
         self.graphWidth = 0
 
-        # TODO change back to 0, 1 when tabs implemented
         # device settings display
         self.dev_sets_frame = EasyFrame()
-        # self.layout().addWidget(self.dev_sets_frame, 0, 1)
         self.dev_sets_frame.setMaximumSize(250, 350)
 
         self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
@@ -138,7 +136,8 @@ class DRTView(AbstractView):
 
         self.strings = dict()
         self._setup_handlers()
-        self.setMinimumSize(760, 540)
+        self.setMinimumWidth(760)
+        self.setFixedHeight(540)
         self._logger.debug("Initialized")
 
     def _setup_handlers(self) -> None:
@@ -150,7 +149,6 @@ class DRTView(AbstractView):
         self.config_tab.tabBarClicked.connect(self._set_config_visibility)
         self._logger.debug("done")
 
-    # TODO change back to 0, 0 when tabs implemented
     def add_graph(self, graph):
         self.layout().addWidget(graph, 0, 0)
 
