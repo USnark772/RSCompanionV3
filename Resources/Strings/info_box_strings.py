@@ -45,5 +45,12 @@ french = {StringsEnum.TITLE: "Information",
           StringsEnum.BLOCK_NO: "Numéro de bloc:"
           }
 
+# TODO: Verify Spanish version
+spanish = {StringsEnum.TITLE: "Información",
+           StringsEnum.START_TIME: "Hora de inicio del experimento:",
+           StringsEnum.BLOCK_NO: "Número de bloque:"
+           }
+
 strings = {LangEnum.ENG: english,
-           LangEnum.FRE: french}
+           LangEnum.FRE: french,
+           LangEnum.SPA: spanish}

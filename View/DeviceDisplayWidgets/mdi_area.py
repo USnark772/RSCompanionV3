@@ -25,7 +25,7 @@ https://redscientific.com/index.html
 
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QMdiArea
-from PySide2.QtCore import QSize
+from PySide2.QtCore import QSize, Qt
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
@@ -39,6 +39,8 @@ class MDIArea(QMdiArea):
         super().__init__(parent)
         self.setMinimumSize(size)
         self._logger.debug("Done")
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
     def add_window(self, window: AbstractView) -> None:
         """

@@ -48,5 +48,13 @@ french = {StringsEnum.TITLE: "Remarque",
           StringsEnum.SHADOW: "Entrez une note ici",
           }
 
+# TODO: Verify Spanish version
+spanish = {StringsEnum.TITLE: "Nota",
+           StringsEnum.POST: "Publicar",
+           StringsEnum.POST_TT: "Publicar nota",
+           StringsEnum.SHADOW: "Ingrese la nota aquí",
+           }
+
 strings = {LangEnum.ENG: english,
-           LangEnum.FRE: french}
+           LangEnum.FRE: french,
+           LangEnum.SPA: spanish}

@@ -29,7 +29,7 @@ from abc import ABCMeta, ABC
 from Model.app_helpers import EasyFrame
 from PySide2.QtWidgets import QMdiSubWindow, QHBoxLayout, QGridLayout, QLayout
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QCloseEvent
+from PySide2.QtGui import QCloseEvent, QMoveEvent
 
 
 class AbstractMeta(ABCMeta, type(QMdiSubWindow)):
@@ -66,6 +66,24 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
         :return: This object's device name.
         """
         return self._name
+
+    # TODO find why graph disappears if we want to use this
+    # def moveEvent(self, event: QMoveEvent) -> None:
+    #     """
+    #     Prevent subwindow from moving outside of parent window.
+    #     :return None:
+    #     """
+    #     right = self.width()
+    #     bottom = self.height()
+    #     parent_right = self.parent().width()
+    #     parent_bottom = self.parent().height()
+    #
+    #     if self.pos().x() < self.parent().pos().x():
+    #         self.move(0, self.pos().y())
+    #     if self.pos().x() + right > self.parent().pos().x() + parent_right:
+    #         self.move(parent_right - right, self.pos().y())
+    #     if self.pos().y() + bottom > self.parent().pos().y() + parent_bottom:
+    #         self.move(self.pos().x(), parent_bottom - bottom)
 
     def closeEvent(self, event: QCloseEvent) -> None:
         """

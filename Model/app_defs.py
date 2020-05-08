@@ -78,6 +78,7 @@ button_normal_style = "QPushButton { border: 1px solid #8f8f91; background-color
 class LangEnum(Enum):
     ENG = auto()
     FRE = auto()
+    SPA = auto()
 
 
 #################################################################################################################

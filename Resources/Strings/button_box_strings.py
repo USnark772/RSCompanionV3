@@ -63,5 +63,18 @@ french = {StringsEnum.TITLE: "Expérience",
           StringsEnum.COND_NAME_SHADOW: "Nom de condition facultatif",
           }
 
+# TODO: Verify Spanish version
+spanish = {StringsEnum.TITLE: "Experimentar",
+           StringsEnum.CREATE: "Crear",
+           StringsEnum.END: "Final",
+           StringsEnum.CREATE_TT: "Crea un nuevo experimento",
+           StringsEnum.END_TT: "Fin del experimento",
+           StringsEnum.START_TT: "Comenzar experimento",
+           StringsEnum.RESUME_TT: "Reanudar experimento",
+           StringsEnum.PAUSE_TT: "Pausa experimento",
+           StringsEnum.COND_NAME_SHADOW: "Nombre de condición opcional",
+           }
+
 strings = {LangEnum.ENG: english,
-           LangEnum.FRE: french}
+           LangEnum.FRE: french,
+           LangEnum.SPA: spanish}

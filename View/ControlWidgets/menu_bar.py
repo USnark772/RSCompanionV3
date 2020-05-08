@@ -89,6 +89,12 @@ class AppMenuBar(QMenuBar):
         self._french_action.triggered.connect(self._fre_clicked)
         self._language_menu.addAction(self._french_action)
 
+        self._spanish_action = QAction(self)
+        self._lang_actions.append(self._spanish_action)
+        self._spanish_action.setCheckable(True)
+        self._spanish_action.triggered.connect(self._spa_clicked)
+        self._language_menu.addAction(self._spanish_action)
+
         self._help_menu = QMenu(self)
         self.addAction(self._help_menu.menuAction())
 
@@ -124,6 +130,8 @@ class AppMenuBar(QMenuBar):
             self._reset_lang_actions(self._english_action)
         elif lang == LangEnum.FRE:
             self._reset_lang_actions(self._french_action)
+        elif lang == LangEnum.SPA:
+            self._reset_lang_actions(self._spanish_action)
 
     def add_lang_select_handler(self, func: classmethod) -> None:
         """
@@ -285,6 +293,14 @@ class AppMenuBar(QMenuBar):
         if self._lang_callback:
             self._lang_callback(LangEnum.FRE)
 
+    def _spa_clicked(self) -> None:
+        """
+        Private handler for self._english_action
+        :return None:
+        """
+        if self._lang_callback:
+            self._lang_callback(LangEnum.SPA)
+
     def _debug_clicked(self) -> None:
         """
         Private handler for self._french_action
@@ -340,6 +356,7 @@ class AppMenuBar(QMenuBar):
         self._language_menu.setTitle(self._strings[StringsEnum.LANG])
         self._english_action.setText(self._strings[StringsEnum.ENG])
         self._french_action.setText(self._strings[StringsEnum.FRE])
+        self._spanish_action.setText(self._strings[StringsEnum.SPA])
         self._help_menu.setTitle(self._strings[StringsEnum.HELP])
         self._about_app_action.setText(self._strings[StringsEnum.ABOUT_APP])
         self._about_company_action.setText(self._strings[StringsEnum.ABOUT_COMPANY])

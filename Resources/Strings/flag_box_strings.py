@@ -42,5 +42,11 @@ french = {StringsEnum.TITLE: "Drapeau clé",
           StringsEnum.FLAG_TT: "La touche la plus récente appuyée pour référence dans le fichier de sauvegarde",
           }
 
+# TODO: Verify Spanish version
+spanish = {StringsEnum.TITLE: "Bandera clave",
+           StringsEnum.FLAG_TT: "La tecla más reciente presionada para referencia en guardar archivo",
+           }
+
 strings = {LangEnum.ENG: english,
-           LangEnum.FRE: french}
+           LangEnum.FRE: french,
+           LangEnum.SPA: spanish}

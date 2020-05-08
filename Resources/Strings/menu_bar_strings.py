@@ -45,6 +45,7 @@ class StringsEnum(Enum):
     LANG = auto()
     ENG = auto()
     FRE = auto()
+    SPA = auto()
 
 
 english = {StringsEnum.FILE: "File",
@@ -63,6 +64,7 @@ english = {StringsEnum.FILE: "File",
            StringsEnum.LANG: "Language:",
            StringsEnum.ENG: "English",
            StringsEnum.FRE: "French",
+           StringsEnum.SPA: "Spanish",
            }
 
 # TODO: Verify French version
@@ -82,6 +84,29 @@ french = {StringsEnum.FILE: "Fichier",
           StringsEnum.LANG: "Langue:",
           StringsEnum.ENG: "Anglais",
           StringsEnum.FRE: "Français",
+          StringsEnum.SPA: "Espagnol",
           }
+
+# TODO: Verify Spanish version
+spanish = {StringsEnum.FILE: "Expediente",
+           StringsEnum.LAST_DIR: "Abrir la última ubicación de guardado",
+           StringsEnum.HELP: "Ayuda",
+           StringsEnum.ABOUT_APP: "Acerca de " + app_name,
+           StringsEnum.ABOUT_COMPANY: "Acerca de " + company_name,
+           StringsEnum.UPDATE_CHECK: "Buscar actualizaciones",
+           StringsEnum.SHOW_LOG_WINDOW: "Mostrar ventana de registro",
+           StringsEnum.USE_CAMS: "Usar cámaras",
+           StringsEnum.ATTACHED_CAMS: "Cámara adjunta",
+           StringsEnum.SETTINGS: "Configuraciones",
+           StringsEnum.DEBUG_MENU: "Nivel de depuración",
+           StringsEnum.DEBUG: "Modo de depuración",
+           StringsEnum.WARNING: "Modo normal",
+           StringsEnum.LANG: "Idioma:",
+           StringsEnum.ENG: "Inglés",
+           StringsEnum.FRE: "Francés",
+           StringsEnum.SPA: "Español",
+           }
+
 strings = {LangEnum.ENG: english,
-           LangEnum.FRE: french}
+           LangEnum.FRE: french,
+           LangEnum.SPA: spanish}

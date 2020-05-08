@@ -125,5 +125,45 @@ french = {StringsEnum.COMPANY_NAME: company_name,
           StringsEnum.RESTART_PROG: "Cette application doit redémarrer pour que les modifications prennent effet."
           }
 
+# TODO: verify Spanish version
+spanish = {StringsEnum.COMPANY_NAME: company_name,
+           StringsEnum.APP_NAME: app_name,
+           StringsEnum.LOG_OUT_NAME: log_out_filename,
+           StringsEnum.LOG_VER_ID: company_name + " version de aplicacion: ",
+           StringsEnum.PROG_OUT_HDR: "Marca de tiempo, Autor, Ubicación, Mensaje\n",
+           StringsEnum.ABOUT_COMPANY: company_name + " Inc fue fundada en 2015 por Joel Cooper PhD\n\n"
+                                                     " Información del contacto:\n"
+                                                     " joel@redscientific.com\n"
+                                                     " 1-801-520-5408",
+           StringsEnum.ABOUT_APP: "- La mayoría de las cosas en esta aplicación tienen información sobre herramientas."
+                                  " Pase el mouse sobre diferentes partes para ver la información sobre herramientas"
+                                  " respectiva para obtener más información.\n\n"
+                                  " En la parte superior de la aplicación, encontrará una barra de control"
+                                  " que contiene lo siguiente:\n"
+                                  " - Botón Crear/Finalizar: Crea o finaliza un experimento. Elija una carpeta de"
+                                  " ubicación para que la aplicación guarde los datos del dispositivo.\n"
+                                  " - Botón Reproducir/Pausa: Comience / reanude o pause un experimento en progreso.\n"
+                                  " - Nombre de condición opcional: Un nombre opcional que se asociará con el"
+                                  " experimento recién creado.\n\n"
+                                  " - Bandera clave: Presione una tecla de letra en cualquier momento para crear"
+                                  " una tecla de referencia rápida que se asociará con los datos provenientes"
+                                  " de los Dispositivos durante un experimento.\n\n"
+                                  " - Nota: Ingrese una nota en el cuadro y presione Publicar para aplicar esa nota a"
+                                  " todos los archivos de datos del dispositivo dentro del experimento actual.\n\n"
+                                  " - Información: Muestra información sobre el experimento actual.\n\n"
+                                  " - Información de la unidad: Muestra información sobre el volumen actual donde"
+                                  " se guardan los datos.",
+           StringsEnum.UPDATE_HDR: "Actualizar",
+           StringsEnum.UPDATE_HDR_ERR: "Error",
+           StringsEnum.UPDATE_AVAILABLE: "Hay una actualización disponible.",
+           StringsEnum.NO_UPDATE: "Tu programa está actualizado.",
+           StringsEnum.ERR_UPDATE_CHECK: "Hubo un error inesperado al conectarse al repositorio."
+                                         " Consulte https://redscientific.com/downloads.html manualmente o comuníquese"
+                                         " directamente con Red Scientific.",
+           StringsEnum.DEV_CON_ERR: "Hubo un problema al conectar el dispositivo. Vuelva a intentar la conexión.",
+           StringsEnum.RESTART_PROG: "Esta aplicación debe reiniciarse para que los cambios surtan efecto."
+           }
+
 strings = {LangEnum.ENG: english,
-           LangEnum.FRE: french}
+           LangEnum.FRE: french,
+           LangEnum.SPA: spanish}

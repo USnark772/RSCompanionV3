@@ -60,5 +60,16 @@ french = {StringsEnum.TITLE: "Informations de Stockage",
           StringsEnum.MB_USED: "MB utilisé:",
           }
 
+# TODO: Verify Spanish version
+spanish = {StringsEnum.TITLE: "Información de almacenamiento",
+           StringsEnum.STORAGE_ID: 'ID de almacenamiento:',
+           StringsEnum.PERC_FREE: "Porcentaje libre:",
+           StringsEnum.PERC_USED: "Porcentaje utilizado:",
+           StringsEnum.GB_FREE: "GB libre:",
+           StringsEnum.GB_USED: "GB utilizado:",
+           StringsEnum.MB_FREE: "MB libre:",
+           StringsEnum.MB_USED: "MB utilizado:",
+           }
 strings = {LangEnum.ENG: english,
-           LangEnum.FRE: french}
+           LangEnum.FRE: french,
+           LangEnum.SPA: spanish}
