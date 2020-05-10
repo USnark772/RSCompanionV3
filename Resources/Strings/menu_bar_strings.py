@@ -45,7 +45,16 @@ class StringsEnum(Enum):
     LANG = auto()
     ENG = auto()
     FRE = auto()
+    GER = auto()
     SPA = auto()
+    CHI = auto()
+
+
+lang_eng = "English"
+lang_fre = "Français"
+lang_ger = "Deutsche"
+lang_spa = "Español"
+lang_chi = "中文"
 
 
 english = {StringsEnum.FILE: "File",
@@ -62,12 +71,14 @@ english = {StringsEnum.FILE: "File",
            StringsEnum.DEBUG: "Debugging mode",
            StringsEnum.WARNING: "Normal mode",
            StringsEnum.LANG: "Language:",
-           StringsEnum.ENG: "English",
-           StringsEnum.FRE: "French",
-           StringsEnum.SPA: "Spanish",
+           StringsEnum.ENG: lang_eng,
+           StringsEnum.FRE: lang_fre,
+           StringsEnum.GER: lang_ger,
+           StringsEnum.SPA: lang_spa,
+           StringsEnum.CHI: lang_chi,
            }
 
-# TODO: Verify French version
+# TODO: Verify French
 french = {StringsEnum.FILE: "Fichier",
           StringsEnum.LAST_DIR: "Ouvrir le dernier emplacement d'enregistrement",
           StringsEnum.HELP: "Assistance",
@@ -82,12 +93,36 @@ french = {StringsEnum.FILE: "Fichier",
           StringsEnum.DEBUG: "Mode de débogage",
           StringsEnum.WARNING: "Mode normal",
           StringsEnum.LANG: "Langue:",
-          StringsEnum.ENG: "Anglais",
-          StringsEnum.FRE: "Français",
-          StringsEnum.SPA: "Espagnol",
+          StringsEnum.ENG: lang_eng,
+          StringsEnum.FRE: lang_fre,
+          StringsEnum.GER: lang_ger,
+          StringsEnum.SPA: lang_spa,
+          StringsEnum.CHI: lang_chi,
           }
 
-# TODO: Verify Spanish version
+# TODO: Verify German
+german = {StringsEnum.FILE: "Datei",
+          StringsEnum.LAST_DIR: "Öffnen Sie den letzten Speicherort",
+          StringsEnum.HELP: "Hilfe",
+          StringsEnum.ABOUT_APP: "Über " + app_name,
+          StringsEnum.ABOUT_COMPANY: "Über " + company_name,
+          StringsEnum.UPDATE_CHECK: "Auf Updates prüfen",
+          StringsEnum.SHOW_LOG_WINDOW: "Protokollfenster anzeigen",
+          StringsEnum.USE_CAMS: "Verwenden Sie Kameras",
+          StringsEnum.ATTACHED_CAMS: "Angebrachte Kamera",
+          StringsEnum.SETTINGS: "die Einstellungen",
+          StringsEnum.DEBUG_MENU: "Debug-Ebene",
+          StringsEnum.DEBUG: "Debugging-Modus",
+          StringsEnum.WARNING: "Normaler Modus",
+          StringsEnum.LANG: "Sprache:",
+          StringsEnum.ENG: lang_eng,
+          StringsEnum.FRE: lang_fre,
+          StringsEnum.GER: lang_ger,
+          StringsEnum.SPA: lang_spa,
+          StringsEnum.CHI: lang_chi,
+          }
+
+# TODO: Verify Spanish
 spanish = {StringsEnum.FILE: "Expediente",
            StringsEnum.LAST_DIR: "Abrir la última ubicación de guardado",
            StringsEnum.HELP: "Ayuda",
@@ -102,11 +137,37 @@ spanish = {StringsEnum.FILE: "Expediente",
            StringsEnum.DEBUG: "Modo de depuración",
            StringsEnum.WARNING: "Modo normal",
            StringsEnum.LANG: "Idioma:",
-           StringsEnum.ENG: "Inglés",
-           StringsEnum.FRE: "Francés",
-           StringsEnum.SPA: "Español",
+           StringsEnum.ENG: lang_eng,
+           StringsEnum.FRE: lang_fre,
+           StringsEnum.GER: lang_ger,
+           StringsEnum.SPA: lang_spa,
+           StringsEnum.CHI: lang_chi,
+           }
+
+# TODO: Verify Chinese (simplified)
+chinese = {StringsEnum.FILE: "文件",
+           StringsEnum.LAST_DIR: "打开上一个保存位置",
+           StringsEnum.HELP: "帮帮",
+           StringsEnum.ABOUT_APP: "关于 " + app_name,
+           StringsEnum.ABOUT_COMPANY: "关于 " + company_name,
+           StringsEnum.UPDATE_CHECK: "检查更新",
+           StringsEnum.SHOW_LOG_WINDOW: "显示日志窗口",
+           StringsEnum.USE_CAMS: "使用相机",
+           StringsEnum.ATTACHED_CAMS: "附属相机",
+           StringsEnum.SETTINGS: "应用程式设定",
+           StringsEnum.DEBUG_MENU: "调试级别",
+           StringsEnum.DEBUG: "调试模式",
+           StringsEnum.WARNING: "正常模式",
+           StringsEnum.LANG: "语言:",
+           StringsEnum.ENG: lang_eng,
+           StringsEnum.FRE: lang_fre,
+           StringsEnum.GER: lang_ger,
+           StringsEnum.SPA: lang_spa,
+           StringsEnum.CHI: lang_chi,
            }
 
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french,
-           LangEnum.SPA: spanish}
+           LangEnum.GER: german,
+           LangEnum.SPA: spanish,
+           LangEnum.CHI: chinese}

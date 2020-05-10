@@ -39,18 +39,32 @@ english = {StringsEnum.TITLE: "Information",
            StringsEnum.BLOCK_NO: "Block number:"
            }
 
-# TODO: Verify French version
+# TODO: Verify French
 french = {StringsEnum.TITLE: "Information",
           StringsEnum.START_TIME: "Heure de début de l'expérience:",
           StringsEnum.BLOCK_NO: "Numéro de bloc:"
           }
 
-# TODO: Verify Spanish version
+# TODO: Verify German
+german = {StringsEnum.TITLE: "Information",
+          StringsEnum.START_TIME: "Startzeit des Experiments:",
+          StringsEnum.BLOCK_NO: "Blocknummer:"
+          }
+
+# TODO: Verify Spanish
 spanish = {StringsEnum.TITLE: "Información",
            StringsEnum.START_TIME: "Hora de inicio del experimento:",
            StringsEnum.BLOCK_NO: "Número de bloque:"
            }
 
+# TODO: Verify Chinese (simplified)
+chinese = {StringsEnum.TITLE: "信息",
+           StringsEnum.START_TIME: "实验开始时间:",
+           StringsEnum.BLOCK_NO: "块号:"
+           }
+
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french,
-           LangEnum.SPA: spanish}
+           LangEnum.GER: german,
+           LangEnum.SPA: spanish,
+           LangEnum.CHI: chinese}

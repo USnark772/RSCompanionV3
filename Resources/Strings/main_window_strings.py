@@ -40,18 +40,32 @@ english = {StringsEnum.TITLE: app_name,
            StringsEnum.CLOSE_APP_CONFIRM: "Close app? Any unsaved progress will be lost!",
            }
 
-# TODO: Verify French version
+# TODO: Verify French
 french = {StringsEnum.TITLE: app_name,
           StringsEnum.CLOSE_TITLE: "Fermer " + company_name,
           StringsEnum.CLOSE_APP_CONFIRM: "Fermer l'application? Tout progrès non enregistré sera perdu!",
           }
 
-# TODO: Verify Spanish version
+# TODO: Verify German
+german = {StringsEnum.TITLE: app_name,
+          StringsEnum.CLOSE_TITLE: "Schließen " + company_name,
+          StringsEnum.CLOSE_APP_CONFIRM: "App schließen? Jeder nicht gespeicherte Fortschritt geht verloren!",
+          }
+
+# TODO: Verify Spanish
 spanish = {StringsEnum.TITLE: app_name,
            StringsEnum.CLOSE_TITLE: "Cerrar " + company_name,
            StringsEnum.CLOSE_APP_CONFIRM: "¿Cerrar app? ¡Cualquier progreso no guardado se perderá!",
            }
 
+# TODO: Verify Chinese (simplified)
+chinese = {StringsEnum.TITLE: app_name,
+           StringsEnum.CLOSE_TITLE: "关闭 " + company_name,
+           StringsEnum.CLOSE_APP_CONFIRM: "关闭应用程式？ 任何未保存的进度将丢失！",
+           }
+
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french,
-           LangEnum.SPA: spanish}
+           LangEnum.GER: german,
+           LangEnum.SPA: spanish,
+           LangEnum.CHI: chinese}

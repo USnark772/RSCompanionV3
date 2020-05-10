@@ -37,16 +37,28 @@ english = {StringsEnum.TITLE: "Key Flag",
            StringsEnum.FLAG_TT: "The most recent key pressed for reference in save file",
            }
 
-# TODO: Verify French version
+# TODO: Verify French
 french = {StringsEnum.TITLE: "Drapeau clé",
           StringsEnum.FLAG_TT: "La touche la plus récente appuyée pour référence dans le fichier de sauvegarde",
           }
 
-# TODO: Verify Spanish version
+# TODO: Verify German
+german = {StringsEnum.TITLE: "Schlüsselflagge",
+          StringsEnum.FLAG_TT: "Die zuletzt als Referenz in der Sicherungsdatei gedrückte Taste",
+          }
+
+# TODO: Verify Spanish
 spanish = {StringsEnum.TITLE: "Bandera clave",
            StringsEnum.FLAG_TT: "La tecla más reciente presionada para referencia en guardar archivo",
            }
 
+# TODO: Verify Chinese (simplified)
+chinese = {StringsEnum.TITLE: "钥匙旗",
+           StringsEnum.FLAG_TT: "在保存文件中按下以供参考的最新键",
+           }
+
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french,
-           LangEnum.SPA: spanish}
+           LangEnum.GER: german,
+           LangEnum.SPA: spanish,
+           LangEnum.CHI: chinese}

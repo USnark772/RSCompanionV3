@@ -41,20 +41,36 @@ english = {StringsEnum.TITLE: "Note",
            StringsEnum.SHADOW: "Enter note here",
            }
 
-# TODO: Verify French version
+# TODO: Verify French
 french = {StringsEnum.TITLE: "Remarque",
           StringsEnum.POST: "Publier",
           StringsEnum.POST_TT: "Poster une note",
           StringsEnum.SHADOW: "Entrez une note ici",
           }
 
-# TODO: Verify Spanish version
+# TODO: Verify German
+german = {StringsEnum.TITLE: "Notiz",
+          StringsEnum.POST: "Post",
+          StringsEnum.POST_TT: "Notiz posten",
+          StringsEnum.SHADOW: "Notiz hier eingeben",
+          }
+
+# TODO: Verify Spanish
 spanish = {StringsEnum.TITLE: "Nota",
            StringsEnum.POST: "Publicar",
            StringsEnum.POST_TT: "Publicar nota",
            StringsEnum.SHADOW: "Ingrese la nota aquí",
            }
 
+# TODO: Verify Chinese (simplified)
+chinese = {StringsEnum.TITLE: "注意",
+           StringsEnum.POST: "发布",
+           StringsEnum.POST_TT: "发布笔记",
+           StringsEnum.SHADOW: "在此处输入注释",
+           }
+
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french,
-           LangEnum.SPA: spanish}
+           LangEnum.GER: german,
+           LangEnum.SPA: spanish,
+           LangEnum.CHI: chinese}

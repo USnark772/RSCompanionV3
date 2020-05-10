@@ -81,7 +81,7 @@ english = {StringsEnum.CUSTOM_LABEL: "Custom",
            StringsEnum.PLOT_NAME_CLICKS: "Clicks",
            }
 
-# TODO: Verify French version
+# TODO: Verify French
 # French strings
 lower_isi_fre = "Inférieur ISI"
 upper_isi_fre = "Supérieur ISI"
@@ -109,7 +109,35 @@ french = {StringsEnum.CUSTOM_LABEL: "Douane",
           StringsEnum.PLOT_NAME_CLICKS: "Clics",
           }
 
-# TODO: verify Spanish version
+# TODO: Verify German
+# German strings
+lower_isi_ger = "Niedriger ISI"
+upper_isi_ger = "Obere ISI"
+german = {StringsEnum.CUSTOM_LABEL: "Benutzerdefiniert",
+          StringsEnum.ISO_LABEL: iso,
+          StringsEnum.CONFIG_TAB_LABEL: "Konfiguration",
+          StringsEnum.CONFIG_LABEL: "Aktuelle Konfiguration:",
+          StringsEnum.ISO_BUTTON_LABEL: iso,
+          StringsEnum.UPLOAD_BUTTON_LABEL: "Einstellungen hochladen",
+          StringsEnum.DURATION_LABEL: "Reizdauer",
+          StringsEnum.INTENSITY_LABEL: "Reizintensität",
+          StringsEnum.UPPER_ISI_LABEL: upper_isi_ger,
+          StringsEnum.LOWER_ISI_LABEL: lower_isi_ger,
+          StringsEnum.CONFIG_LABEL_TOOLTIP: "Aktuelle Gerätekonfiguration",
+          StringsEnum.ISO_BUTTON_TOOLTIP: "Gerät auf ISO-Standard einstellen",
+          StringsEnum.UPLOAD_BUTTON_TOOLTIP: "Laden Sie die aktuelle Konfiguration auf das Gerät hoch",
+          StringsEnum.DURATION_TOOLTIP: "Millisekunden. Angebot: " + str(defs.duration_min) + "-" + str(
+              defs.duration_max),
+          StringsEnum.INTENSITY_TOOLTIP: "Intensität des Reizes",
+          StringsEnum.UPPER_ISI_TOOLTIP: "Millisekunden. Angebot: " + lower_isi_ger + "-" + str(defs.ISI_max),
+          StringsEnum.LOWER_ISI_TOOLTIP: "Millisekunden. Angebot: " + str(defs.ISI_min) + "-" + upper_isi_ger,
+          StringsEnum.SAVE_HDR: "Zeitstempel, Sonde #, Klicks, Millisekunden nach Beginn des Experiments,"
+                                " Reaktionszeit",
+          StringsEnum.PLOT_NAME_RT: "Reaktionszeit",
+          StringsEnum.PLOT_NAME_CLICKS: "Klicks",
+          }
+
+# TODO: Verify Spanish
 # Spanish strings
 lower_isi_spa = "Inferior ISI"
 upper_isi_spa = "Superior ISI"
@@ -129,14 +157,43 @@ spanish = {StringsEnum.CUSTOM_LABEL: "Personalizado",
            StringsEnum.DURATION_TOOLTIP: "Milisegundos. Alcance: " + str(defs.duration_min) + "-" + str(
                defs.duration_max),
            StringsEnum.INTENSITY_TOOLTIP: "Intensidad del estímulo",
-           StringsEnum.UPPER_ISI_TOOLTIP: "Milisegundos. Alcance: " + lower_isi_eng + "-" + str(defs.ISI_max),
-           StringsEnum.LOWER_ISI_TOOLTIP: "Milisegundos. Alcance: " + str(defs.ISI_min) + "-" + upper_isi_eng,
+           StringsEnum.UPPER_ISI_TOOLTIP: "Milisegundos. Alcance: " + lower_isi_spa + "-" + str(defs.ISI_max),
+           StringsEnum.LOWER_ISI_TOOLTIP: "Milisegundos. Alcance: " + str(defs.ISI_min) + "-" + upper_isi_spa,
            StringsEnum.SAVE_HDR: "marca de tiempo, Investigacion #, clics,"
                                  " milisegundos desde el inicio del experimento, tiempo de respuesta",
            StringsEnum.PLOT_NAME_RT: "Tiempo de respuesta",
            StringsEnum.PLOT_NAME_CLICKS: "Clics",
            }
 
+# TODO: Verify Chinese (simplified)
+# Chinese (simplified) strings
+lower_isi_chi = "较低的ISI"
+upper_isi_chi = "上ISI"
+chinese = {StringsEnum.CUSTOM_LABEL: "自订",
+           StringsEnum.ISO_LABEL: iso,
+           StringsEnum.CONFIG_TAB_LABEL: "组态",
+           StringsEnum.CONFIG_LABEL: "当前配置:",
+           StringsEnum.ISO_BUTTON_LABEL: iso,
+           StringsEnum.UPLOAD_BUTTON_LABEL: "上载设定",
+           StringsEnum.DURATION_LABEL: "刺激持续时间",
+           StringsEnum.INTENSITY_LABEL: "刺激强度",
+           StringsEnum.UPPER_ISI_LABEL: upper_isi_chi,
+           StringsEnum.LOWER_ISI_LABEL: lower_isi_chi,
+           StringsEnum.CONFIG_LABEL_TOOLTIP: "当前设备配置",
+           StringsEnum.ISO_BUTTON_TOOLTIP: "将设备设置为ISO标准",
+           StringsEnum.UPLOAD_BUTTON_TOOLTIP: "将当前配置上传到设备",
+           StringsEnum.DURATION_TOOLTIP: "毫秒。 范围: " + str(defs.duration_min) + "-" + str(
+               defs.duration_max),
+           StringsEnum.INTENSITY_TOOLTIP: "刺激强度",
+           StringsEnum.UPPER_ISI_TOOLTIP: "毫秒。 范围: " + lower_isi_chi + "-" + str(defs.ISI_max),
+           StringsEnum.LOWER_ISI_TOOLTIP: "毫秒。 范围: " + str(defs.ISI_min) + "-" + upper_isi_chi,
+           StringsEnum.SAVE_HDR: "时间戳记, 探测 #, 点击次数, 从实验开始算起的毫秒数, 响应时间",
+           StringsEnum.PLOT_NAME_RT: "响应时间",
+           StringsEnum.PLOT_NAME_CLICKS: "点击次数",
+           }
+
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french,
-           LangEnum.SPA: spanish}
+           LangEnum.GER: german,
+           LangEnum.SPA: spanish,
+           LangEnum.CHI: chinese}

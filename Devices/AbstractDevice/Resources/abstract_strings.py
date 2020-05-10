@@ -46,11 +46,21 @@ french = {StringsEnum.EXAMPLE_ENTRY: "Implémentez ce langage.",
           StringsEnum.GRAPH_TS: "Horodatage",
           }
 
+german = {StringsEnum.EXAMPLE_ENTRY: "Implementieren Sie diese Sprache.",
+          StringsEnum.GRAPH_TS: "Zeitstempel",
+          }
+
 spanish = {StringsEnum.EXAMPLE_ENTRY: "Implementa este lenguaje.",
            StringsEnum.GRAPH_TS: "marca de tiempo",
+           }
+
+chinese = {StringsEnum.EXAMPLE_ENTRY: "实施这种语言。",
+           StringsEnum.GRAPH_TS: "时间戳记",
            }
 
 # Add defined languages to strings dictionary.
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french,
-           LangEnum.SPA: spanish}
+           LangEnum.GER: german,
+           LangEnum.SPA: spanish,
+           LangEnum.CHI: chinese}

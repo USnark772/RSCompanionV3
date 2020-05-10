@@ -89,11 +89,25 @@ class AppMenuBar(QMenuBar):
         self._french_action.triggered.connect(self._fre_clicked)
         self._language_menu.addAction(self._french_action)
 
+        self._german_action = QAction(self)
+        self._lang_actions.append(self._german_action)
+        self._german_action.setCheckable(True)
+        self._german_action.triggered.connect(self._ger_clicked)
+        self._language_menu.addAction(self._german_action)
+
         self._spanish_action = QAction(self)
         self._lang_actions.append(self._spanish_action)
         self._spanish_action.setCheckable(True)
         self._spanish_action.triggered.connect(self._spa_clicked)
         self._language_menu.addAction(self._spanish_action)
+
+        # TODO: issue with Chinese characters.
+        #       Maybe use traditional instead of simplified.
+        # self._chinese_action = QAction(self)
+        # self._lang_actions.append(self._chinese_action)
+        # self._chinese_action.setCheckable(True)
+        # self._chinese_action.triggered.connect(self._chi_clicked)
+        # self._language_menu.addAction(self._chinese_action)
 
         self._help_menu = QMenu(self)
         self.addAction(self._help_menu.menuAction())
@@ -130,8 +144,12 @@ class AppMenuBar(QMenuBar):
             self._reset_lang_actions(self._english_action)
         elif lang == LangEnum.FRE:
             self._reset_lang_actions(self._french_action)
+        elif lang == LangEnum.GER:
+            self._reset_lang_actions(self._german_action)
         elif lang == LangEnum.SPA:
             self._reset_lang_actions(self._spanish_action)
+        # elif lang == LangEnum.CHI:
+        #     self._reset_lang_actions(self._chinese_action)
 
     def add_lang_select_handler(self, func: classmethod) -> None:
         """
@@ -293,13 +311,29 @@ class AppMenuBar(QMenuBar):
         if self._lang_callback:
             self._lang_callback(LangEnum.FRE)
 
+    def _ger_clicked(self) -> None:
+        """
+        Private handler for self._german_action
+        :return None:
+        """
+        if self._lang_callback:
+            self._lang_callback(LangEnum.GER)
+
     def _spa_clicked(self) -> None:
         """
-        Private handler for self._english_action
+        Private handler for self._spanish_action
         :return None:
         """
         if self._lang_callback:
             self._lang_callback(LangEnum.SPA)
+
+    def _chi_clicked(self) -> None:
+        """
+        Private handler for self._chinese_action
+        :return None:
+        """
+        if self._lang_callback:
+            self._lang_callback(LangEnum.CHI)
 
     def _debug_clicked(self) -> None:
         """
@@ -356,7 +390,9 @@ class AppMenuBar(QMenuBar):
         self._language_menu.setTitle(self._strings[StringsEnum.LANG])
         self._english_action.setText(self._strings[StringsEnum.ENG])
         self._french_action.setText(self._strings[StringsEnum.FRE])
+        self._german_action.setText(self._strings[StringsEnum.GER])
         self._spanish_action.setText(self._strings[StringsEnum.SPA])
+        # self._chinese_action.setText(self._strings[StringsEnum.CHI])
         self._help_menu.setTitle(self._strings[StringsEnum.HELP])
         self._about_app_action.setText(self._strings[StringsEnum.ABOUT_APP])
         self._about_company_action.setText(self._strings[StringsEnum.ABOUT_COMPANY])

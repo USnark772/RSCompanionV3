@@ -49,7 +49,7 @@ english = {StringsEnum.TITLE: "Storage Information",
            StringsEnum.MB_USED: "MB used:",
            }
 
-# TODO: Verify French version
+# TODO: Verify French
 french = {StringsEnum.TITLE: "Informations de Stockage",
           StringsEnum.STORAGE_ID: 'ID de Stockage:',
           StringsEnum.PERC_FREE: "Pourcentage inutilisé:",
@@ -60,7 +60,18 @@ french = {StringsEnum.TITLE: "Informations de Stockage",
           StringsEnum.MB_USED: "MB utilisé:",
           }
 
-# TODO: Verify Spanish version
+# TODO: Verify German
+german = {StringsEnum.TITLE: "Speicherinformationen",
+          StringsEnum.STORAGE_ID: 'Speicher-ID:',
+          StringsEnum.PERC_FREE: "Prozent frei:",
+          StringsEnum.PERC_USED: "Prozent verwendet:",
+          StringsEnum.GB_FREE: "GB frei:",
+          StringsEnum.GB_USED: "GB verwendet:",
+          StringsEnum.MB_FREE: "MB frei:",
+          StringsEnum.MB_USED: "MB verwendet:",
+          }
+
+# TODO: Verify Spanish
 spanish = {StringsEnum.TITLE: "Información de almacenamiento",
            StringsEnum.STORAGE_ID: 'ID de almacenamiento:',
            StringsEnum.PERC_FREE: "Porcentaje libre:",
@@ -70,6 +81,20 @@ spanish = {StringsEnum.TITLE: "Información de almacenamiento",
            StringsEnum.MB_FREE: "MB libre:",
            StringsEnum.MB_USED: "MB utilizado:",
            }
+
+# TODO: Verify Chinese (simplified)
+chinese = {StringsEnum.TITLE: "储存资讯",
+           StringsEnum.STORAGE_ID: '储存ID:',
+           StringsEnum.PERC_FREE: "可用百分比:",
+           StringsEnum.PERC_USED: "使用百分比:",
+           StringsEnum.GB_FREE: "GB 可用的:",
+           StringsEnum.GB_USED: "GB 用过的:",
+           StringsEnum.MB_FREE: "MB 可用的:",
+           StringsEnum.MB_USED: "MB 用过的:",
+           }
+
 strings = {LangEnum.ENG: english,
            LangEnum.FRE: french,
-           LangEnum.SPA: spanish}
+           LangEnum.GER: german,
+           LangEnum.SPA: spanish,
+           LangEnum.CHI: chinese}
