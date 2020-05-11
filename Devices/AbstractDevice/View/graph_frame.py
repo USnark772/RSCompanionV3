@@ -56,7 +56,6 @@ class GraphFrame(QFrame):
         self._navbar_height = 100
         self._graph_height = 400
         self.layout().addWidget(self._graph)
-        self.layout().addWidget(self._graph.get_nav_bar())
         self.setFixedHeight(self._navbar_height + self._graph_height)
         self._logger.debug("Initialized")
 
@@ -71,14 +70,11 @@ class GraphFrame(QFrame):
         self._logger.debug("running")
         self._visible = not self._visible
         if self._visible:
-            self.layout().removeWidget(self._graph.get_nav_bar())
             self.layout().addWidget(self._graph)
-            self.layout().addWidget(self._graph.get_nav_bar())
             self.setFixedHeight(40 + self._navbar_height + self._graph_height)
             self._show_hide_button.setText("Hide " + self._graph.get_title() + " graph")
         else:
             self.layout().removeWidget(self._graph)
-            self.layout().removeWidget(self._graph.get_nav_bar())
             self.setFixedHeight(40)
             self._show_hide_button.setText("Show " + self._graph.get_title() + " graph")
         self._logger.debug("done")

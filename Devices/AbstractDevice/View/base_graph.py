@@ -47,21 +47,12 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
         super().__init__(Figure(figsize=(5, 5)))
         self.setParent(parent)
         self._new = True
-        self._nav_bar = NavBar(self, parent)
-        self._nav_bar.update()
         # self._leg_plot_links = dict()
         self._plots = list()  # name, coords, active
         self._v_lines = list()
         self._base_strings = dict()
         # self.figure.canvas.mpl_connect('pick_event', self._onpick)
         self._logger.debug("Initialized")
-
-    def get_nav_bar(self) -> NavBar:
-        """
-        Get this graph's nav bar.
-        :return NavBar: This graph's nav bar.
-        """
-        return self._nav_bar
 
     def refresh_self(self):
         """ Redraw the canvas. """
