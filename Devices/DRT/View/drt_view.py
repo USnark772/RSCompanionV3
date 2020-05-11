@@ -131,7 +131,7 @@ class DRTView(AbstractView):
         self.strings = dict()
         # self._setup_handlers()
         self.setMinimumWidth(760)
-        self.setFixedHeight(540)
+        self.setFixedHeight(547)
         self._logger.debug("Initialized")
     #
     # def _setup_handlers(self) -> None:
