@@ -69,23 +69,17 @@ class DRTGraph(BaseGraph):
         create_task(self.show())
         self._logger.debug("done")
 
-    async def plot_device_data(self, axes, name) -> []:  #, show_in_legend) -> []:
+    async def plot_device_data(self, axes, name) -> []:
         self._logger.debug("running")
         data = list()
         for x in self._data:
             if x[0] == name:
                 data = x
-        # lines = []
         left = datetime.now()
         right = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        # if show_in_legend:
-        #     the_label = self._dev_name
-        # else:
-        #     the_label = "_nolegend_"
         await sleep(.001)
-        line, = axes.plot(data[1], data[2], marker='o')  #, label=the_label)
+        axes.plot(data[1], data[2], marker='o')
         await sleep(.001)
-        # lines.append((self._dev_name, line))
         if len(data[1]) > 0:
             if right < data[1][-1]:
                 right = data[1][-1]
@@ -98,7 +92,6 @@ class DRTGraph(BaseGraph):
         axes.set_xlim(left=left - timedelta(seconds=10), right=right + timedelta(seconds=10))
         await sleep(.001)
         self._logger.debug("done")
-        # return lines
 
     def add_data(self, data: []) -> None:
         """ Ensure data comes in as type, x, y """
