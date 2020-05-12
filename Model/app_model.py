@@ -191,7 +191,7 @@ class AppModel:
             create_task(self._save_exp(save))
         except Exception as e:
             self._logger.exception("Failed ending exp on a controller.")
-        self.exp_running = False
+        self.exp_created = False
 
     def signal_start_exp(self) -> None:
         """
