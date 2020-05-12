@@ -60,19 +60,5 @@ class GraphFrame(QFrame):
             self._graph_height = height
         self._logger.debug("done")
 
-    def _set_graph_visibility(self):
-        """ Show or hide the graph in the display area. """
-        self._logger.debug("running")
-        self._visible = not self._visible
-        if self._visible:
-            self.layout().addWidget(self._graph)
-            self.setFixedHeight(40 + self._navbar_height + self._graph_height)
-            self._show_hide_button.setText("Hide " + self._graph.get_title() + " graph")
-        else:
-            self.layout().removeWidget(self._graph)
-            self.setFixedHeight(40)
-            self._show_hide_button.setText("Show " + self._graph.get_title() + " graph")
-        self._logger.debug("done")
-
     def get_graph(self):
         return self._graph
