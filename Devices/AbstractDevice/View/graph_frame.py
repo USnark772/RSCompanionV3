@@ -48,16 +48,16 @@ class GraphFrame(QFrame):
         self.setLayout(QVBoxLayout(self))
         self._visible = True
         self._graph = graph
-        # TODO: Edit this to be able to be a value passed in.
         self._graph_height = 400
         self.layout().addWidget(self._graph)
         self.setFixedHeight(self._graph_height)
         self._logger.debug("Initialized")
 
-    def set_graph_height(self, height):
+    def set_graph_height(self, height: int = None):
         """ Each display type will be a different size. """
         self._logger.debug("running")
-        self._graph_height = height
+        if height is not None:
+            self._graph_height = height
         self._logger.debug("done")
 
     def _set_graph_visibility(self):

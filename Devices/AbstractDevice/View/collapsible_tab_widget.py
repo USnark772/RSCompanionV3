@@ -41,8 +41,20 @@ class CollapsingTab(QTabWidget):
         self.tab_index = self.addTab(self.contents, "")
         self.tab_extended_width = max_width
         self.tab_collapsed_width = 20
+        self.setFixedHeight(380)
         self.tabBarClicked.connect(self._toggle_collapse)
         self._logger.debug("Initialized")
+
+    def set_tab_height(self, height: int = None) -> None:
+        """
+        Set the height of this object.
+        :param height: The new height for this object.
+        :return None:
+        """
+        self._logger.debug("running")
+        if height is not None:
+            self.setFixedHeight(height)
+        self._logger.debug("done")
 
     def set_tab_text(self, text: str) -> None:
         """
@@ -57,7 +69,6 @@ class CollapsingTab(QTabWidget):
     def _toggle_collapse(self) -> None:
         """
         Toggle whether this tab is collapsed or not.
-        :param collapsed: If this is collapsed.
         :return None:
         """
         self._logger.debug("running")
