@@ -29,6 +29,7 @@ from PySide2.QtWidgets import QFrame, QVBoxLayout, QSizePolicy
 from Model.app_helpers import ClickAnimationButton
 
 
+# TODO: Merge this with base graph?
 class GraphFrame(QFrame):
     """ This code is to contain and properly size graph widgets. """
     def __init__(self, parent, graph: BaseGraph, log_handlers: [StreamHandler]):
@@ -46,7 +47,6 @@ class GraphFrame(QFrame):
         self.setFrameShape(QFrame.NoFrame)
         self.setFrameShadow(QFrame.Raised)
         self.setLayout(QVBoxLayout(self))
-        self._visible = True
         self._graph = graph
         self._graph_height = 400
         self.layout().addWidget(self._graph)

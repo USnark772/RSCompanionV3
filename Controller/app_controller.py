@@ -145,6 +145,7 @@ class AppController:
         self._settings.setValue("logging/level", debug_level)
         self.main_window.show_help_window(self._strings[StringsEnum.APP_NAME], self._strings[StringsEnum.RESTART_PROG])
 
+    # TODO: Figure out why this does not create new exp after ending exp.
     def create_end_exp_handler(self) -> None:
         """
         Handler for create/end button.
@@ -494,6 +495,7 @@ class AppController:
         self._tasks.append(create_task(self.remove_device_view_handler()))
         self._model.start()
 
+    # TODO: Figure out why window will not close after ending an experiment.
     def _cleanup(self) -> None:
         """
         Cleanup any code that would cause problems for shutdown and prep for app closure.
