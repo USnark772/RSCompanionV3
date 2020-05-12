@@ -31,7 +31,7 @@ from Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
 
 
 class DRTGraph(BaseGraph):
-    def __init__(self, parent, dev_name: str, log_handlers: [StreamHandler]):
+    def __init__(self, parent, log_handlers: [StreamHandler]):
         self._logger = getLogger(__name__)
         for h in log_handlers:
             self._logger.addHandler(h)
@@ -39,7 +39,7 @@ class DRTGraph(BaseGraph):
         super().__init__(parent, log_handlers)
         self._data = list()
         self._strings = dict()
-        self._dev_name = dev_name
+        # self._dev_name = dev_name
         self._logger.debug("Initialized")
 
     async def show(self) -> None:
@@ -75,7 +75,7 @@ class DRTGraph(BaseGraph):
         for x in self._data:
             if x[0] == name:
                 data = x
-        lines = []
+        # lines = []
         left = datetime.now()
         right = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         # if show_in_legend:
@@ -85,7 +85,7 @@ class DRTGraph(BaseGraph):
         await sleep(.001)
         line, = axes.plot(data[1], data[2], marker='o')  #, label=the_label)
         await sleep(.001)
-        lines.append((self._dev_name, line))
+        # lines.append((self._dev_name, line))
         if len(data[1]) > 0:
             if right < data[1][-1]:
                 right = data[1][-1]
@@ -98,7 +98,7 @@ class DRTGraph(BaseGraph):
         axes.set_xlim(left=left - timedelta(seconds=10), right=right + timedelta(seconds=10))
         await sleep(.001)
         self._logger.debug("done")
-        return lines
+        # return lines
 
     def add_data(self, data: []) -> None:
         """ Ensure data comes in as type, x, y """

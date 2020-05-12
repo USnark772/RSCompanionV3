@@ -55,6 +55,7 @@ class AbstractController(ABC):
         """
         pass
 
+    @abstractmethod
     def set_lang(self, lang: LangEnum) -> None:
         """
         Set this device's language.

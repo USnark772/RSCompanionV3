@@ -43,10 +43,11 @@ class Controller(AbstractController):
             self._logger.addHandler(h)
         self._logger.debug("Initializing")
         device_name = "DRT_" + conn.port.strip("COM")
-        super().__init__(DRTView(device_name, log_handlers))
+        view = DRTView(device_name, log_handlers)
+        super().__init__(view)
         self._model = DRTModel(device_name, conn, log_handlers)
-        self._graph = DRTGraph(None, device_name, log_handlers)
-        self.view.add_graph(GraphFrame(None, self._graph, log_handlers))
+        self._graph = DRTGraph(view, log_handlers)
+        self.view.add_graph(GraphFrame(view, self._graph, log_handlers))
         self._exp = False
         self._updating_config = False
         self._setup_handlers()
