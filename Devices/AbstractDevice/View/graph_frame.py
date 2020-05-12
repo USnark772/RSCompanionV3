@@ -48,15 +48,10 @@ class GraphFrame(QFrame):
         self.setLayout(QVBoxLayout(self))
         self._visible = True
         self._graph = graph
-        # self._show_hide_button = ClickAnimationButton(self)
-        # self._show_hide_button.setFixedSize(150, 30)
-        # self._show_hide_button.clicked.connect(self._set_graph_visibility)
-        # self.layout().addWidget(self._show_hide_button)
-        # self._show_hide_button.setText("Hide " + self._graph.get_title() + " graph")
-        self._navbar_height = 100
+        # TODO: Edit this to be able to be a value passed in.
         self._graph_height = 400
         self.layout().addWidget(self._graph)
-        self.setFixedHeight(self._navbar_height + self._graph_height)
+        self.setFixedHeight(self._graph_height)
         self._logger.debug("Initialized")
 
     def set_graph_height(self, height):

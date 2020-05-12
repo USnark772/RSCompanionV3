@@ -129,19 +129,9 @@ class DRTView(AbstractView):
         self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
 
         self.strings = dict()
-        # self._setup_handlers()
         self.setMinimumWidth(760)
-        self.setFixedHeight(547)
+        self.setFixedHeight(450)
         self._logger.debug("Initialized")
-    #
-    # def _setup_handlers(self) -> None:
-    #     """
-    #     Handler method for buttons
-    #     :return None:
-    #     """
-    #     self._logger.debug("running")
-    #     self.config_tab.tabBarClicked.connect(self._set_config_visibility)
-    #     self._logger.debug("done")
 
     def add_graph(self, graph):
         self.layout().addWidget(graph, 0, 0)
