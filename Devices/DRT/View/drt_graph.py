@@ -39,7 +39,6 @@ class DRTGraph(BaseGraph):
         super().__init__(parent, log_handlers)
         self._data = list()
         self._strings = dict()
-        # self._dev_name = dev_name
         self._logger.debug("Initialized")
 
     async def show(self) -> None:
