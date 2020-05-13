@@ -123,8 +123,70 @@ class VOGModel:
         self._conn.close()
         self._logger.debug("done")
 
-    def check_current_input(self):
-        pass
+    def check_open_entry(self, entry: str) -> bool:
+        """
+        Check user input for validity.
+        :param entry: The user input.
+        :return bool: validity.
+        """
+        self._logger.debug("running with entry: " + entry)
+        ret = False
+        if entry.isdigit():
+            val = int(entry)
+            if defs.max_open_close >= val >= defs.min_open_close:
+                self._changed[1] = (val != self._current_vals[1])
+                ret = True
+        self._errs[0] = not ret
+        self._logger.debug("done with: " + str(ret))
+        return ret
+
+    def check_close_entry(self, entry: str) -> bool:
+        """
+        Check user input for validity.
+        :param entry: The user input.
+        :return bool: validity.
+        """
+        self._logger.debug("running with entry: " + entry)
+        ret = False
+        if entry.isdigit():
+            val = int(entry)
+            if defs.max_open_close >= val >= defs.min_open_close:
+                self._changed[2] = (val != self._current_vals[2])
+                ret = True
+        self._errs[1] = not ret
+        self._logger.debug("done with: " + str(ret))
+        return ret
+
+    def check_debounce_entry(self, entry: str) -> bool:
+        """
+        Check user input for validity.
+        :param entry: The user input.
+        :return bool: validity.
+        """
+        self._logger.debug("running with entry: " + entry)
+        ret = False
+        if entry.isdigit():
+            val = int(entry)
+            if defs.debounce_max >= val >= defs.debounce_min:
+                self._changed[3] = (val != self._current_vals[3])
+                ret = True
+        self._errs[2] = not ret
+        self._logger.debug("done with: " + str(ret))
+        return ret
+
+    def check_current_input(self) -> bool:
+        """
+        Check user input for validity.
+        :return: Whether the user input values are valid or not.
+        """
+        ret = False
+        for x in self._changed:  # Check for any changes first.
+            if x:
+                ret = True
+        for y in self._errs:  # If any errors, can't send changes.
+            if y:
+                ret = False
+        return ret
 
     def query_config(self) -> None:
         """
