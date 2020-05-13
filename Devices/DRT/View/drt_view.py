@@ -44,15 +44,13 @@ class DRTView(AbstractView):
 
         # device settings display
         self.dev_sets_frame = EasyFrame()
-        self.dev_sets_frame.setMaximumSize(250, 350)
-
         self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
         self.config_horizontal_layout = QHBoxLayout()
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         # Set configuration value display area
         self.config_frame = EasyFrame()
-        self.config_layout = QHBoxLayout(self.config_frame)
+        self.config_layout = QVBoxLayout(self.config_frame)
         self.config_label = QLabel(self.config_frame)
         self.config_label.setAlignment(Qt.AlignCenter)
         self.config_layout.addWidget(self.config_label)
@@ -182,7 +180,9 @@ class DRTView(AbstractView):
         :param func: The handler.
         :return: None.
         """
+        self._logger.debug("running")
         self.iso_button.clicked.connect(func)
+        self._logger.debug("done")
 
     def set_upload_button_handler(self, func: classmethod) -> None:
         """

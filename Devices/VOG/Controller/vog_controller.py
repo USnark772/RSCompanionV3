@@ -46,7 +46,7 @@ class Controller(AbstractController):
         device_name = "VOG_" + conn.port.strip("COM")
         view = VOGView(device_name, log_handlers)
         super().__init__(view)
-        # self._model = VOGModel(device_name, conn, log_handlers)
+        self._model = VOGModel(device_name, conn, log_handlers)
         self._graph = VOGGraph(view, log_handlers)
         self.view.add_graph(GraphFrame(view, self._graph, log_handlers))
         self._exp_created = False
@@ -154,4 +154,37 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self._model.query_config()
+        self._logger.debug("done")
+
+    # TODO: update for vog
+    def _update_view_config(self, msg: dict) -> None:
+        """
+        Send device config updates to the view.
+        :param msg: The current device settings.
+        :return: None.
+        """
+        self._logger.debug("running")
+        self._updating_config = True
+        for key in msg:
+            self._set_view_val(key, msg[key])
+        self._updating_config = False
+        self._logger.debug("done")
+
+    def _config_val_handler(self) -> None:
+        """
+        Handles config value entry changes
+        :return None:
+        """
+        self._logger.debug("running")
+        if not self._updating_config:
+            self._check_for_upload()
+        self._logger.debug("done")
+
+    def _check_for_upload(self) -> None:
+        """
+        Set view upload button depending on if upload is possible.
+        :return: None.
+        """
+        self._logger.debug("running")
+        self.view.set_upload_button(self._model.check_current_input())
         self._logger.debug("done")

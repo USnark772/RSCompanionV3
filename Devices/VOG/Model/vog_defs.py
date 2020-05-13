@@ -24,3 +24,19 @@ https://redscientific.com/index.html
 """
 
 profile = {"VOG": {"vid": 5824, "pid": 1155}}
+
+""" Definitions specific to the VOG device """
+
+vog_config_fields = []
+vog_output_field = ['trialCounter', 'millis_openElapsed', 'millis_closeElapsed']
+vog_ui_fields = ['block #', 'Total millis open', 'Total millis closed']
+
+vog_max_val = 2147483647
+
+vog_max_open_close = vog_max_val
+vog_min_open_close = 0
+
+vog_debounce_max = 100
+vog_debounce_min = 0
+
+vog_button_mode = 0
