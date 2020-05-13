@@ -163,7 +163,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self.send_msg(self._prepare_msg("get_config"))
+        self._send_msg(self._prepare_msg("get_config"))
         self._logger.debug("done")
 
     def query_stim_dur(self) -> None:
@@ -172,7 +172,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self.send_msg(self._prepare_msg("get_stimDur"))
+        self._send_msg(self._prepare_msg("get_stimDur"))
         self._logger.debug("done")
 
     def send_stim_dur(self, val: str) -> None:
@@ -182,7 +182,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self.send_msg(self._prepare_msg("set_stimDur", str(val)))
+        self._send_msg(self._prepare_msg("set_stimDur", str(val)))
         self._logger.debug("done")
 
     def query_stim_intesity(self) -> None:
@@ -191,7 +191,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self.send_msg(self._prepare_msg("get_intensity"))
+        self._send_msg(self._prepare_msg("get_intensity"))
         self._logger.debug("done")
 
     def send_stim_intensity(self, val: int) -> None:
@@ -201,7 +201,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self.send_msg(self._prepare_msg("set_intensity", str(self.calc_percent_to_val(val))))
+        self._send_msg(self._prepare_msg("set_intensity", str(self.calc_percent_to_val(val))))
         self._logger.debug("done")
 
     def query_upper_isi(self) -> None:
@@ -210,7 +210,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self.send_msg(self._prepare_msg("get_upperISI"))
+        self._send_msg(self._prepare_msg("get_upperISI"))
         self._logger.debug("done")
 
     def send_upper_isi(self, val: str) -> None:
@@ -220,7 +220,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self.send_msg(self._prepare_msg("set_upperISI", str(val)))
+        self._send_msg(self._prepare_msg("set_upperISI", str(val)))
         self._logger.debug("done")
 
     def query_lower_isi(self) -> None:
@@ -229,7 +229,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self.send_msg(self._prepare_msg("get_lowerISI"))
+        self._send_msg(self._prepare_msg("get_lowerISI"))
         self._logger.debug("done")
 
     def send_lower_isi(self, val: str) -> None:
@@ -239,7 +239,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self.send_msg(self._prepare_msg("set_lowerISI", str(val)))
+        self._send_msg(self._prepare_msg("set_lowerISI", str(val)))
         self._logger.debug("done")
 
     def send_start(self) -> None:
@@ -248,7 +248,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self.send_msg(self._prepare_msg("exp_start"))
+        self._send_msg(self._prepare_msg("exp_start"))
         self._logger.debug("done")
 
     def send_stop(self) -> None:
@@ -257,7 +257,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        self.send_msg(self._prepare_msg("exp_stop"))
+        self._send_msg(self._prepare_msg("exp_stop"))
         self._logger.debug("done")
 
     def check_stim_dur_entry(self, entry: str) -> bool:
@@ -371,7 +371,12 @@ class DRTModel:
         self._output_save_data(self._format_save_data(data, timestamp))
         self._logger.debug("done")
 
-    def send_msg(self, msg):
+    def _send_msg(self, msg) -> None:
+        """
+        encode and send a message over serial port
+        :param msg: message to be sent
+        :return None:
+        """
         if self._conn.is_open:
             self._conn.write(str.encode(msg))
 
