@@ -271,11 +271,7 @@ class DRTModel:
         if entry.isdigit():
             val = int(entry)
             if defs.duration_max >= val >= defs.duration_min:
-                if val == self._current_vals[0]:
-                    changed = False
-                else:
-                    changed = True
-                self._changed[0] = changed
+                self._changed[0] = (val != self._current_vals[0])
                 ret = True
         self._errs[0] = not ret
         self._logger.debug("done with: " + str(ret))
@@ -291,11 +287,7 @@ class DRTModel:
         self._logger.debug("running with entry: " + str(entry))
         val = self.calc_percent_to_val(int(entry))
         if defs.intensity_max >= val >= defs.intensity_min:
-            if val == self._current_vals[1]:
-                changed = False
-            else:
-                changed = True
-            self._changed[1] = changed
+            self._changed[1] = (val != self._current_vals[1])
             self._logger.debug("done with true")
             ret = True
         self._errs[1] = not ret
@@ -315,11 +307,7 @@ class DRTModel:
             upper_val = int(upper_entry)
             lower_val = int(lower_entry)
             if defs.ISI_max >= upper_val >= lower_val:
-                if upper_val == self._current_vals[2]:
-                    changed = False
-                else:
-                    changed = True
-                self._changed[2] = changed
+                self._changed[2] = (upper_val != self._current_vals[2])
                 ret = True
         self._errs[2] = not ret
         self._logger.debug("done with: " + str(ret))
@@ -338,11 +326,7 @@ class DRTModel:
             upper_val = int(upper_entry)
             lower_val = int(lower_entry)
             if upper_val >= lower_val >= defs.ISI_min:
-                if lower_val == self._current_vals[3]:
-                    changed = False
-                else:
-                    changed = True
-                self._changed[3] = changed
+                self._changed[3] = (lower_val != self._current_vals[3])
                 ret = True
         self._errs[3] = not ret
         self._logger.debug("done with: " + str(ret))
