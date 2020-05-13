@@ -64,22 +64,23 @@ class VOGModel:
         self._save_dir = path
         self._save_filename = self._dev_name + "_" + format_current_time(datetime.now(), save=True) + ".csv"
 
-    def set_current_vals(self, name: str = None, open: int = None, close: int = None, debounce: int = None) -> None:
+    def set_current_vals(self, name: str = None, max_open: int = None, max_close: int = None, debounce: int = None)\
+            -> None:
         """
         Set the current values the device should have.
         :param name: The config name of the device.
-        :param open: The max_open value.
-        :param close: The max_close value.
+        :param max_open: The max_open value.
+        :param max_close: The max_close value.
         :param debounce: The debounce value.
         :return: None.
         """
         self._logger.debug("running")
         if name:
             self._current_vals[0] = name
-        if open:
-            self._current_vals[1] = open
-        if close:
-            self._current_vals[2] = close
+        if max_open:
+            self._current_vals[1] = max_open
+        if max_close:
+            self._current_vals[2] = max_close
         if debounce:
             self._current_vals[3] = debounce
         self._logger.debug("done")
