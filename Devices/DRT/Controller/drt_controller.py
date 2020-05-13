@@ -180,7 +180,7 @@ class Controller(AbstractController):
             self._model.send_lower_isi(self.view.get_lower_isi())
             changed = True
         if changed:
-            self.view.set_config_val(self.view._strings[StringsEnum.CUSTOM_LABEL])
+            self.view.set_config_val(self.view.strings[StringsEnum.CUSTOM_LABEL])
         self._model.reset_changed()
         self._check_for_upload()
         self._logger.debug("done")
@@ -290,7 +290,7 @@ class Controller(AbstractController):
         :return: None.
         """
         self._logger.debug("running")
-        self.view.set_config_val(self.view._strings[StringsEnum.ISO_LABEL])
+        self.view.set_config_val(self.view.strings[StringsEnum.ISO_LABEL])
         self._model.send_iso()
         self.view.set_upload_button(False)
         self._logger.debug("done")

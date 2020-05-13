@@ -29,7 +29,8 @@ from PySide2.QtWidgets import QTabWidget, QWidget
 
 
 class CollapsingTab(QTabWidget):
-    def __init__(self, parent, contents: QWidget, log_handlers: [StreamHandler], max_width: int = 350):
+    def __init__(self, parent, contents: QWidget, log_handlers: [StreamHandler], max_width: int = 350,
+                 max_height: int = 380):
         self._logger = getLogger(__name__)
         for h in log_handlers:
             self._logger.addHandler(h)
@@ -41,7 +42,7 @@ class CollapsingTab(QTabWidget):
         self.tab_index = self.addTab(self.contents, "")
         self.tab_extended_width = max_width
         self.tab_collapsed_width = 20
-        self.setFixedHeight(380)
+        self.setFixedHeight(max_height)
         self.tabBarClicked.connect(self._toggle_collapse)
         self._logger.debug("Initialized")
 
