@@ -44,7 +44,7 @@ class VOGModel:
         self._save_filename = str()
         self._save_dir = str()
         self._strings = dict()
-        self._current_vals = [0, 0, 0, 0, 0]  # current config, open, close, debounce, mode
+        self._current_vals = ["", 0, 0, 0, 0]  # current config, open, close, debounce, mode
         self._errs = [False, False, False]  # open, close, debounce
         self._changed = [False, False, False, False, False] # current config, open, close, debounce, mode
         self._logger.debug("Initialized")
@@ -64,26 +64,24 @@ class VOGModel:
         self._save_dir = path
         self._save_filename = self._dev_name + "_" + format_current_time(datetime.now(), save=True) + ".csv"
 
-    # TODO: update for vog
-    def set_current_vals(self, duration: int = None, intensity: int = None, upper_isi: int = None,
-                         lower_isi: int = None) -> None:
+    def set_current_vals(self, name: str = None, open: int = None, close: int = None, debounce: int = None) -> None:
         """
         Set the current values the device should have.
-        :param duration: The stim duration value.
-        :param intensity: The stim intensity value.
-        :param upper_isi: The upper_isi value.
-        :param lower_isi: The lower_isi value.
+        :param name: The config name of the device.
+        :param open: The max_open value.
+        :param close: The max_close value.
+        :param debounce: The debounce value.
         :return: None.
         """
         self._logger.debug("running")
-        if duration:
-            self._current_vals[0] = duration
-        if intensity:
-            self._current_vals[1] = intensity
-        if upper_isi:
-            self._current_vals[2] = upper_isi
-        if lower_isi:
-            self._current_vals[3] = lower_isi
+        if name:
+            self._current_vals[0] = name
+        if open:
+            self._current_vals[1] = open
+        if close:
+            self._current_vals[2] = close
+        if debounce:
+            self._current_vals[3] = debounce
         self._logger.debug("done")
 
     def reset_changed(self) -> None:
@@ -326,7 +324,6 @@ class VOGModel:
         self.send_button_control("1")
         # self.__set_upload_button(False)
         self._logger.debug("done")
-
 
     @staticmethod
     def _parse_msg(msg_string):
