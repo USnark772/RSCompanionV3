@@ -116,13 +116,13 @@ class VOGModel:
         timestamp = datetime.now()
         return msg, timestamp
 
-    # TODO: update for vog
     def cleanup(self) -> None:
         """
         Cleanup this code for code removal or app closure.
         :return: None.
         """
         self._logger.debug("running")
+        self._conn.close()
         self._logger.debug("done")
 
     def check_current_input(self):

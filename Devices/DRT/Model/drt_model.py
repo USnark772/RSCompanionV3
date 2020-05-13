@@ -131,6 +131,7 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
+        self._conn.close()
         self._logger.debug("done")
 
     def dur_changed(self) -> bool:
