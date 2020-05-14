@@ -114,9 +114,9 @@ class AppController:
         self._setup_handlers()
         self._initialize_view()
         self._start()
-        self._logger.debug("Initialized")
         self._drive_updater_task = None
         self._curr_cond_name = ""
+        self._logger.debug("Initialized")
 
     def language_change_handler(self, lang: LangEnum) -> None:
         """
