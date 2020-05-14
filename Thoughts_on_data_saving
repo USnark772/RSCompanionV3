@@ -1,8 +1,0 @@
-- Using python's zipfile we can create/write/read a .rs item which is simply a zip file.
-- Can we do this from multiple places or do we need to have a multiple producer/ single consumer type situation?
-- How to save video files in this package?
-    - Can only write to this zipfile from one place at a time (Must open/write/close before next writer can write)
-    - Cameras would open/write/write/.../close which would block all other writers during an experiment.
-- See Tests/zip_testing.py
-
-- zipfile does not support writing to files in a zip. Files must be written completely before adding them to the zipfile
