@@ -43,6 +43,9 @@ class VOGView(AbstractView):
         self._logger.debug("Initializing")
         super().__init__(name)
 
+        self.subwindow_height = 600
+        self.tab_height = self.subwindow_height * 0.9
+
         # device settings display
         self.dev_sets_frame = EasyFrame()
         # self.dev_sets_frame.setMaximumSize(250, 350)
@@ -54,7 +57,7 @@ class VOGView(AbstractView):
         # Show/Hide Configuration tab
         self.config_tab = CollapsingTab(self, self.dev_sets_frame, log_handlers, 400)
         self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
-        self.config_tab.set_tab_height(450)
+        self.config_tab.set_tab_height(self.tab_height)
 
         """ Set configuration value display area"""
         self._config_frame = EasyFrame()
@@ -147,7 +150,7 @@ class VOGView(AbstractView):
 
         self._strings = dict()
         self.setMinimumWidth(760)
-        self.setFixedHeight(500)
+        self.setFixedHeight(self.subwindow_height)
         self._logger.debug("Initialized")
 
     def add_graph(self, graph) -> None:
