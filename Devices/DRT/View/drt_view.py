@@ -219,11 +219,11 @@ class DRTView(AbstractView):
         self.stim_dur_line_edit.setText(str(val))
         self._logger.debug("done")
 
-    def set_stim_dur_err(self, is_error) -> None:
+    def set_stim_dur_err(self, is_error: bool) -> None:
         """
         Set display of error in stim duration
-        :param is_error:
-        :return:
+        :param is_error: Whether this line edit should display error.
+        :return None:
         """
         self._logger.debug("running")
         if is_error:
@@ -276,11 +276,11 @@ class DRTView(AbstractView):
         self.upper_isi_line_edit.setText(str(val))
         self._logger.debug("done")
 
-    def set_upper_isi_err(self, is_error) -> None:
+    def set_upper_isi_err(self, is_error: bool) -> None:
         """
         Set display of error in upper isi line edit
-        :param is_error:
-        :return:
+        :param is_error: Whether this line edit should display error.
+        :return None:
         """
         self._logger.debug("running")
         if is_error:
@@ -306,11 +306,11 @@ class DRTView(AbstractView):
         self.lower_isi_line_edit.setText(str(val))
         self._logger.debug("done")
 
-    def set_lower_isi_err(self, is_error) -> None:
+    def set_lower_isi_err(self, is_error: bool) -> None:
         """
         Set display of error in lower isi line edit
-        :param is_error:
-        :return:
+        :param is_error: Whether this line edit should display error.
+        :return None:
         """
         self._logger.debug("running")
         if is_error:

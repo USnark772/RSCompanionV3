@@ -152,15 +152,15 @@ class VOGView(AbstractView):
 
     def add_graph(self, graph) -> None:
         """
-        Add Graph to view
+        Add Graph to view.
         :return None:
         """
         self.layout().addWidget(graph, 0, 0)
 
     def set_config_val_line_edit_handler(self, func: classmethod) -> None:
         """
-        Sets the config val line handler
-        :param func: classmethod that handles the config val line
+        Sets the config val line handler.
+        :param func: classmethod that handles the config val line.
         :return None:
         """
         self._logger.debug("running")
@@ -170,7 +170,7 @@ class VOGView(AbstractView):
     def set_nhtsa_button_handler(self, func: classmethod) -> None:
         """
         Sets NHTSA button press handler.
-        :param func: classmethod that handles the NHTSA button
+        :param func: classmethod that handles the NHTSA button.
         :return None:
         """
         self._logger.debug("running")
@@ -180,7 +180,7 @@ class VOGView(AbstractView):
     def set_eblindfold_button_handler(self, func: classmethod) -> None:
         """
         Sets eBlindfold button press handler.
-        :param func: classmethod that handles the eBlindfold button
+        :param func: classmethod that handles the eBlindfold button.
         :return None:
         """
         self._logger.debug("running")
@@ -190,7 +190,7 @@ class VOGView(AbstractView):
     def set_direct_control_button_handler(self, func: classmethod) -> None:
         """
         Sets Direct Control button press handler.
-        :param func: classmethod that handles the Direct Control button
+        :param func: classmethod that handles the Direct Control button.
         :return None:
         """
         self._logger.debug("running")
@@ -200,7 +200,7 @@ class VOGView(AbstractView):
     def set_open_dur_line_edit_handler(self, func: classmethod) -> None:
         """
         Sets open duration line edit handler.
-        :param func: classmethod that handles the line edit
+        :param func: classmethod that handles the line edit.
         :return None:
         """
         self._logger.debug("running")
@@ -210,7 +210,7 @@ class VOGView(AbstractView):
     def set_close_dur_line_edit_handler(self, func: classmethod) -> None:
         """
         Sets close duration line edit handler.
-        :param func: classmethod that handles the line edit
+        :param func: classmethod that handles the line edit.
         :return None:
         """
         self._logger.debug("running")
@@ -220,7 +220,7 @@ class VOGView(AbstractView):
     def set_open_inf_check_box_handler(self, func: classmethod) -> None:
         """
         Sets open INF checkbox handler.
-        :param func: classmethod that handles the checkbox, requires bool param
+        :param func: classmethod that handles the checkbox, requires bool param.
         :return None:
         """
         self._logger.debug("running")
@@ -230,7 +230,7 @@ class VOGView(AbstractView):
     def set_close_inf_check_box_handler(self, func: classmethod) -> None:
         """
         Sets close INF checkbox handler.
-        :param func: classmethod that handles the checkbox, requires bool param
+        :param func: classmethod that handles the checkbox, requires bool param.
         :return None:
         """
         self._logger.debug("running")
@@ -240,7 +240,7 @@ class VOGView(AbstractView):
     def set_debounce_time_line_edit_handler(self, func: classmethod) -> None:
         """
         Sets debounce time line edit handler.
-        :param func: classmethod that handles the line edit
+        :param func: classmethod that handles the line edit.
         :return None:
         """
         self._logger.debug("running")
@@ -250,7 +250,7 @@ class VOGView(AbstractView):
     def set_button_mode_selector_handler(self, func: classmethod) -> None:
         """
         Sets button mode combo box handler.
-        :param func: classmethod that handles the combo
+        :param func: classmethod that handles the combo.
         :return None:
         """
         self._logger.debug("running")
@@ -260,7 +260,7 @@ class VOGView(AbstractView):
     def set_control_mode_selector_handler(self, func: classmethod) -> None:
         """
         Sets button mode combo box handler.
-        :param func: classmethod that handles the combo
+        :param func: classmethod that handles the combo.
         :return None:
         """
         self._logger.debug("running")
@@ -270,7 +270,7 @@ class VOGView(AbstractView):
     def set_upload_settings_button_handler(self, func: classmethod) -> None:
         """
         Sets upload settings button handler.
-        :param func: classmethod that handles the button
+        :param func: classmethod that handles the button.
         :return None:
         """
         self._logger.debug("running")
@@ -280,7 +280,7 @@ class VOGView(AbstractView):
     def set_manual_control_button_handler(self, func: classmethod) -> None:
         """
         Sets manual control button handler.
-        :param func: classmethod that handles the button
+        :param func: classmethod that handles the button.
         :return None:
         """
         self._logger.debug("running")
@@ -289,15 +289,15 @@ class VOGView(AbstractView):
 
     def get_config_val(self) -> str:
         """
-        Get the string value found in the config text box
-        :return str: string value in the text box
+        Get the string value found in the config text box.
+        :return str: string value in the text box.
         """
         return self._config_val_line_edit.text()
 
     def set_config_val(self, val: str) -> None:
         """
-        Set the string value found in the config text box
-        :param val: string value to set the config text box
+        Set the string value found in the config text box.
+        :param val: string value to set the config text box.
         :return None:
         """
         self._logger.debug("running")
@@ -306,15 +306,15 @@ class VOGView(AbstractView):
 
     def get_open_dur_val(self) -> str:
         """
-        Get the string value found in the open duration text box
-        :return str: string value in the text box
+        Get the string value found in the open duration text box.
+        :return str: string value in the text box.
         """
         return self._open_dur_line_edit.text()
 
     def set_open_dur_val(self, val: str) -> None:
         """
-        Set the string value found in the open duration text box
-        :param val: string value to set the open duration text box
+        Set the string value found in the open duration text box.
+        :param val: string value to set the open duration text box.
         :return None:
         """
         self._logger.debug("running")
@@ -323,15 +323,15 @@ class VOGView(AbstractView):
 
     def get_close_dur_val(self) -> str:
         """
-        Get the string value found in the close duration text box
-        :return str: string value in the text box
+        Get the string value found in the close duration text box.
+        :return str: string value in the text box.
         """
         return self._close_dur_line_edit.text()
 
     def set_close_dur_val(self, val: str) -> None:
         """
-        Set the string value found in the close duration text box
-        :param val: string value to set the close duration text box
+        Set the string value found in the close duration text box.
+        :param val: string value to set the close duration text box.
         :return None:
         """
         self._logger.debug("running")
@@ -340,15 +340,15 @@ class VOGView(AbstractView):
 
     def get_debounce_val(self) -> str:
         """
-        Get the string value found in the debounce time text box
-        :return str: string value in the text box
+        Get the string value found in the debounce time text box.
+        :return str: string value in the text box.
         """
         return self._debounce_time_line_edit.text()
 
     def set_debounce_val(self, val: str) -> None:
         """
-        Set the string value found in the debounce time text box
-        :param val: string value to set the debounce text box
+        Set the string value found in the debounce time text box.
+        :param val: string value to set the debounce text box.
         :return None:
         """
         self._logger.debug("running")
@@ -358,14 +358,14 @@ class VOGView(AbstractView):
     def get_open_inf_check_box(self) -> bool:
         """
         Get the check box state.
-        :return bool: returns true if the box is checked
+        :return bool: returns true if the box is checked.
         """
         return self._open_inf_check_box.isChecked()
 
     def set_open_inf_check_box(self, val: bool) -> None:
         """
         Set the check box state.
-        :param val: bool value to set the check box
+        :param val: bool value to set the check box.
         :return None:
         """
         self._logger.debug("running")
@@ -375,14 +375,14 @@ class VOGView(AbstractView):
     def get_close_inf_check_box(self) -> bool:
         """
         Get the check box state.
-        :return bool: returns true if the box is checked
+        :return bool: returns true if the box is checked.
         """
         return self._close_inf_check_box.isChecked()
 
     def set_close_inf_check_box(self, val: bool) -> None:
         """
         Set the check box state.
-        :param val: bool value to set the check box
+        :param val: bool value to set the check box.
         :return None:
         """
         self._logger.debug("running")
@@ -391,14 +391,14 @@ class VOGView(AbstractView):
 
     def get_button_mode(self) -> int:
         """
-        Get index of button mode
-        :return int: index of current button mode
+        Get index of button mode.
+        :return int: index of current button mode.
         """
         return self._button_mode_selector.currentIndex()
 
     def set_button_mode(self, val: int) -> None:
         """
-        Set index of button mode
+        Set index of button mode.
         :return None:
         """
         self._logger.debug("running")
@@ -407,18 +407,57 @@ class VOGView(AbstractView):
 
     def get_control_mode(self) -> int:
         """
-        Get index of button mode
-        :return int: index of current button mode
+        Get index of button mode.
+        :return int: index of current button mode.
         """
         return self._control_mode_selector.currentIndex()
 
     def set_control_mode(self, val: int) -> None:
         """
-        Set index of button mode
+        Set index of button mode.
         :return None:
         """
         self._logger.debug("running")
         self._control_mode_selector.setCurrentIndex(val)
+        self._logger.debug("done")
+
+    def set_open_dur_err(self, err: bool) -> None:
+        """
+        Set this text entry to error style depending on err.
+        :param err: If this text entry needs to be error styel
+        :return None:
+        """
+        self._logger.debug("running")
+        if err:
+            self._open_dur_line_edit.setStyleSheet(tab_line_edit_error_style)
+        else:
+            self._open_dur_line_edit.setStyleSheet(tab_line_edit_compliant_style)
+        self._logger.debug("done")
+
+    def set_close_dur_err(self, err: bool) -> None:
+        """
+        Set this text entry to error style depending on err.
+        :param err: If this text entry needs to be error styel
+        :return None:
+        """
+        self._logger.debug("running")
+        if err:
+            self._close_dur_line_edit.setStyleSheet(tab_line_edit_error_style)
+        else:
+            self._close_dur_line_edit.setStyleSheet(tab_line_edit_compliant_style)
+        self._logger.debug("done")
+
+    def set_debounce_err(self, err: bool) -> None:
+        """
+        Set this text entry to error style depending on err.
+        :param err: If this text entry needs to be error styel
+        :return None:
+        """
+        self._logger.debug("running")
+        if err:
+            self._debounce_time_line_edit.setStyleSheet(tab_line_edit_error_style)
+        else:
+            self._debounce_time_line_edit.setStyleSheet(tab_line_edit_compliant_style)
         self._logger.debug("done")
 
     def set_lang(self, lang: LangEnum) -> None:
@@ -430,6 +469,16 @@ class VOGView(AbstractView):
         self._strings = strings[lang]
         self._set_texts()
         self._set_tooltips()
+
+    def set_upload_button(self, is_active: bool) -> None:
+        """
+        Set upload button activity to is_active.
+        :param is_active: Whether this button should be active.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._upload_settings_button.setEnabled(is_active)
+        self._logger.debug("done")
 
     def _set_texts(self) -> None:
         """

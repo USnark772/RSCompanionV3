@@ -44,9 +44,12 @@ class VOGModel:
         self._save_filename = str()
         self._save_dir = str()
         self._strings = dict()
-        self._current_vals = ["", 0, 0, 0, 0]  # current config, open, close, debounce, mode
-        self._errs = [False, False, False]  # open, close, debounce
-        self._changed = [False, False, False, False, False] # current config, open, close, debounce, mode
+        self._current_vals = ["", 0, 0, 0, 0, 0]
+        # current config, open, close, debounce, button_mode, control_mode
+        self._errs = [False, False, False]
+        # open, close, debounce
+        self._changed = [False, False, False, False, False]
+        # current config, open, close, debounce, button_mode, control_mode
         self._logger.debug("Initialized")
 
     def get_conn(self) -> AioSerial:
@@ -64,15 +67,17 @@ class VOGModel:
         self._save_dir = path
         self._save_filename = self._dev_name + "_" + format_current_time(datetime.now(), save=True) + ".csv"
 
-    def set_current_vals(self, name: str = None, max_open: int = None, max_close: int = None, debounce: int = None)\
-            -> None:
+    def set_current_vals(self, name: str = None, max_open: int = None, max_close: int = None, debounce: int = None,
+                         button_mode: int = None, control_mode: int = None) -> None:
         """
         Set the current values the device should have.
         :param name: The config name of the device.
         :param max_open: The max_open value.
         :param max_close: The max_close value.
         :param debounce: The debounce value.
-        :return: None.
+        :param button_mode: The button_mode value.
+        :param control_mode: The control_mode value.
+        :return None:
         """
         self._logger.debug("running")
         if name:
@@ -83,18 +88,28 @@ class VOGModel:
             self._current_vals[2] = max_close
         if debounce:
             self._current_vals[3] = debounce
+        if button_mode:
+            self._current_vals[4] = button_mode
+        if control_mode:
+            self._current_vals[5] = control_mode
         self._logger.debug("done")
 
     def reset_changed(self) -> None:
         """
         Reset all changed bools to false.
-        :return: None.
+        :return None:
         """
         for i in range(len(self._changed)):
             self._changed[i] = False
 
     def add_save_hdr(self) -> None:
+        """
+        Add header line to save file.
+        :return None:
+        """
+        self._logger.debug("running")
         self._output_save_data(self._strings[StringsEnum.SAVE_HDR])
+        self._logger.debug("done")
 
     def set_lang(self, lang: LangEnum) -> None:
         """
@@ -102,7 +117,9 @@ class VOGModel:
         :param lang: The lang enum to use.
         :return None:
         """
+        self._logger.debug("running")
         self._strings = strings[lang]
+        self._logger.debug("done")
 
     async def get_msg(self) -> (dict, datetime):
         """
@@ -113,22 +130,35 @@ class VOGModel:
         line = await self._conn.readline_async()
         msg = self._parse_msg(line.decode("utf-8"))
         timestamp = datetime.now()
+        self._logger.debug("done")
         return msg, timestamp
 
     def cleanup(self) -> None:
         """
         Cleanup this code for code removal or app closure.
-        :return: None.
+        :return None:
         """
         self._logger.debug("running")
         self._conn.close()
         self._logger.debug("done")
 
+    def check_config_entry(self, entry: str) -> bool:
+        """
+        Check user input for changes.
+        :param entry: The user input.
+        :return bool: If changed.
+        """
+        self._logger.debug("running with entry: " + entry)
+        ret = False
+        self._changed[0] = (entry != self._current_vals[0])
+        self._logger.debug("done with: " + str(ret))
+        return ret
+
     def check_open_entry(self, entry: str) -> bool:
         """
-        Check user input for validity.
+        Check user input for validity and changes.
         :param entry: The user input.
-        :return bool: validity.
+        :return bool: Validity.
         """
         self._logger.debug("running with entry: " + entry)
         ret = False
@@ -143,9 +173,9 @@ class VOGModel:
 
     def check_close_entry(self, entry: str) -> bool:
         """
-        Check user input for validity.
+        Check user input for validity and changes.
         :param entry: The user input.
-        :return bool: validity.
+        :return bool: Validity.
         """
         self._logger.debug("running with entry: " + entry)
         ret = False
@@ -160,9 +190,9 @@ class VOGModel:
 
     def check_debounce_entry(self, entry: str) -> bool:
         """
-        Check user input for validity.
+        Check user input for validity and changes.
         :param entry: The user input.
-        :return bool: validity.
+        :return bool: Validity.
         """
         self._logger.debug("running with entry: " + entry)
         ret = False
@@ -175,11 +205,34 @@ class VOGModel:
         self._logger.debug("done with: " + str(ret))
         return ret
 
+    def check_button_mode_entry(self, entry: int) -> bool:
+        """
+        Check user input for changes.
+        :param entry: The user input.
+        :return bool: If changed.
+        """
+        self._logger.debug("running with entry: " + str(entry))
+        self._changed[4] = (entry != self._current_vals[4])
+        self._logger.debug("done with: " + str(self._changed[4]))
+        return self._changed[4]
+
+    def check_control_mode_entry(self, entry: int) -> bool:
+        """
+        Check user input for changes.
+        :param entry: The user input.
+        :return bool: If changed.
+        """
+        self._logger.debug("running with entry: " + str(entry))
+        self._changed[5] = (entry != self._current_vals[5])
+        self._logger.debug("done with: " + str(self._changed[5]))
+        return self._changed[5]
+
     def check_current_input(self) -> bool:
         """
-        Check user input for validity.
-        :return: Whether the user input values are valid or not.
+        Check if any changes need to be sent to device as long as no errors exist.
+        :return: Whether the user input values are valid or not and are different than current device settings.
         """
+        self._logger.debug("running")
         ret = False
         for x in self._changed:  # Check for any changes first.
             if x:
@@ -187,7 +240,44 @@ class VOGModel:
         for y in self._errs:  # If any errors, can't send changes.
             if y:
                 ret = False
+        self._logger.debug("done")
         return ret
+
+    def send_create(self) -> None:
+        """
+        Notify this device of exp creation.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._send_msg(self._prepare_msg("do_expStart"))
+        self._logger.debug("done")
+
+    def send_end(self) -> None:
+        """
+        Notify this device of exp end.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._send_msg(self._prepare_msg("do_expStop"))
+        self._logger.debug("done")
+
+    def send_start(self) -> None:
+        """
+        Notify this device of exp start.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._send_msg(self._prepare_msg("do_trialStart"))
+        self._logger.debug("done")
+
+    def send_stop(self) -> None:
+        """
+        Notify this device of exp stop.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._send_msg(self._prepare_msg("do_trialStop"))
+        self._logger.debug("done")
 
     def query_config(self) -> None:
         """
@@ -205,7 +295,7 @@ class VOGModel:
 
     def query_name(self) -> None:
         """
-        Ask device for current name
+        Ask device for current name.
         :return None:
         """
         self._logger.debug("running")
@@ -214,7 +304,7 @@ class VOGModel:
 
     def query_open(self) -> None:
         """
-        Ask device for current max open
+        Ask device for current max open.
         :return None:
         """
         self._logger.debug("running")
@@ -223,7 +313,7 @@ class VOGModel:
 
     def query_close(self) -> None:
         """
-        Ask device for current max close
+        Ask device for current max close.
         :return None:
         """
         self._logger.debug("running")
@@ -232,7 +322,7 @@ class VOGModel:
 
     def query_debounce(self) -> None:
         """
-        Ask device for current debounce value
+        Ask device for current debounce value.
         :return None:
         """
         self._logger.debug("running")
@@ -241,7 +331,7 @@ class VOGModel:
 
     def query_click(self) -> None:
         """
-        Ask device for current mode
+        Ask device for current mode.
         :return None:
         """
         self._logger.debug("running")
@@ -250,7 +340,7 @@ class VOGModel:
 
     def query_button_control(self) -> None:
         """
-        Ask device for current config button type
+        Ask device for current config button type.
         :return None:
         """
         self._logger.debug("running")
@@ -259,56 +349,56 @@ class VOGModel:
 
     def send_name(self, val: str) -> None:
         """
-        Ask device for current name
+        Ask device for current name.
         :return None:
         """
         self._logger.debug("running")
-        self._send_msg(self._prepare_msg("get_configName", str(val)))
+        self._send_msg(self._prepare_msg("set_configName", str(val)))
         self._logger.debug("done")
 
     def send_open(self, val: str) -> None:
         """
-        Ask device for current max open
+        Ask device for current max open.
         :return None:
         """
         self._logger.debug("running")
-        self._send_msg(self._prepare_msg("get_configMaxOpen", str(val)))
+        self._send_msg(self._prepare_msg("set_configMaxOpen", str(val)))
         self._logger.debug("done")
 
     def send_close(self, val: str) -> None:
         """
-        Ask device for current max close
+        Ask device for current max close.
         :return None:
         """
         self._logger.debug("running")
-        self._send_msg(self._prepare_msg("get_configMaxClose", str(val)))
+        self._send_msg(self._prepare_msg("set_configMaxClose", str(val)))
         self._logger.debug("done")
 
     def send_debounce(self, val: str) -> None:
         """
-        Ask device for current debounce value
+        Ask device for current debounce value.
         :return None:
         """
         self._logger.debug("running")
-        self._send_msg(self._prepare_msg("get_configDebounce", str(val)))
+        self._send_msg(self._prepare_msg("set_configDebounce", str(val)))
         self._logger.debug("done")
 
     def send_click(self, val: int) -> None:
         """
-        Ask device for current mode
+        Ask device for current mode.
         :return None:
         """
         self._logger.debug("running")
-        self._send_msg(self._prepare_msg("get_configClickMode", str(val)))
+        self._send_msg(self._prepare_msg("set_configClickMode", str(val)))
         self._logger.debug("done")
 
     def send_button_control(self, val: str) -> None:
         """
-        Ask device for current config button type
+        Ask device for current config button type.
         :return None:
         """
         self._logger.debug("running")
-        self._send_msg(self._prepare_msg("get_configButtonControl", str(val)))
+        self._send_msg(self._prepare_msg("set_configButtonControl", str(val)))
         self._logger.debug("done")
 
     def save_data(self, data: dict, timestamp: datetime) -> None:
@@ -324,9 +414,11 @@ class VOGModel:
         """
         Write data to save file.
         :param line: The data to write.
-        :return: None.
+        :return None:
         """
+        self._logger.debug("running")
         create_task(write_line_to_file(self._save_dir + self._save_filename, line))
+        self._logger.debug("done")
 
     def _send_msg(self, msg) -> None:
         """
@@ -334,8 +426,10 @@ class VOGModel:
         :param msg: message to be sent
         :return None:
         """
+        self._logger.debug("running")
         if self._conn.is_open:
             self._conn.write(str.encode(msg))
+        self._logger.debug("done")
 
     def send_nhtsa(self):
         """
@@ -380,7 +474,12 @@ class VOGModel:
         self._logger.debug("done")
 
     @staticmethod
-    def _parse_msg(msg_string):
+    def _parse_msg(msg_string) -> dict:
+        """
+        Parse the message from the device into key-value pairs and return as dictionary.
+        :param msg_string: The message from the device.
+        :return dict: The parsed message as key-value pairs.
+        """
         ret = dict()
         ret['values'] = {}
         if msg_string[0:5] == "data|":
@@ -407,6 +506,7 @@ class VOGModel:
             elif msg_string[6:bar_ind] == "ClickMode":
                 ret['values']['ClickMode'] = msg_string[bar_ind + 1: len(msg_string)].rstrip("\r\n")
         elif "Click" in msg_string:
+            ret['type'] = "action"
             ret['action'] = "Click"
         elif "buttonControl" in msg_string:
             ret['type'] = "settings"
@@ -420,8 +520,13 @@ class VOGModel:
         return ret
 
     @staticmethod
-    def _prepare_msg(cmd, arg=None):
-        """ Create string using vog syntax. """
+    def _prepare_msg(cmd, arg=None) -> None:
+        """
+        Create string using VOG syntax.
+        :param cmd: The command to use.
+        :param arg: The optional argument to use.
+        :return None:
+        """
         if arg:
             msg_to_send = ">" + cmd + "|" + arg + "<<\n"
         else:
