@@ -42,11 +42,19 @@ class DRTView(AbstractView):
         self._logger.debug("Initializing")
         super().__init__(name)
 
+        self.subwindow_height = 450
+        self.tab_height = self.subwindow_height * 0.87
+
         # device settings display
         self.dev_sets_frame = EasyFrame()
         self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
         self.config_horizontal_layout = QHBoxLayout()
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
+
+        # Show/Hide Configuration tab
+        self.config_tab = CollapsingTab(self, self.dev_sets_frame, log_handlers)
+        self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
+        self.config_tab.set_tab_height(self.tab_height)
 
         # Set configuration value display area
         self.config_frame = EasyFrame()
@@ -122,13 +130,9 @@ class DRTView(AbstractView):
 
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
-        # Show/Hide Configuration tab
-        self.config_tab = CollapsingTab(self, self.dev_sets_frame, log_handlers)
-        self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
-
         self.strings = dict()
         self.setMinimumWidth(760)
-        self.setFixedHeight(450)
+        self.setFixedHeight(self.subwindow_height)
         self._logger.debug("Initialized")
 
     def add_graph(self, graph):
