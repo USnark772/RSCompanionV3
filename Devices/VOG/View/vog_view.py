@@ -120,6 +120,17 @@ class VOGView(AbstractView):
         self._button_mode_horiz_layout.addWidget(self._button_mode_selector)
         self.dev_sets_layout.addWidget(self._button_mode_frame)
 
+        """ Set control mode setting display area. """
+        self._control_mode_frame = EasyFrame()
+        self._control_mode_horiz_layout = QHBoxLayout(self._control_mode_frame)
+        self._control_mode_label = QLabel(self._control_mode_frame)
+        self._control_mode_horiz_layout.addWidget(self._control_mode_label)
+        self._control_mode_selector = QComboBox(self._control_mode_frame)
+        self._control_mode_selector.addItem("")
+        self._control_mode_selector.addItem("")
+        self._control_mode_horiz_layout.addWidget(self._control_mode_selector)
+        self.dev_sets_layout.addWidget(self._control_mode_frame)
+
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         """ Set upload button selection area. """
@@ -244,6 +255,16 @@ class VOGView(AbstractView):
         """
         self._logger.debug("running")
         self._button_mode_selector.currentIndexChanged.connect(func)
+        self._logger.debug("done")
+
+    def set_control_mode_selector_handler(self, func: classmethod) -> None:
+        """
+        Sets button mode combo box handler.
+        :param func: classmethod that handles the combo
+        :return None:
+        """
+        self._logger.debug("running")
+        self._control_mode_selector.currentIndexChanged.connect(func)
         self._logger.debug("done")
 
     def set_upload_settings_button_handler(self, func: classmethod) -> None:
@@ -384,6 +405,22 @@ class VOGView(AbstractView):
         self._button_mode_selector.setCurrentIndex(val)
         self._logger.debug("done")
 
+    def get_control_mode(self) -> int:
+        """
+        Get index of button mode
+        :return int: index of current button mode
+        """
+        return self._control_mode_selector.currentIndex()
+
+    def set_control_mode(self, val: int) -> None:
+        """
+        Set index of button mode
+        :return None:
+        """
+        self._logger.debug("running")
+        self._control_mode_selector.setCurrentIndex(val)
+        self._logger.debug("done")
+
     def set_lang(self, lang: LangEnum) -> None:
         """
         Set this view's language and reload the text and tooltips.
@@ -413,6 +450,9 @@ class VOGView(AbstractView):
         self._button_mode_label.setText(self._strings[StringsEnum.BUTTON_MODE_LABEL])
         self._button_mode_selector.setItemText(0, self._strings[StringsEnum.HOLD_VAL_LABEL])
         self._button_mode_selector.setItemText(1, self._strings[StringsEnum.CLICK_VAL_LABEL])
+        self._control_mode_label.setText(self._strings[StringsEnum.CONTROL_MODE_LABEL])
+        self._control_mode_selector.setItemText(0, self._strings[StringsEnum.LENS_VAL_LABEL])
+        self._control_mode_selector.setItemText(1, self._strings[StringsEnum.TRIAL_VAL_LABEL])
         self._upload_settings_button.setText(self._strings[StringsEnum.UPLOAD_BUTTON_LABEL])
         self._manual_control_button.setText(self._strings[StringsEnum.TOGGLE_LABEL])
         self.config_tab.set_tab_text(self._strings[StringsEnum.CONFIG_TAB_LABEL])
