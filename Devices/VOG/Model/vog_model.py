@@ -343,15 +343,12 @@ class VOGModel:
         :return None:
         """
         self._logger.debug("running")
-        # self.tab.set_open_inf(False)
-        # self.tab.set_close_inf(False)
         self.send_name("NHTSA")
         self.send_open("1500")
         self.send_close("1500")
         self.send_debounce("20")
         self.send_click(1)
         self.send_button_control("0")
-        # self._set_upload_button(False)
         self._logger.debug("done")
 
     def send_eblind(self):
@@ -360,15 +357,12 @@ class VOGModel:
         :return None:
         """
         self._logger.debug("running")
-        # self.tab.set_open_inf(True)
-        # self.tab.set_close_inf(False)
         self.send_name("eBlindfold")
         self.send_open(defs.max_open_close)
         self.send_close("0")
         self.send_debounce("100")
         self.send_click(1)
         self.send_button_control("0")
-        # self.__set_upload_button(False)
         self._logger.debug("done")
 
     def send_direct_control(self):
@@ -377,15 +371,12 @@ class VOGModel:
         :return None:
         """
         self._logger.debug("running")
-        # self.tab.set_open_inf(True)
-        # self.tab.set_close_inf(True)
         self.send_name("DIRECT CONTROL")
         self.send_open(defs.max_open_close)
         self.send_close("0")
         self.send_debounce("100")
         self.send_click(0)
         self.send_button_control("1")
-        # self.__set_upload_button(False)
         self._logger.debug("done")
 
     @staticmethod

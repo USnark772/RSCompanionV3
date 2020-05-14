@@ -70,7 +70,7 @@ class Controller(AbstractController):
         if self._exp_running:
             self.stop_exp()
         self._msg_handler_task.cancel()
-        # self._model.cleanup()
+        self._model.cleanup()
         self._logger.debug("done")
 
     def set_lang(self, lang: LangEnum) -> None:
@@ -100,8 +100,15 @@ class Controller(AbstractController):
         self._logger.debug("running")
         while True:
             msg, timestamp = await self._model.get_msg()
-            msg_type = msg['type']
-            # TODO: handle message on message type
+            if 'type' in msg.keys():
+                msg_type = msg['type']
+                if msg_type == "data":
+                    self._update_view_data(msg['values'], timestamp)
+                    self._model.save_data(msg['values'], timestamp)
+                elif msg_type == "settings":
+                    self._update_view_config(msg['values'])
+                elif msg_type == "action":
+                    print("action") # TODO: handle action message
 
     def create_exp(self, path: str) -> None:
         """
@@ -156,7 +163,28 @@ class Controller(AbstractController):
         self._model.query_config()
         self._logger.debug("done")
 
+    def _nhtsa_handler(self) -> None:
+        # self.tab.set_open_inf(False)
+        # self.tab.set_close_inf(False)
+        # self._set_upload_button(False)
+        pass
+
+    def _eblind_handler(self) -> None:
+        # self.tab.set_open_inf(True)
+        # self.tab.set_close_inf(False)
+        # self._set_upload_button(False)
+        pass
+
+    def _direct_control_handler(self) -> None:
+        # self.tab.set_open_inf(True)
+        # self.tab.set_close_inf(True)
+        # self._set_upload_button(False)
+        pass
+
+
+
     # TODO: update for vog
+    # TODO: check for inf values on bootup
     def _update_view_config(self, msg: dict) -> None:
         """
         Send device config updates to the view.
@@ -188,3 +216,6 @@ class Controller(AbstractController):
         self._logger.debug("running")
         self.view.set_upload_button(self._model.check_current_input())
         self._logger.debug("done")
+
+    def _update_view_data(self, param, timestamp):
+        pass
