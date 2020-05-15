@@ -43,7 +43,7 @@ class DRTView(AbstractView):
         super().__init__(name)
 
         self.subwindow_height = 450
-        self.tab_height = self.subwindow_height * 0.87
+        self.tab_height = int(self.subwindow_height * 0.87)
 
         # device settings display
         self.dev_sets_frame = EasyFrame()

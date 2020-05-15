@@ -81,6 +81,7 @@ english = {StringsEnum.CUSTOM_LABEL: "Custom",
            StringsEnum.SAVE_HDR: "timestamp, probe #, clicks, milliseconds from experiment start, response time",
            StringsEnum.PLOT_NAME_RT: "Response time",
            StringsEnum.PLOT_NAME_CLICKS: "Clicks",
+           StringsEnum.GRAPH_TS: "Timestamp",
            }
 
 # TODO: Verify French
@@ -110,6 +111,7 @@ french = {StringsEnum.CUSTOM_LABEL: "Douane",
                                 "temp de réponse",
           StringsEnum.PLOT_NAME_RT: "Temp de réponse",
           StringsEnum.PLOT_NAME_CLICKS: "Clics",
+          StringsEnum.GRAPH_TS: "Horodatage",
           }
 
 # TODO: Verify German
@@ -139,6 +141,7 @@ german = {StringsEnum.CUSTOM_LABEL: "Benutzerdefiniert",
                                 " Reaktionszeit",
           StringsEnum.PLOT_NAME_RT: "Reaktionszeit",
           StringsEnum.PLOT_NAME_CLICKS: "Klicks",
+          StringsEnum.GRAPH_TS: "Zeitstempel",
           }
 
 # TODO: Verify Spanish
@@ -168,6 +171,7 @@ spanish = {StringsEnum.CUSTOM_LABEL: "Personalizado",
                                  " milisegundos desde el inicio del experimento, tiempo de respuesta",
            StringsEnum.PLOT_NAME_RT: "Tiempo de respuesta",
            StringsEnum.PLOT_NAME_CLICKS: "Clics",
+           StringsEnum.GRAPH_TS: "marca de tiempo",
            }
 
 # TODO: Verify Chinese (simplified)
@@ -196,6 +200,7 @@ chinese = {StringsEnum.CUSTOM_LABEL: "自订",
            StringsEnum.SAVE_HDR: "时间戳记, 探测 #, 点击次数, 从实验开始算起的毫秒数, 响应时间",
            StringsEnum.PLOT_NAME_RT: "响应时间",
            StringsEnum.PLOT_NAME_CLICKS: "点击次数",
+           StringsEnum.GRAPH_TS: "时间戳记",
            }
 
 strings = {LangEnum.ENG: english,

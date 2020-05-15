@@ -66,6 +66,7 @@ class AppModel:
         self.exp_created = False
         self.exp_running = False
         self.saving = False
+        self._make_cam_controller(0)
         self._logger.debug("Initialized")
 
     def await_new_view(self) -> futures:
@@ -289,24 +290,43 @@ class AppModel:
         if dev_type not in self._controllers.keys():
             self._logger.warning("Could not recognize device type")
             return
-        ret = self._make_controller(conn, dev_type)
+        ret = self._make_rs_controller(conn, dev_type)
         if not ret:
             self._logger.warning("Failed making controller for type: " + dev_type)
             return
         self._logger.debug("done")
 
-    def _make_controller(self, conn: AioSerial, dev_type) -> bool:
+    def _make_rs_controller(self, conn: AioSerial, dev_type) -> bool:
         """
         Create controller of type dev_type
-        :param conn:
-        :param dev_type:
-        :return:
+        :param conn: The com connection for this device.
+        :param dev_type: The type of device.
+        :return bool: Success of controller creation.
         """
         self._logger.debug("running")
         ret = True
         try:
             controller = self._controllers[dev_type](conn, self._current_lang, self._log_handlers)
             self._devs[conn.port] = controller
+            self._new_dev_views.append(controller.get_view())
+            self._new_dev_view_flag.set()
+        except Exception as e:
+            self._logger.exception("Problem making controller")
+            ret = False
+        self._logger.debug("done")
+        return ret
+
+    def _make_cam_controller(self, cam_index: int) -> bool:
+        """
+        Create controller of type camera
+        :param cam_index: The camera index to use.
+        :return:
+        """
+        self._logger.debug("running")
+        ret = True
+        try:
+            controller = self._controllers["Camera"](cam_index, self._current_lang, self._log_handlers)
+            self._devs[cam_index] = controller
             self._new_dev_views.append(controller.get_view())
             self._new_dev_view_flag.set()
         except Exception as e:

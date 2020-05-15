@@ -43,18 +43,16 @@ class VOGView(AbstractView):
         super().__init__(name)
 
         self.subwindow_height = 600
-        self.tab_height = self.subwindow_height * 0.9
+        self.tab_height = int(self.subwindow_height * 0.9)
 
         # device settings display
         self.dev_sets_frame = EasyFrame()
-        # self.dev_sets_frame.setMaximumSize(250, 350)
 
         self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
-        self.config_horizontal_layout = QHBoxLayout()
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         # Show/Hide Configuration tab
-        self.config_tab = CollapsingTab(self, self.dev_sets_frame, log_handlers, 400)
+        self.config_tab = CollapsingTab(self, self.dev_sets_frame, log_handlers, max_width=400)
         self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
         self.config_tab.set_tab_height(self.tab_height)
 
@@ -485,9 +483,11 @@ class VOGView(AbstractView):
         :param lang: The lang enum to use.
         :return: None.
         """
+        self._logger.debug("running")
         self._strings = strings[lang]
         self._set_texts()
         self._set_tooltips()
+        self._logger.debug("done")
 
     def set_upload_button(self, is_active: bool) -> None:
         """

@@ -27,7 +27,6 @@ from abc import ABCMeta, ABC, abstractmethod
 from asyncio import create_task, sleep
 from logging import getLogger, StreamHandler
 from datetime import datetime
-from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavBar
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as Canvas
 from matplotlib.figure import Figure
 from Devices.AbstractDevice.Resources.abstract_strings import strings, StringsEnum, LangEnum
