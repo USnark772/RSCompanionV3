@@ -165,7 +165,8 @@ class Controller(AbstractController):
         self.view.set_button_mode_selector_handler(self._button_mode_handler)
         self.view.set_control_mode_selector_handler(self._control_mode_handler)
         self.view.set_upload_settings_button_handler(self._update_device)
-        self.view.set_manual_control_button_handler(self._manual_control_handler)
+        self.view.set_manual_control_open_button_handler(self._manual_open_handler)
+        self.view.set_manual_control_close_button_handler(self._manual_close_handler)
         self._logger.debug("done")
 
     def _init_values(self) -> None:
@@ -299,12 +300,22 @@ class Controller(AbstractController):
         self._check_for_upload()
         self._logger.debug("done")
 
-    def _manual_control_handler(self) -> None:
+    def _manual_open_handler(self) -> None:
         """
-        Handle user clicking toggle lens button.
+        Handle user clicking open lens button.
         :return None:
         """
         self._logger.debug("running")
+        self._model.send_lens_open()
+        self._logger.debug("done")
+
+    def _manual_close_handler(self) -> None:
+        """
+        Handle user clicking close lens button.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._model.send_lens_close()
         self._logger.debug("done")
 
     def _nhtsa_handler(self) -> None:
@@ -353,6 +364,8 @@ class Controller(AbstractController):
                 self._set_view_val(key, msg[key])
         finally:
             self._updating_config = False
+            self._model.reset_changed()
+            self._check_for_upload()
         self._logger.debug("done")
 
     def _set_view_val(self, var: str, val: str) -> None:

@@ -514,6 +514,24 @@ class VOGModel:
         self.send_button_control("1")
         self._logger.debug("done")
 
+    def send_lens_open(self) -> None:
+        """
+        Tell device to open lens.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._send_msg(self._prepare_msg("do_peekOpen"))
+        self._logger.debug("done")
+
+    def send_lens_close(self) -> None:
+        """
+        Tell device to close lens.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._send_msg(self._prepare_msg("do_peekClose"))
+        self._logger.debug("done")
+
     @staticmethod
     def _parse_msg(msg_string) -> dict:
         """

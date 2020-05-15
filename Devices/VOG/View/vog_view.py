@@ -25,8 +25,8 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from PySide2.QtWidgets import QHBoxLayout, QLabel, QSlider, QGridLayout, QLineEdit, QVBoxLayout, QTabWidget,\
-    QCheckBox, QComboBox
+from PySide2.QtWidgets import QHBoxLayout, QLabel, QGridLayout, QLineEdit, QVBoxLayout, QCheckBox, QComboBox, QFrame, \
+    QSplitter
 from PySide2.QtCore import Qt, QSize
 from Model.app_helpers import ClickAnimationButton, EasyFrame
 from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style
@@ -143,8 +143,14 @@ class VOGView(AbstractView):
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         """ Set manual control selection area. """
-        self._manual_control_button = ClickAnimationButton()
-        self.dev_sets_layout.addWidget(self._manual_control_button)
+        self._manual_control_button_frame = QFrame()
+        self._manual_control_button_frame.setFrameShape(QFrame.NoFrame)
+        self._manual_control_button_layout = QHBoxLayout(self._manual_control_button_frame)
+        self._manual_control_open_button = ClickAnimationButton()
+        self._manual_control_close_button = ClickAnimationButton()
+        self._manual_control_button_layout.addWidget(self._manual_control_open_button)
+        self._manual_control_button_layout.addWidget(self._manual_control_close_button)
+        self.dev_sets_layout.addWidget(self._manual_control_button_frame)
 
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
@@ -280,14 +286,24 @@ class VOGView(AbstractView):
         self._upload_settings_button.clicked.connect(func)
         self._logger.debug("done")
 
-    def set_manual_control_button_handler(self, func: classmethod) -> None:
+    def set_manual_control_open_button_handler(self, func: classmethod) -> None:
         """
-        Sets manual control button handler.
+        Sets manual open button handler.
         :param func: classmethod that handles the button.
         :return None:
         """
         self._logger.debug("running")
-        self._manual_control_button.clicked.connect(func)
+        self._manual_control_open_button.clicked.connect(func)
+        self._logger.debug("done")
+
+    def set_manual_control_close_button_handler(self, func: classmethod) -> None:
+        """
+        Sets manual close button handler.
+        :param func: classmethod that handles the button.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._manual_control_close_button.clicked.connect(func)
         self._logger.debug("done")
 
     def get_config_val(self) -> str:
@@ -506,7 +522,8 @@ class VOGView(AbstractView):
         self._control_mode_selector.setItemText(0, self._strings[StringsEnum.LENS_VAL_LABEL])
         self._control_mode_selector.setItemText(1, self._strings[StringsEnum.TRIAL_VAL_LABEL])
         self._upload_settings_button.setText(self._strings[StringsEnum.UPLOAD_BUTTON_LABEL])
-        self._manual_control_button.setText(self._strings[StringsEnum.TOGGLE_LABEL])
+        self._manual_control_open_button.setText(self._strings[StringsEnum.MANUAL_OPEN_LABEL])
+        self._manual_control_close_button.setText(self._strings[StringsEnum.MANUAL_CLOSE_LABEL])
         self.config_tab.set_tab_text(self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
