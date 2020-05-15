@@ -44,11 +44,12 @@ class VOGModel:
         self._save_filename = str()
         self._save_dir = str()
         self._strings = dict()
-        self._current_vals = ["", 0, 0, 0, 0, 0]
+        self._current_vals = [""]
+        self._current_vals.extend([0] * 5)
         # current config, open, close, debounce, button_mode, control_mode
-        self._errs = [False, False, False]
+        self._errs = [False] * 3
         # open, close, debounce
-        self._changed = [False, False, False, False, False]
+        self._changed = [False] * 6
         # current config, open, close, debounce, button_mode, control_mode
         self._logger.debug("Initialized")
 
@@ -141,6 +142,42 @@ class VOGModel:
         self._logger.debug("running")
         self._conn.close()
         self._logger.debug("done")
+
+    def name_changed(self) -> bool:
+        """
+        :return: Whether or not there is an unsaved user change to this value.
+        """
+        return self._changed[0]
+
+    def open_changed(self) -> bool:
+        """
+        :return: Whether or not there is an unsaved user change to this value.
+        """
+        return self._changed[1]
+
+    def close_changed(self) -> bool:
+        """
+        :return: Whether or not there is an unsaved user change to this value.
+        """
+        return self._changed[2]
+
+    def debounce_changed(self) -> bool:
+        """
+        :return: Whether or not there is an unsaved user change to this value.
+        """
+        return self._changed[3]
+
+    def button_mode_changed(self) -> bool:
+        """
+        :return: Whether or not there is an unsaved user change to this value.
+        """
+        return self._changed[4]
+
+    def control_mode_changed(self) -> bool:
+        """
+        :return: Whether or not there is an unsaved user change to this value.
+        """
+        return self._changed[5]
 
     def check_config_entry(self, entry: str) -> bool:
         """
@@ -427,6 +464,7 @@ class VOGModel:
         :return None:
         """
         self._logger.debug("running")
+        print("sending msg:", msg)
         if self._conn.is_open:
             self._conn.write(str.encode(msg))
         self._logger.debug("done")

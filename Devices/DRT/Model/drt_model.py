@@ -44,9 +44,9 @@ class DRTModel:
         self._save_filename = str()
         self._save_dir = str()
         self._strings = dict()
-        self._current_vals = [0, 0, 0, 0]  # dur, int, upper, lower
-        self._errs = [False, False, False, False]  # dur, upper, lower
-        self._changed = [False, False, False, False]
+        self._current_vals = [0] * 4  # dur, int, upper, lower
+        self._errs = [False] * 4  # dur, int, upper, lower
+        self._changed = [False] * 4
         self._logger.debug("Initialized")
 
     def get_conn(self) -> AioSerial:

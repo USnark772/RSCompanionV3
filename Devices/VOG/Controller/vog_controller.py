@@ -52,8 +52,9 @@ class Controller(AbstractController):
         self._exp_created = False
         self._exp_running = False
         self._updating_config = False
-        # self._setup_handlers()
-        # self._init_values()
+        self._prev_vals = ["0", "0"]  # open_dur, close_dur
+        self._setup_handlers()
+        self._init_values()
         self._msg_handler_task = create_task(self.msg_handler())
         self._strings = dict()
         self.set_lang(lang)
@@ -81,7 +82,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self._strings = strings[lang]
-        # self._model.set_lang(lang)
+        self._model.set_lang(lang)
         self.view.set_lang(lang)
         self._graph.set_lang(lang)
         self._logger.debug("done")
@@ -103,12 +104,12 @@ class Controller(AbstractController):
             if 'type' in msg.keys():
                 msg_type = msg['type']
                 if msg_type == "data":
-                    self._update_view_data(msg['values'], timestamp)
+                    # self._update_view_data(msg['values'], timestamp)
                     self._model.save_data(msg['values'], timestamp)
                 elif msg_type == "settings":
                     self._update_view_config(msg['values'])
                 elif msg_type == "action":
-                    print("action") # TODO: handle action message
+                    print(msg[msg_type])  # TODO: handle action message
 
     def create_exp(self, path: str) -> None:
         """
@@ -152,6 +153,19 @@ class Controller(AbstractController):
 
     def _setup_handlers(self) -> None:
         self._logger.debug("running")
+        self.view.set_config_val_line_edit_handler(self._config_name_handler)
+        self.view.set_nhtsa_button_handler(self._nhtsa_handler)
+        self.view.set_eblindfold_button_handler(self._eblind_handler)
+        self.view.set_direct_control_button_handler(self._direct_control_handler)
+        self.view.set_open_dur_line_edit_handler(self._open_dur_handler)
+        self.view.set_close_dur_line_edit_handler(self._close_dur_handler)
+        self.view.set_open_inf_check_box_handler(self._open_inf_handler)
+        self.view.set_close_inf_check_box_handler(self._close_inf_handler)
+        self.view.set_debounce_time_line_edit_handler(self._debounce_handler)
+        self.view.set_button_mode_selector_handler(self._button_mode_handler)
+        self.view.set_control_mode_selector_handler(self._control_mode_handler)
+        self.view.set_upload_settings_button_handler(self._update_device)
+        self.view.set_manual_control_button_handler(self._manual_control_handler)
         self._logger.debug("done")
 
     def _init_values(self) -> None:
@@ -163,28 +177,169 @@ class Controller(AbstractController):
         self._model.query_config()
         self._logger.debug("done")
 
+    def _config_name_handler(self) -> None:
+        """
+        Handle user changing config name.
+        :return None:
+        """
+        self._logger.debug("running")
+        if not self._updating_config:
+            self._model.check_config_entry(self.view.get_config_val())
+            self._check_for_upload()
+        self._logger.debug("done")
+
+    def _open_dur_handler(self) -> None:
+        """
+        Handle user changing open duration value.
+        :return None:
+        """
+        self._logger.debug("running")
+        if not self._updating_config:
+            self.view.set_open_dur_err(not self._model.check_open_entry(self.view.get_open_dur_val()))
+            self._check_for_upload()
+        self._logger.debug("done")
+
+    def _close_dur_handler(self) -> None:
+        """
+        Handle user changing close duration value.
+        :return None:
+        """
+        self._logger.debug("running")
+        if not self._updating_config:
+            self.view.set_close_dur_err(not self._model.check_close_entry(self.view.get_close_dur_val()))
+            self._check_for_upload()
+        self._logger.debug("done")
+
+    def _open_inf_handler(self, state: int) -> None:
+        """
+        Handle user changing open inf val.
+        :param state: Whether inf is checked or not.
+        :return None:
+        """
+        self._logger.debug("running")
+        if not self._updating_config:
+            if state == 2:
+                self._prev_vals[0] = self.view.get_open_dur_val()
+                self.view.set_open_dur_val(str(defs.max_open_close))
+            elif state == 0:
+                self.view.set_open_dur_val(self._prev_vals[0])
+            self.view.set_open_dur_err(not self._model.check_open_entry(self.view.get_open_dur_val()))
+            self._check_for_upload()
+        self._logger.debug("done")
+
+    def _close_inf_handler(self, state: int) -> None:
+        """
+        Handle user changing close inf val.
+        :param state: Whether inf is checked or not.
+        :return None:
+        """
+        self._logger.debug("running")
+        if not self._updating_config:
+            if state == 2:
+                self._prev_vals[1] = self.view.get_close_dur_val()
+                self.view.set_close_dur_val(str(defs.max_open_close))
+            elif state == 0:
+                self.view.set_close_dur_val(self._prev_vals[1])
+            self.view.set_close_dur_err(not self._model.check_close_entry(self.view.get_close_dur_val()))
+            self._check_for_upload()
+        self._logger.debug("done")
+
+    def _debounce_handler(self) -> None:
+        """
+        Handle user changing debounce time value.
+        :return None:
+        """
+        self._logger.debug("running")
+        if not self._updating_config:
+            self.view.set_debounce_err(not self._model.check_debounce_entry(self.view.get_debounce_val()))
+            self._check_for_upload()
+        self._logger.debug("done")
+
+    def _button_mode_handler(self) -> None:
+        """
+        Handle user changing button mode.
+        :return None:
+        """
+        self._logger.debug("running")
+        if not self._updating_config:
+            self._model.check_button_mode_entry(self.view.get_button_mode())
+            self._check_for_upload()
+        self._logger.debug("done")
+
+    def _control_mode_handler(self) -> None:
+        """
+        Handle user changing control mode.
+        :return None:
+        """
+        self._logger.debug("running")
+        if not self._updating_config:
+            self._model.check_control_mode_entry(self.view.get_control_mode())
+            self._check_for_upload()
+        self._logger.debug("done")
+
+    def _update_device(self) -> None:
+        """
+        Handle user clicking upload button.
+        :return None:
+        """
+        self._logger.debug("running")
+        if self._model.name_changed():
+            self._model.send_name(self.view.get_config_val())
+        if self._model.open_changed():
+            self._model.send_open(self.view.get_open_dur_val())
+        if self._model.close_changed():
+            self._model.send_close(self.view.get_close_dur_val())
+        if self._model.debounce_changed():
+            self._model.send_debounce(self.view.get_debounce_val())
+        if self._model.button_mode_changed():
+            self._model.send_button_control(self.view.get_button_mode())
+        if self._model.control_mode_changed():
+            self._model.send_click(self.view.get_control_mode())
+        self._model.reset_changed()
+        self._check_for_upload()
+        self._logger.debug("done")
+
+    def _manual_control_handler(self) -> None:
+        """
+        Handle user clicking toggle lens button.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._logger.debug("done")
+
     def _nhtsa_handler(self) -> None:
-        # self.tab.set_open_inf(False)
-        # self.tab.set_close_inf(False)
-        # self._set_upload_button(False)
-        pass
+        """
+        Handle user click on NHTSA button.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._model.send_nhtsa()
+        self._model.reset_changed()
+        self._check_for_upload()
+        self._logger.debug("done")
 
     def _eblind_handler(self) -> None:
-        # self.tab.set_open_inf(True)
-        # self.tab.set_close_inf(False)
-        # self._set_upload_button(False)
-        pass
+        """
+        Handle user click on eBlindfold button.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._model.send_eblind()
+        self._model.reset_changed()
+        self._check_for_upload()
+        self._logger.debug("done")
 
     def _direct_control_handler(self) -> None:
-        # self.tab.set_open_inf(True)
-        # self.tab.set_close_inf(True)
-        # self._set_upload_button(False)
-        pass
+        """
+        Handle user click on direct control button.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._model.send_direct_control()
+        self._model.reset_changed()
+        self._check_for_upload()
+        self._logger.debug("done")
 
-
-
-    # TODO: update for vog
-    # TODO: check for inf values on bootup
     def _update_view_config(self, msg: dict) -> None:
         """
         Send device config updates to the view.
@@ -193,19 +348,59 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self._updating_config = True
-        for key in msg:
-            self._set_view_val(key, msg[key])
-        self._updating_config = False
+        try:
+            for key in msg:
+                self._set_view_val(key, msg[key])
+        finally:
+            self._updating_config = False
         self._logger.debug("done")
 
-    def _config_val_handler(self) -> None:
+    def _set_view_val(self, var: str, val: str) -> None:
         """
-        Handles config value entry changes
-        :return None:
+        Set the value for the config field in the view.
+        :param var: The config field.
+        :param val: The new value.
+        :return: None.
         """
+        print("_set_view_val(), var:", var, type(var), " and val:", val, type(val))
         self._logger.debug("running")
-        if not self._updating_config:
-            self._check_for_upload()
+        if var == "Name":
+            self._model.set_current_vals(name=val)
+            self.view.set_config_val(val)
+        elif var == "MaxOpen":
+            int_val = int(val)
+            if int_val == defs.max_open_close:
+                self.view.set_open_inf_check_box(True)
+            else:
+                self.view.set_open_inf_check_box(False)
+            self._model.set_current_vals(max_open=int_val)
+            self.view.set_open_dur_val(val)
+            self._prev_vals[0] = val  # TODO: Does this overwrite after we hit upload?
+            self.view.set_open_dur_err(False)
+        elif var == "MaxClose":
+            int_val = int(val)
+            if int_val == defs.max_open_close:
+                self.view.set_close_inf_check_box(True)
+            else:
+                self.view.set_close_inf_check_box(False)
+            self._model.set_current_vals(max_close=int_val)
+            self.view.set_close_dur_val(val)
+            self._prev_vals[1] = val  # TODO: Does this overwrite after we hit upload?
+            self.view.set_close_dur_err(False)
+        elif var == "Debounce":
+            int_val = int(val)
+            self._model.set_current_vals(debounce=int_val)
+            self.view.set_debounce_val(val)
+            self.view.set_debounce_err(False)
+        elif var == "ClickMode":
+            int_val = int(val)
+            self._model.set_current_vals(button_mode=int_val)
+            self.view.set_button_mode(int_val)
+        elif var == "ButtonControl":
+            int_val = int(val)
+            self._model.set_current_vals(control_mode=int_val)
+            self.view.set_control_mode(int_val)
+        print("_set_view_val(), done setting var:", var, type(var), " and val:", val, type(val))
         self._logger.debug("done")
 
     def _check_for_upload(self) -> None:
@@ -217,5 +412,14 @@ class Controller(AbstractController):
         self.view.set_upload_button(self._model.check_current_input())
         self._logger.debug("done")
 
-    def _update_view_data(self, param, timestamp):
-        pass
+    def _update_view_data(self, values: dict, timestamp: datetime) -> None:
+        """
+        Display data from device on view.
+        :param values: The data to display.
+        :param timestamp: When the data was received.
+        :return: None.
+        """
+        self._logger.debug("running")
+        data = [timestamp, values[defs.output_field[1], values[defs.output_field[1]]]]
+        self._graph.add_data(data)
+        self._logger.debug("done")
