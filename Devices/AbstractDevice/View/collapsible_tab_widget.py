@@ -67,6 +67,16 @@ class CollapsingTab(QTabWidget):
         self.setTabText(self.tab_index, text)
         self._logger.debug("done")
 
+    def set_tab_tooltip(self, text: str) -> None:
+        """
+        Change the tooltip for this tab.
+        :param text: The tooltip to use.
+        :return None:
+        """
+        self._logger.debug("running")
+        self.setTabToolTip(self.tab_index, text)
+        self._logger.debug("done")
+
     def _toggle_collapse(self) -> None:
         """
         Toggle whether this tab is collapsed or not.

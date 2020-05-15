@@ -506,7 +506,7 @@ class VOGView(AbstractView):
         """
         self._logger.debug("running")
         self._config_label.setText(self._strings[StringsEnum.CONFIG_LABEL])
-        self._config_val_line_edit.setText(self._strings[StringsEnum.DCON_LABEL])
+        self._config_val_line_edit.setText(self._strings[StringsEnum.CONFIG_LABEL])
         self._nhtsa_button.setText(self._strings[StringsEnum.NHTSA_LABEL])
         self._eblindfold_button.setText(self._strings[StringsEnum.EBLIND_LABEL])
         self._direct_control_button.setText(self._strings[StringsEnum.DCON_LABEL])
@@ -527,11 +527,21 @@ class VOGView(AbstractView):
         self.config_tab.set_tab_text(self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
-    # TODO: implement this
     def _set_tooltips(self) -> None:
         """
         Set tooltip text fields of view object.
         :return None:
         """
         self._logger.debug("running")
+        self._config_label.setToolTip(self._strings[StringsEnum.CONFIG_LABEL_TOOLTIP])
+        self._config_val_line_edit.setToolTip(self._strings[StringsEnum.CONFIG_LABEL_TOOLTIP])
+        self._open_dur_label.setToolTip(self._strings[StringsEnum.OPEN_DURATION_TOOLTIP])
+        self._close_dur_label.setToolTip(self._strings[StringsEnum.CLOSE_DURATION_TOOLTIP])
+        self._debounce_label.setToolTip(self._strings[StringsEnum.DEBOUNCE_TOOLTIP])
+        self._button_mode_label.setToolTip(self._strings[StringsEnum.BUTTON_MODE_TOOLTIP])
+        self._control_mode_label.setToolTip(self._strings[StringsEnum.CONTROL_MODE_TOOLTIP])
+        self._upload_settings_button.setToolTip(self._strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
+        self._manual_control_open_button.setToolTip(self._strings[StringsEnum.MANUAL_OPEN_TOOLTIP])
+        self._manual_control_close_button.setToolTip(self._strings[StringsEnum.MANUAL_CLOSE_TOOLTIP])
+        self.config_tab.set_tab_tooltip(self._strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self._logger.debug("done")

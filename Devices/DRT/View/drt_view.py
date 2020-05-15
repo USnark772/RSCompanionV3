@@ -365,4 +365,5 @@ class DRTView(AbstractView):
         self.stim_intens_label.setToolTip(self.strings[StringsEnum.INTENSITY_TOOLTIP])
         self.upload_settings_button.setToolTip(self.strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
         self.stim_intens_slider.setToolTip(str(self.stim_intens_slider.value()) + "%")
+        self.config_tab.set_tab_tooltip(self.strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self._logger.debug("done")
