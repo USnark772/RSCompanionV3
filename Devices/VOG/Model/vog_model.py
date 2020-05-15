@@ -446,7 +446,6 @@ class VOGModel:
         :return: None
         """
         self._logger.debug("running")
-        print(__name__, "in save_data(), data:", data)
         self._output_save_data(self._format_save_data(data, timestamp))
         self._logger.debug("done")
 
@@ -457,7 +456,6 @@ class VOGModel:
         :return None:
         """
         self._logger.debug("running")
-        print(__name__, "in _output_save_data(), sending line:", line)
         create_task(write_line_to_file(self._save_dir + self._save_filename, line))
         self._logger.debug("done")
 
@@ -468,7 +466,6 @@ class VOGModel:
         :return None:
         """
         self._logger.debug("running")
-        print("sending msg:", msg)
         if self._conn.is_open:
             self._conn.write(str.encode(msg))
         self._logger.debug("done")

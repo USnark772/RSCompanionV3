@@ -104,10 +104,8 @@ class Controller(AbstractController):
             if 'type' in msg.keys():
                 msg_type = msg['type']
                 if msg_type == "data":
-                    print("type was data")
                     self._update_view_data(msg['values'], timestamp)
                     self._model.save_data(msg['values'], timestamp)
-                    print("Done updating view and model with data.")
                 elif msg_type == "settings":
                     self._update_view_config(msg['values'])
                 elif msg_type == "action":
@@ -434,5 +432,6 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         data = [timestamp, values[defs.output_field[1]], values[defs.output_field[2]]]
+        print(__name__, "Sending data to view. data:", data)
         self._graph.add_data(data)
         self._logger.debug("done")

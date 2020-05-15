@@ -43,7 +43,7 @@ class VOGGraph(BaseGraph):
         self._logger.debug("Initialized")
 
     async def show(self) -> None:
-        self.set_subplots([x[0] for x in self._data])
+        self.set_subplots([self._data[0]])
         await create_task(self.plot(self.get_new()))
 
     def clear_graph(self) -> None:
@@ -51,8 +51,7 @@ class VOGGraph(BaseGraph):
         Clear this graph of any device data.
         :return None:
         """
-        for i in range(len(self._data)):
-            self._data[i] = [self._data[i][0], [], [], []]
+        self._data = [self._data[0], [], [], []]
         self.set_new(True)
         create_task(self.show())
 
@@ -65,27 +64,23 @@ class VOGGraph(BaseGraph):
         self._logger.debug("running")
         super(VOGGraph, self).set_lang(lang)
         self._strings = strings[lang]
-        self._change_plot_names([self._strings[StringsEnum.PLOT_NAME_OPEN_CLOSE]])
+        self._change_plot_name(self._strings[StringsEnum.PLOT_NAME_OPEN_CLOSE])
         create_task(self.show())
         self._logger.debug("done")
 
     async def plot_device_data(self, axes, name) -> []:
         self._logger.debug("running")
-        data = list()
-        for x in self._data:
-            if x[0] == name:
-                data = x
         left = datetime.now()
         right = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         await sleep(.001)
-        line1, = axes.plot(data[1], data[2], marker='o', linestyle='None')
-        axes.plot(data[1], data[3], color=line1.get_color(), marker='s', linestyle='None')
+        axes.plot(self._data[1], self._data[3], marker='s', linestyle='None', )
+        axes.plot(self._data[1], self._data[2], marker='o', linestyle='None')
         await sleep(.001)
-        if len(data[1]) > 0:
-            if right < data[1][-1]:
-                right = data[1][-1]
-            if left > data[1][0]:
-                left = data[1][0]
+        if len(self._data[1]) > 0:
+            if right < self._data[1][-1]:
+                right = self._data[1][-1]
+            if left > self._data[1][0]:
+                left = self._data[1][0]
         temp_left = right - timedelta(minutes=2)
         if left < temp_left:
             left = temp_left
@@ -101,20 +96,19 @@ class VOGGraph(BaseGraph):
         """
         self._logger.debug("running")
         self.set_new(False)
-        self._data[0][1].append(data[0])
-        self._data[0][2].append(data[1])
-        self._data[0][3].append(data[2])
+        self._data[1].append(data[0])
+        self._data[2].append(data[1])
+        self._data[3].append(data[2])
         create_task(self.plot())
         self._logger.debug("done")
 
-    def _change_plot_names(self, names) -> None:
+    def _change_plot_name(self, name: str) -> None:
         """
-        Change the names of the plots
+        Change the name of the plot.
+        :param name: The new plot name.
         :return None:
         """
         if len(self._data) == 0:
-            for name in names:
-                self._data.append([name, [], [], []])
+            self._data = [name, [], [], []]
         else:
-            for i in range(len(names)):
-                self._data[i][0] = names[i]
+            self._data[0] = name
