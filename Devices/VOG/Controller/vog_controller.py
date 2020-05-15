@@ -362,7 +362,6 @@ class Controller(AbstractController):
         :param val: The new value.
         :return: None.
         """
-        print("_set_view_val(), var:", var, type(var), " and val:", val, type(val))
         self._logger.debug("running")
         if var == "Name":
             self._model.set_current_vals(name=val)
@@ -396,11 +395,10 @@ class Controller(AbstractController):
             int_val = int(val)
             self._model.set_current_vals(button_mode=int_val)
             self.view.set_button_mode(int_val)
-        elif var == "ButtonControl":
+        elif var == "buttonControl":
             int_val = int(val)
             self._model.set_current_vals(control_mode=int_val)
             self.view.set_control_mode(int_val)
-        print("_set_view_val(), done setting var:", var, type(var), " and val:", val, type(val))
         self._logger.debug("done")
 
     def _check_for_upload(self) -> None:

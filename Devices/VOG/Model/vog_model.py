@@ -259,6 +259,7 @@ class VOGModel:
         :param entry: The user input.
         :return bool: If changed.
         """
+        # TODO: Figure out why changed[5] is set to the wrong value.
         self._logger.debug("running with entry: " + str(entry))
         self._changed[5] = (entry != self._current_vals[5])
         self._logger.debug("done with: " + str(self._changed[5]))
@@ -436,6 +437,8 @@ class VOGModel:
         """
         self._logger.debug("running")
         self._send_msg(self._prepare_msg("set_configButtonControl", str(val)))
+        self._send_msg(self._prepare_msg("get_configButtonControl"))
+        # Device does not send button control update automatically so we must ask for it explicitly.
         self._logger.debug("done")
 
     def save_data(self, data: dict, timestamp: datetime) -> None:
