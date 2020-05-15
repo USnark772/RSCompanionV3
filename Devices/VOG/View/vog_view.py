@@ -114,48 +114,49 @@ class VOGView(AbstractView):
 
         """ Set button mode setting display area. """
         self._button_mode_frame = EasyFrame()
-        self._button_mode_horiz_layout = QHBoxLayout(self._button_mode_frame)
+        self._button_mode_horiz_layout = QGridLayout(self._button_mode_frame)
+        self._button_mode_horiz_layout.setContentsMargins(0, 6, 0, 6)
         self._button_mode_label = QLabel(self._button_mode_frame)
-        self._button_mode_horiz_layout.addWidget(self._button_mode_label)
+        self._button_mode_horiz_layout.addWidget(self._button_mode_label, 0, 0, 1, 1)
         self._button_mode_selector = QComboBox(self._button_mode_frame)
         self._button_mode_selector.addItem("")
         self._button_mode_selector.addItem("")
-        self._button_mode_horiz_layout.addWidget(self._button_mode_selector)
-        self.dev_sets_layout.addWidget(self._button_mode_frame)
+        self._button_mode_horiz_layout.addWidget(self._button_mode_selector, 0, 1, 1, 1)
 
         """ Set control mode setting display area. """
-        self._control_mode_frame = EasyFrame()
-        self._control_mode_horiz_layout = QHBoxLayout(self._control_mode_frame)
-        self._control_mode_label = QLabel(self._control_mode_frame)
-        self._control_mode_horiz_layout.addWidget(self._control_mode_label)
-        self._control_mode_selector = QComboBox(self._control_mode_frame)
+        self._control_mode_label = QLabel(self._button_mode_frame)
+        self._button_mode_horiz_layout.addWidget(self._control_mode_label, 1, 0, 1, 1)
+        self._control_mode_selector = QComboBox(self._button_mode_frame)
         self._control_mode_selector.addItem("")
         self._control_mode_selector.addItem("")
-        self._control_mode_horiz_layout.addWidget(self._control_mode_selector)
-        self.dev_sets_layout.addWidget(self._control_mode_frame)
+        self._button_mode_horiz_layout.addWidget(self._control_mode_selector, 1, 1, 1, 1)
+        self.dev_sets_layout.addWidget(self._button_mode_frame)
 
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         """ Set upload button selection area. """
+        self._upload_control_buttons_frame = EasyFrame()
+        self._upload_control_buttons_layout = QVBoxLayout(self._upload_control_buttons_frame)
         self._upload_settings_button = ClickAnimationButton()
-        self.dev_sets_layout.addWidget(self._upload_settings_button)
+        # self.dev_sets_layout.addWidget(self._upload_settings_button)
+        self._upload_control_buttons_layout.addWidget(self._upload_settings_button)
 
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        # self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         """ Set manual control selection area. """
-        self._manual_control_button_frame = QFrame()
-        self._manual_control_button_frame.setFrameShape(QFrame.NoFrame)
+        self._manual_control_button_frame = EasyFrame()
         self._manual_control_button_layout = QHBoxLayout(self._manual_control_button_frame)
         self._manual_control_open_button = ClickAnimationButton()
         self._manual_control_close_button = ClickAnimationButton()
         self._manual_control_button_layout.addWidget(self._manual_control_open_button)
         self._manual_control_button_layout.addWidget(self._manual_control_close_button)
-        self.dev_sets_layout.addWidget(self._manual_control_button_frame)
+        self._upload_control_buttons_layout.addWidget(self._manual_control_button_frame)
+        self.dev_sets_layout.addWidget(self._upload_control_buttons_frame)
 
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         self._strings = dict()
-        self.setMinimumWidth(760)
+        self.setMinimumWidth(840)
         self.setFixedHeight(self.subwindow_height)
         self._logger.debug("Initialized")
 
