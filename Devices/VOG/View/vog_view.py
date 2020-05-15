@@ -25,8 +25,7 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from PySide2.QtWidgets import QHBoxLayout, QLabel, QGridLayout, QLineEdit, QVBoxLayout, QCheckBox, QComboBox, QFrame, \
-    QSplitter
+from PySide2.QtWidgets import QHBoxLayout, QLabel, QGridLayout, QLineEdit, QVBoxLayout, QCheckBox, QComboBox, QFrame
 from PySide2.QtCore import Qt, QSize
 from Model.app_helpers import ClickAnimationButton, EasyFrame
 from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style

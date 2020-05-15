@@ -109,7 +109,7 @@ class Controller(AbstractController):
                 elif msg_type == "settings":
                     self._update_view_config(msg['values'])
                 elif msg_type == "action":
-                    print(msg[msg_type])  # TODO: handle action message
+                    pass  # TODO: handle action message?
 
     def create_exp(self, path: str) -> None:
         """
@@ -431,7 +431,6 @@ class Controller(AbstractController):
         :return: None.
         """
         self._logger.debug("running")
-        data = [timestamp, values[defs.output_field[1]], values[defs.output_field[2]]]
-        print(__name__, "Sending data to view. data:", data)
+        data = [timestamp, int(values[defs.output_field[1]]), int(values[defs.output_field[2]])]
         self._graph.add_data(data)
         self._logger.debug("done")

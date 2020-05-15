@@ -52,8 +52,11 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
         self._base_strings = dict()
         self._logger.debug("Initialized")
 
-    def refresh_self(self):
-        """ Redraw the canvas. """
+    def refresh_self(self) -> None:
+        """
+        Redraw this canvas. Good for when making changes to the graph.
+        :return None:
+        """
         self._logger.debug("running")
         try:
             self.figure.canvas.draw()
@@ -90,8 +93,12 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
         """
         pass
 
-    async def plot(self, new=False):
-        """ Reset all subplots to empty then call subclass's plot function for each subplot """
+    async def plot(self, new=False) -> None:
+        """
+        Reset all subplots to empty then call subclass's plot function for each subplot
+        :param new: Whether this graph has any data in it or not.
+        :return None:
+        """
         self._logger.debug("running")
         self.figure.clear()
         self.figure.set_tight_layout(True)
@@ -118,7 +125,12 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
         self.figure.canvas.draw()
         self._logger.debug("done")
 
-    def add_vert_lines(self, timestamp: datetime = None):
+    def add_vert_lines(self, timestamp: datetime = None) -> None:
+        """
+        Add vertical lines at given timestamp to this graph.
+        :param timestamp: The x value to add vertical lines at.
+        :return None:
+        """
         self._logger.debug("running")
         for axes in self.figure.get_axes():
             if timestamp:
@@ -130,7 +142,12 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
                     axes.axvline(line)
         self._logger.debug("done")
 
-    def set_subplots(self, names: [str]):
+    def set_subplots(self, names: [str]) -> None:
+        """
+        Create a subplot per name in names.
+        :param names: The names for the subplots. (Generally the same as the names of the y axes)
+        :return None:
+        """
         self._plots = list()
         self._logger.debug("running")
         if len(names) < 1:

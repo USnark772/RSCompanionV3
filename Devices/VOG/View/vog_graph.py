@@ -73,8 +73,8 @@ class VOGGraph(BaseGraph):
         left = datetime.now()
         right = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         await sleep(.001)
-        axes.plot(self._data[1], self._data[3], marker='s', linestyle='None')
         axes.plot(self._data[1], self._data[2], marker='o', linestyle='None')
+        axes.plot(self._data[1], self._data[3], marker='s', linestyle='None')
         await sleep(.001)
         if len(self._data[1]) > 0:
             if right < self._data[1][-1]:
