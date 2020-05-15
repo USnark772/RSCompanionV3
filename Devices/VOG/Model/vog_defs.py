@@ -26,7 +26,7 @@ https://redscientific.com/index.html
 profile = {"VOG": {"vid": 5824, "pid": 1155}}
 
 output_field = ['trialCounter', 'millis_openElapsed', 'millis_closeElapsed']
-save_field = ['trialCounter', 'millis_openElapsed', 'millis_closeElapsed']
+save_fields = ['trialCounter', 'millis_openElapsed', 'millis_closeElapsed']
 ui_fields = ['block #', 'Total millis open', 'Total millis closed']
 
 max_val = 2147483647

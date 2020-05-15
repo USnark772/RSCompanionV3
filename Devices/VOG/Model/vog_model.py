@@ -446,6 +446,7 @@ class VOGModel:
         :return: None
         """
         self._logger.debug("running")
+        print(__name__, "in save_data(), data:", data)
         self._output_save_data(self._format_save_data(data, timestamp))
         self._logger.debug("done")
 
@@ -456,6 +457,7 @@ class VOGModel:
         :return None:
         """
         self._logger.debug("running")
+        print(__name__, "in _output_save_data(), sending line:", line)
         create_task(write_line_to_file(self._save_dir + self._save_filename, line))
         self._logger.debug("done")
 
@@ -547,7 +549,7 @@ class VOGModel:
                 val_ind_end = msg_string.find(',', val_ind_start + 1)
                 if val_ind_end < 0:
                     val_ind_end = None
-                ret['values'][defs.output_field[i]] = msg_string[val_ind_start:val_ind_end]
+                ret['values'][defs.output_field[i]] = msg_string[val_ind_start:val_ind_end].rstrip("\r\n")
                 if val_ind_end:
                     val_ind_start = val_ind_end + 1
         elif "config" in msg_string:

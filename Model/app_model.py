@@ -248,11 +248,11 @@ class AppModel:
         :param save: Should experiment data be saved.
         :return None:
         """
+        self.saving = True
         if save:
-            self.saving = True
             await get_running_loop().run_in_executor(None, self._convert_to_rs_file)
-            self.saving = False
         self._temp_folder.cleanup()
+        self.saving = False
 
     # TODO: Look into async implementation. https://pypi.org/project/aiofile/
     def _convert_to_rs_file(self) -> None:
