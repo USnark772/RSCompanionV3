@@ -81,17 +81,17 @@ class VOGModel:
         :return None:
         """
         self._logger.debug("running")
-        if name:
+        if type(name) == str:
             self._current_vals[0] = name
-        if max_open:
+        if type(max_open) == int:
             self._current_vals[1] = max_open
-        if max_close:
+        if type(max_close) == int:
             self._current_vals[2] = max_close
-        if debounce:
+        if type(debounce) == int:
             self._current_vals[3] = debounce
-        if button_mode:
+        if type(button_mode) == int:
             self._current_vals[4] = button_mode
-        if control_mode:
+        if type(control_mode) == int:
             self._current_vals[5] = control_mode
         self._logger.debug("done")
 
@@ -259,7 +259,6 @@ class VOGModel:
         :param entry: The user input.
         :return bool: If changed.
         """
-        # TODO: Figure out why changed[5] is set to the wrong value.
         self._logger.debug("running with entry: " + str(entry))
         self._changed[5] = (entry != self._current_vals[5])
         self._logger.debug("done with: " + str(self._changed[5]))

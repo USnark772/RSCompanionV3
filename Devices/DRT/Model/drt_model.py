@@ -75,13 +75,13 @@ class DRTModel:
         :return: None.
         """
         self._logger.debug("running")
-        if duration:
+        if type(duration) == int:
             self._current_vals[0] = duration
-        if intensity:
+        if type(intensity) == int:
             self._current_vals[1] = intensity
-        if upper_isi:
+        if type(upper_isi) == int:
             self._current_vals[2] = upper_isi
-        if lower_isi:
+        if type(lower_isi) == int:
             self._current_vals[3] = lower_isi
         self._logger.debug("done")
 
