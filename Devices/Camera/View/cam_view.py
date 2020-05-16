@@ -24,7 +24,6 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-
 from PySide2.QtWidgets import QVBoxLayout, QLabel, QProgressBar, QHBoxLayout, QCheckBox, QComboBox, QLineEdit, \
     QSizePolicy, QSpacerItem
 from PySide2.QtGui import QPixmap
