@@ -47,7 +47,8 @@ class AppModel:
             self._logger.addHandler(h)
         self._logger.debug("Initializing")
         self._controllers = self.get_controllers()
-        self._scanner = RSDeviceCommScanner(self.get_profiles(), log_handlers)
+        self.rs_dev_scanner = RSDeviceCommScanner(self.get_profiles(), log_handlers)
+        # self.cam_scanner = CamScanner(log_handlers)
         self._ver_check = VersionChecker(log_handlers)
         self._log_handlers = log_handlers
         self._new_dev_view_flag = Event()
@@ -88,7 +89,7 @@ class AppModel:
         Signal when there is a remove view event.
         :return futures: If the flag is set.
         """
-        return self._scanner.await_err()
+        return self.rs_dev_scanner.await_err()
 
     def change_lang(self, lang: LangEnum) -> None:
         """
@@ -140,7 +141,6 @@ class AppModel:
         :return None:
         """
         if self.exp_created:
-            print(__name__, "Got note:", note, " Saving note to:", self._temp_folder.name + self._note_filename)
             timestamp = format_current_time(datetime.now(), True, True, True)
             line = timestamp + ", " + note
             create_task(write_line_to_file(self._temp_folder.name + "/" + self._note_filename, line))
@@ -231,7 +231,7 @@ class AppModel:
         :return None:
         """
         while True:
-            await self._scanner.await_connect()
+            await self.rs_dev_scanner.await_connect()
             self._setup_new_devices()
 
     async def _await_remove_devs(self) -> None:
@@ -240,7 +240,25 @@ class AppModel:
         :return None:
         """
         while True:
-            await self._scanner.await_disconnect()
+            await self.rs_dev_scanner.await_disconnect()
+            self._remove_lost_devices()
+
+    async def _await_new_cams(self) -> None:
+        """
+        Wait for and handle new cameras.
+        :return None:
+        """
+        while True:
+            await self._cam_scanner.await_connect()
+            self._setup_new_devices()
+
+    async def _await_remove_cams(self) -> None:
+        """
+        Wait for and handle cameras to remove.
+        :return None:
+        """
+        while True:
+            await self._cam_scanner.await_disconnect()
             self._remove_lost_devices()
 
     async def _save_exp(self, save: bool) -> None:
@@ -255,7 +273,6 @@ class AppModel:
         self._temp_folder.cleanup()
         self.saving = False
 
-    # TODO: Look into async implementation. https://pypi.org/project/aiofile/
     def _convert_to_rs_file(self) -> None:
         """
         Transfer latest experiment data to .rs file.
@@ -335,51 +352,84 @@ class AppModel:
         self._logger.debug("done")
         return ret
 
-    def _setup_new_devices(self):
+    def _setup_new_devices(self) -> None:
         """
         Get new device info from new device queue and make new device.
         :return: None.
         """
         self._logger.debug("running")
-        ret, item = self._scanner.get_next_new_com()
+        ret, item = self.rs_dev_scanner.get_next_new_com()
         while ret:
             dev_type, connection = item[0], item[1]
             self._make_device(dev_type, connection)
-            ret, item = self._scanner.get_next_new_com()
+            ret, item = self.rs_dev_scanner.get_next_new_com()
         self._logger.debug("done")
 
-    def _remove_lost_devices(self):
+    def _remove_lost_devices(self) -> None:
         """
         For any lost device, destroy controller and signal view removal to controller.
         :return: None.
         """
         self._logger.debug("running")
-        ret, item = self._scanner.get_next_lost_com()
+        ret, item = self.rs_dev_scanner.get_next_lost_com()
         to_remove = []
         while ret:
             for key in self._devs:
-                if self._devs[key].get_conn().port == item.device:
+                conn = self._devs[key].get_conn()
+                if conn and conn.port == item.device:
                     self._remove_dev_views.append(self._devs[key].get_view())
                     self._devs[key].cleanup()
                     to_remove.append(key)
                     self._remove_dev_view_flag.set()
                     break
-            ret, item = self._scanner.get_next_lost_com()
+            ret, item = self.rs_dev_scanner.get_next_lost_com()
         if len(to_remove) > 0:
             for ele in to_remove:
                 del self._devs[ele]
         self._logger.debug("done")
 
-    def start(self):
+    def _remove_lost_cams(self) -> None:
+        """
+        For any lost camera, destroy controller and signal view removal to controller.
+        :return None:
+        """
+        pass
+        # self._logger.debug("running")
+        # ret, item = self._scanner.get_next_lost_com()
+        # to_remove = []
+        # while ret:
+        #     for key in self._devs:
+        #         conn = self._devs[key].get_conn()
+        #         if conn and conn.port == item.device:
+        #             self._remove_dev_views.append(self._devs[key].get_view())
+        #             self._devs[key].cleanup()
+        #             to_remove.append(key)
+        #             self._remove_dev_view_flag.set()
+        #             break
+        #     ret, item = self._scanner.get_next_lost_com()
+        # if len(to_remove) > 0:
+        #     for ele in to_remove:
+        #         del self._devs[ele]
+        # self._logger.debug("done")
+
+    def start(self) -> None:
+        """
+        Create all async tasks this model requires.
+        :return None:
+        """
         self._logger.debug("running")
         self._gatherable_tasks.append(create_task(self._await_new_devs()))
         self._gatherable_tasks.append(create_task(self._await_remove_devs()))
-        self._scanner.start()
+        self.rs_dev_scanner.start()
         self._logger.debug("done")
 
-    def cleanup(self):
+    def cleanup(self) -> None:
+        """
+        End all async tasks that are running and cleanup any other things that might cause shutdown errors.
+        :return None:
+        """
         self._logger.debug("running")
-        self._scanner.cleanup()
+        self.rs_dev_scanner.cleanup()
         while self.saving:
             continue
         for dev in self._devs.values():
@@ -391,8 +441,15 @@ class AppModel:
 
     # TODO add debugging
     @staticmethod
-    def get_profiles():
+    def get_profiles() -> dict:
+        """
+        Iteratively search for any devices and get the profiles for those devices.
+        :return dict: The list of keyval pairs {device name: device profile}
+        """
         profs = {}
+        # TODO: Handle when not under asyncCompanion directory
+        while not os.getcwd().endswith("asyncCompanion"):  # Make sure we are in the right directory.
+            os.chdir(os.pardir)
         for device in os.listdir('Devices'):
             if device != "AbstractDevice":
                 fpath = glob.glob("Devices/" + device + "/Model/*defs.py")
@@ -405,8 +462,15 @@ class AppModel:
 
     # TODO add debugging
     @staticmethod
-    def get_controllers():
+    def get_controllers() -> dict:
+        """
+        Iteratively search for any devices and get the controller classes for those devices.
+        :return dict: The list of keyval pairs {device name: device controller class}
+        """
         controllers = {}
+        # TODO: Handle when not under asyncCompanion directory
+        while not os.getcwd().endswith("asyncCompanion"):  # Make sure we are in the right directory.
+            os.chdir(os.pardir)
         for device in os.listdir('Devices'):
             if device != "AbstractDevice":
                 fpath = glob.glob("Devices/" + device + "/Controller/*controller.py")
