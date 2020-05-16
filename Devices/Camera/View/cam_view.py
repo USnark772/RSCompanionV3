@@ -185,15 +185,15 @@ class CamView(AbstractView):
         :return None:
         """
         self._logger.debug("running")
-        self.initialization_bar_label.setText('Initialization progress')
+        self.initialization_bar_label.setText(self._strings[StringsEnum.INITIALIZATION_BAR_LABEL])
         self.initialization_bar.setValue(0)
-        self.image_display_label.setText("Preview")
-        self.image_display.setText("Initializing")
-        self.show_cam_checkbox_label.setText("Show feed")
-        self.frame_size_selector_label.setText("Frame size")
-        self.frame_rotation_setting_label.setText("Rotate image")
-        self.fps_display_label.setText("FPS:")
-        self.fps_display_value.setText("0")
+        self.image_display_label.setText(self._strings[StringsEnum.IMAGE_DISPLAY_LABEL])
+        self.image_display.setText(self._strings[StringsEnum.IMAGE_DISPLAY])
+        self.show_cam_checkbox_label.setText(self._strings[StringsEnum.SHOW_CAM_CHECKBOX_LABEL])
+        self.frame_size_selector_label.setText(self._strings[StringsEnum.FRAME_SIZE_SELECTOR_LABEL])
+        self.frame_rotation_setting_label.setText(self._strings[StringsEnum.FRAME_ROTATION_SETTING_LABEL])
+        self.fps_display_label.setText(self._strings[StringsEnum.FPS_DISPLAY_LABEL])
+        self.fps_display_value.setText(self._strings[StringsEnum.FPS_DISPLAY_VALUE])
         self._logger.debug("done")
 
     def _set_tooltips(self) -> None:
@@ -202,15 +202,9 @@ class CamView(AbstractView):
         :return None:
         """
         self._logger.debug("running")
-        frame_size_tooltip = "Select resolution for this camera."
-        show_cam_tooltip = "Show or hide camera feed preview. (Does not disable camera)"
-        fps_display_tooltip = "The approximate fps this cam is performing at. This value can be affected by the load "\
-                              "your computer is currently under."
-        rotation_tooltip = "Set degree of rotation for video feed. -360 < value < 360."
-        image_display_tooltip = "Preview of camera feed."
-        self.show_cam_checkbox_frame.setToolTip(show_cam_tooltip)
-        self.frame_size_selector_frame.setToolTip(frame_size_tooltip)
-        self.frame_rotation_setting_frame.setToolTip(rotation_tooltip)
-        self.image_display_frame.setToolTip(image_display_tooltip)
-        self.fps_display_frame.setToolTip(fps_display_tooltip)
+        self.show_cam_checkbox_frame.setToolTip(self._strings[StringsEnum.SHOW_CAM_TOOLTIP])
+        self.frame_size_selector_frame.setToolTip(self._strings[StringsEnum.FRAME_SIZE_TOOLTIP])
+        self.frame_rotation_setting_frame.setToolTip(self._strings[StringsEnum.ROTATION_TOOLTIP])
+        self.image_display_frame.setToolTip(self._strings[StringsEnum.IMAGE_DISPLAY_TOOLTIP])
+        self.fps_display_frame.setToolTip(self._strings[StringsEnum.FPS_DISPLAY_TOOLTIP])
         self._logger.debug("done")
