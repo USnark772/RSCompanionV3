@@ -305,6 +305,19 @@ class AppModel:
             self._logger.exception("Failed trying to stop exp on controller")
             return False
 
+    def _setup_new_devices(self) -> None:
+        """
+        Get new device info from new device queue and make new device.
+        :return: None.
+        """
+        self._logger.debug("running")
+        ret, item = self._rs_dev_scanner.get_next_new_com()
+        while ret:
+            dev_type, connection = item[0], item[1]
+            self._make_device(dev_type, connection)
+            ret, item = self._rs_dev_scanner.get_next_new_com()
+        self._logger.debug("done")
+
     def _make_device(self, dev_type: str, conn: AioSerial) -> None:
         """
         Make new controller for dev_type.
@@ -342,6 +355,18 @@ class AppModel:
         self._logger.debug("done")
         return ret
 
+    def _setup_new_cams(self) -> None:
+        """
+        Get new device info from new device queue and make new device.
+        :return: None.
+        """
+        self._logger.debug("running")
+        ret, cam_index = self._cam_scanner.get_next_new_cam()
+        while ret:
+            self._make_cam_controller(cam_index)
+            ret, cam_index = self._rs_dev_scanner.get_next_new_com()
+        self._logger.debug("done")
+
     def _make_cam_controller(self, cam_index: int) -> bool:
         """
         Create controller of type camera
@@ -360,31 +385,6 @@ class AppModel:
             ret = False
         self._logger.debug("done")
         return ret
-
-    def _setup_new_devices(self) -> None:
-        """
-        Get new device info from new device queue and make new device.
-        :return: None.
-        """
-        self._logger.debug("running")
-        ret, item = self._rs_dev_scanner.get_next_new_com()
-        while ret:
-            dev_type, connection = item[0], item[1]
-            self._make_device(dev_type, connection)
-            ret, item = self._rs_dev_scanner.get_next_new_com()
-        self._logger.debug("done")
-
-    def _setup_new_cams(self) -> None:
-        """
-        Get new device info from new device queue and make new device.
-        :return: None.
-        """
-        self._logger.debug("running")
-        ret, cam_index = self._cam_scanner.get_next_new_cam()
-        while ret:
-            self._make_cam_controller(cam_index)
-            ret, cam_index = self._rs_dev_scanner.get_next_new_com()
-        self._logger.debug("done")
 
     def _remove_lost_devices(self) -> None:
         """
@@ -415,23 +415,20 @@ class AppModel:
         :return None:
         """
         pass
-        # self._logger.debug("running")
-        ret, item = self._cam_scanner.get_next_lost_cam()
-        # to_remove = []
-        # while ret:
-        #     for key in self._devs:
-        #         conn = self._devs[key].get_conn()
-        #         if conn and conn.port == item.device:
-        #             self._remove_dev_views.append(self._devs[key].get_view())
-        #             self._devs[key].cleanup()
-        #             to_remove.append(key)
-        #             self._remove_dev_view_flag.set()
-        #             break
-        #     ret, item = self._scanner.get_next_lost_com()
-        # if len(to_remove) > 0:
-        #     for ele in to_remove:
-        #         del self._devs[ele]
-        # self._logger.debug("done")
+        self._logger.debug("running")
+        ret, cam_index = self._cam_scanner.get_next_lost_cam()
+        to_remove = []
+        while ret:
+            if cam_index in self._devs.keys():
+                self._remove_dev_views.append(self._devs[cam_index].get_view())
+                self._devs[cam_index].cleanup()
+                to_remove.append(cam_index)
+                self._remove_dev_view_flag.set()
+            ret, cam_index = self._cam_scanner.get_next_lost_cam()
+        if len(to_remove) > 0:
+            for ele in to_remove:
+                del self._devs[ele]
+        self._logger.debug("done")
 
     def start(self) -> None:
         """
@@ -444,7 +441,6 @@ class AppModel:
         self._rs_dev_scanner.start()
         self._logger.debug("done")
 
-    # TODO: put exp cleanup trigger in here instead of app_controller?
     def cleanup(self) -> None:
         """
         End all async tasks that are running and cleanup any other things that might cause shutdown errors.
@@ -452,6 +448,10 @@ class AppModel:
         """
         self._logger.debug("running")
         self._rs_dev_scanner.cleanup()
+        if self.exp_running:
+            self.signal_stop_exp()
+        if self.exp_created:
+            self.signal_end_exp(False)
         while self.saving:
             continue
         for dev in self._devs.values():

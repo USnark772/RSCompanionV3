@@ -499,8 +499,8 @@ class AppController:
         Cleanup any code that would cause problems for shutdown and prep for app closure.
         :return None:
         """
-        if self._model.exp_created:
-            self._end_exp(False)
         self._model.cleanup()
+        if self._drive_updater_task:
+            self._drive_updater_task.cancel()
         create_task(end_tasks(self._tasks))
         self.log_output.close()
