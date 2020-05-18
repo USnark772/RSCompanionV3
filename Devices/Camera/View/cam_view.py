@@ -50,78 +50,94 @@ class CamView(AbstractView):
         self._tab_height = int(self._subwindow_height * 0.9)
 
         self._initialization_bar_frame = EasyFrame()
+        self._initialization_bar_frame.setMaximumHeight(70)
         self._initialization_bar_layout = QVBoxLayout(self._initialization_bar_frame)
+
         self._initialization_bar_label = QLabel(self._initialization_bar_frame)
-        self._initialization_bar_layout.addWidget(self._initialization_bar_label)
         self._initialization_bar = QProgressBar(self._initialization_bar_frame)
+        self._initialization_bar.setMaximumHeight(15)
         self._initialization_bar.setTextVisible(True)
         self._initialization_bar.setAlignment(Qt.AlignHCenter)
-        self._initialization_bar.setMaximumHeight(15)
+
+        self._initialization_bar_layout.addWidget(self._initialization_bar_label)
         self._initialization_bar_layout.addWidget(self._initialization_bar)
-        self._initialization_bar_frame.setMaximumHeight(70)
 
         self._show_cam_checkbox_frame = EasyFrame()
+        self._show_cam_checkbox_frame.setMaximumHeight(50)
         self._show_cam_checkbox_layout = QHBoxLayout(self._show_cam_checkbox_frame)
+
         self._show_cam_checkbox_label = QLabel(self._show_cam_checkbox_frame)
         self._show_cam_checkbox_label.setAlignment(Qt.AlignLeft)
-        self._show_cam_checkbox_layout.addWidget(self._show_cam_checkbox_label)
-        self._show_cam_checkbox_layout.addWidget(EasyFrame(vert=True))
+
         self._show_cam_checkbox = QCheckBox()
         self._show_cam_checkbox.setChecked(True)
         self._show_cam_checkbox.setLayoutDirection(Qt.RightToLeft)
+
+        self._show_cam_checkbox_layout.addWidget(self._show_cam_checkbox_label)
+        self._show_cam_checkbox_layout.addWidget(EasyFrame(vert=True))
         self._show_cam_checkbox_layout.addWidget(self._show_cam_checkbox)
-        self._show_cam_checkbox_frame.setMaximumHeight(50)
 
         self._frame_size_selector_frame = EasyFrame()
         self._frame_size_selector_layout = QHBoxLayout(self._frame_size_selector_frame)
-        self._frame_size_selector_label = QLabel(self._frame_size_selector_frame)
-        self._frame_size_selector_label.setAlignment(Qt.AlignLeft)
-        self._frame_size_selector_layout.addWidget(self._frame_size_selector_label)
-        self._frame_size_selector_layout.addWidget(EasyFrame(vert=True))
-        self._frame_size_selector = QComboBox(self._frame_size_selector_frame)
-        self._frame_size_selector.setMaximumHeight(combo_box_height)
-        self._frame_size_selector_layout.addWidget(self._frame_size_selector)
         self._frame_size_selector_frame.setMaximumHeight(50)
 
+        self._frame_size_selector_label = QLabel(self._frame_size_selector_frame)
+        self._frame_size_selector_label.setAlignment(Qt.AlignLeft)
+
+        self._frame_size_selector = QComboBox(self._frame_size_selector_frame)
+        self._frame_size_selector.setMaximumHeight(combo_box_height)
+
+        self._frame_size_selector_layout.addWidget(self._frame_size_selector_label)
+        self._frame_size_selector_layout.addWidget(EasyFrame(vert=True))
+        self._frame_size_selector_layout.addWidget(self._frame_size_selector)
+
         self._frame_rotation_setting_frame = EasyFrame()
+        self._frame_rotation_setting_frame.setMaximumHeight(50)
         self._frame_rotation_setting_layout = QHBoxLayout(self._frame_rotation_setting_frame)
+
         self._frame_rotation_setting_label = QLabel(self._frame_rotation_setting_frame)
         self._frame_rotation_setting_label.setAlignment(Qt.AlignLeft)
-        self._frame_rotation_setting_layout.addWidget(self._frame_rotation_setting_label)
-        self._frame_rotation_setting_layout.addWidget(EasyFrame(vert=True))
+
         self._frame_rotation_setting_entry_box = QLineEdit(self._frame_rotation_setting_frame)
         self._frame_rotation_setting_entry_box.setMaximumSize(90, 20)
         self._frame_rotation_setting_entry_box.setAlignment(Qt.AlignRight)
+
+        self._frame_rotation_setting_layout.addWidget(self._frame_rotation_setting_label)
+        self._frame_rotation_setting_layout.addWidget(EasyFrame(vert=True))
         self._frame_rotation_setting_layout.addWidget(self._frame_rotation_setting_entry_box)
-        self._frame_rotation_setting_frame.setMaximumHeight(50)
 
         self._image_display_frame = EasyFrame()
         self._image_display_layout = QVBoxLayout(self._image_display_frame)
+
         self._image_display_label = QLabel(self._image_display_frame)
         self._image_display_label.setAlignment(Qt.AlignHCenter)
-        self._image_display_layout.addWidget(self._image_display_label)
+
         self._image_display = QLabel(self._image_display_frame)
         self._image_display.setAlignment(Qt.AlignHCenter)
+
+        self._image_display_layout.addWidget(self._image_display_label)
         self._image_display_layout.addWidget(self._image_display)
 
         self._fps_display_frame = EasyFrame()
         self._fps_display_layout = QHBoxLayout(self._fps_display_frame)
+
         self._fps_display_label = QLabel(self._fps_display_frame)
         self._fps_display_label.setAlignment(Qt.AlignRight)
-        self._fps_display_layout.addWidget(self._fps_display_label)
+
         self._fps_display_value = QLabel(self._fps_display_frame)
         self._fps_display_value.setAlignment(Qt.AlignLeft)
+
+        self._fps_display_layout.addWidget(self._fps_display_label)
         self._fps_display_layout.addWidget(self._fps_display_value)
 
         spacer = QSpacerItem(1, 1, vData=QSizePolicy.Expanding)
 
         self._dev_sets_frame = EasyFrame()
-
         self._dev_sets_layout = QVBoxLayout(self._dev_sets_frame)
 
         self._config_tab = CollapsingTab(self, self._dev_sets_frame, max_width=350, log_handlers=log_handlers)
-        self.layout().addWidget(self._config_tab, 0, 1, Qt.AlignRight)
         self._config_tab.set_tab_height(self._tab_height)
+        self.layout().addWidget(self._config_tab, 0, 1, Qt.AlignRight)
 
         self._dev_sets_layout.addWidget(self._initialization_bar_frame)
         self._dev_sets_layout.addWidget(EasyFrame(line=True))

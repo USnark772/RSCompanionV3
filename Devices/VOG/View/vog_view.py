@@ -45,111 +45,117 @@ class VOGView(AbstractView):
         self.subwindow_height = 600
         self.tab_height = int(self.subwindow_height * 0.9)
 
-        # device settings display
-        self.dev_sets_frame = EasyFrame()
-
-        self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
-
-        # Show/Hide Configuration tab
-        self.config_tab = CollapsingTab(self, self.dev_sets_frame, max_width=400, log_handlers=log_handlers)
-        self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
-        self.config_tab.set_tab_height(self.tab_height)
-
         """ Set configuration value display area"""
         self._config_frame = EasyFrame()
         self._config_vertical_layout = QVBoxLayout(self._config_frame)
         self._config_label = QLabel(self._config_frame)
         self._config_label.setAlignment(Qt.AlignCenter)
-        self._config_vertical_layout.addWidget(self._config_label)
         self._config_val_line_edit = QLineEdit(self._config_frame)
         self._config_val_line_edit.setAlignment(Qt.AlignCenter)
-        self._config_vertical_layout.addWidget(self._config_val_line_edit)
-        self.dev_sets_layout.addWidget(self._config_frame)
 
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self._config_vertical_layout.addWidget(self._config_label)
+        self._config_vertical_layout.addWidget(self._config_val_line_edit)
 
         """ Set preset button selection area. """
         self._presets_frame = EasyFrame()
         self._presets_vert_layout = QVBoxLayout(self._presets_frame)
         self._nhtsa_button = ClickAnimationButton(self._presets_frame)
-        self._presets_vert_layout.addWidget(self._nhtsa_button)
         self._eblindfold_button = ClickAnimationButton(self._presets_frame)
-        self._presets_vert_layout.addWidget(self._eblindfold_button)
         self._direct_control_button = ClickAnimationButton(self._presets_frame)
-        self._presets_vert_layout.addWidget(self._direct_control_button)
-        self.dev_sets_layout.addWidget(self._presets_frame)
 
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self._presets_vert_layout.addWidget(self._nhtsa_button)
+        self._presets_vert_layout.addWidget(self._eblindfold_button)
+        self._presets_vert_layout.addWidget(self._direct_control_button)
 
         """ Set open duration, close duration, and debounce time settings display area. """
         self._input_box_frame = EasyFrame()
         self._input_box_grid_layout = QGridLayout(self._input_box_frame)
         self._input_box_grid_layout.setContentsMargins(0, 6, 0, 6)
+
         self._open_dur_label = QLabel(self._input_box_frame)
-        self._input_box_grid_layout.addWidget(self._open_dur_label, 0, 0, 1, 1)
         self._open_dur_line_edit = QLineEdit(self._input_box_frame)
         self._open_dur_line_edit.setFixedWidth(80)
-        self._input_box_grid_layout.addWidget(self._open_dur_line_edit, 0, 1, 1, 1)
         self._open_inf_check_box = QCheckBox(self._input_box_frame)
-        self._input_box_grid_layout.addWidget(self._open_inf_check_box, 0, 2, 1, 1)
+
         self._close_dur_label = QLabel(self._input_box_frame)
-        self._input_box_grid_layout.addWidget(self._close_dur_label, 1, 0, 1, 1)
         self._close_dur_line_edit = QLineEdit(self._input_box_frame)
         self._close_dur_line_edit.setFixedWidth(80)
-        self._input_box_grid_layout.addWidget(self._close_dur_line_edit, 1, 1, 1, 1)
         self._close_inf_check_box = QCheckBox(self._input_box_frame)
-        self._input_box_grid_layout.addWidget(self._close_inf_check_box, 1, 2, 1, 1)
+
         self._debounce_label = QLabel(self._input_box_frame)
-        self._input_box_grid_layout.addWidget(self._debounce_label, 2, 0, 1, 1)
         self._debounce_time_line_edit = QLineEdit(self._input_box_frame)
         self._debounce_time_line_edit.setFixedWidth(80)
-        self._input_box_grid_layout.addWidget(self._debounce_time_line_edit, 2, 1, 1, 1)
-        self.dev_sets_layout.addWidget(self._input_box_frame)
 
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self._input_box_grid_layout.addWidget(self._open_dur_label, 0, 0, 1, 1)
+        self._input_box_grid_layout.addWidget(self._open_dur_line_edit, 0, 1, 1, 1)
+        self._input_box_grid_layout.addWidget(self._open_inf_check_box, 0, 2, 1, 1)
+        self._input_box_grid_layout.addWidget(self._close_dur_label, 1, 0, 1, 1)
+        self._input_box_grid_layout.addWidget(self._close_dur_line_edit, 1, 1, 1, 1)
+        self._input_box_grid_layout.addWidget(self._close_inf_check_box, 1, 2, 1, 1)
+        self._input_box_grid_layout.addWidget(self._debounce_label, 2, 0, 1, 1)
+        self._input_box_grid_layout.addWidget(self._debounce_time_line_edit, 2, 1, 1, 1)
 
         """ Set button mode setting display area. """
         self._button_mode_frame = EasyFrame()
         self._button_mode_horiz_layout = QGridLayout(self._button_mode_frame)
         self._button_mode_horiz_layout.setContentsMargins(0, 6, 0, 6)
         self._button_mode_label = QLabel(self._button_mode_frame)
-        self._button_mode_horiz_layout.addWidget(self._button_mode_label, 0, 0, 1, 1)
         self._button_mode_selector = QComboBox(self._button_mode_frame)
+
         self._button_mode_selector.addItem("")
         self._button_mode_selector.addItem("")
+
+        self._button_mode_horiz_layout.addWidget(self._button_mode_label, 0, 0, 1, 1)
         self._button_mode_horiz_layout.addWidget(self._button_mode_selector, 0, 1, 1, 1)
 
         """ Set control mode setting display area. """
         self._control_mode_label = QLabel(self._button_mode_frame)
-        self._button_mode_horiz_layout.addWidget(self._control_mode_label, 1, 0, 1, 1)
         self._control_mode_selector = QComboBox(self._button_mode_frame)
-        self._control_mode_selector.addItem("")
-        self._control_mode_selector.addItem("")
-        self._button_mode_horiz_layout.addWidget(self._control_mode_selector, 1, 1, 1, 1)
-        self.dev_sets_layout.addWidget(self._button_mode_frame)
 
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self._control_mode_selector.addItem("")
+        self._control_mode_selector.addItem("")
+
+        self._button_mode_horiz_layout.addWidget(self._control_mode_label, 1, 0, 1, 1)
+        self._button_mode_horiz_layout.addWidget(self._control_mode_selector, 1, 1, 1, 1)
 
         """ Set upload button selection area. """
         self._upload_control_buttons_frame = EasyFrame()
         self._upload_control_buttons_layout = QVBoxLayout(self._upload_control_buttons_frame)
         self._upload_settings_button = ClickAnimationButton()
-        # self.dev_sets_layout.addWidget(self._upload_settings_button)
         self._upload_control_buttons_layout.addWidget(self._upload_settings_button)
-
-        # self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         """ Set manual control selection area. """
         self._manual_control_button_frame = EasyFrame()
         self._manual_control_button_layout = QHBoxLayout(self._manual_control_button_frame)
+
         self._manual_control_open_button = ClickAnimationButton()
         self._manual_control_close_button = ClickAnimationButton()
+
         self._manual_control_button_layout.addWidget(self._manual_control_open_button)
         self._manual_control_button_layout.addWidget(self._manual_control_close_button)
         self._upload_control_buttons_layout.addWidget(self._manual_control_button_frame)
-        self.dev_sets_layout.addWidget(self._upload_control_buttons_frame)
 
+        """ device settings display """
+        self.dev_sets_frame = EasyFrame()
+
+        self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
+        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+
+        """ Show/Hide Configuration tab """
+        self.config_tab = CollapsingTab(self, self.dev_sets_frame, max_width=400, log_handlers=log_handlers)
+        self.config_tab.set_tab_height(self.tab_height)
+        self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
+
+        """ Add widgets to layout. """
+        self.dev_sets_layout.addWidget(self._config_frame)
+        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self.dev_sets_layout.addWidget(self._presets_frame)
+        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self.dev_sets_layout.addWidget(self._input_box_frame)
+        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self.dev_sets_layout.addWidget(self._button_mode_frame)
+        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self.dev_sets_layout.addWidget(self._upload_control_buttons_frame)
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         self._strings = dict()
