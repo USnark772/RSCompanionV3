@@ -17,7 +17,6 @@
         - Scanning through data example: DRT_7,_8,_9 clicks threshold x, scan through all by timestamp.
 
 # TODO: At some point
-    - Reformat drt_view.py and vog_view.py to mimic cam_view.py layout.addWidget lines at end of init().
     - Deal with matplotlib error being thrown when subwindows are minimized.
     - Check all files for proper and complete self._logger usage.
     - Figure out how to get app to work with Chinese language.

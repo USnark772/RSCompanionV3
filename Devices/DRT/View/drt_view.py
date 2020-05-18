@@ -46,50 +46,39 @@ class DRTView(AbstractView):
         self.subwindow_height = 450
         self.tab_height = int(self.subwindow_height * 0.87)
 
-        # device settings display
-        self.dev_sets_frame = EasyFrame()
-        self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
-        self.config_horizontal_layout = QHBoxLayout()
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
-
-        # Show/Hide Configuration tab
-        self.config_tab = CollapsingTab(self, self.dev_sets_frame, log_handlers=log_handlers)
-        self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
-        self.config_tab.set_tab_height(self.tab_height)
-
-        # Set configuration value display area
+        """ Set configuration value display area """
         self.config_frame = EasyFrame()
         self.config_layout = QVBoxLayout(self.config_frame)
+
         self.config_label = QLabel(self.config_frame)
         self.config_label.setAlignment(Qt.AlignCenter)
-        self.config_layout.addWidget(self.config_label)
+
         self.config_val = QLabel(self.config_frame)
         self.config_val.setAlignment(Qt.AlignCenter)
+
+        self.config_layout.addWidget(self.config_label)
         self.config_layout.addWidget(self.config_val)
-        self.dev_sets_layout.addWidget(self.config_frame)
 
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
-
-        # Set preset button selection area.
+        """ Set preset button selection area. """
         self.presets_frame = EasyFrame()
         self.presets_layout = QVBoxLayout(self.presets_frame)
+
         self.iso_button = ClickAnimationButton(self.presets_frame)
+
         self.presets_layout.addWidget(self.iso_button)
-        self.dev_sets_layout.addWidget(self.presets_frame)
 
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
-
-        # Set stim intensity settings display area.
+        """ Set stim intensity settings display area. """
         self.slider_frame = EasyFrame()
         self.slider_layout = QVBoxLayout(self.slider_frame)
         self.slider_label_layout = QHBoxLayout(self.slider_frame)
+
         self.stim_intens_label = QLabel(self.slider_frame)
         self.stim_intens_label.setAlignment(Qt.AlignLeft)
-        self.slider_label_layout.addWidget(self.stim_intens_label)
         self.stim_intens_val = QLabel(self.slider_frame)
         self.stim_intens_val.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
-        self.slider_label_layout.addWidget(self.stim_intens_val)
+
         self.slider_layout.addLayout(self.slider_label_layout)
+
         self.stim_intens_slider = QSlider(self.slider_frame)
         self.stim_intens_slider.setMinimum(1)
         self.stim_intens_slider.setMaximum(100)
@@ -97,38 +86,60 @@ class DRTView(AbstractView):
         self.stim_intens_slider.setOrientation(Qt.Horizontal)
         self.stim_intens_slider.setTickPosition(QSlider.TicksBelow)
         self.stim_intens_slider.setTickInterval(10)
+
+        self.slider_label_layout.addWidget(self.stim_intens_label)
+        self.slider_label_layout.addWidget(self.stim_intens_val)
         self.slider_layout.addWidget(self.stim_intens_slider)
-        self.dev_sets_layout.addWidget(self.slider_frame)
 
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
-
-        # Set stim duration, upper isi and lower isi settings display area.
+        """ Set stim duration, upper isi and lower isi settings display area. """
         self.input_box_frame = EasyFrame()
         self.input_box_layout = QGridLayout(self.input_box_frame)
+
         self.stim_dur_line_edit = QLineEdit(self.input_box_frame)
         self.stim_dur_line_edit.setMaximumSize(QSize(100, 16777215))
-        self.input_box_layout.addWidget(self.stim_dur_line_edit, 0, 1, 1, 1)
+        self.stim_dur_label = QLabel(self.input_box_frame)
+
         self.upper_isi_label = QLabel(self.input_box_frame)
-        self.input_box_layout.addWidget(self.upper_isi_label, 1, 0, 1, 1)
         self.upper_isi_line_edit = QLineEdit(self.input_box_frame)
         self.upper_isi_line_edit.setMaximumSize(QSize(100, 16777215))
-        self.input_box_layout.addWidget(self.upper_isi_line_edit, 1, 1, 1, 1)
-        self.stim_dur_label = QLabel(self.input_box_frame)
-        self.input_box_layout.addWidget(self.stim_dur_label, 0, 0, 1, 1)
+
         self.lower_isi_line_edit = QLineEdit(self.input_box_frame)
         self.lower_isi_line_edit.setMaximumSize(QSize(100, 16777215))
-        self.input_box_layout.addWidget(self.lower_isi_line_edit, 2, 1, 1, 1)
         self.lower_isi_label = QLabel(self.input_box_frame)
+
+        self.input_box_layout.addWidget(self.stim_dur_line_edit, 0, 1, 1, 1)
+        self.input_box_layout.addWidget(self.upper_isi_label, 1, 0, 1, 1)
+        self.input_box_layout.addWidget(self.upper_isi_line_edit, 1, 1, 1, 1)
+        self.input_box_layout.addWidget(self.stim_dur_label, 0, 0, 1, 1)
+        self.input_box_layout.addWidget(self.lower_isi_line_edit, 2, 1, 1, 1)
         self.input_box_layout.addWidget(self.lower_isi_label, 2, 0, 1, 1)
-        self.dev_sets_layout.addWidget(self.input_box_frame)
 
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
-
-        # Set upload button selection area.
+        """ Set upload button selection area. """
         self.upload_settings_button = ClickAnimationButton()
         self.upload_settings_button.setEnabled(False)
-        self.dev_sets_layout.addWidget(self.upload_settings_button)
 
+        """ device settings display """
+        self.dev_sets_frame = EasyFrame()
+        self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
+        self.config_horizontal_layout = QHBoxLayout()
+
+        """ Show/Hide Configuration tab """
+        self.config_tab = CollapsingTab(self, self.dev_sets_frame, log_handlers=log_handlers)
+        self.config_tab.set_tab_height(self.tab_height)
+
+        self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
+
+        """ Add all of the widgets to the layout. """
+        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self.dev_sets_layout.addWidget(self.config_frame)
+        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self.dev_sets_layout.addWidget(self.presets_frame)
+        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self.dev_sets_layout.addWidget(self.slider_frame)
+        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self.dev_sets_layout.addWidget(self.input_box_frame)
+        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self.dev_sets_layout.addWidget(self.upload_settings_button)
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         self.strings = dict()
