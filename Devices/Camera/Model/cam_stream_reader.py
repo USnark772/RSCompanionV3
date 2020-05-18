@@ -23,21 +23,33 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
+from logging import getLogger, StreamHandler
 from cv2 import VideoCapture, CAP_PROP_FOURCC, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
-from threading import Thread
+from queue import SimpleQueue
 from time import time
+from asyncio import futures, Event, create_task, get_running_loop, Queue, sleep
 from Devices.Camera.Model import cam_defs as defs
+from Model.app_helpers import await_event, end_tasks
 
 
 # TODO: Update this to use async
 class StreamReader:
-    def __init__(self, index: int):
+    def __init__(self, index: int = 0, log_handlers: [StreamHandler] = None):
+        self._logger = getLogger(__name__)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
+        self._logger.debug("Initializing")
         self.running = False
         self.stream = VideoCapture(index, defs.cap_backend)
-        ret, self.frame = self.stream.read()
-        self.new_frame = True
-        self.t: Thread = Thread()
-        self.failure = False
+        ret, self.latest_frame = self.stream.read()
+        self._new_frame_event = Event()
+        self._err_event = Event()
+        self._awaitable_tasks = []
+        self._cancellable_tasks = []
+        self._internal_frame_q = SimpleQueue()
+        self._loop = get_running_loop()
+        self._logger.debug("Initialized")
 
     def cleanup(self):
         self.stop()
@@ -45,30 +57,56 @@ class StreamReader:
 
     def start(self):
         self.running = True
-        self.t = Thread(target=self._update, args=())
-        self.t.start()
+        self._awaitable_tasks.append(self._loop.run_in_executor(None, self._read_cam))
+        self._awaitable_tasks.append(create_task(self._update()))
 
-    def _update(self):
+    def await_new_frame(self) -> futures:
+        """
+        Signal when there is a connect event.
+        :return futures: If the flag is set.
+        """
+        return await_event(self._new_frame_event)
+
+    def await_err(self) -> futures:
+        """
+        Signal when there is a connect event.
+        :return futures: If the flag is set.
+        """
+        return await_event(self._err_event)
+
+    async def _update(self):
         while self.running:
-            start = time()
-            ret, self.frame = self.stream.read()
-            end = time()
-            time_taken = end - start
-            if not ret or self.frame is None or time_taken > 0.2:
-                self.running = False
-                self.failure = True
-                break
-            self.new_frame = True
+            if not self._internal_frame_q.empty():
+                ret, frame = self._internal_frame_q.get()
+                if not ret:
+                    self._err_event.set()
+                    self.running = False
+                    break
+                self.latest_frame = frame
+                self._new_frame_event.set()
+            else:
+                await sleep(.0001)
 
     def stop(self):
         self.running = False
-        if self.t.is_alive():
-            self.t.join()
+        for task in self._cancellable_tasks:
+            task.cancel()
+        create_task(end_tasks(self._awaitable_tasks))
+
+    def _read_cam(self) -> None:
+        while self.running:
+            start = time()
+            ret, frame = self.stream.read()
+            end = time()
+            time_taken = end - start
+            if not ret or frame is None or time_taken > 0.2:
+                self._internal_frame_q.put((False, None))
+                break
+            else:
+                self._internal_frame_q.put((ret, frame))
 
     def get_latest_frame(self):
-        ret = self.new_frame
-        self.new_frame = False
-        return ret, self.frame
+        return self.latest_frame
 
     def test_frame_size(self, size: (float, float)):
         ret1 = self.stream.set(CAP_PROP_FRAME_WIDTH, size[0])

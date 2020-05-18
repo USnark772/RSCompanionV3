@@ -169,7 +169,6 @@ class CamView(AbstractView):
         self._logger.debug("running")
         self._show_cam_checkbox.toggled.connect(func)
         self._logger.debug("done")
-
     def set_frame_size_selector_handler(self, func):
         self._logger.debug("running")
         self._frame_size_selector.activated.connect(func)
@@ -178,6 +177,16 @@ class CamView(AbstractView):
     def set_frame_rotation_handler(self, func):
         self._logger.debug("running")
         self._frame_rotation_setting_entry_box.textChanged.connect(func)
+        self._logger.debug("done")
+
+    def update_image(self, image: QPixmap) -> None:
+        """
+        Update image viewer with new image.
+        :param image: The new image to show.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._image_display.setPixmap(image)
         self._logger.debug("done")
 
     def _set_texts(self) -> None:

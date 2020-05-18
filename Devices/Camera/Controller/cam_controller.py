@@ -24,8 +24,11 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
+from asyncio import create_task
 from Devices.AbstractDevice.Controller.abstract_controller import AbstractController
+from Model.app_helpers import end_tasks
 from Devices.Camera.View.cam_view import CamView
+from Devices.Camera.Model.cam_model import CamModel
 from Devices.Camera.Resources.cam_strings import strings, StringsEnum, LangEnum
 
 
@@ -39,8 +42,11 @@ class Controller(AbstractController):
         cam_name = "CAM_" + str(cam_index)
         view = CamView(cam_name, log_handlers)
         super().__init__(view)
-        # TODO: Do stuff here.
+        self._model = CamModel(cam_name, cam_index, log_handlers)
         self.set_lang(lang)
+        self._awaitable_tasks = []
+        self._cancellable_tasks = []
+        self._awaitable_tasks.append(create_task(self._update_view()))
         self._logger.debug("Initialized")
 
     def set_lang(self, lang: LangEnum) -> None:
@@ -54,7 +60,19 @@ class Controller(AbstractController):
         self._logger.debug("done")
 
     def cleanup(self) -> None:
-        pass
+        self._model.cleanup()
+        for task in self._cancellable_tasks:
+            task.cancel()
+        create_task(end_tasks(self._awaitable_tasks))
+
+    async def _update_view(self) -> None:
+        """
+        Update view with latest image from camera.
+        :return None:
+        """
+        while True:
+            await self._model.await_new_image()
+            self.view.update_image(self._model.get_latest_frame())
 
     def _setup_handlers(self) -> None:
         """

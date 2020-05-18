@@ -479,7 +479,10 @@ class AppModel:
                     spec = importlib.util.spec_from_file_location("stuff", fpath[0])
                     mod = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(mod)
-                    profs.update(mod.profile)
+                    try:
+                        profs.update(mod.profile)
+                    except Exception as e:
+                        pass
         return profs
 
     # TODO add debugging

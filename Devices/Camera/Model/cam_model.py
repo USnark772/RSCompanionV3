@@ -24,11 +24,14 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from cv2 import COLOR_BGR2RGB, cvtColor, VideoCapture
+from asyncio import create_task, Event, futures
+from cv2 import COLOR_BGR2RGB, cvtColor
 from numpy import ndarray
 from PySide2.QtGui import QImage, QPixmap
 from PySide2.QtCore import Qt
+from Model.app_helpers import await_event
 from Devices.Camera.Model import cam_defs as defs
+from Devices.Camera.Model.cam_stream_reader import StreamReader
 
 
 class CamModel:
@@ -38,8 +41,44 @@ class CamModel:
             for h in log_handlers:
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
-        self._cap = VideoCapture(cam_index, defs.cap_backend)
+        self._new_image_event = Event()
+        self._cam_reader = StreamReader(cam_index)
+        self._cam_reader.start()
+        self._latest_frame: ndarray
         self._logger.debug("Initialized")
+
+    def await_new_image(self) -> futures:
+        """
+        Signal when there is a connect event.
+        :return futures: If the flag is set.
+        """
+        return await_event(self._new_image_event)
+
+    def get_latest_frame(self) -> QPixmap:
+        """
+        :return QPixmap: The latest frame in QPixmap form.
+        """
+        return self.convert_frame_to_qt_image(self._latest_frame)
+
+    def cleanup(self) -> None:
+        """
+        Cleanup this code and prep for app closure.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._cam_reader.cleanup()
+        self._logger.debug("done")
+
+    async def _handle_new_frame(self) -> None:
+        """
+        Handle frames from camera
+        :return None:
+        """
+        while True:
+            await self._cam_reader.await_new_frame()
+            self._latest_frame = self._cam_reader.get_latest_frame()
+            self._new_image_event.set()
+            # TODO: Do stuff with frame here.
 
     @staticmethod
     def convert_frame_to_qt_image(frame: ndarray) -> QPixmap:
