@@ -55,3 +55,10 @@ class Controller(AbstractController):
 
     def cleanup(self) -> None:
         pass
+
+    def _setup_handlers(self) -> None:
+        """
+        Connect handlers to view object.
+        :return None:
+        """
+        pass

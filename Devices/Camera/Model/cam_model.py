@@ -23,8 +23,12 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-import cv2
 from logging import getLogger, StreamHandler
+from cv2 import COLOR_BGR2RGB, cvtColor, VideoCapture
+from numpy import ndarray
+from PySide2.QtGui import QImage, QPixmap
+from PySide2.QtCore import Qt
+from Devices.Camera.Model import cam_defs as defs
 
 
 class CamModel:
@@ -34,5 +38,19 @@ class CamModel:
             for h in log_handlers:
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
-        # TODO: Do stuff here.
+        self._cap = VideoCapture(cam_index, defs.cap_backend)
         self._logger.debug("Initialized")
+
+    @staticmethod
+    def convert_frame_to_qt_image(frame: ndarray) -> QPixmap:
+        """
+        Convert image to suitable format for display in Qt.
+        :param frame: The image to convert.
+        :return QPixmap: The converted image.
+        """
+        rgb_image = cvtColor(frame, COLOR_BGR2RGB)
+        h, w, ch = rgb_image.shape
+        bytes_per_line = ch * w
+        convert_to_qt_format = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format_RGB888)
+        p = convert_to_qt_format.scaled(248, 186, Qt.KeepAspectRatio)
+        return QPixmap.fromImage(p)
