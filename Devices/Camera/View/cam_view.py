@@ -169,6 +169,7 @@ class CamView(AbstractView):
         self._logger.debug("running")
         self._show_cam_checkbox.toggled.connect(func)
         self._logger.debug("done")
+
     def set_frame_size_selector_handler(self, func):
         self._logger.debug("running")
         self._frame_size_selector.activated.connect(func)
@@ -204,6 +205,7 @@ class CamView(AbstractView):
         self._frame_rotation_setting_label.setText(self._strings[StringsEnum.FRAME_ROTATION_SETTING_LABEL])
         self._fps_display_label.setText(self._strings[StringsEnum.FPS_DISPLAY_LABEL])
         self._fps_display_value.setText(self._strings[StringsEnum.FPS_DISPLAY_VALUE])
+        self._config_tab.set_tab_text(self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
     def _set_tooltips(self) -> None:
@@ -217,4 +219,5 @@ class CamView(AbstractView):
         self._frame_rotation_setting_frame.setToolTip(self._strings[StringsEnum.ROTATION_TOOLTIP])
         self._image_display_frame.setToolTip(self._strings[StringsEnum.IMAGE_DISPLAY_TOOLTIP])
         self._fps_display_frame.setToolTip(self._strings[StringsEnum.FPS_DISPLAY_TOOLTIP])
+        self._config_tab.set_tab_tooltip(self._strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self._logger.debug("done")

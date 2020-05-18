@@ -29,6 +29,7 @@ from enum import Enum, auto
 
 # Define enum like this.
 class StringsEnum(Enum):
+    CONFIG_TAB_LABEL = auto()
     INITIALIZATION_BAR_LABEL = auto()
     IMAGE_DISPLAY_LABEL = auto()
     IMAGE_DISPLAY = auto()
@@ -37,6 +38,7 @@ class StringsEnum(Enum):
     FRAME_ROTATION_SETTING_LABEL = auto()
     FPS_DISPLAY_LABEL = auto()
     FPS_DISPLAY_VALUE = auto()
+    CONFIG_TAB_TOOLTIP = auto()
     FRAME_SIZE_TOOLTIP = auto()
     SHOW_CAM_TOOLTIP = auto()
     FPS_DISPLAY_TOOLTIP = auto()
@@ -45,7 +47,8 @@ class StringsEnum(Enum):
 
 
 # Define languages like this.
-english = {StringsEnum.INITIALIZATION_BAR_LABEL: "Initialization progress",
+english = {StringsEnum.CONFIG_TAB_LABEL: "Configuration",
+           StringsEnum.INITIALIZATION_BAR_LABEL: "Initialization progress",
            StringsEnum.IMAGE_DISPLAY_LABEL: "Preview",
            StringsEnum.IMAGE_DISPLAY: "Initializing",
            StringsEnum.SHOW_CAM_CHECKBOX_LABEL: "Show Feed",
@@ -53,6 +56,7 @@ english = {StringsEnum.INITIALIZATION_BAR_LABEL: "Initialization progress",
            StringsEnum.FRAME_ROTATION_SETTING_LABEL: "Rotate Image",
            StringsEnum.FPS_DISPLAY_LABEL: "FPS:",
            StringsEnum.FPS_DISPLAY_VALUE: "0",
+           StringsEnum.CONFIG_TAB_TOOLTIP: "Show/Hide configuration tab",
            StringsEnum.FRAME_SIZE_TOOLTIP: "Select resolution for this camera.",
            StringsEnum.SHOW_CAM_TOOLTIP: "Show or hide camera feed preview. (Does not disable camera)",
            StringsEnum.FPS_DISPLAY_TOOLTIP: "The approximate fps this camera is performing at. This value can be"
@@ -62,7 +66,8 @@ english = {StringsEnum.INITIALIZATION_BAR_LABEL: "Initialization progress",
            }
 
 # TODO: Verify translations
-french = {StringsEnum.INITIALIZATION_BAR_LABEL: "Progression de l'initialisation",
+french = {StringsEnum.CONFIG_TAB_LABEL: "Configuration",
+          StringsEnum.INITIALIZATION_BAR_LABEL: "Progression de l'initialisation",
           StringsEnum.IMAGE_DISPLAY_LABEL: "Aperçu",
           StringsEnum.IMAGE_DISPLAY: "Initialisation",
           StringsEnum.SHOW_CAM_CHECKBOX_LABEL: "Afficher le flux",
@@ -70,6 +75,7 @@ french = {StringsEnum.INITIALIZATION_BAR_LABEL: "Progression de l'initialisation
           StringsEnum.FRAME_ROTATION_SETTING_LABEL: "Faire pivoter l'image",
           StringsEnum.FPS_DISPLAY_LABEL: "FPS:",
           StringsEnum.FPS_DISPLAY_VALUE: "0",
+          StringsEnum.CONFIG_TAB_TOOLTIP: "Afficher/masquer l'onglet de configuration",
           StringsEnum.FRAME_SIZE_TOOLTIP: "Sélectionnez la résolution de cette caméra.",
           StringsEnum.SHOW_CAM_TOOLTIP: "Afficher ou masquer l'aperçu du flux de la caméra."
                                         " (Ne désactive pas la caméra)",
@@ -79,7 +85,8 @@ french = {StringsEnum.INITIALIZATION_BAR_LABEL: "Progression de l'initialisation
           StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Aperçu du flux de la caméra.",
           }
 
-german = {StringsEnum.INITIALIZATION_BAR_LABEL: "Initialisierungsfortschritt",
+german = {StringsEnum.CONFIG_TAB_LABEL: "Konfiguration",
+          StringsEnum.INITIALIZATION_BAR_LABEL: "Initialisierungsfortschritt",
           StringsEnum.IMAGE_DISPLAY_LABEL: "Vorschau",
           StringsEnum.IMAGE_DISPLAY: "Initialisieren",
           StringsEnum.SHOW_CAM_CHECKBOX_LABEL: "Feed anzeigen",
@@ -87,6 +94,7 @@ german = {StringsEnum.INITIALIZATION_BAR_LABEL: "Initialisierungsfortschritt",
           StringsEnum.FRAME_ROTATION_SETTING_LABEL: "Bild drehen",
           StringsEnum.FPS_DISPLAY_LABEL: "FPS:",
           StringsEnum.FPS_DISPLAY_VALUE: "0",
+          StringsEnum.CONFIG_TAB_TOOLTIP: "Registerkarte Konfiguration anzeigen/ausblenden",
           StringsEnum.FRAME_SIZE_TOOLTIP: "Wählen Sie die Auflösung für diese Kamera.",
           StringsEnum.SHOW_CAM_TOOLTIP: "Vorschau des Kamera-Feeds ein- oder ausblenden."
                                         " (Deaktiviert die Kamera nicht)",
@@ -96,7 +104,8 @@ german = {StringsEnum.INITIALIZATION_BAR_LABEL: "Initialisierungsfortschritt",
           StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Vorschau des Kamera-Feeds.",
           }
 
-spanish = {StringsEnum.INITIALIZATION_BAR_LABEL: "Progreso de inicialización",
+spanish = {StringsEnum.CONFIG_TAB_LABEL: "Configuración",
+           StringsEnum.INITIALIZATION_BAR_LABEL: "Progreso de inicialización",
            StringsEnum.IMAGE_DISPLAY_LABEL: "Preestreno",
            StringsEnum.IMAGE_DISPLAY: "Inicializando",
            StringsEnum.SHOW_CAM_CHECKBOX_LABEL: "Mostrar feed",
@@ -104,6 +113,7 @@ spanish = {StringsEnum.INITIALIZATION_BAR_LABEL: "Progreso de inicialización",
            StringsEnum.FRAME_ROTATION_SETTING_LABEL: "Girar imagen",
            StringsEnum.FPS_DISPLAY_LABEL: "FPS:",
            StringsEnum.FPS_DISPLAY_VALUE: "0",
+           StringsEnum.CONFIG_TAB_TOOLTIP: "Mostrar/Ocultar pestaña de configuración",
            StringsEnum.FRAME_SIZE_TOOLTIP: "Seleccione la resolución para esta cámara.",
            StringsEnum.SHOW_CAM_TOOLTIP: "Mostrar u ocultar la vista previa de alimentación de la cámara."
                                          " (No desactiva la cámara)",
