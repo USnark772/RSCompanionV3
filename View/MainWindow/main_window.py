@@ -40,10 +40,12 @@ window_state = "mw_state"
 
 class AppMainWindow(QMainWindow):
     """ The main window the app will be displayed in. """
-    def __init__(self, min_size: QSize, log_handlers: [StreamHandler], lang: LangEnum):
+    def __init__(self, min_size: QSize = QSize(10, 10), lang: LangEnum = LangEnum.ENG,
+                 log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
-        for h in log_handlers:
-            self._logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__()
         self._icon = QIcon(image_file_path + "rs_icon.png")

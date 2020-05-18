@@ -34,15 +34,15 @@ class VersionChecker:
     """
     Checks version number against latest version from the site
     """
-
-    def __init__(self, log_handlers: [StreamHandler]):
+    def __init__(self, log_handlers: [StreamHandler] = None):
         """
         Initialize the version checker
         :return None:
         """
         self.logger = getLogger(__name__)
-        for h in log_handlers:
-            self.logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self.logger.addHandler(h)
         self.logger.debug("Initializing")
         self.latest_version = self.get_latest_version()
         self.logger.debug("Initialized")

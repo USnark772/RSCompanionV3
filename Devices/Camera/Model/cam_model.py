@@ -28,10 +28,11 @@ from logging import getLogger, StreamHandler
 
 
 class CamModel:
-    def __init__(self, cam_name: str, cam_index: int, log_handlers: [StreamHandler]):
+    def __init__(self, cam_name: str = "", cam_index: int = 0, log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
-        for h in log_handlers:
-            self._logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
         # TODO: Do stuff here.
         self._logger.debug("Initialized")

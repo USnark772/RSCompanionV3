@@ -31,10 +31,11 @@ from Resources.Strings.menu_bar_strings import strings, StringsEnum, LangEnum
 
 class AppMenuBar(QMenuBar):
     """ This code is for the menu bar at the top of the main window. File, help, etc. """
-    def __init__(self, parent, log_handlers: [StreamHandler], lang: LangEnum):
+    def __init__(self, parent=None, lang: LangEnum = LangEnum.ENG, log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
-        for h in log_handlers:
-            self._logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(parent)
         self.setGeometry(QRect(0, 0, 840, 22))

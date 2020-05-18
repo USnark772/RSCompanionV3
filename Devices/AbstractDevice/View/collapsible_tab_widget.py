@@ -29,11 +29,12 @@ from PySide2.QtWidgets import QTabWidget, QWidget
 
 
 class CollapsingTab(QTabWidget):
-    def __init__(self, parent, contents: QWidget, log_handlers: [StreamHandler], max_width: int = 350,
-                 max_height: int = 380):
+    def __init__(self, parent=None, contents: QWidget = QWidget(), max_width: int = 350, max_height: int = 380,
+                 log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
-        for h in log_handlers:
-            self._logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(parent)
         self._vis = True

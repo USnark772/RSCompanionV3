@@ -33,10 +33,12 @@ from Resources.Strings.info_box_strings import strings, StringsEnum, LangEnum
 
 class InfoBox(QGroupBox):
     """ This code is for displaying information about the current experiment. """
-    def __init__(self, parent, size: QSize, log_handlers: [StreamHandler], lang: LangEnum):
+    def __init__(self, parent=None, size: QSize = QSize(10, 10), lang: LangEnum = LangEnum.ENG,
+                 log_handlers: [StreamHandler] = None):
         self.logger = getLogger(__name__)
-        for h in log_handlers:
-            self.logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self.logger.addHandler(h)
         self.logger.debug("Initializing")
         super().__init__(parent)
         self.setFixedSize(size)

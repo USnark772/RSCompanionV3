@@ -26,16 +26,19 @@ https://redscientific.com/index.html
 
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QGroupBox, QGridLayout, QTextEdit
+from PySide2.QtCore import QSize
 from Model.app_helpers import ClickAnimationButton
 from Resources.Strings.note_box_strings import strings, StringsEnum, LangEnum
 
 
 class NoteBox(QGroupBox):
     """ This code is for the user to input notes as desired. """
-    def __init__(self, parent, size, log_handlers: [StreamHandler], lang: LangEnum):
+    def __init__(self, parent=None, size: QSize = QSize(10, 10), lang: LangEnum = LangEnum.ENG,
+                 log_handlers: [StreamHandler] = None):
         self.logger = getLogger(__name__)
-        for h in log_handlers:
-            self.logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self.logger.addHandler(h)
         self.logger.debug("Initializing")
         super().__init__(parent)
         self.setLayout(QGridLayout())

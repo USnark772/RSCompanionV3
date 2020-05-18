@@ -37,12 +37,17 @@ from Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
 
 
 class Controller(AbstractController):
-    def __init__(self, conn: AioSerial, lang: LangEnum, log_handlers: [StreamHandler]):
+    def __init__(self, conn: AioSerial = AioSerial(), lang: LangEnum = LangEnum.ENG,
+                 log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
-        for h in log_handlers:
-            self._logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
-        device_name = "DRT_" + conn.port.strip("COM")
+        try:
+            device_name = "DRT_" + conn.port.strip("COM")
+        except:
+            device_name = "DRT_NONE"
         view = DRTView(device_name, log_handlers)
         super().__init__(view)
         self._model = DRTModel(device_name, conn, log_handlers)

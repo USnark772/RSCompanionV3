@@ -89,18 +89,18 @@ class AppController:
         note_box_size = QSize(250, 120)
         drive_info_box_size = QSize(200, 120)
         mdi_area_min_size = QSize(500, 300)
-        self.main_window = AppMainWindow(ui_min_size, [self.app_lh, self.stderr_lh], self._lang)
-        self.menu_bar = AppMenuBar(self.main_window, [self.app_lh, self.stderr_lh], self._lang)
-        self.button_box = ButtonBox(self.main_window, button_box_size, [self.app_lh, self.stderr_lh], self._lang)
-        self.info_box = InfoBox(self.main_window, info_box_size, [self.app_lh, self.stderr_lh], self._lang)
-        self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, [self.app_lh, self.stderr_lh], self._lang)
-        self.flag_box = FlagBox(self.main_window, flag_box_size, [self.app_lh, self.stderr_lh], self._lang)
-        self.note_box = NoteBox(self.main_window, note_box_size, [self.app_lh, self.stderr_lh], self._lang)
+        self.main_window = AppMainWindow(ui_min_size, self._lang, [self.app_lh, self.stderr_lh])
+        self.menu_bar = AppMenuBar(self.main_window, self._lang, [self.app_lh, self.stderr_lh])
+        self.button_box = ButtonBox(self.main_window, button_box_size, self._lang, [self.app_lh, self.stderr_lh])
+        self.info_box = InfoBox(self.main_window, info_box_size, self._lang, [self.app_lh, self.stderr_lh])
+        self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, self._lang, [self.app_lh, self.stderr_lh])
+        self.flag_box = FlagBox(self.main_window, flag_box_size, self._lang, [self.app_lh, self.stderr_lh])
+        self.note_box = NoteBox(self.main_window, note_box_size, self._lang, [self.app_lh, self.stderr_lh])
         self.mdi_area = MDIArea(self.main_window, mdi_area_min_size, [self.app_lh, self.stderr_lh])
         self._file_dialog = QFileDialog(self.main_window)
 
         # Model
-        self._model = AppModel([self.app_lh, self.stderr_lh], self._lang)
+        self._model = AppModel(self._lang, [self.app_lh, self.stderr_lh])
 
         # from PySide2.QtWidgets import QMdiSubWindow
         # for i in range(6):

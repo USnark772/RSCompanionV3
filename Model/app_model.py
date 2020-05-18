@@ -34,6 +34,7 @@ from datetime import datetime
 from asyncio import Event, create_task, futures, get_running_loop
 from aioserial import AioSerial
 from Model.rs_device_com_scanner import RSDeviceCommScanner
+from Model.cam_scanner import CamScanner
 from Model.app_defs import LangEnum
 from Model.app_helpers import await_event, end_tasks, write_line_to_file, format_current_time
 from Model.version_checker import VersionChecker
@@ -41,14 +42,15 @@ from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
 class AppModel:
-    def __init__(self, log_handlers: [StreamHandler], lang: LangEnum):
+    def __init__(self, lang: LangEnum = LangEnum.ENG, log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
-        for h in log_handlers:
-            self._logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
         self._controllers = self.get_controllers()
-        self.rs_dev_scanner = RSDeviceCommScanner(self.get_profiles(), log_handlers)
-        # self.cam_scanner = CamScanner(log_handlers)
+        self._rs_dev_scanner = RSDeviceCommScanner(self.get_profiles(), log_handlers)
+        self._cam_scanner = CamScanner(log_handlers)
         self._ver_check = VersionChecker(log_handlers)
         self._log_handlers = log_handlers
         self._new_dev_view_flag = Event()
@@ -86,10 +88,17 @@ class AppModel:
 
     def await_dev_con_err(self) -> futures:
         """
-        Signal when there is a remove view event.
+        Signal when there is a err connecting to rs device.
         :return futures: If the flag is set.
         """
-        return self.rs_dev_scanner.await_err()
+        return self._rs_dev_scanner.await_err()
+
+    def await_cam_con_err(self) -> futures:
+        """
+        Signal when there is a err connecting to camera.
+        :return futures: If the flag is set.
+        """
+        return self._cam_scanner.await_err()
 
     def change_lang(self, lang: LangEnum) -> None:
         """
@@ -231,7 +240,7 @@ class AppModel:
         :return None:
         """
         while True:
-            await self.rs_dev_scanner.await_connect()
+            await self._rs_dev_scanner.await_connect()
             self._setup_new_devices()
 
     async def _await_remove_devs(self) -> None:
@@ -240,7 +249,7 @@ class AppModel:
         :return None:
         """
         while True:
-            await self.rs_dev_scanner.await_disconnect()
+            await self._rs_dev_scanner.await_disconnect()
             self._remove_lost_devices()
 
     async def _await_new_cams(self) -> None:
@@ -250,7 +259,7 @@ class AppModel:
         """
         while True:
             await self._cam_scanner.await_connect()
-            self._setup_new_devices()
+            self._setup_new_cams()
 
     async def _await_remove_cams(self) -> None:
         """
@@ -358,11 +367,23 @@ class AppModel:
         :return: None.
         """
         self._logger.debug("running")
-        ret, item = self.rs_dev_scanner.get_next_new_com()
+        ret, item = self._rs_dev_scanner.get_next_new_com()
         while ret:
             dev_type, connection = item[0], item[1]
             self._make_device(dev_type, connection)
-            ret, item = self.rs_dev_scanner.get_next_new_com()
+            ret, item = self._rs_dev_scanner.get_next_new_com()
+        self._logger.debug("done")
+
+    def _setup_new_cams(self) -> None:
+        """
+        Get new device info from new device queue and make new device.
+        :return: None.
+        """
+        self._logger.debug("running")
+        ret, cam_index = self._cam_scanner.get_next_new_cam()
+        while ret:
+            self._make_cam_controller(cam_index)
+            ret, cam_index = self._rs_dev_scanner.get_next_new_com()
         self._logger.debug("done")
 
     def _remove_lost_devices(self) -> None:
@@ -371,7 +392,7 @@ class AppModel:
         :return: None.
         """
         self._logger.debug("running")
-        ret, item = self.rs_dev_scanner.get_next_lost_com()
+        ret, item = self._rs_dev_scanner.get_next_lost_com()
         to_remove = []
         while ret:
             for key in self._devs:
@@ -382,7 +403,7 @@ class AppModel:
                     to_remove.append(key)
                     self._remove_dev_view_flag.set()
                     break
-            ret, item = self.rs_dev_scanner.get_next_lost_com()
+            ret, item = self._rs_dev_scanner.get_next_lost_com()
         if len(to_remove) > 0:
             for ele in to_remove:
                 del self._devs[ele]
@@ -395,7 +416,7 @@ class AppModel:
         """
         pass
         # self._logger.debug("running")
-        # ret, item = self._scanner.get_next_lost_com()
+        ret, item = self._cam_scanner.get_next_lost_cam()
         # to_remove = []
         # while ret:
         #     for key in self._devs:
@@ -420,16 +441,17 @@ class AppModel:
         self._logger.debug("running")
         self._gatherable_tasks.append(create_task(self._await_new_devs()))
         self._gatherable_tasks.append(create_task(self._await_remove_devs()))
-        self.rs_dev_scanner.start()
+        self._rs_dev_scanner.start()
         self._logger.debug("done")
 
+    # TODO: put exp cleanup trigger in here instead of app_controller?
     def cleanup(self) -> None:
         """
         End all async tasks that are running and cleanup any other things that might cause shutdown errors.
         :return None:
         """
         self._logger.debug("running")
-        self.rs_dev_scanner.cleanup()
+        self._rs_dev_scanner.cleanup()
         while self.saving:
             continue
         for dev in self._devs.values():

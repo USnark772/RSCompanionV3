@@ -38,10 +38,11 @@ combo_box_height = 22
 
 
 class CamView(AbstractView):
-    def __init__(self, name: str, log_handlers: [StreamHandler]):
+    def __init__(self, name: str = "", log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
-        for h in log_handlers:
-            self._logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(name)
 
@@ -118,7 +119,7 @@ class CamView(AbstractView):
 
         self._dev_sets_layout = QVBoxLayout(self._dev_sets_frame)
 
-        self._config_tab = CollapsingTab(self, self._dev_sets_frame, log_handlers, max_width=350)
+        self._config_tab = CollapsingTab(self, self._dev_sets_frame, max_width=350, log_handlers=log_handlers)
         self.layout().addWidget(self._config_tab, 0, 1, Qt.AlignRight)
         self._config_tab.set_tab_height(self._tab_height)
 

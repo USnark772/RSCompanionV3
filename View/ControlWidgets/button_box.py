@@ -35,10 +35,12 @@ from Resources.Strings.button_box_strings import strings, StringsEnum, LangEnum
 
 class ButtonBox(QGroupBox):
     """ This code is to contain the overall controls which govern running experiments. """
-    def __init__(self, parent, size: QSize, log_handlers: [StreamHandler], lang: LangEnum):
+    def __init__(self, parent=None, size: QSize = QSize(10, 10), lang: LangEnum = LangEnum.ENG,
+                 log_handlers: [StreamHandler] = None):
         self.logger = getLogger(__name__)
-        for h in log_handlers:
-            self.logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self.logger.addHandler(h)
         self.logger.debug("Initializing")
         super().__init__(parent)
         self.setLayout(QVBoxLayout())

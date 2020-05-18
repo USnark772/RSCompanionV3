@@ -31,7 +31,7 @@ from Resources.Strings.output_window_strings import strings, StringsEnum, LangEn
 # TODO: Proper logging for this file?
 class OutputWindow(QWidget):
     """ This is to display small messages to the user. """
-    def __init__(self, lang: LangEnum):
+    def __init__(self, lang: LangEnum = LangEnum.ENG):
         super().__init__()
         self.resize(400, 200)
         self.move(100, 100)

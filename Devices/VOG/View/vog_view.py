@@ -52,7 +52,7 @@ class VOGView(AbstractView):
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         # Show/Hide Configuration tab
-        self.config_tab = CollapsingTab(self, self.dev_sets_frame, log_handlers, max_width=400)
+        self.config_tab = CollapsingTab(self, self.dev_sets_frame, max_width=400, log_handlers=log_handlers)
         self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
         self.config_tab.set_tab_height(self.tab_height)
 

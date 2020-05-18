@@ -1,4 +1,4 @@
-"""
+""" 
 Licensed under GNU GPL-3.0-or-later
 
 This file is part of RS Companion.
@@ -17,26 +17,41 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
-Date: 2019
+Date: 2020
 Project: Companion App
 Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-import logging
-from PySide2.QtWidgets import QMessageBox
+from logging import getLogger, StreamHandler
 
 
-# TODO: Proper logging for this file?
-class HelpWindow(QMessageBox):
-    """ This is to display small messages to the user. """
-    def __init__(self, name: str = "No Title", text: str = "No Text"):
-        self._logger = logging.getLogger(__name__)
+class CamScanner:
+    def __init__(self, log_handlers: [StreamHandler] = None):
+        self._logger = getLogger(__name__)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
-        super().__init__()
-        self.setWindowTitle(name)
-        self.setText(text)
-        self.setStandardButtons(QMessageBox.Close)
-        self.setDefaultButton(QMessageBox.Close)
-        self.setEscapeButton(QMessageBox.Close)
         self._logger.debug("Initialized")
+
+    def start(self):
+        pass
+
+    def cleanup(self):
+        pass
+
+    def get_next_new_cam(self):
+        pass
+
+    def get_next_lost_cam(self):
+        pass
+
+    def await_connect(self):
+        pass
+
+    def await_disconnect(self):
+        pass
+
+    def await_err(self):
+        pass

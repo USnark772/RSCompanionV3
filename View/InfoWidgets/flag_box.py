@@ -33,10 +33,12 @@ from Resources.Strings.flag_box_strings import strings, StringsEnum, LangEnum
 
 class FlagBox(QGroupBox):
     """ This code is for showing and storing the keyflag which in this case is the last letter key the user pressed. """
-    def __init__(self, parent, size: QSize, log_handlers: [StreamHandler], lang: LangEnum):
+    def __init__(self, parent=None, size: QSize = QSize(10, 10), lang: LangEnum = LangEnum.ENG,
+                 log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
-        for h in log_handlers:
-            self._logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(parent)
         self.setLayout(QVBoxLayout())

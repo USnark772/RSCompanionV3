@@ -26,13 +26,14 @@ https://redscientific.com/index.html
 
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QLabel, QGridLayout, QGroupBox
-from PySide2.QtCore import Qt
+from PySide2.QtCore import QSize, Qt
 from Resources.Strings.drive_info_strings import strings, StringsEnum, LangEnum
 
 
 class DriveInfoBox(QGroupBox):
     """ This code is for displaying information about storage usage. """
-    def __init__(self, parent, size: (int, int), log_handlers: [StreamHandler], lang: LangEnum):
+    def __init__(self, parent = None, size: QSize = QSize(10, 10), lang: LangEnum = LangEnum.ENG,
+                 log_handlers: [StreamHandler] = None):
         """
         Initialize this view module.
         :param parent: parent of this view module.
@@ -40,8 +41,9 @@ class DriveInfoBox(QGroupBox):
         :param log_handlers:
         """
         self._logger = getLogger(__name__)
-        for h in log_handlers:
-            self._logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(parent)
         self.setFixedSize(size)

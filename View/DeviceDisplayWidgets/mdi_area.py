@@ -31,10 +31,11 @@ from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 class MDIArea(QMdiArea):
     """ The area to show device specific views. """
-    def __init__(self, parent, size: QSize, log_handlers: [StreamHandler]):
+    def __init__(self, parent=None, size: QSize = QSize(10, 10), log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
-        for h in log_handlers:
-            self._logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(parent)
         self.setMinimumSize(size)

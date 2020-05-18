@@ -30,10 +30,11 @@ from Devices.Camera.Resources.cam_strings import strings, StringsEnum, LangEnum
 
 
 class Controller(AbstractController):
-    def __init__(self, cam_index: int, lang: LangEnum, log_handlers: [StreamHandler]):
+    def __init__(self, cam_index: int = 0, lang: LangEnum = LangEnum.ENG, log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
-        for h in log_handlers:
-            self._logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
         cam_name = "CAM_" + str(cam_index)
         view = CamView(cam_name, log_handlers)

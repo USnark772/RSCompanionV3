@@ -32,10 +32,11 @@ from Model.app_helpers import ClickAnimationButton
 # TODO: Merge this with base graph?
 class GraphFrame(QFrame):
     """ This code is to contain and properly size graph widgets. """
-    def __init__(self, parent, graph: BaseGraph, log_handlers: [StreamHandler]):
+    def __init__(self, parent=None, graph: BaseGraph = BaseGraph(), log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
-        for h in log_handlers:
-            self._logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(parent)
         size_policy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
