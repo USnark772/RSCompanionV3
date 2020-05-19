@@ -503,5 +503,8 @@ class AppModel:
                     spec = importlib.util.spec_from_file_location(device, fpath[0])
                     mod = importlib.util.module_from_spec(spec)
                     spec.loader.exec_module(mod)
-                    controllers.update({device: mod.Controller})
+                    try:
+                        controllers.update({device: mod.Controller})
+                    except Exception as e:
+                        pass
         return controllers
