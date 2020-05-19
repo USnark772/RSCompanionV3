@@ -157,3 +157,9 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
         for i in range(0, r):
             self._plots.append((names[i], (r, c, i + 1), True))
         self._logger.debug("done")
+
+    def resizeEvent(self, event):
+        try:
+            Canvas.resizeEvent(self, event)
+        except ValueError as e:
+            pass
