@@ -24,6 +24,7 @@ https://redscientific.com/index.html
 """
 
 from cv2 import CAP_DSHOW, VideoWriter_fourcc
+from enum import Enum, auto
 
 cap_backend = CAP_DSHOW
 cap_temp_codec = VideoWriter_fourcc(*'mjpg')
@@ -42,3 +43,17 @@ list_of_common_sizes = [(640.0, 480.0),
                         (1600.0, 1200.0),
                         (1920.0, 1080.0),
                         ]
+
+
+class ModelEnum(Enum):
+    CLEANUP = auto()
+    START = auto()
+    STOP = auto()
+    SET_RES = auto()
+    GET_RES = auto()
+    SET_FPS = auto()
+    GET_FPS = auto()
+    CUR_FPS = auto()
+    SET_USE_CAM = auto()
+    SET_USE_FEED = auto()
+    FAILURE = auto()
