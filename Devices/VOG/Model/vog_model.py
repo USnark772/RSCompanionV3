@@ -34,7 +34,7 @@ from Devices.VOG.Resources.vog_strings import strings, StringsEnum, LangEnum
 
 
 class VOGModel:
-    def __init__(self, dev_name: str = "", conn: AioSerial = AioSerial(), log_handlers: [StreamHandler] = None):
+    def __init__(self, dev_name: str = "VOG_NONE", conn: AioSerial = AioSerial(), log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
         if log_handlers:
             for h in log_handlers:

@@ -35,10 +35,11 @@ from Devices.AbstractDevice.View.collapsible_tab_widget import CollapsingTab
 
 
 class VOGView(AbstractView):
-    def __init__(self, name, log_handlers: [StreamHandler]):
+    def __init__(self, name: str = "VOG_NONE", log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
-        for h in log_handlers:
-            self._logger.addHandler(h)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(name)
 

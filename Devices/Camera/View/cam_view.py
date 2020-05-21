@@ -38,7 +38,7 @@ combo_box_height = 22
 
 
 class CamView(AbstractView):
-    def __init__(self, name: str = "", log_handlers: [StreamHandler] = None):
+    def __init__(self, name: str = "CAM_NONE", log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
         if log_handlers:
             for h in log_handlers:

@@ -55,7 +55,7 @@ class SubWindow(QMdiSubWindow):
 
 
 class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
-    def __init__(self, name: str = ""):
+    def __init__(self, name: str = "DEFAULT"):
         ABC.__init__(self)
         SubWindow.__init__(self)
         self._name = name

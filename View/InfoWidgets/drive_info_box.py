@@ -32,7 +32,7 @@ from Resources.Strings.drive_info_strings import strings, StringsEnum, LangEnum
 
 class DriveInfoBox(QGroupBox):
     """ This code is for displaying information about storage usage. """
-    def __init__(self, parent = None, size: QSize = QSize(10, 10), lang: LangEnum = LangEnum.ENG,
+    def __init__(self, parent=None, size: QSize = QSize(10, 10), lang: LangEnum = LangEnum.ENG,
                  log_handlers: [StreamHandler] = None):
         """
         Initialize this view module.

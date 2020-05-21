@@ -35,7 +35,7 @@ from Devices.AbstractDevice.View.collapsible_tab_widget import CollapsingTab
 
 
 class DRTView(AbstractView):
-    def __init__(self, name = "", log_handlers: [StreamHandler] = None):
+    def __init__(self, name: str = "DRT_NONE", log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
         if log_handlers:
             for h in log_handlers:
