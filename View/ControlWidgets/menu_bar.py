@@ -45,6 +45,8 @@ class AppMenuBar(QMenuBar):
 
         self._open_last_save_dir_action = QAction(self)
 
+        self._exit_action = QAction(self)
+
         # self._cam_list_menu = QMenu(self)
         # self._file_menu.addMenu(self._cam_list_menu)
 
@@ -147,6 +149,8 @@ class AppMenuBar(QMenuBar):
 
         # Menu bar -> File menu options
         self._file_menu.addAction(self._open_last_save_dir_action)
+        self._file_menu.addSeparator()
+        self._file_menu.addAction(self._exit_action)
 
         # Menu bar -> Settings menu options
         self._settings_menu.addMenu(self._subwindow_layout_menu)
@@ -275,6 +279,16 @@ class AppMenuBar(QMenuBar):
         """
 
         self._use_cams_action.setEnabled(is_active)
+
+    def add_exit_handler(self, func: classmethod) -> None:
+        """
+        Add handler to this selectable.
+        :param func: The handler.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._exit_action.triggered.connect(func)
+        self._logger.debug("done")
 
     def add_open_last_save_dir_handler(self, func: classmethod) -> None:
         """
@@ -476,6 +490,7 @@ class AppMenuBar(QMenuBar):
         self._logger.debug("running")
         self._file_menu.setTitle(self._strings[StringsEnum.FILE])
         self._open_last_save_dir_action.setText(self._strings[StringsEnum.LAST_DIR])
+        self._exit_action.setText(self._strings[StringsEnum.EXIT])
         self._settings_menu.setTitle(self._strings[StringsEnum.SETTINGS])
         self._subwindow_layout_menu.setTitle(self._strings[StringsEnum.LAYOUT])
         self._horiz_action.setText(self._strings[StringsEnum.HORIZONTAL])

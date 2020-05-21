@@ -31,6 +31,7 @@ from enum import Enum, auto
 class StringsEnum(Enum):
     FILE = auto()
     LAST_DIR = auto()
+    EXIT = auto()
     HELP = auto()
     ABOUT_APP = auto()
     ABOUT_COMPANY = auto()
@@ -64,6 +65,7 @@ lang_chi = "中文"
 
 english = {StringsEnum.FILE: "File",
            StringsEnum.LAST_DIR: "Open last save location",
+           StringsEnum.EXIT: "Exit",
            StringsEnum.HELP: "Help",
            StringsEnum.ABOUT_APP: "About " + app_name,
            StringsEnum.ABOUT_COMPANY: "About " + company_name,
@@ -91,6 +93,7 @@ english = {StringsEnum.FILE: "File",
 # TODO: Verify French
 french = {StringsEnum.FILE: "Fichier",
           StringsEnum.LAST_DIR: "Ouvrir le dernier emplacement d'enregistrement",
+          StringsEnum.EXIT: "Sortie",
           StringsEnum.HELP: "Assistance",
           StringsEnum.ABOUT_APP: "À propos de " + app_name,
           StringsEnum.ABOUT_COMPANY: "À propos de " + company_name,
@@ -118,6 +121,7 @@ french = {StringsEnum.FILE: "Fichier",
 # TODO: Verify German
 german = {StringsEnum.FILE: "Datei",
           StringsEnum.LAST_DIR: "Öffnen Sie den letzten Speicherort",
+          StringsEnum.EXIT: "Ausgang",
           StringsEnum.HELP: "Hilfe",
           StringsEnum.ABOUT_APP: "Über " + app_name,
           StringsEnum.ABOUT_COMPANY: "Über " + company_name,
@@ -145,6 +149,7 @@ german = {StringsEnum.FILE: "Datei",
 # TODO: Verify Spanish
 spanish = {StringsEnum.FILE: "Expediente",
            StringsEnum.LAST_DIR: "Abrir la última ubicación de guardado",
+           StringsEnum.EXIT: "Salida",
            StringsEnum.HELP: "Ayuda",
            StringsEnum.ABOUT_APP: "Acerca de " + app_name,
            StringsEnum.ABOUT_COMPANY: "Acerca de " + company_name,
@@ -172,6 +177,7 @@ spanish = {StringsEnum.FILE: "Expediente",
 # TODO: Verify Chinese (simplified)
 chinese = {StringsEnum.FILE: "文件",
            StringsEnum.LAST_DIR: "打开上一个保存位置",
+           StringsEnum.EXIT: "退出",
            StringsEnum.HELP: "帮帮",
            StringsEnum.ABOUT_APP: "关于 " + app_name,
            StringsEnum.ABOUT_COMPANY: "关于 " + company_name,

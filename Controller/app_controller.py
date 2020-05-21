@@ -303,6 +303,15 @@ class AppController:
             QDesktopServices.openUrl(QUrl.fromLocalFile(self._save_dir))
         self._logger.debug("done")
 
+    def exit_handler(self) -> None:
+        """
+        Handler for the exit button in the file menu.
+        :return None:
+        """
+        self._logger.debug("running")
+        self.main_window.close()
+        self._logger.debug("done")
+
     # TODO: Implement
     def toggle_cam_handler(self) -> None:
         """
@@ -468,6 +477,7 @@ class AppController:
         # File menu
         self.menu_bar.add_open_last_save_dir_handler(self.last_save_dir_handler)
         # self.menu_bar.add_cam_bool_handler(self.toggle_cam_handler)
+        self.menu_bar.add_exit_handler(self.exit_handler)
 
         # Settings menu
         self.menu_bar.add_lang_select_handler(self.language_change_handler)
