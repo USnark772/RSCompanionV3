@@ -153,7 +153,7 @@ class CamModel:
         while self._running:
             await self._using_cam.wait()
             await self._cam_reader.await_new_frame()
-            ret, frame = self._cam_reader.get_next_new_frame()
+            frame = self._cam_reader.get_next_new_frame()
             if self._writing:
                 self._write_q.put(frame)
             if self._show_feed:
