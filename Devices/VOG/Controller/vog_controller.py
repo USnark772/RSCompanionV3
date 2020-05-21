@@ -52,8 +52,8 @@ class Controller(AbstractController):
         view = VOGView(device_name, log_handlers)
         super().__init__(view)
         self._model = VOGModel(device_name, conn, log_handlers)
-        self._graph = VOGGraph(view.window(), log_handlers)
-        self.view.add_graph(GraphFrame(view.window(), self._graph, log_handlers))
+        self._graph = VOGGraph(view, log_handlers)
+        self.view.add_graph(GraphFrame(view, self._graph, log_handlers))
         self._exp_created = False
         self._exp_running = False
         self._updating_config = False

@@ -38,7 +38,10 @@ class VOGGraph(BaseGraph):
             for h in log_handlers:
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
-        super().__init__(parent, log_handlers)
+        if parent:
+            super().__init__(parent.window(), log_handlers)
+        else:
+            super().__init__(None, log_handlers)
         self._data = list()
         self._strings = dict()
         self._logger.debug("Initialized")

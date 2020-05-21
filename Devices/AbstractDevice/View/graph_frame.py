@@ -38,8 +38,11 @@ class GraphFrame(QFrame):
             for h in log_handlers:
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
-        print(type(parent))
-        super().__init__(parent)
+        print("GraphFrame parent:", parent)
+        if parent:
+            super().__init__(parent.window())
+        else:
+            super().__init__()
         size_policy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         size_policy.setHorizontalStretch(0)
         size_policy.setVerticalStretch(0)
