@@ -22,7 +22,7 @@
     - Figure out how to get app to work with Chinese language.
     - Add more languages.
     - Finish adding/translating languages for current string.py files.
-
+    - Look over https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html and make edits to imports.
 Languages:
     - Mandarin (Chinese simplified/formal)
     - Dutch
