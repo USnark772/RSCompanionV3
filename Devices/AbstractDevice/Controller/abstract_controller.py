@@ -40,6 +40,7 @@ class AbstractController(ABC):
         """
         return self.view
 
+    # TODO: Change this to async? Could await all cleanup calls in app_model in this case.
     @abstractmethod
     def cleanup(self) -> None:
         """

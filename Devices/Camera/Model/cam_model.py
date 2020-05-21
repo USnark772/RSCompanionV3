@@ -73,14 +73,17 @@ class CamModel:
             while self._running:
                 if self._msg_pipe.poll():
                     msg = self._msg_pipe.recv()
+                    print(__name__, "msg:", msg)
                     if msg[1] is not None:
                         self._switcher[msg[0]](msg[1])
                     else:
                         self._switcher[msg[0]]()
                 await sleep(.1)
         except BrokenPipeError as bpe:
+            # print(__name__, "bpe:", bpe)
             pass
         except OSError as ose:
+            # print(__name__, "ose:", ose)
             pass
 
     def cleanup(self) -> None:

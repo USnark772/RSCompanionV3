@@ -45,8 +45,7 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(Figure(figsize=(5, 5)))
-        if parent:
-            self.setParent(parent.window())
+        self.setParent(parent)
         self._new = True
         self._plots = list()  # name, coords, active
         self._v_lines = list()

@@ -71,7 +71,7 @@ class Controller(AbstractController):
 
     def cleanup(self) -> None:
         self._logger.debug("running")
-        self._model_msg_pipe.send((defs.ModelEnum.CLEANUP, None))
+        self.send_msg_to_model((defs.ModelEnum.CLEANUP, None))
         # TODO: Await model done cleanup msg for video saving? Only if end exp has been called.
         for task in self._cancellable_tasks:
             task.cancel()
@@ -85,7 +85,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        self._model_msg_pipe.send((defs.ModelEnum.START, path))
+        self.send_msg_to_model((defs.ModelEnum.START, path))
         self._logger.debug("done")
 
     def end_exp(self) -> None:
@@ -94,7 +94,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        self._model_msg_pipe.send((defs.ModelEnum.STOP, None))
+        self.send_msg_to_model((defs.ModelEnum.STOP, None))
         self._logger.debug("done")
 
     async def _handle_pipe(self) -> None:
@@ -152,7 +152,7 @@ class Controller(AbstractController):
         self._logger.debug("running")
         self._logger.debug("done")
 
-    def send_model_msg(self, msg) -> None:
+    def send_msg_to_model(self, msg) -> None:
         """
         A wrapper for pipe.send()
         :param msg:
@@ -161,6 +161,8 @@ class Controller(AbstractController):
         try:
             self._model_msg_pipe.send(msg)
         except BrokenPipeError as bpe:
+            # print(__name__, "bpe", bpe)
             pass
         except OSError as ose:
+            # print(__name__, "ose", ose)
             pass

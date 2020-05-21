@@ -38,11 +38,7 @@ class GraphFrame(QFrame):
             for h in log_handlers:
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
-        print("GraphFrame parent:", parent)
-        if parent:
-            super().__init__(parent.window())
-        else:
-            super().__init__()
+        super().__init__(parent)
         size_policy = QSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Fixed)
         size_policy.setHorizontalStretch(0)
         size_policy.setVerticalStretch(0)
@@ -54,7 +50,8 @@ class GraphFrame(QFrame):
         self.setLayout(QVBoxLayout(self))
         self._graph = graph
         self._graph_height = 400
-        self.layout().addWidget(self._graph)
+        if graph:
+            self.layout().addWidget(self._graph)
         # self.setFixedHeight(self._graph_height)
         self._logger.debug("Initialized")
 
