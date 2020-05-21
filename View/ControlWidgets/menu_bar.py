@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2019 - 2020
 Project: Companion App
 Company: Red Scientific
@@ -41,10 +42,8 @@ class AppMenuBar(QMenuBar):
         self.setGeometry(QRect(0, 0, 840, 22))
 
         self._file_menu = QMenu(self)
-        self.addAction(self._file_menu.menuAction())
 
         self._open_last_save_dir_action = QAction(self)
-        self._file_menu.addAction(self._open_last_save_dir_action)
 
         # self._cam_list_menu = QMenu(self)
         # self._file_menu.addMenu(self._cam_list_menu)
@@ -56,79 +55,130 @@ class AppMenuBar(QMenuBar):
         # sep = self._cam_list_menu.addSeparator()
 
         self._settings_menu = QMenu(self)
-        self.addAction(self._settings_menu.menuAction())
 
+        """ Display layout options """
+        self._subwindow_layout_actions = []
+        self._subwindow_layout_menu = QMenu(self)
+
+        self._horiz_action = QAction(self)
+        self._subwindow_layout_actions.append(self._horiz_action)
+        self._horiz_action.triggered.connect(self._horiz_clicked)
+
+        self._vert_action = QAction(self)
+        self._subwindow_layout_actions.append(self._vert_action)
+        self._vert_action.triggered.connect(self._vert_clicked)
+
+        self._tiled_action = QAction(self)
+        self._subwindow_layout_actions.append(self._tiled_action)
+        self._tiled_action.triggered.connect(self._tiled_clicked)
+
+        self._cascade_action = QAction(self)
+        self._subwindow_layout_actions.append(self._cascade_action)
+        self._cascade_action.triggered.connect(self._cascade_clicked)
+
+        """ Language options """
+        self._lang_actions = []
+        self._language_menu = QMenu(self)
+
+        # English
+        self._english_action = QAction(self)
+        self._lang_actions.append(self._english_action)
+        self._english_action.setCheckable(True)
+        self._english_action.triggered.connect(self._eng_clicked)
+
+        # French
+        self._french_action = QAction(self)
+        self._lang_actions.append(self._french_action)
+        self._french_action.setCheckable(True)
+        self._french_action.triggered.connect(self._fre_clicked)
+
+        # German
+        self._german_action = QAction(self)
+        self._lang_actions.append(self._german_action)
+        self._german_action.setCheckable(True)
+        self._german_action.triggered.connect(self._ger_clicked)
+
+        # Spanish
+        self._spanish_action = QAction(self)
+        self._lang_actions.append(self._spanish_action)
+        self._spanish_action.setCheckable(True)
+        self._spanish_action.triggered.connect(self._spa_clicked)
+
+        # TODO: issue with Chinese characters.
+        #       Maybe use traditional instead of simplified.
+        # Chinese
+        # self._chinese_action = QAction(self)
+        # self._lang_actions.append(self._chinese_action)
+        # self._chinese_action.setCheckable(True)
+        # self._chinese_action.triggered.connect(self._chi_clicked)
+
+        """ Debug options """
         self._debug_actions = []
         self._debug_menu = QMenu(self)
-        self._settings_menu.addMenu(self._debug_menu)
 
         self._debug_action = QAction(self)
         self._debug_action.setCheckable(True)
         self._debug_action.triggered.connect(self._debug_clicked)
         self._debug_actions.append(self._debug_action)
-        self._debug_menu.addAction(self._debug_action)
 
         self._warning_action = QAction(self)
         self._warning_action.setCheckable(True)
         self._warning_action.triggered.connect(self._warning_clicked)
         self._debug_actions.append(self._warning_action)
-        self._debug_menu.addAction(self._warning_action)
 
-        self._lang_actions = []
-        self._language_menu = QMenu(self)
-        self._settings_menu.addMenu(self._language_menu)
-
-        self._english_action = QAction(self)
-        self._lang_actions.append(self._english_action)
-        self._english_action.setCheckable(True)
-        self._english_action.triggered.connect(self._eng_clicked)
-        self._language_menu.addAction(self._english_action)
-
-        self._french_action = QAction(self)
-        self._lang_actions.append(self._french_action)
-        self._french_action.setCheckable(True)
-        self._french_action.triggered.connect(self._fre_clicked)
-        self._language_menu.addAction(self._french_action)
-
-        self._german_action = QAction(self)
-        self._lang_actions.append(self._german_action)
-        self._german_action.setCheckable(True)
-        self._german_action.triggered.connect(self._ger_clicked)
-        self._language_menu.addAction(self._german_action)
-
-        self._spanish_action = QAction(self)
-        self._lang_actions.append(self._spanish_action)
-        self._spanish_action.setCheckable(True)
-        self._spanish_action.triggered.connect(self._spa_clicked)
-        self._language_menu.addAction(self._spanish_action)
-
-        # TODO: issue with Chinese characters.
-        #       Maybe use traditional instead of simplified.
-        # self._chinese_action = QAction(self)
-        # self._lang_actions.append(self._chinese_action)
-        # self._chinese_action.setCheckable(True)
-        # self._chinese_action.triggered.connect(self._chi_clicked)
-        # self._language_menu.addAction(self._chinese_action)
-
+        """ Help options """
         self._help_menu = QMenu(self)
-        self.addAction(self._help_menu.menuAction())
 
         self._about_app_action = QAction(self)
-        self._help_menu.addAction(self._about_app_action)
 
         self._about_company_action = QAction(self)
-        self._help_menu.addAction(self._about_company_action)
 
         self._update_action = QAction(self)
-        self._help_menu.addAction(self._update_action)
 
         self._log_window_action = QAction(self)
-        self._help_menu.addAction(self._log_window_action)
 
         self._cam_actions = {}
 
+        """ Menus order """
+        # Menu bar options
+        self.addAction(self._file_menu.menuAction())
+        self.addAction(self._settings_menu.menuAction())
+        self.addAction(self._help_menu.menuAction())
+
+        # Menu bar -> File menu options
+        self._file_menu.addAction(self._open_last_save_dir_action)
+
+        # Menu bar -> Settings menu options
+        self._settings_menu.addMenu(self._subwindow_layout_menu)
+        self._settings_menu.addMenu(self._language_menu)
+        self._settings_menu.addMenu(self._debug_menu)
+
+        # Menu bar -> Settings -> Window Layout options
+        self._subwindow_layout_menu.addAction(self._horiz_action)
+        self._subwindow_layout_menu.addAction(self._vert_action)
+        self._subwindow_layout_menu.addAction(self._tiled_action)
+        self._subwindow_layout_menu.addAction(self._cascade_action)
+
+        # Menu bar -> Settings -> Language menu options
+        self._language_menu.addAction(self._english_action)
+        self._language_menu.addAction(self._french_action)
+        self._language_menu.addAction(self._german_action)
+        self._language_menu.addAction(self._spanish_action)
+        # self._language_menu.addAction(self._chinese_action)
+
+        # Menu bar -> Settings -> Debug menu options
+        self._debug_menu.addAction(self._debug_action)
+        self._debug_menu.addAction(self._warning_action)
+
+        # Menu bar -> Help menu options
+        self._help_menu.addAction(self._about_app_action)
+        self._help_menu.addAction(self._about_company_action)
+        self._help_menu.addAction(self._update_action)
+        self._help_menu.addAction(self._log_window_action)
+
         self._debug_callback = None
         self._lang_callback = None
+        self._layout_callback = None
         self._strings = dict()
         self.set_lang(lang)
         self._logger.debug("Initialized")
@@ -151,6 +201,14 @@ class AppMenuBar(QMenuBar):
             self._reset_lang_actions(self._spanish_action)
         # elif lang == LangEnum.CHI:
         #     self._reset_lang_actions(self._chinese_action)
+
+    def add_window_layout_handler(self, func: classmethod) -> None:
+        """
+        Add handler for window layout.
+        :param func: The handler function.
+        :return None:
+        """
+        self._layout_callback = func
 
     def add_lang_select_handler(self, func: classmethod) -> None:
         """
@@ -296,6 +354,42 @@ class AppMenuBar(QMenuBar):
             self._cam_list_menu.removeAction(self._cam_actions[name])
             del self._cam_actions[name]
 
+    def _horiz_clicked(self) -> None:
+        """
+        Private handler for self._horiz_action
+        :return None:
+        """
+        self._logger.debug("running")
+        self._layout_callback("horizontal")
+        self._logger.debug("done")
+
+    def _vert_clicked(self) -> None:
+        """
+        Private handler for self._vert_action
+        :return None:
+        """
+        self._logger.debug("running")
+        self._layout_callback("vertical")
+        self._logger.debug("done")
+
+    def _tiled_clicked(self) -> None:
+        """
+        Private handler for self._tiled_action
+        :return None:
+        """
+        self._logger.debug("running")
+        self._layout_callback("tiled")
+        self._logger.debug("done")
+
+    def _cascade_clicked(self) -> None:
+        """
+        Private handler for self._cascade_action
+        :return None:
+        """
+        self._logger.debug("running")
+        self._layout_callback("cascade")
+        self._logger.debug("done")
+
     def _eng_clicked(self) -> None:
         """
         Private handler for self._english_action
@@ -383,6 +477,11 @@ class AppMenuBar(QMenuBar):
         self._file_menu.setTitle(self._strings[StringsEnum.FILE])
         self._open_last_save_dir_action.setText(self._strings[StringsEnum.LAST_DIR])
         self._settings_menu.setTitle(self._strings[StringsEnum.SETTINGS])
+        self._subwindow_layout_menu.setTitle(self._strings[StringsEnum.LAYOUT])
+        self._horiz_action.setText(self._strings[StringsEnum.HORIZONTAL])
+        self._vert_action.setText(self._strings[StringsEnum.VERTICAL])
+        self._tiled_action.setText(self._strings[StringsEnum.TILED])
+        self._cascade_action.setText(self._strings[StringsEnum.CASCADE])
         self._debug_menu.setTitle(self._strings[StringsEnum.DEBUG_MENU])
         self._debug_action.setText(self._strings[StringsEnum.DEBUG])
         self._warning_action.setText(self._strings[StringsEnum.WARNING])

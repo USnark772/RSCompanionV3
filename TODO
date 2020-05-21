@@ -3,7 +3,8 @@
     - Finish fine tuning MDI subwindows.
         - Make subwindows rearrange/resize/move on main window resize.
         - Make subwindows not able to move outside the main window size.
-    - Implement subwindow arranging in mdi_area.py.
+            - Do we still want to do this now that we have scroll bars?
+        - Look into tiled window layout.
     - Implement CAM.
         - Model.
             - Implement everything. Only have bare bones here.

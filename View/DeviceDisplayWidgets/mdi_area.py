@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2020
 Project: Companion App
 Company: Red Scientific
@@ -82,11 +83,23 @@ class MDIArea(QMdiArea):
 
     # TODO: Implement this
     def sort_windows_horizontal(self):
-        pass
+        window_list = self.subWindowList()
+        for i in range(len(window_list)):
+            if i == 0:
+                window_list[i].move(0, 0)
+            else:
+                prev = window_list[i-1]
+                window_list[i].move(prev.pos().x() + prev.width(), 0)
 
     # TODO: Implement this
     def sort_windows_vertical(self):
-        pass
+        window_list = self.subWindowList()
+        for i in range(len(window_list)):
+            if i == 0:
+                window_list[i].move(0, 0)
+            else:
+                prev = window_list[i-1]
+                window_list[i].move(0, prev.pos().y() + prev.height())
 
     # TODO: Implement this
     def set_window_view_mode(self):

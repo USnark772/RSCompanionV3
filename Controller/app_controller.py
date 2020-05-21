@@ -118,6 +118,23 @@ class AppController:
         self._curr_cond_name = ""
         self._logger.debug("Initialized")
 
+    def window_layout_handler(self, layout: str) -> None:
+        """
+        Sets the subwindow layout to vertical or horizontal
+        :param layout: string value of either "vertical" or "horizontal" to set layout
+        :return None:
+        """
+        self._logger.debug("running")
+        if layout == "horizontal":
+            self.mdi_area.sort_windows_horizontal()
+        elif layout == "vertical":
+            self.mdi_area.sort_windows_vertical()
+        elif layout == "tiled":
+            self.mdi_area.sort_windows_tiled()
+        elif layout == "cascade":
+            self.mdi_area.sort_windows_cascade()
+        self._logger.debug("done")
+
     def language_change_handler(self, lang: LangEnum) -> None:
         """
         Sets the app language to the user selection.
@@ -455,6 +472,7 @@ class AppController:
         # Settings menu
         self.menu_bar.add_lang_select_handler(self.language_change_handler)
         self.menu_bar.add_debug_select_handler(self.debug_change_handler)
+        self.menu_bar.add_window_layout_handler(self.window_layout_handler)
 
         # Help menu
         self.menu_bar.add_about_company_handler(self.about_rs_handler)
