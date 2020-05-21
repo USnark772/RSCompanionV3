@@ -24,11 +24,13 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from asyncio import create_task
+from asyncio import create_task, sleep
+from multiprocessing import Process, Pipe
 from Devices.AbstractDevice.Controller.abstract_controller import AbstractController
 from Model.app_helpers import end_tasks
 from Devices.Camera.View.cam_view import CamView
 from Devices.Camera.Model.cam_model import CamModel
+from Devices.Camera.Model import cam_defs as defs
 from Devices.Camera.Resources.cam_strings import strings, StringsEnum, LangEnum
 
 
@@ -42,16 +44,24 @@ class Controller(AbstractController):
         cam_name = "CAM_" + str(cam_index)
         view = CamView(cam_name, log_handlers)
         super().__init__(view)
-        self._model = CamModel(cam_name, cam_index, log_handlers)
+        # TODO: Get logging in here. See https://docs.python.org/3/howto/logging-cookbook.html find multiprocessing.
+        self._model_msg_pipe, msg_pipe = Pipe()  # For messages/commands.
+        self._model_image_pipe, img_pipe = Pipe(False)  # For images.
+        self._model = Process(target=CamModel, args=(msg_pipe, img_pipe, cam_index))
+        self._model.start()
+        # self._model = CamModel(cam_name, cam_index, log_handlers)
         self.set_lang(lang)
         self._awaitable_tasks = []
         self._cancellable_tasks = []
         self._awaitable_tasks.append(create_task(self._update_view()))
+        self._switcher = {defs.ModelEnum.FAILURE: self.cleanup,
+                          defs.ModelEnum.CUR_FPS: self._update_view_fps}
+        self._model_msg_pipe.send((defs.ModelEnum.SET_USE_CAM, True))
         self._logger.debug("Initialized")
 
     def set_lang(self, lang: LangEnum) -> None:
         """
-        Set the language for this device's MVC.
+        Set the language for this device.
         :param lang: The language to use.
         :return None:
         """
@@ -60,23 +70,97 @@ class Controller(AbstractController):
         self._logger.debug("done")
 
     def cleanup(self) -> None:
-        self._model.cleanup()
+        self._logger.debug("running")
+        self._model_msg_pipe.send((defs.ModelEnum.CLEANUP, None))
+        # TODO: Await model done cleanup msg for video saving? Only if end exp has been called.
         for task in self._cancellable_tasks:
             task.cancel()
         create_task(end_tasks(self._awaitable_tasks))
+        self._logger.debug("done")
+
+    def create_exp(self, path: str) -> None:
+        """
+        Handle experiment created for this device.
+        :param path: The path to use to save data.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._model_msg_pipe.send((defs.ModelEnum.START, path))
+        self._logger.debug("done")
+
+    def end_exp(self) -> None:
+        """
+        Handle experiment ended for this device.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._model_msg_pipe.send((defs.ModelEnum.STOP, None))
+        self._logger.debug("done")
+
+    async def _handle_pipe(self) -> None:
+        """
+        Handle msgs from model.
+        :return None:
+        """
+        self._logger.debug("running")
+        try:
+            while True:
+                if self._model_msg_pipe.poll():
+                    msg = self._model_msg_pipe.recv()
+                    if msg[1] is not None:
+                        self._switcher[msg[0]](msg[1])
+                    else:
+                        self._switcher[msg[0]]()
+        except BrokenPipeError as bpe:
+            pass
+        except OSError as ose:
+            pass
 
     async def _update_view(self) -> None:
         """
         Update view with latest image from camera.
         :return None:
         """
-        while True:
-            await self._model.await_new_image()
-            self.view.update_image(self._model.get_latest_frame())
+        self._logger.debug("running")
+        try:
+            while True:
+                if self._model_image_pipe.poll():
+                    next_image = self._model_image_pipe.recv()
+                    self.view.update_image(next_image)
+                else:
+                    await sleep(0)
+        except BrokenPipeError as bpe:
+            pass
+        except OSError as ose:
+            pass
+
+    def _update_view_fps(self, new_fps) -> None:
+        """
+        Update view object fps display with new value.
+        :param new_fps: The new value.
+        :return None:
+        """
+        self._logger.debug("running")
+        self.view.set_fps_val(new_fps)
+        self._logger.debug("done")
 
     def _setup_handlers(self) -> None:
         """
         Connect handlers to view object.
         :return None:
         """
-        pass
+        self._logger.debug("running")
+        self._logger.debug("done")
+
+    def send_model_msg(self, msg) -> None:
+        """
+        A wrapper for pipe.send()
+        :param msg:
+        :return:
+        """
+        try:
+            self._model_msg_pipe.send(msg)
+        except BrokenPipeError as bpe:
+            pass
+        except OSError as ose:
+            pass
