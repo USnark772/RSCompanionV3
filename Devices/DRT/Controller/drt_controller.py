@@ -49,7 +49,7 @@ class Controller(AbstractController):
         except:
             device_name = "DRT_NONE"
         view = DRTView(device_name, log_handlers)
-        super().__init__(view)
+        super().__init__(view.window())
         self._model = DRTModel(device_name, conn, log_handlers)
         self._graph = DRTGraph(view, log_handlers)
         self.view.add_graph(GraphFrame(view, self._graph, log_handlers))

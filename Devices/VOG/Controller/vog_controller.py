@@ -50,7 +50,7 @@ class Controller(AbstractController):
         except:
             device_name = "VOG_NONE"
         view = VOGView(device_name, log_handlers)
-        super().__init__(view)
+        super().__init__(view.window())
         self._model = VOGModel(device_name, conn, log_handlers)
         self._graph = VOGGraph(view, log_handlers)
         self.view.add_graph(GraphFrame(view, self._graph, log_handlers))
