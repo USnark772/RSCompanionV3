@@ -85,8 +85,12 @@ class StreamReader:
         End any looping tasks.
         :return None:
         """
+        print(__name__, "Stopping")
         self.running = False
-        create_task(end_tasks(self._awaitable_tasks))
+        for task in self._awaitable_tasks:
+            task.cancel()
+        # create_task(end_tasks(self._awaitable_tasks))
+        print(__name__, "Stopped")
 
     def _read_cam(self) -> None:
         """

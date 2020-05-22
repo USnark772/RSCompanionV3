@@ -24,6 +24,7 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
+import time
 from asyncio import create_task, sleep
 from multiprocessing import Process, Pipe
 from Devices.AbstractDevice.Controller.abstract_controller import AbstractController
@@ -56,7 +57,7 @@ class Controller(AbstractController):
         self._awaitable_tasks.append(create_task(self._update_view()))
         self._switcher = {defs.ModelEnum.FAILURE: self.cleanup,
                           defs.ModelEnum.CUR_FPS: self._update_view_fps}
-        self._model_msg_pipe.send((defs.ModelEnum.SET_USE_CAM, True))
+        self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, True))
         self._logger.debug("Initialized")
 
     def set_lang(self, lang: LangEnum) -> None:
@@ -159,6 +160,7 @@ class Controller(AbstractController):
         :return:
         """
         try:
+            print("Sending msg:", msg, "to model")
             self._model_msg_pipe.send(msg)
         except BrokenPipeError as bpe:
             # print(__name__, "bpe", bpe)

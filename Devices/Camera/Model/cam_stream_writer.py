@@ -84,7 +84,7 @@ class StreamWriter:
         self._stopping = True
         await self.await_done_writing()
         self._stopping = False
-        await create_task(end_tasks(self._awaitable_tasks))
+        await self._awaitable_tasks[0]
 
     async def _update(self) -> None:
         """

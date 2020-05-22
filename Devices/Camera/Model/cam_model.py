@@ -71,6 +71,7 @@ class CamModel:
         """
         try:
             while self._running:
+                print("Checking for msgs")
                 if self._msg_pipe.poll():
                     msg = self._msg_pipe.recv()
                     print(__name__, "msg:", msg)
