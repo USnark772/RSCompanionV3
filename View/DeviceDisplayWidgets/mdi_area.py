@@ -50,7 +50,6 @@ class MDIArea(QMdiArea):
         # from Devices.VOG.View.vog_view import VOGView as subwindow
         # for i in range(6):
         #     window = subwindow()
-        #     window.setFixedSize(300, 200)
         #     self.add_window(window)
 
     def add_window(self, window: AbstractView) -> None:
@@ -83,15 +82,34 @@ class MDIArea(QMdiArea):
         self.setActivationOrder(order)
 
     # TODO: Implement this
-    def sort_windows_cascade(self):
+    def sort_windows_cascade(self) -> None:
+        """
+        Sort subwindows in a cascade format
+        :return None:
+        """
+        self._logger.debug("running")
+        self.setActivationOrder(QMdiArea.StackingOrder)
         self.cascadeSubWindows()
+        self.setActivationOrder(QMdiArea.CreationOrder)
+        self._logger.debug("done")
 
     # TODO: Implement this
-    def sort_windows_tiled(self):
+    def sort_windows_tiled(self) -> None:
+        """
+        Tile subwindows
+        :return None:
+        """
+        self._logger.debug("running")
         self.tileSubWindows()
+        self._logger.debug("done")
 
     # TODO: Implement this
-    def sort_windows_horizontal(self):
+    def sort_windows_horizontal(self) -> None:
+        """
+        Sort subwindows horizontally
+        :return None:
+        """
+        self._logger.debug("running")
         window_list = self.subWindowList()
         for i in range(len(window_list)):
             if i == 0:
@@ -99,9 +117,15 @@ class MDIArea(QMdiArea):
             else:
                 prev = window_list[i-1]
                 window_list[i].move(prev.pos().x() + prev.width(), 0)
+        self._logger.debug("done")
 
     # TODO: Implement this
-    def sort_windows_vertical(self):
+    def sort_windows_vertical(self) -> None:
+        """
+        Sort subwindows vertically
+        :return None:
+        """
+        self._logger.debug("running")
         window_list = self.subWindowList()
         for i in range(len(window_list)):
             if i == 0:
@@ -109,6 +133,7 @@ class MDIArea(QMdiArea):
             else:
                 prev = window_list[i-1]
                 window_list[i].move(0, prev.pos().y() + prev.height())
+        self._logger.debug("done")
 
     # TODO: Implement this
     def set_window_view_mode(self):
