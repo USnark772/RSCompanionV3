@@ -44,6 +44,15 @@ class MDIArea(QMdiArea):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
+        # Dummy subwindows for testing.
+        # from PySide2.QtWidgets import QMdiSubWindow as subwindow
+        # from Devices.DRT.View.drt_view import DRTView as subwindow
+        # from Devices.VOG.View.vog_view import VOGView as subwindow
+        # for i in range(6):
+        #     window = subwindow()
+        #     window.setFixedSize(300, 200)
+        #     self.add_window(window)
+
     def add_window(self, window: AbstractView) -> None:
         """
         Add given window to the MDI Area.

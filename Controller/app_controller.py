@@ -102,12 +102,6 @@ class AppController:
         # Model
         self._model = AppModel(self._lang, [self.app_lh, self.stderr_lh])
 
-        # from PySide2.QtWidgets import QMdiSubWindow
-        # for i in range(6):
-        #     window = QMdiSubWindow()
-        #     window.setFixedSize(300, 200)
-        #     self.mdi_area.add_window(window)
-
         self._save_file_name = str()
         self._save_dir = str()
         self._tasks = []
