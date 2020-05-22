@@ -23,16 +23,11 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from logging import getLogger, StreamHandler
 from datetime import datetime
 from asyncio import create_task, Event, sleep, set_event_loop, new_event_loop, get_event_loop
 from multiprocessing.connection import Connection
-from cv2 import COLOR_BGR2RGB, cvtColor
-from numpy import ndarray
 from queue import SimpleQueue
-from PySide2.QtGui import QImage, QPixmap
-from PySide2.QtCore import Qt
-from Model.app_helpers import await_event, end_tasks, format_current_time
+from Model.app_helpers import format_current_time
 from Devices.Camera.Model import cam_defs as defs
 from Devices.Camera.Model.cam_stream_reader import StreamReader
 from Devices.Camera.Model.cam_stream_writer import StreamWriter
@@ -71,20 +66,16 @@ class CamModel:
         """
         try:
             while self._running:
-                print("Checking for msgs")
                 if self._msg_pipe.poll():
                     msg = self._msg_pipe.recv()
-                    print(__name__, "msg:", msg)
                     if msg[1] is not None:
                         self._switcher[msg[0]](msg[1])
                     else:
                         self._switcher[msg[0]]()
                 await sleep(.1)
         except BrokenPipeError as bpe:
-            # print(__name__, "bpe:", bpe)
             pass
         except OSError as ose:
-            # print(__name__, "ose:", ose)
             pass
 
     def cleanup(self) -> None:
@@ -161,20 +152,4 @@ class CamModel:
             if self._writing:
                 self._write_q.put(frame)
             if self._show_feed:
-                self._img_pipe.send(self.convert_frame_to_qt_image(frame))
-
-    @staticmethod
-    def convert_frame_to_qt_image(frame: ndarray) -> QPixmap:
-        """
-        Convert image to suitable format for display in Qt.
-        :param frame: The image to convert.
-        :return QPixmap: The converted image.
-        """
-        print("in convert()")
-        rgb_image = cvtColor(frame, COLOR_BGR2RGB)
-        h, w, ch = rgb_image.shape
-        res = QImage(rgb_image.data, w, h, ch * w, QImage.Format_RGB888).scaled(248, 186, Qt.KeepAspectRatio)
-        print("here 1")
-        ret = QPixmap.fromImage(res)  # TODO: Figure out why this hangs.
-        print("here 2")
-        return ret
+                self._img_pipe.send(frame)

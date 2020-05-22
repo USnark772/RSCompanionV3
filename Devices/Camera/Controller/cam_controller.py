@@ -24,9 +24,12 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-import time
 from asyncio import create_task, sleep
 from multiprocessing import Process, Pipe
+from numpy import ndarray
+from PySide2.QtGui import QPixmap, QImage
+from PySide2.QtCore import Qt
+from cv2 import cvtColor, COLOR_BGR2RGB
 from Devices.AbstractDevice.Controller.abstract_controller import AbstractController
 from Model.app_helpers import end_tasks
 from Devices.Camera.View.cam_view import CamView
@@ -127,7 +130,7 @@ class Controller(AbstractController):
             while True:
                 if self._model_image_pipe.poll():
                     next_image = self._model_image_pipe.recv()
-                    self.view.update_image(next_image)
+                    self.view.update_image(self.convert_frame_to_qt_image(next_image))
                 else:
                     await sleep(0)
         except BrokenPipeError as bpe:
@@ -160,11 +163,21 @@ class Controller(AbstractController):
         :return:
         """
         try:
-            print("Sending msg:", msg, "to model")
             self._model_msg_pipe.send(msg)
         except BrokenPipeError as bpe:
-            # print(__name__, "bpe", bpe)
             pass
         except OSError as ose:
-            # print(__name__, "ose", ose)
             pass
+
+    @staticmethod
+    def convert_frame_to_qt_image(frame: ndarray) -> QPixmap:
+        """
+        Convert image to suitable format for display in Qt.
+        :param frame: The image to convert.
+        :return QPixmap: The converted image.
+        """
+        rgb_image = cvtColor(frame, COLOR_BGR2RGB)
+        h, w, ch = rgb_image.shape
+        res = QImage(rgb_image.data, w, h, ch * w, QImage.Format_RGB888).scaled(248, 186, Qt.KeepAspectRatio)
+        ret = QPixmap.fromImage(res)
+        return ret
