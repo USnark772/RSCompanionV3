@@ -188,7 +188,6 @@ class CamView(AbstractView):
         """
         self._logger.debug("running")
         self._image_display.setPixmap(image)
-        self.adjustSize()
         self._logger.debug("done")
 
     def _set_texts(self) -> None:
