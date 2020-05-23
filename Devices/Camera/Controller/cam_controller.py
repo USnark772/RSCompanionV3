@@ -24,7 +24,7 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from asyncio import create_task, sleep
+from asyncio import create_task, sleep, Event
 from multiprocessing import Process, Pipe
 from numpy import ndarray
 from PySide2.QtGui import QPixmap, QImage
@@ -58,9 +58,12 @@ class Controller(AbstractController):
         self._awaitable_tasks = []
         self._cancellable_tasks = []
         self._awaitable_tasks.append(create_task(self._update_view()))
+        self._awaitable_tasks.append(create_task(self._handle_pipe()))
         self._switcher = {defs.ModelEnum.FAILURE: self.cleanup,
-                          defs.ModelEnum.CUR_FPS: self._update_view_fps}
+                          defs.ModelEnum.CUR_FPS: self._update_view_fps,
+                          defs.ModelEnum.CLEANUP: self._set_model_cleaned}
         self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, True))
+        self._model_cleaned = Event()
         self._logger.debug("Initialized")
 
     def set_lang(self, lang: LangEnum) -> None:
@@ -73,10 +76,10 @@ class Controller(AbstractController):
         self.view.set_lang(lang)
         self._logger.debug("done")
 
-    def cleanup(self) -> None:
+    async def cleanup(self) -> None:
         self._logger.debug("running")
         self.send_msg_to_model((defs.ModelEnum.CLEANUP, None))
-        # TODO: Await model done cleanup msg for video saving? Only if end exp has been called.
+        await self._model_cleaned.wait()
         for task in self._cancellable_tasks:
             task.cancel()
         create_task(end_tasks(self._awaitable_tasks))
@@ -115,6 +118,7 @@ class Controller(AbstractController):
                         self._switcher[msg[0]](msg[1])
                     else:
                         self._switcher[msg[0]]()
+                await sleep(.01)
         except BrokenPipeError as bpe:
             pass
         except OSError as ose:
@@ -154,6 +158,15 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
+        self._logger.debug("done")
+
+    def _set_model_cleaned(self) -> None:
+        """
+        Set flag that model is done with cleanup.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._model_cleaned.set()
         self._logger.debug("done")
 
     def send_msg_to_model(self, msg) -> None:

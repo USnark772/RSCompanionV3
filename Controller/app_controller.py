@@ -316,7 +316,11 @@ class AppController:
         print("Implement handling for this button")
         self._logger.debug("done")
 
-    async def _update_drive_info_box(self):
+    async def _update_drive_info_box(self) -> None:
+        """
+        Periodically get info about drive currently being used to save data and display info on view.
+        :return None:
+        """
         while True:
             info = get_disk_usage_stats(self._drive_path)
             self.d_info_box.set_name_val(str(info[0]))
@@ -485,7 +489,7 @@ class AppController:
         self.menu_bar.add_log_window_handler(self.log_window_handler)
 
         # Close app button
-        self.main_window.add_close_handler(self._cleanup)
+        self.main_window.add_close_handler(self.cleanup)
 
         self._logger.debug("done")
 
@@ -516,13 +520,26 @@ class AppController:
         self._tasks.append(create_task(self.remove_device_view_handler()))
         self._model.start()
 
-    def _cleanup(self) -> None:
+    def cleanup(self) -> None:
+        """
+        Handler for view close event.
+        :return None:
+        """
+        self._logger.debug("running")
+        create_task(self._cleanup())
+        self._logger.debug("done")
+
+    async def _cleanup(self) -> None:
         """
         Cleanup any code that would cause problems for shutdown and prep for app closure.
         :return None:
         """
-        self._model.cleanup()
+        self._logger.debug("running")
+        await self._model.cleanup()
         if self._drive_updater_task:
             self._drive_updater_task.cancel()
         create_task(end_tasks(self._tasks))
         self.log_output.close()
+        self.main_window.set_close_override(True)
+        self._logger.debug("done")
+        self.main_window.close()

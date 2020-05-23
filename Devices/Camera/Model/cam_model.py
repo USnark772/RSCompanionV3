@@ -72,7 +72,7 @@ class CamModel:
                         self._switcher[msg[0]](msg[1])
                     else:
                         self._switcher[msg[0]]()
-                await sleep(.1)
+                await sleep(.01)
         except BrokenPipeError as bpe:
             pass
         except OSError as ose:
@@ -83,10 +83,14 @@ class CamModel:
         Cleanup this code and prep for app closure.
         :return None:
         """
+        create_task(self._cleanup())
+
+    async def _cleanup(self) -> None:
         self._running = False
-        self._stop_event.set()
+        await create_task(self._stop())
         self._cam_reader.cleanup()
         self._cam_writer.cleanup()
+        self._msg_pipe.send((defs.ModelEnum.CLEANUP, None))
 
     def _use_cam(self, is_active: bool) -> None:
         """
@@ -136,9 +140,18 @@ class CamModel:
         Run all async tasks in this model and wait for stop signal. (This method is the main loop for this process)
         :return None:
         """
-        create_task(self._handle_pipe())
-        create_task(self._handle_new_frame())
+        self._awaitable_tasks.append(create_task(self._handle_pipe()))
+        self._awaitable_tasks.append(create_task(self._handle_new_frame()))
         await self._stop_event.wait()
+
+    async def _stop(self) -> None:
+        """
+        Stop all async tasks.
+        :return None:
+        """
+        for task in self._awaitable_tasks:
+            await task
+        self._stop_event.set()
 
     async def _handle_new_frame(self) -> None:
         """
@@ -146,7 +159,6 @@ class CamModel:
         :return None:
         """
         while self._running:
-            # print(__name__, "handling new frames")
             await self._using_cam.wait()
             await self._cam_reader.await_new_frame()
             frame = self._cam_reader.get_next_new_frame()

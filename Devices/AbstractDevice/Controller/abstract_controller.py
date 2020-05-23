@@ -42,7 +42,7 @@ class AbstractController(ABC):
 
     # TODO: Change this to async? Could await all cleanup calls in app_model in this case.
     @abstractmethod
-    def cleanup(self) -> None:
+    async def cleanup(self) -> None:
         """
         Handle cleanup and shut down of this code.
         :return: None.

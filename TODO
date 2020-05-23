@@ -1,4 +1,5 @@
 # TODO: Pressing matters.
+    - Look through all device MVC and update app closure processes to use async.
     - Implement camera handler in app_controller.py
     - Finish fine tuning MDI subwindows.
         - Make subwindows rearrange/resize/move on main window resize.
@@ -8,6 +9,7 @@
     - Implement CAM.
         - Model.
             - Fix app closure handling, sometimes hangs on cleanup() call.
+            - Look into how saving video is handled when ending experiments vs. when closing app during experiment.
         - Controller.
             - Need to implement handlers.
         - Finish view.

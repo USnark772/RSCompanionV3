@@ -441,21 +441,21 @@ class AppModel:
         self._rs_dev_scanner.start()
         self._logger.debug("done")
 
-    def cleanup(self) -> None:
+    async def cleanup(self) -> None:
         """
         End all async tasks that are running and cleanup any other things that might cause shutdown errors.
         :return None:
         """
         self._logger.debug("running")
-        self._rs_dev_scanner.cleanup()
+        await self._rs_dev_scanner.cleanup()
         if self.exp_running:
             self.signal_stop_exp()
         if self.exp_created:
             self.signal_end_exp(False)
-        while self.saving:
+        while self.saving:  # TODO: change this to event?
             continue
         for dev in self._devs.values():
-            dev.cleanup()
+            await dev.cleanup()
         for task in self._cancelable_tasks:
             task.cancel()
         create_task(end_tasks(self._gatherable_tasks))

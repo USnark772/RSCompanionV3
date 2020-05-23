@@ -69,6 +69,7 @@ class AppMainWindow(QMainWindow):
         self._close_callback = None
         self._help_window = None
 
+        self._close_override = False
         self._strings = dict()
         self.set_lang(lang)
         self._setup_checker_buttons()
@@ -99,17 +100,32 @@ class AppMainWindow(QMainWindow):
         :return: None.
         """
         self._logger.debug("running")
+        if self._close_override:
+            self._logger.debug("done with event.accept()")
+            event.accept()
+            return
         if self.close_check:
             user_input = self._checker.exec_() == QMessageBox.Yes
             if not user_input:
                 event.ignore()
+                self._logger.debug("done with event.ignore()")
                 return
         settings = QSettings(company_name, app_name)
         settings.setValue(window_geometry, self.saveGeometry())
         settings.setValue(window_state, self.saveState())
         if self._close_callback:
             self._close_callback()
-        event.accept()
+        event.ignore()
+        self._logger.debug("done with event.ignore()")
+
+    def set_close_override(self, override: bool) -> None:
+        """
+        Set this window to close without checking anything.
+        :param override: Whether to just close or do checks first.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._close_override = True
         self._logger.debug("done")
 
     def add_mdi_area(self, mdi_area: QMdiArea) -> None:

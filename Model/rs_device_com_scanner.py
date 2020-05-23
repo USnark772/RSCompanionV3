@@ -68,7 +68,7 @@ class RSDeviceCommScanner:
         self._tasks.append(create_task(self._scan_ports()))
         self._logger.debug("done")
 
-    def cleanup(self) -> None:
+    async def cleanup(self) -> None:
         """
         Cleanup this class and prep for app closure.
         :return None:
