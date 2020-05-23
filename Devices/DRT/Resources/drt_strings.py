@@ -84,7 +84,36 @@ english = {StringsEnum.CUSTOM_LABEL: "Custom",
            StringsEnum.GRAPH_TS: "Timestamp",
            }
 
-# TODO: Verify French
+# TODO: Verify translations
+# Dutch strings
+lower_isi_dut = "Lagere ISI"
+upper_isi_dut = "Bovenste ISI"
+dutch = {StringsEnum.CUSTOM_LABEL: "Op maat",
+         StringsEnum.ISO_LABEL: iso,
+         StringsEnum.CONFIG_TAB_LABEL: "Configuratie",
+         StringsEnum.CONFIG_LABEL: "Huidige configuratie:",
+         StringsEnum.ISO_BUTTON_LABEL: iso,
+         StringsEnum.UPLOAD_BUTTON_LABEL: "Upload instellingen",
+         StringsEnum.DURATION_LABEL: "Stim Duur",
+         StringsEnum.INTENSITY_LABEL: "Stim-intensiteit",
+         StringsEnum.UPPER_ISI_LABEL: upper_isi_dut,
+         StringsEnum.LOWER_ISI_LABEL: lower_isi_dut,
+         StringsEnum.CONFIG_TAB_TOOLTIP: "Configuratietabblad weergeven/verbergen",
+         StringsEnum.CONFIG_LABEL_TOOLTIP: "Huidige apparaatconfiguratie",
+         StringsEnum.ISO_BUTTON_TOOLTIP: "Stel het apparaat in op de ISO-standaard",
+         StringsEnum.UPLOAD_BUTTON_TOOLTIP: "Upload de huidige configuratie naar het apparaat",
+         StringsEnum.DURATION_TOOLTIP: "Milliseconden. Bereik: " + str(defs.duration_min) + "-" + str(
+             defs.duration_max),
+         StringsEnum.INTENSITY_TOOLTIP: "Intensity of the stimulus",
+         StringsEnum.UPPER_ISI_TOOLTIP: "Milliseconden. Bereik: " + lower_isi_dut + "-" + str(defs.ISI_max),
+         StringsEnum.LOWER_ISI_TOOLTIP: "Milliseconden. Bereik: " + str(defs.ISI_min) + "-" + upper_isi_dut,
+         StringsEnum.SAVE_HDR: "tijdstempel, onderzoek #, klikken, milliseconden vanaf het begin van het experiment,"
+                               " reactietijd",
+         StringsEnum.PLOT_NAME_RT: "Reactietijd",
+         StringsEnum.PLOT_NAME_CLICKS: "klikken",
+         StringsEnum.GRAPH_TS: "tijdstempel",
+         }
+
 # French strings
 lower_isi_fre = "Inférieur ISI"
 upper_isi_fre = "Supérieur ISI"
@@ -114,7 +143,6 @@ french = {StringsEnum.CUSTOM_LABEL: "Douane",
           StringsEnum.GRAPH_TS: "Horodatage",
           }
 
-# TODO: Verify German
 # German strings
 lower_isi_ger = "Niedriger ISI"
 upper_isi_ger = "Obere ISI"
@@ -144,7 +172,6 @@ german = {StringsEnum.CUSTOM_LABEL: "Benutzerdefiniert",
           StringsEnum.GRAPH_TS: "Zeitstempel",
           }
 
-# TODO: Verify Spanish
 # Spanish strings
 lower_isi_spa = "Inferior ISI"
 upper_isi_spa = "Superior ISI"
@@ -174,7 +201,6 @@ spanish = {StringsEnum.CUSTOM_LABEL: "Personalizado",
            StringsEnum.GRAPH_TS: "marca de tiempo",
            }
 
-# TODO: Verify Chinese (simplified)
 # Chinese (simplified) strings
 lower_isi_chi = "较低的ISI"
 upper_isi_chi = "上ISI"
@@ -203,8 +229,38 @@ chinese = {StringsEnum.CUSTOM_LABEL: "自订",
            StringsEnum.GRAPH_TS: "时间戳记",
            }
 
+# Japanese strings
+lower_isi_jpn = "下 ISI"
+upper_isi_jpn = "上 ISI"
+japanese = {StringsEnum.CUSTOM_LABEL: "カスタム",
+            StringsEnum.ISO_LABEL: iso,
+            StringsEnum.CONFIG_TAB_LABEL: "構成",
+            StringsEnum.CONFIG_LABEL: "現在の構成:",
+            StringsEnum.ISO_BUTTON_LABEL: iso,
+            StringsEnum.UPLOAD_BUTTON_LABEL: "アップロード設定",
+            StringsEnum.DURATION_LABEL: "刺激持続時間",
+            StringsEnum.INTENSITY_LABEL: "刺激強度",
+            StringsEnum.UPPER_ISI_LABEL: upper_isi_jpn,
+            StringsEnum.LOWER_ISI_LABEL: lower_isi_jpn,
+            StringsEnum.CONFIG_TAB_TOOLTIP: "構成タブの表示/非表示",
+            StringsEnum.CONFIG_LABEL_TOOLTIP: "現在のデバイス構成",
+            StringsEnum.ISO_BUTTON_TOOLTIP: "デバイスをISO標準に設定",
+            StringsEnum.UPLOAD_BUTTON_TOOLTIP: "現在の構成をデバイスにアップロード",
+            StringsEnum.DURATION_TOOLTIP: "ミリ秒。 範囲: " + str(defs.duration_min) + "-" + str(
+                defs.duration_max),
+            StringsEnum.INTENSITY_TOOLTIP: "刺激の強さ",
+            StringsEnum.UPPER_ISI_TOOLTIP: "ミリ秒。 範囲: " + lower_isi_jpn + "-" + str(defs.ISI_max),
+            StringsEnum.LOWER_ISI_TOOLTIP: "ミリ秒。 範囲: " + str(defs.ISI_min) + "-" + upper_isi_jpn,
+            StringsEnum.SAVE_HDR: "タイムスタンプ, 調査 #, クリック, 実験開始からミリ秒, 反応時間",
+            StringsEnum.PLOT_NAME_RT: "反応時間",
+            StringsEnum.PLOT_NAME_CLICKS: "クリック",
+            StringsEnum.GRAPH_TS: "タイムスタンプ",
+            }
+
 strings = {LangEnum.ENG: english,
+           LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
            LangEnum.SPA: spanish,
-           LangEnum.CHI: chinese}
+           LangEnum.CHI: chinese,
+           LangEnum.JPN: japanese}

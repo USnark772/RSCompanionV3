@@ -41,36 +41,53 @@ english = {StringsEnum.TITLE: "Note",
            StringsEnum.SHADOW: "Enter note here",
            }
 
-# TODO: Verify French
+# TODO: Verify translations
+# Dutch strings
+dutch = {StringsEnum.TITLE: "Notitie",
+         StringsEnum.POST: "Posten",
+         StringsEnum.POST_TT: "Notitie plaatsen",
+         StringsEnum.SHADOW: "Notitie hier invoeren",
+         }
+
+# French strings
 french = {StringsEnum.TITLE: "Remarque",
           StringsEnum.POST: "Publier",
           StringsEnum.POST_TT: "Poster une note",
           StringsEnum.SHADOW: "Entrez une note ici",
           }
 
-# TODO: Verify German
+# German strings
 german = {StringsEnum.TITLE: "Notiz",
           StringsEnum.POST: "Post",
           StringsEnum.POST_TT: "Notiz posten",
           StringsEnum.SHADOW: "Notiz hier eingeben",
           }
 
-# TODO: Verify Spanish
+# Spanish strings
 spanish = {StringsEnum.TITLE: "Nota",
            StringsEnum.POST: "Publicar",
            StringsEnum.POST_TT: "Publicar nota",
            StringsEnum.SHADOW: "Ingrese la nota aquí",
            }
 
-# TODO: Verify Chinese (simplified)
+# Chinese (simplified) strings
 chinese = {StringsEnum.TITLE: "注意",
            StringsEnum.POST: "发布",
            StringsEnum.POST_TT: "发布笔记",
            StringsEnum.SHADOW: "在此处输入注释",
            }
 
+# Japanese strings
+japanese = {StringsEnum.TITLE: "注意",
+            StringsEnum.POST: "ポスト",
+            StringsEnum.POST_TT: "ポストノート",
+            StringsEnum.SHADOW: "ここにメモを入力",
+            }
+
 strings = {LangEnum.ENG: english,
+           LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
            LangEnum.SPA: spanish,
-           LangEnum.CHI: chinese}
+           LangEnum.CHI: chinese,
+           LangEnum.JPN: japanese}

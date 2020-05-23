@@ -50,17 +50,21 @@ class StringsEnum(Enum):
     WARNING = auto()
     LANG = auto()
     ENG = auto()
+    DUT = auto()
     FRE = auto()
     GER = auto()
     SPA = auto()
     CHI = auto()
+    JPN = auto()
 
 
 lang_eng = "English"
+lang_dut = "Nederlands"
 lang_fre = "Français"
 lang_ger = "Deutsche"
 lang_spa = "Español"
 lang_chi = "中文"
+lang_jpn = "日本語"
 
 
 english = {StringsEnum.FILE: "File",
@@ -84,13 +88,46 @@ english = {StringsEnum.FILE: "File",
            StringsEnum.WARNING: "Normal mode",
            StringsEnum.LANG: "Language:",
            StringsEnum.ENG: lang_eng,
+           StringsEnum.DUT: lang_dut,
            StringsEnum.FRE: lang_fre,
            StringsEnum.GER: lang_ger,
            StringsEnum.SPA: lang_spa,
            StringsEnum.CHI: lang_chi,
+           StringsEnum.JPN: lang_jpn,
            }
 
-# TODO: Verify French
+# TODO: Verify translations
+# Dutch strings
+dutch = {StringsEnum.FILE: "Bestand",
+         StringsEnum.LAST_DIR: "Open laatste opslaglocatie",
+         StringsEnum.EXIT: "Uitgang",
+         StringsEnum.HELP: "Helpen",
+         StringsEnum.ABOUT_APP: "Over " + app_name,
+         StringsEnum.ABOUT_COMPANY: "Over " + company_name,
+         StringsEnum.UPDATE_CHECK: "Controleer op updates",
+         StringsEnum.SHOW_LOG_WINDOW: "Toon logvenster",
+         StringsEnum.USE_CAMS: "Gebruik camera's",
+         StringsEnum.ATTACHED_CAMS: "Bijgevoegde camera",
+         StringsEnum.SETTINGS: "Instellingen",
+         StringsEnum.LAYOUT: "Vensterindeling",
+         StringsEnum.HORIZONTAL: "Horizontaal",
+         StringsEnum.VERTICAL: "Verticaal",
+         StringsEnum.TILED: "Betegeld",
+         StringsEnum.CASCADE: "Cascade",
+         StringsEnum.DEBUG_MENU: "Debug-niveau",
+         StringsEnum.DEBUG: "Foutopsporingsmodus",
+         StringsEnum.WARNING: "Normale modus",
+         StringsEnum.LANG: "Taal:",
+         StringsEnum.ENG: lang_eng,
+         StringsEnum.DUT: lang_dut,
+         StringsEnum.FRE: lang_fre,
+         StringsEnum.GER: lang_ger,
+         StringsEnum.SPA: lang_spa,
+         StringsEnum.CHI: lang_chi,
+         StringsEnum.JPN: lang_jpn,
+         }
+
+# French strings
 french = {StringsEnum.FILE: "Fichier",
           StringsEnum.LAST_DIR: "Ouvrir le dernier emplacement d'enregistrement",
           StringsEnum.EXIT: "Sortie",
@@ -112,13 +149,15 @@ french = {StringsEnum.FILE: "Fichier",
           StringsEnum.WARNING: "Mode normal",
           StringsEnum.LANG: "Langue:",
           StringsEnum.ENG: lang_eng,
+          StringsEnum.DUT: lang_dut,
           StringsEnum.FRE: lang_fre,
           StringsEnum.GER: lang_ger,
           StringsEnum.SPA: lang_spa,
           StringsEnum.CHI: lang_chi,
+          StringsEnum.JPN: lang_jpn,
           }
 
-# TODO: Verify German
+# German strings
 german = {StringsEnum.FILE: "Datei",
           StringsEnum.LAST_DIR: "Öffnen Sie den letzten Speicherort",
           StringsEnum.EXIT: "Ausgang",
@@ -140,13 +179,15 @@ german = {StringsEnum.FILE: "Datei",
           StringsEnum.WARNING: "Normaler Modus",
           StringsEnum.LANG: "Sprache:",
           StringsEnum.ENG: lang_eng,
+          StringsEnum.DUT: lang_dut,
           StringsEnum.FRE: lang_fre,
           StringsEnum.GER: lang_ger,
           StringsEnum.SPA: lang_spa,
           StringsEnum.CHI: lang_chi,
+          StringsEnum.JPN: lang_jpn,
           }
 
-# TODO: Verify Spanish
+# Spanish strings
 spanish = {StringsEnum.FILE: "Expediente",
            StringsEnum.LAST_DIR: "Abrir la última ubicación de guardado",
            StringsEnum.EXIT: "Salida",
@@ -168,13 +209,15 @@ spanish = {StringsEnum.FILE: "Expediente",
            StringsEnum.WARNING: "Modo normal",
            StringsEnum.LANG: "Idioma:",
            StringsEnum.ENG: lang_eng,
+           StringsEnum.DUT: lang_dut,
            StringsEnum.FRE: lang_fre,
            StringsEnum.GER: lang_ger,
            StringsEnum.SPA: lang_spa,
            StringsEnum.CHI: lang_chi,
+           StringsEnum.JPN: lang_jpn,
            }
 
-# TODO: Verify Chinese (simplified)
+# Chinese (simplified) strings
 chinese = {StringsEnum.FILE: "文件",
            StringsEnum.LAST_DIR: "打开上一个保存位置",
            StringsEnum.EXIT: "退出",
@@ -196,14 +239,48 @@ chinese = {StringsEnum.FILE: "文件",
            StringsEnum.WARNING: "正常模式",
            StringsEnum.LANG: "语言:",
            StringsEnum.ENG: lang_eng,
+           StringsEnum.DUT: lang_dut,
            StringsEnum.FRE: lang_fre,
            StringsEnum.GER: lang_ger,
            StringsEnum.SPA: lang_spa,
            StringsEnum.CHI: lang_chi,
+           StringsEnum.JPN: lang_jpn,
            }
 
+# Japanese strings
+japanese = {StringsEnum.FILE: "ファイル",
+            StringsEnum.LAST_DIR: "最後の保存場所を開く",
+            StringsEnum.EXIT: "出口",
+            StringsEnum.HELP: "助けて",
+            StringsEnum.ABOUT_APP: "約 " + app_name,
+            StringsEnum.ABOUT_COMPANY: "約 " + company_name,
+            StringsEnum.UPDATE_CHECK: "アップデートを確認する",
+            StringsEnum.SHOW_LOG_WINDOW: "ログウィンドウを表示",
+            StringsEnum.USE_CAMS: "カメラを使用する",
+            StringsEnum.ATTACHED_CAMS: "付属カメラ",
+            StringsEnum.SETTINGS: "設定",
+            StringsEnum.LAYOUT: "ウィンドウのレイアウト",
+            StringsEnum.HORIZONTAL: "横型",
+            StringsEnum.VERTICAL: "垂直",
+            StringsEnum.TILED: "タイル張り",
+            StringsEnum.CASCADE: "カスケード",
+            StringsEnum.DEBUG_MENU: "デバッグレベル",
+            StringsEnum.DEBUG: "デバッグモード",
+            StringsEnum.WARNING: "ノーマルモード",
+            StringsEnum.LANG: "言語:",
+            StringsEnum.ENG: lang_eng,
+            StringsEnum.DUT: lang_dut,
+            StringsEnum.FRE: lang_fre,
+            StringsEnum.GER: lang_ger,
+            StringsEnum.SPA: lang_spa,
+            StringsEnum.CHI: lang_chi,
+            StringsEnum.JPN: lang_jpn,
+            }
+
 strings = {LangEnum.ENG: english,
+           LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
            LangEnum.SPA: spanish,
-           LangEnum.CHI: chinese}
+           LangEnum.CHI: chinese,
+           LangEnum.JPN: japanese}

@@ -51,7 +51,20 @@ english = {StringsEnum.TITLE: "Experiment",
            StringsEnum.COND_NAME_SHADOW: "Optional condition name",
            }
 
-# TODO: Verify French
+# TODO: Verify translations
+# Dutch strings
+dutch = {StringsEnum.TITLE: "Experiment",
+         StringsEnum.CREATE: "Creëer",
+         StringsEnum.END: "Einde",
+         StringsEnum.CREATE_TT: "Maak een nieuw experiment",
+         StringsEnum.END_TT: "Einde experiment",
+         StringsEnum.START_TT: "Begin met experimenteren",
+         StringsEnum.RESUME_TT: "Hervat experiment",
+         StringsEnum.PAUSE_TT: "Pauzeer het experiment",
+         StringsEnum.COND_NAME_SHADOW: "Optionele conditienaam",
+         }
+
+# French strings
 french = {StringsEnum.TITLE: "Expérience",
           StringsEnum.CREATE: "Créer",
           StringsEnum.END: "Fin",
@@ -63,7 +76,7 @@ french = {StringsEnum.TITLE: "Expérience",
           StringsEnum.COND_NAME_SHADOW: "Nom de condition facultatif",
           }
 
-# TODO: Verify German
+# German strings
 german = {StringsEnum.TITLE: "Experiment",
           StringsEnum.CREATE: "Erstellen",
           StringsEnum.END: "Ende",
@@ -75,7 +88,7 @@ german = {StringsEnum.TITLE: "Experiment",
           StringsEnum.COND_NAME_SHADOW: "Optionaler Bedingungsname",
           }
 
-# TODO: Verify Spanish
+# Spanish strings
 spanish = {StringsEnum.TITLE: "Experimentar",
            StringsEnum.CREATE: "Crear",
            StringsEnum.END: "Final",
@@ -87,7 +100,7 @@ spanish = {StringsEnum.TITLE: "Experimentar",
            StringsEnum.COND_NAME_SHADOW: "Nombre de condición opcional",
            }
 
-# TODO: Verify Chinese (simplified)
+# Chinese (simplified) strings
 chinese = {StringsEnum.TITLE: "实验",
            StringsEnum.CREATE: "创建",
            StringsEnum.END: "结束",
@@ -99,8 +112,22 @@ chinese = {StringsEnum.TITLE: "实验",
            StringsEnum.COND_NAME_SHADOW: "可选条件名称",
            }
 
+# Japanese strings
+japanese = {StringsEnum.TITLE: "実験",
+            StringsEnum.CREATE: "作成する",
+            StringsEnum.END: "終わり",
+            StringsEnum.CREATE_TT: "新しい実験を作成する",
+            StringsEnum.END_TT: "実験を終了",
+            StringsEnum.START_TT: "実験を始める",
+            StringsEnum.RESUME_TT: "実験を再開",
+            StringsEnum.PAUSE_TT: "実験を一時停止",
+            StringsEnum.COND_NAME_SHADOW: "オプションの条件名",
+            }
+
 strings = {LangEnum.ENG: english,
+           LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
            LangEnum.SPA: spanish,
-           LangEnum.CHI: chinese}
+           LangEnum.CHI: chinese,
+           LangEnum.JPN: japanese}

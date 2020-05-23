@@ -40,32 +40,47 @@ english = {StringsEnum.TITLE: app_name,
            StringsEnum.CLOSE_APP_CONFIRM: "Close app? Any unsaved progress will be lost!",
            }
 
-# TODO: Verify French
+# TODO: Verify translations
+# Dutch strings
+dutch = {StringsEnum.TITLE: app_name,
+         StringsEnum.CLOSE_TITLE: "Dicht " + company_name,
+         StringsEnum.CLOSE_APP_CONFIRM: "App sluiten? Alle niet-opgeslagen voortgang gaat verloren!",
+         }
+
+# French strings
 french = {StringsEnum.TITLE: app_name,
           StringsEnum.CLOSE_TITLE: "Fermer " + company_name,
           StringsEnum.CLOSE_APP_CONFIRM: "Fermer l'application? Tout progrès non enregistré sera perdu!",
           }
 
-# TODO: Verify German
+# German strings
 german = {StringsEnum.TITLE: app_name,
           StringsEnum.CLOSE_TITLE: "Schließen " + company_name,
           StringsEnum.CLOSE_APP_CONFIRM: "App schließen? Jeder nicht gespeicherte Fortschritt geht verloren!",
           }
 
-# TODO: Verify Spanish
+# Spanish strings
 spanish = {StringsEnum.TITLE: app_name,
            StringsEnum.CLOSE_TITLE: "Cerrar " + company_name,
            StringsEnum.CLOSE_APP_CONFIRM: "¿Cerrar app? ¡Cualquier progreso no guardado se perderá!",
            }
 
-# TODO: Verify Chinese (simplified)
+# Chinese (simplified) strings
 chinese = {StringsEnum.TITLE: app_name,
            StringsEnum.CLOSE_TITLE: "关闭 " + company_name,
            StringsEnum.CLOSE_APP_CONFIRM: "关闭应用程式？ 任何未保存的进度将丢失！",
            }
 
+# Japanese strings
+japanese = {StringsEnum.TITLE: app_name,
+            StringsEnum.CLOSE_TITLE: "閉じる " + company_name,
+            StringsEnum.CLOSE_APP_CONFIRM: "アプリを閉じますか？ 保存されていない進行状況は失われます！",
+            }
+
 strings = {LangEnum.ENG: english,
+           LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
            LangEnum.SPA: spanish,
-           LangEnum.CHI: chinese}
+           LangEnum.CHI: chinese,
+           LangEnum.JPN: japanese}

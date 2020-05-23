@@ -88,6 +88,12 @@ class AppMenuBar(QMenuBar):
         self._english_action.setCheckable(True)
         self._english_action.triggered.connect(self._eng_clicked)
 
+        # Dutch
+        self._dutch_action = QAction(self)
+        self._lang_actions.append(self._dutch_action)
+        self._dutch_action.setCheckable(True)
+        self._dutch_action.triggered.connect(self._dut_clicked)
+
         # French
         self._french_action = QAction(self)
         self._lang_actions.append(self._french_action)
@@ -106,13 +112,19 @@ class AppMenuBar(QMenuBar):
         self._spanish_action.setCheckable(True)
         self._spanish_action.triggered.connect(self._spa_clicked)
 
-        # TODO: issue with Chinese characters.
-        #       Maybe use traditional instead of simplified.
+        # TODO: issue with Chinese and Japanese characters.
+        #       seems to be an issue with matplotlib
         # Chinese
         # self._chinese_action = QAction(self)
         # self._lang_actions.append(self._chinese_action)
         # self._chinese_action.setCheckable(True)
         # self._chinese_action.triggered.connect(self._chi_clicked)
+
+        # Japanese
+        # self._japanese_action = QAction(self)
+        # self._lang_actions.append(self._japanese_action)
+        # self._japanese_action.setCheckable(True)
+        # self._japanese_action.triggered.connect(self._jpn_clicked)
 
         """ Debug options """
         self._debug_actions = []
@@ -165,10 +177,12 @@ class AppMenuBar(QMenuBar):
 
         # Menu bar -> Settings -> Language menu options
         self._language_menu.addAction(self._english_action)
+        self._language_menu.addAction(self._dutch_action)
         self._language_menu.addAction(self._french_action)
         self._language_menu.addAction(self._german_action)
         self._language_menu.addAction(self._spanish_action)
         # self._language_menu.addAction(self._chinese_action)
+        # self._language_menu.addAction(self._japanese_action)
 
         # Menu bar -> Settings -> Debug menu options
         self._debug_menu.addAction(self._debug_action)
@@ -197,6 +211,8 @@ class AppMenuBar(QMenuBar):
         self._set_texts()
         if lang == LangEnum.ENG:
             self._reset_lang_actions(self._english_action)
+        elif lang == LangEnum.DUT:
+            self._reset_lang_actions(self._dutch_action)
         elif lang == LangEnum.FRE:
             self._reset_lang_actions(self._french_action)
         elif lang == LangEnum.GER:
@@ -205,6 +221,8 @@ class AppMenuBar(QMenuBar):
             self._reset_lang_actions(self._spanish_action)
         # elif lang == LangEnum.CHI:
         #     self._reset_lang_actions(self._chinese_action)
+        # elif lang == LangEnum.JPN:
+        #     self._reset_lang_actions(self._japanese_action)
 
     def add_window_layout_handler(self, func: classmethod) -> None:
         """
@@ -412,6 +430,14 @@ class AppMenuBar(QMenuBar):
         if self._lang_callback:
             self._lang_callback(LangEnum.ENG)
 
+    def _dut_clicked(self) -> None:
+        """
+        Private handler for self._english_action
+        :return None:
+        """
+        if self._lang_callback:
+            self._lang_callback(LangEnum.DUT)
+
     def _fre_clicked(self) -> None:
         """
         Private handler for self._french_action
@@ -443,6 +469,14 @@ class AppMenuBar(QMenuBar):
         """
         if self._lang_callback:
             self._lang_callback(LangEnum.CHI)
+
+    def _jpn_clicked(self) -> None:
+        """
+        Private handler for self._japanese_action
+        :return None:
+        """
+        if self._lang_callback:
+            self._lang_callback(LangEnum.JPN)
 
     def _debug_clicked(self) -> None:
         """
@@ -504,10 +538,12 @@ class AppMenuBar(QMenuBar):
         # self._use_cams_action.setText(self._strings[StringsEnum.USE_CAMS])
         self._language_menu.setTitle(self._strings[StringsEnum.LANG])
         self._english_action.setText(self._strings[StringsEnum.ENG])
+        self._dutch_action.setText(self._strings[StringsEnum.DUT])
         self._french_action.setText(self._strings[StringsEnum.FRE])
         self._german_action.setText(self._strings[StringsEnum.GER])
         self._spanish_action.setText(self._strings[StringsEnum.SPA])
         # self._chinese_action.setText(self._strings[StringsEnum.CHI])
+        # self._japanese_action.setText(self._strings[StringsEnum.JPN])
         self._help_menu.setTitle(self._strings[StringsEnum.HELP])
         self._about_app_action.setText(self._strings[StringsEnum.ABOUT_APP])
         self._about_company_action.setText(self._strings[StringsEnum.ABOUT_COMPANY])
