@@ -49,7 +49,18 @@ english = {StringsEnum.TITLE: "Storage Information",
            StringsEnum.MB_USED: "MB used:",
            }
 
-# TODO: Verify French
+# TODO: Verify translations
+# Dutch strings
+dutch = {StringsEnum.TITLE: "Opslaginformatie",
+         StringsEnum.STORAGE_ID: 'Opslag-ID:',
+         StringsEnum.PERC_FREE: "Percentage gratis:",
+         StringsEnum.PERC_USED: "Percentage gebruikt:",
+         StringsEnum.GB_FREE: "GB gratis:",
+         StringsEnum.GB_USED: "GB gebruikt:",
+         StringsEnum.MB_FREE: "MB gratis:",
+         StringsEnum.MB_USED: "MB gebruikt:",
+         }
+# French strings
 french = {StringsEnum.TITLE: "Informations de Stockage",
           StringsEnum.STORAGE_ID: 'ID de Stockage:',
           StringsEnum.PERC_FREE: "Pourcentage inutilisé:",
@@ -60,7 +71,7 @@ french = {StringsEnum.TITLE: "Informations de Stockage",
           StringsEnum.MB_USED: "MB utilisé:",
           }
 
-# TODO: Verify German
+# German strings
 german = {StringsEnum.TITLE: "Speicherinformationen",
           StringsEnum.STORAGE_ID: 'Speicher-ID:',
           StringsEnum.PERC_FREE: "Prozent frei:",
@@ -71,7 +82,7 @@ german = {StringsEnum.TITLE: "Speicherinformationen",
           StringsEnum.MB_USED: "MB verwendet:",
           }
 
-# TODO: Verify Spanish
+# Spanish strings
 spanish = {StringsEnum.TITLE: "Información de almacenamiento",
            StringsEnum.STORAGE_ID: 'ID de almacenamiento:',
            StringsEnum.PERC_FREE: "Porcentaje libre:",
@@ -82,7 +93,7 @@ spanish = {StringsEnum.TITLE: "Información de almacenamiento",
            StringsEnum.MB_USED: "MB utilizado:",
            }
 
-# TODO: Verify Chinese (simplified)
+# Chinese (simplified) strings
 chinese = {StringsEnum.TITLE: "储存资讯",
            StringsEnum.STORAGE_ID: '储存ID:',
            StringsEnum.PERC_FREE: "可用百分比:",
@@ -93,8 +104,21 @@ chinese = {StringsEnum.TITLE: "储存资讯",
            StringsEnum.MB_USED: "MB 用过的:",
            }
 
+# Japanese strings
+japanese = {StringsEnum.TITLE: "ストレージ情報",
+            StringsEnum.STORAGE_ID: 'ストレージID:',
+            StringsEnum.PERC_FREE: "パーセント無料:",
+            StringsEnum.PERC_USED: "パーセント中古:",
+            StringsEnum.GB_FREE: "GB無料:",
+            StringsEnum.GB_USED: "GB中古:",
+            StringsEnum.MB_FREE: "MB無料:",
+            StringsEnum.MB_USED: "MB中古:",
+            }
+
 strings = {LangEnum.ENG: english,
+           LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
            LangEnum.SPA: spanish,
-           LangEnum.CHI: chinese}
+           LangEnum.CHI: chinese,
+           LangEnum.JPN: japanese}

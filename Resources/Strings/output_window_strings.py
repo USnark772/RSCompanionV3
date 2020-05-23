@@ -35,6 +35,8 @@ class StringsEnum(Enum):
 
 english = {StringsEnum.TITLE: app_name}
 
+dutch = {StringsEnum.TITLE: app_name}
+
 french = {StringsEnum.TITLE: app_name}
 
 german = {StringsEnum.TITLE: app_name}
@@ -43,7 +45,10 @@ spanish = {StringsEnum.TITLE: app_name}
 
 chinese = {StringsEnum.TITLE: app_name}
 
+japanese = {StringsEnum.TITLE: app_name}
+
 strings = {LangEnum.ENG: english,
+           LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
            LangEnum.SPA: spanish,

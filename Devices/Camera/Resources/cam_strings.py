@@ -66,6 +66,27 @@ english = {StringsEnum.CONFIG_TAB_LABEL: "Configuration",
            }
 
 # TODO: Verify translations
+# Dutch strings
+dutch = {StringsEnum.CONFIG_TAB_LABEL: "Configuratie",
+         StringsEnum.INITIALIZATION_BAR_LABEL: "Initialisatievoortgang",
+         StringsEnum.IMAGE_DISPLAY_LABEL: "Voorbeeld",
+         StringsEnum.IMAGE_DISPLAY: "Bezig met initialiseren",
+         StringsEnum.SHOW_CAM_CHECKBOX_LABEL: "Feed Weergeven",
+         StringsEnum.FRAME_SIZE_SELECTOR_LABEL: "Kadergrootte",
+         StringsEnum.FRAME_ROTATION_SETTING_LABEL: "Roteer afbeelding",
+         StringsEnum.FPS_DISPLAY_LABEL: "FPS:",
+         StringsEnum.FPS_DISPLAY_VALUE: "0",
+         StringsEnum.CONFIG_TAB_TOOLTIP: "Configuratietabblad weergeven/verbergen",
+         StringsEnum.FRAME_SIZE_TOOLTIP: "Selecteer resolutie voor deze camera.",
+         StringsEnum.SHOW_CAM_TOOLTIP: "Voorbeeldweergave van camerafeed weergeven of verbergen."
+                                       " (Schakelt camera niet uit)",
+         StringsEnum.FPS_DISPLAY_TOOLTIP: "De geschatte fps waarop deze camera presteert. Deze waarde kan worden"
+                                          " beïnvloed door de belasting van uw computer.",
+         StringsEnum.ROTATION_TOOLTIP: "Stel de mate van rotatie in voor videofeed. -360 < waarde < 360.",
+         StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Voorbeeld van camerafeed.",
+         }
+
+# French strings
 french = {StringsEnum.CONFIG_TAB_LABEL: "Configuration",
           StringsEnum.INITIALIZATION_BAR_LABEL: "Progression de l'initialisation",
           StringsEnum.IMAGE_DISPLAY_LABEL: "Aperçu",
@@ -85,6 +106,7 @@ french = {StringsEnum.CONFIG_TAB_LABEL: "Configuration",
           StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Aperçu du flux de la caméra.",
           }
 
+# German strings
 german = {StringsEnum.CONFIG_TAB_LABEL: "Konfiguration",
           StringsEnum.INITIALIZATION_BAR_LABEL: "Initialisierungsfortschritt",
           StringsEnum.IMAGE_DISPLAY_LABEL: "Vorschau",
@@ -104,6 +126,7 @@ german = {StringsEnum.CONFIG_TAB_LABEL: "Konfiguration",
           StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Vorschau des Kamera-Feeds.",
           }
 
+# Spanish strings
 spanish = {StringsEnum.CONFIG_TAB_LABEL: "Configuración",
            StringsEnum.INITIALIZATION_BAR_LABEL: "Progreso de inicialización",
            StringsEnum.IMAGE_DISPLAY_LABEL: "Preestreno",
@@ -125,11 +148,34 @@ spanish = {StringsEnum.CONFIG_TAB_LABEL: "Configuración",
            StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Vista previa de la alimentación de la cámara.",
            }
 
+# Chinese strings
 chinese = english
+
+# Japanese strings
+japanese = {StringsEnum.CONFIG_TAB_LABEL: "構成",
+            StringsEnum.INITIALIZATION_BAR_LABEL: "初期化の進行状況",
+            StringsEnum.IMAGE_DISPLAY_LABEL: "プレビュー",
+            StringsEnum.IMAGE_DISPLAY: "初期化中",
+            StringsEnum.SHOW_CAM_CHECKBOX_LABEL: "フィードを表示",
+            StringsEnum.FRAME_SIZE_SELECTOR_LABEL: "フレームサイズ",
+            StringsEnum.FRAME_ROTATION_SETTING_LABEL: "画像を回転",
+            StringsEnum.FPS_DISPLAY_LABEL: "FPS:",
+            StringsEnum.FPS_DISPLAY_VALUE: "0",
+            StringsEnum.CONFIG_TAB_TOOLTIP: "構成タブの表示/非表示",
+            StringsEnum.FRAME_SIZE_TOOLTIP: "このカメラの解像度を選択します。",
+            StringsEnum.SHOW_CAM_TOOLTIP: "カメラフィードのプレビューを表示または非表示にします。"
+                                          " （カメラを無効にしません）",
+            StringsEnum.FPS_DISPLAY_TOOLTIP: "このカメラが実行しているおおよそのfps。 この値は、コンピューターに現在か"
+                                             "かっている負荷の影響を受ける可能性があります。",
+            StringsEnum.ROTATION_TOOLTIP: "ビデオフィードの回転角度を設定します。 -360 <値<360。",
+            StringsEnum.IMAGE_DISPLAY_TOOLTIP: "カメラフィードのプレビュー。",
+            }
 
 # Add defined languages to strings dictionary.
 strings = {LangEnum.ENG: english,
+           LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
            LangEnum.SPA: spanish,
-           LangEnum.CHI: chinese}
+           LangEnum.CHI: chinese,
+           LangEnum.JPN: japanese}

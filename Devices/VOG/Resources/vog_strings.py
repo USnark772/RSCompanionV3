@@ -108,6 +108,46 @@ english = {StringsEnum.CUSTOM_LABEL: "Custom",
            }
 
 # TODO: Verify translations
+# Dutch strings
+dutch = {StringsEnum.CUSTOM_LABEL: "Op maat",
+         StringsEnum.NHTSA_LABEL: "NHTSA",
+         StringsEnum.EBLIND_LABEL: "eBlinddoek",
+         StringsEnum.DCON_LABEL: "Directe controle",
+         StringsEnum.INF_LABEL: "INF",
+         StringsEnum.CONFIG_TAB_LABEL: "Configuratie",
+         StringsEnum.CONFIG_LABEL: "Huidige configuratie:",
+         StringsEnum.UPLOAD_BUTTON_LABEL: "Upload instellingen",
+         StringsEnum.OPEN_DURATION_LABEL: "Open Duur",
+         StringsEnum.CLOSE_DURATION_LABEL: "Sluitingsduur",
+         StringsEnum.DEBOUNCE_LABEL: "Debouncetijd",
+         StringsEnum.BUTTON_MODE_LABEL: "Knopmodus",
+         StringsEnum.CONTROL_MODE_LABEL: "Besturingsmodus",
+         StringsEnum.HOLD_VAL_LABEL: "Houden",
+         StringsEnum.CLICK_VAL_LABEL: "Klik",
+         StringsEnum.LENS_VAL_LABEL: "Lens",
+         StringsEnum.TRIAL_VAL_LABEL: "Proef",
+         StringsEnum.MANUAL_OPEN_LABEL: "Open Lens",
+         StringsEnum.MANUAL_CLOSE_LABEL: "Lens sluiten",
+         StringsEnum.CONFIG_TAB_TOOLTIP: "Configuratietabblad weergeven/verbergen",
+         StringsEnum.CONFIG_LABEL_TOOLTIP: "Huidige apparaatconfiguratie",
+         StringsEnum.UPLOAD_BUTTON_TOOLTIP: "Upload de huidige configuratie naar het apparaat",
+         StringsEnum.OPEN_DURATION_TOOLTIP: "Stel de open duur van de lens in.",
+         StringsEnum.CLOSE_DURATION_TOOLTIP: "Stel de sluitingsduur van de lens in.",
+         StringsEnum.DEBOUNCE_TOOLTIP: "Stel de debouncetijd van de knop in.",
+         StringsEnum.BUTTON_MODE_TOOLTIP: "Stel de knopmodus in om te Klikken of vast te Houden.",
+         StringsEnum.CONTROL_MODE_TOOLTIP: "Stel de bedieningsmodus in op Lens of Proef.",
+         StringsEnum.HOLD_VAL_TOOLTIP: "Houd de knop ingedrukt om de lens te wisselen.",
+         StringsEnum.CLICK_VAL_TOOLTIP: "Klik op de knop om de lens te wisselen.",
+         StringsEnum.LENS_VAL_TOOLTIP: "Klik op de knop om de lens te wisselen.",
+         StringsEnum.TRIAL_VAL_TOOLTIP: "Klik op de knop om de proefversie te wisselen.",
+         StringsEnum.MANUAL_OPEN_TOOLTIP: "Handmatig geopende lens.",
+         StringsEnum.MANUAL_CLOSE_TOOLTIP: "Lens handmatig sluiten.",
+         StringsEnum.SAVE_HDR: "tijdstempel, proef, open, sluiten, ",
+         StringsEnum.PLOT_NAME_OPEN_CLOSE: "Tijd openen/sluiten",
+         StringsEnum.GRAPH_TS: "tijdstempel",
+         }
+
+# French strings
 french = {StringsEnum.CUSTOM_LABEL: "Douane",
           StringsEnum.NHTSA_LABEL: "NHTSA",
           StringsEnum.EBLIND_LABEL: "ébandeau",
@@ -146,6 +186,7 @@ french = {StringsEnum.CUSTOM_LABEL: "Douane",
           StringsEnum.GRAPH_TS: "Horodatage",
           }
 
+# German strings
 german = {StringsEnum.CUSTOM_LABEL: "Benutzerdefiniert",
           StringsEnum.NHTSA_LABEL: "NHTSA",
           StringsEnum.EBLIND_LABEL: "eAugenbinde",
@@ -184,6 +225,7 @@ german = {StringsEnum.CUSTOM_LABEL: "Benutzerdefiniert",
           StringsEnum.GRAPH_TS: "Zeitstempel",
           }
 
+# Spanish strings
 spanish = {StringsEnum.CUSTOM_LABEL: "Personalizado",
            StringsEnum.NHTSA_LABEL: "NHTSA",
            StringsEnum.EBLIND_LABEL: "eVenda",
@@ -222,11 +264,53 @@ spanish = {StringsEnum.CUSTOM_LABEL: "Personalizado",
            StringsEnum.GRAPH_TS: "marca de tiempo",
            }
 
+# Chinese strings
 chinese = english
+
+# Japanese strings
+japanese = {StringsEnum.CUSTOM_LABEL: "カスタム",
+            StringsEnum.NHTSA_LABEL: "NHTSA",
+            StringsEnum.EBLIND_LABEL: "e目隠し",
+            StringsEnum.DCON_LABEL: "直接制御",
+            StringsEnum.INF_LABEL: "INF",
+            StringsEnum.CONFIG_TAB_LABEL: "構成",
+            StringsEnum.CONFIG_LABEL: "現在の構成:",
+            StringsEnum.UPLOAD_BUTTON_LABEL: "アップロード設定",
+            StringsEnum.OPEN_DURATION_LABEL: "オープン期間",
+            StringsEnum.CLOSE_DURATION_LABEL: "クローズ期間",
+            StringsEnum.DEBOUNCE_LABEL: "デバウンス時間",
+            StringsEnum.BUTTON_MODE_LABEL: "ボタンモード",
+            StringsEnum.CONTROL_MODE_LABEL: "制御モード",
+            StringsEnum.HOLD_VAL_LABEL: "ホールド",
+            StringsEnum.CLICK_VAL_LABEL: "クリック",
+            StringsEnum.LENS_VAL_LABEL: "レンズ",
+            StringsEnum.TRIAL_VAL_LABEL: "トライアル",
+            StringsEnum.MANUAL_OPEN_LABEL: "オープンレンズ",
+            StringsEnum.MANUAL_CLOSE_LABEL: "レンズを閉じる",
+            StringsEnum.CONFIG_TAB_TOOLTIP: "構成タブの表示/非表示",
+            StringsEnum.CONFIG_LABEL_TOOLTIP: "現在のデバイス構成",
+            StringsEnum.UPLOAD_BUTTON_TOOLTIP: "現在の構成をデバイスにアップロード",
+            StringsEnum.OPEN_DURATION_TOOLTIP: "レンズの開放時間を設定します。",
+            StringsEnum.CLOSE_DURATION_TOOLTIP: "レンズのクローズ期間を設定します。",
+            StringsEnum.DEBOUNCE_TOOLTIP: "ボタンのデバウンス時間を設定します。",
+            StringsEnum.BUTTON_MODE_TOOLTIP: "ボタンモードをクリックまたはホールドに設定します。",
+            StringsEnum.CONTROL_MODE_TOOLTIP: "制御モードをレンズまたはトライアルに設定します。",
+            StringsEnum.HOLD_VAL_TOOLTIP: "ボタンを押し続けると、レンズが切り替わります。",
+            StringsEnum.CLICK_VAL_TOOLTIP: "ボタンをクリックしてレンズを切り替えます。",
+            StringsEnum.LENS_VAL_TOOLTIP: "ボタンをクリックしてレンズを切り替えます。",
+            StringsEnum.TRIAL_VAL_TOOLTIP: "ボタンをクリックしてトライアルを切り替えます。",
+            StringsEnum.MANUAL_OPEN_TOOLTIP: "レンズを手動で開きます。",
+            StringsEnum.MANUAL_CLOSE_TOOLTIP: "レンズを手動で閉じます。",
+            StringsEnum.SAVE_HDR: "タイムスタンプ, トライアル, 開いた, 閉じる, ",
+            StringsEnum.PLOT_NAME_OPEN_CLOSE: "時間の開閉",
+            StringsEnum.GRAPH_TS: "タイムスタンプ",
+            }
 
 # Add defined languages to strings dictionary.
 strings = {LangEnum.ENG: english,
+           LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
            LangEnum.SPA: spanish,
-           LangEnum.CHI: chinese}
+           LangEnum.CHI: chinese,
+           LangEnum.JPN: japanese}

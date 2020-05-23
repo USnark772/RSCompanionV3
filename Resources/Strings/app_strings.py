@@ -85,7 +85,46 @@ english = {StringsEnum.COMPANY_NAME: company_name,
            StringsEnum.RESTART_PROG: "This app must restart for changes to take effect."
            }
 
-# TODO: Verify French
+# TODO: Verify translations
+# Dutch
+dutch = {StringsEnum.COMPANY_NAME: company_name,
+         StringsEnum.APP_NAME: app_name,
+         StringsEnum.LOG_OUT_NAME: log_out_filename,
+         StringsEnum.LOG_VER_ID: company_name + " app versie: ",
+         StringsEnum.PROG_OUT_HDR: "Tijdstempel, Auteur, Plaats, Bericht\n",
+         StringsEnum.ABOUT_COMPANY: company_name + " Inc is in 2015 opgericht door Joel Cooper PhD\n\n"
+                                                   " Contactgegevens:\n"
+                                                   " joel@redscientific.com\n"
+                                                   " 1-801-520-5408",
+         StringsEnum.ABOUT_APP: "- De meeste dingen in deze app hebben tooltips. Ga met de muis over de verschillende"
+                                " onderdelen om de respectievelijke tooltips te zien voor meer informatie\n\n"
+                                " Bovenaan de app vindt u een bedieningsbalk met het volgende:\n"
+                                " - Knop Maken/beëindigen: maak of beëindig een experiment. Kies een locatiemap voor"
+                                " de app om apparaatgegevens op te slaan.\n"
+                                " - Play/Pause-knop: Start/hervat of pauzeer een lopend experiment.\n"
+                                " - Optionele conditienaam: een optionele naam die wordt geassocieerd met het nieuw"
+                                " gemaakte experiment.\n\n"
+                                " - Key Flag: Druk op elk gewenst moment op een lettertoets om een snelle"
+                                " referentietoets te maken die wordt geassocieerd met de gegevens die tijdens een"
+                                " experiment uit de apparaten binnenkomen.\n\n"
+                                " - Opmerking: typ een notitie in het vak en druk op Posten om die notitie toe te"
+                                " passen op alle apparaatgegevensbestanden binnen het huidige experiment.\n\n"
+                                " - Informatie: Geeft informatie weer met betrekking tot het huidige experiment.\n\n"
+                                " - Drive Info: Geeft informatie weer met betrekking tot het huidige volume waarin"
+                                " gegevens worden opgeslagen.",
+         StringsEnum.UPDATE_HDR: "Bijwerken",
+         StringsEnum.UPDATE_HDR_ERR: "Fout",
+         StringsEnum.UPDATE_AVAILABLE: "Een update is beschikbaar.",
+         StringsEnum.NO_UPDATE: "Je programma is up-to-date.",
+         StringsEnum.ERR_UPDATE_CHECK: "Er is een onverwachte fout opgetreden bij het verbinden met de repository."
+                                       " Controleer handmatig https://redscientific.com/downloads.html of neem"
+                                       " rechtstreeks contact op met Red Scientific.",
+         StringsEnum.DEV_CON_ERR: "Er is een probleem opgetreden bij het verbinden van het apparaat."
+                                  " Probeer het opnieuw.",
+         StringsEnum.RESTART_PROG: "Deze app moet opnieuw worden opgestart om de wijzigingen door te voeren."
+         }
+
+# French strings
 french = {StringsEnum.COMPANY_NAME: company_name,
           StringsEnum.APP_NAME: app_name,
           StringsEnum.LOG_OUT_NAME: log_out_filename,
@@ -125,7 +164,7 @@ french = {StringsEnum.COMPANY_NAME: company_name,
           StringsEnum.RESTART_PROG: "Cette application doit redémarrer pour que les modifications prennent effet."
           }
 
-# TODO: verify German
+# German strings
 german = {StringsEnum.COMPANY_NAME: company_name,
           StringsEnum.APP_NAME: app_name,
           StringsEnum.LOG_OUT_NAME: log_out_filename,
@@ -165,7 +204,7 @@ german = {StringsEnum.COMPANY_NAME: company_name,
           StringsEnum.RESTART_PROG: "Diese App muss neu gestartet werden, damit die Änderungen wirksam werden."
           }
 
-# TODO: verify Spanish
+# Spanish strings
 spanish = {StringsEnum.COMPANY_NAME: company_name,
            StringsEnum.APP_NAME: app_name,
            StringsEnum.LOG_OUT_NAME: log_out_filename,
@@ -204,7 +243,7 @@ spanish = {StringsEnum.COMPANY_NAME: company_name,
            StringsEnum.RESTART_PROG: "Esta aplicación debe reiniciarse para que los cambios surtan efecto."
            }
 
-# TODO: Verify Chinese (simplified)
+# Chinese (simplified) strings
 chinese = {StringsEnum.COMPANY_NAME: company_name,
            StringsEnum.APP_NAME: app_name,
            StringsEnum.LOG_OUT_NAME: log_out_filename,
@@ -234,8 +273,44 @@ chinese = {StringsEnum.COMPANY_NAME: company_name,
            StringsEnum.RESTART_PROG: "此应用必须重新启动才能使更改生效。"
            }
 
+# Japanese strings
+japanese = {StringsEnum.COMPANY_NAME: company_name,
+            StringsEnum.APP_NAME: app_name,
+            StringsEnum.LOG_OUT_NAME: log_out_filename,
+            StringsEnum.LOG_VER_ID: company_name + " アプリのバージョン: ",
+            StringsEnum.PROG_OUT_HDR: "タイムスタンプ, 著者, ロケーション, メッセージ\n",
+            StringsEnum.ABOUT_COMPANY: company_name + " Incは2015年にJoel Cooper PhDによって設立されました\n\n"
+                                                      " 連絡先:\n"
+                                                      " joel@redscientific.com\n"
+                                                      " 1-801-520-5408",
+            StringsEnum.ABOUT_APP: "- このアプリのほとんどのものにはツールチップがあります。 さまざまなパーツの上にマウス"
+                                   "を置くと、それぞれのツールチップが表示され、詳細を確認できます\n\n"
+                                   " アプリの上部に沿って、以下を含むコントロールバーがあります:\n"
+                                   " - 作成/終了ボタン：テストを作成または終了します。"
+                                   " デバイスデータを保存する場所のフォルダーを選択します。\n"
+                                   " - 再生/一時停止ボタン：進行中の実験を開始/再開または一時停止します。\n"
+                                   " - オプションの条件名：新しく作成された実験に関連付けられるオプションの名前。\n\n"
+                                   " - キーフラグ：いつでも文字キーを押して、実験中にデバイスから入力されるデータに関連付け"
+                                   "られるクイックリファレンスキーを作成します。\n\n"
+                                   " - 注：ボックスにメモを入力して[投稿]を押すと、そのメモが現在の実験内のすべてのデバイス"
+                                   "データファイルに適用されます。\n\n"
+                                   " - 情報：現在の実験に関する情報を表示します。\n\n"
+                                   " - ドライブ情報：データが保存されている現在のボリュームに関する情報を表示します。",
+            StringsEnum.UPDATE_HDR: "アップデート",
+            StringsEnum.UPDATE_HDR_ERR: "エラー",
+            StringsEnum.UPDATE_AVAILABLE: "アップデートが利用可能です。",
+            StringsEnum.NO_UPDATE: "プログラムは最新です。",
+            StringsEnum.ERR_UPDATE_CHECK: "リポジトリへの接続中に予期しないエラーが発生しました。"
+                                          " https://redscientific.com/downloads.htmlを手動で確認するか、Red Scientific"
+                                          "に直接連絡してください。",
+            StringsEnum.DEV_CON_ERR: "デバイスの接続に問題が発生しました。接続を再試行してください。",
+            StringsEnum.RESTART_PROG: "変更を有効にするには、このアプリを再起動する必要があります。"
+            }
+
 strings = {LangEnum.ENG: english,
+           LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
            LangEnum.SPA: spanish,
-           LangEnum.CHI: chinese}
+           LangEnum.CHI: chinese,
+           LangEnum.JPN: japanese}
