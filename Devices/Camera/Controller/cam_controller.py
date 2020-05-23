@@ -178,6 +178,6 @@ class Controller(AbstractController):
         """
         rgb_image = cvtColor(frame, COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
-        res = QImage(rgb_image.data, w, h, ch * w, QImage.Format_RGB888).scaled(248, 186, Qt.KeepAspectRatio)
+        res = QImage(rgb_image.data, w, h, ch * w, QImage.Format_RGB888)
         ret = QPixmap.fromImage(res)
         return ret

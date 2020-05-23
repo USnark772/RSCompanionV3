@@ -26,7 +26,7 @@ https://redscientific.com/index.html
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QVBoxLayout, QLabel, QProgressBar, QHBoxLayout, QCheckBox, QComboBox, QLineEdit, \
     QSizePolicy, QSpacerItem
-from PySide2.QtGui import QPixmap
+from PySide2.QtGui import QPixmap, QMouseEvent
 from PySide2.QtCore import Qt
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 from Devices.AbstractDevice.View.collapsible_tab_widget import CollapsingTab
@@ -150,6 +150,9 @@ class CamView(AbstractView):
         self._dev_sets_layout.addItem(spacer)
         self.layout().addWidget(self._image_display_frame, 0, 0)
 
+        # self._image_h = int(self.height() * 8)
+        # self._image_w = int(self.width() * 8)
+        self._window_changing = False
         self._strings = dict()
         self._logger.debug("Initialized")
 
@@ -180,6 +183,7 @@ class CamView(AbstractView):
         self._frame_rotation_setting_entry_box.textChanged.connect(func)
         self._logger.debug("done")
 
+    # TODO: Fix this scaling ratio.
     def update_image(self, image: QPixmap) -> None:
         """
         Update image viewer with new image.
@@ -187,7 +191,32 @@ class CamView(AbstractView):
         :return None:
         """
         self._logger.debug("running")
-        self._image_display.setPixmap(image)
+        if not self._window_changing:
+            self._image_display.setPixmap(image.scaled(self.width() * .85,
+                                                       self.height() * .85,
+                                                       Qt.KeepAspectRatio))
+        self._logger.debug("done")
+
+    def mousePressEvent(self, mouseEvent: QMouseEvent) -> None:
+        """
+        Detect when user is possibly resizing window.
+        :param mouseEvent: The event to check.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._window_changing = True
+        super(CamView, self).mousePressEvent(mouseEvent)
+        self._logger.debug("done")
+
+    def mouseReleaseEvent(self, mouseEvent: QMouseEvent) -> None:
+        """
+        Detect when use releases mouse event to tell when user is possibly done resizing window.
+        :param mouseEvent: The event to check.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._window_changing = False
+        super(CamView, self).mousePressEvent(mouseEvent)
         self._logger.debug("done")
 
     def _set_texts(self) -> None:

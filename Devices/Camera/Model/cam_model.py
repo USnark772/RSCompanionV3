@@ -146,6 +146,7 @@ class CamModel:
         :return None:
         """
         while self._running:
+            # print(__name__, "handling new frames")
             await self._using_cam.wait()
             await self._cam_reader.await_new_frame()
             frame = self._cam_reader.get_next_new_frame()
