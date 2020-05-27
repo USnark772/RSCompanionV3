@@ -6,7 +6,7 @@
         - Make subwindows rearrange/resize/move on main window resize.
         - Make subwindows not able to move outside the main window size.
             - Do we still want to do this now that we have scroll bars?
-        - Look into tiled window layout.
+        - Redesign subwindow layouts for drt and vog to be the same. Remove config into pop up window, compact drt graphs into same graph.
     - Implement CAM.
         - Model.
             - Fix app closure handling, sometimes hangs on cleanup() call.
@@ -18,6 +18,7 @@
             - Fix image resizing based on subwindow size.
     - Implement playback of experiment data.
         - Scanning through data example: DRT_7,_8,_9 clicks threshold x, scan through all by timestamp.
+    - Alter save format to be folders instead of .rs files.
 
 # TODO: At some point
     - Check all files for proper and complete self._logger usage.
