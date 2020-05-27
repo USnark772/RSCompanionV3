@@ -53,6 +53,7 @@ class StringsEnum(Enum):
     DUT = auto()
     FRE = auto()
     GER = auto()
+    RUS = auto()
     SPA = auto()
     CHI = auto()
     JPN = auto()
@@ -62,6 +63,7 @@ lang_eng = "English"
 lang_dut = "Nederlands"
 lang_fre = "Français"
 lang_ger = "Deutsche"
+lang_rus = "русский"
 lang_spa = "Español"
 lang_chi = "中文"
 lang_jpn = "日本語"
@@ -91,6 +93,7 @@ english = {StringsEnum.FILE: "File",
            StringsEnum.DUT: lang_dut,
            StringsEnum.FRE: lang_fre,
            StringsEnum.GER: lang_ger,
+           StringsEnum.RUS: lang_rus,
            StringsEnum.SPA: lang_spa,
            StringsEnum.CHI: lang_chi,
            StringsEnum.JPN: lang_jpn,
@@ -122,6 +125,7 @@ dutch = {StringsEnum.FILE: "Bestand",
          StringsEnum.DUT: lang_dut,
          StringsEnum.FRE: lang_fre,
          StringsEnum.GER: lang_ger,
+         StringsEnum.RUS: lang_rus,
          StringsEnum.SPA: lang_spa,
          StringsEnum.CHI: lang_chi,
          StringsEnum.JPN: lang_jpn,
@@ -152,6 +156,7 @@ french = {StringsEnum.FILE: "Fichier",
           StringsEnum.DUT: lang_dut,
           StringsEnum.FRE: lang_fre,
           StringsEnum.GER: lang_ger,
+          StringsEnum.RUS: lang_rus,
           StringsEnum.SPA: lang_spa,
           StringsEnum.CHI: lang_chi,
           StringsEnum.JPN: lang_jpn,
@@ -182,10 +187,42 @@ german = {StringsEnum.FILE: "Datei",
           StringsEnum.DUT: lang_dut,
           StringsEnum.FRE: lang_fre,
           StringsEnum.GER: lang_ger,
+          StringsEnum.RUS: lang_rus,
           StringsEnum.SPA: lang_spa,
           StringsEnum.CHI: lang_chi,
           StringsEnum.JPN: lang_jpn,
           }
+
+# Russian strings
+russian = {StringsEnum.FILE: "файл",
+           StringsEnum.LAST_DIR: "Открыть последнее место сохранения",
+           StringsEnum.EXIT: "выезд",
+           StringsEnum.HELP: "Помогите",
+           StringsEnum.ABOUT_APP: "Около " + app_name,
+           StringsEnum.ABOUT_COMPANY: "Около " + company_name,
+           StringsEnum.UPDATE_CHECK: "Проверить наличие обновлений",
+           StringsEnum.SHOW_LOG_WINDOW: "Показать окно журнала",
+           StringsEnum.USE_CAMS: "Используйте камеры",
+           StringsEnum.ATTACHED_CAMS: "Прикрепленная камера",
+           StringsEnum.SETTINGS: "настройки",
+           StringsEnum.LAYOUT: "Макет окна",
+           StringsEnum.HORIZONTAL: "горизонтальный",
+           StringsEnum.VERTICAL: "вертикальный",
+           StringsEnum.TILED: "Плиточный",
+           StringsEnum.CASCADE: "каскадный",
+           StringsEnum.DEBUG_MENU: "Уровень отладки",
+           StringsEnum.DEBUG: "Режим отладки",
+           StringsEnum.WARNING: "Нормальный режим",
+           StringsEnum.LANG: "язык:",
+           StringsEnum.ENG: lang_eng,
+           StringsEnum.DUT: lang_dut,
+           StringsEnum.FRE: lang_fre,
+           StringsEnum.GER: lang_ger,
+           StringsEnum.RUS: lang_rus,
+           StringsEnum.SPA: lang_spa,
+           StringsEnum.CHI: lang_chi,
+           StringsEnum.JPN: lang_jpn,
+           }
 
 # Spanish strings
 spanish = {StringsEnum.FILE: "Expediente",
@@ -212,6 +249,7 @@ spanish = {StringsEnum.FILE: "Expediente",
            StringsEnum.DUT: lang_dut,
            StringsEnum.FRE: lang_fre,
            StringsEnum.GER: lang_ger,
+           StringsEnum.RUS: lang_rus,
            StringsEnum.SPA: lang_spa,
            StringsEnum.CHI: lang_chi,
            StringsEnum.JPN: lang_jpn,
@@ -242,6 +280,7 @@ chinese = {StringsEnum.FILE: "文件",
            StringsEnum.DUT: lang_dut,
            StringsEnum.FRE: lang_fre,
            StringsEnum.GER: lang_ger,
+           StringsEnum.RUS: lang_rus,
            StringsEnum.SPA: lang_spa,
            StringsEnum.CHI: lang_chi,
            StringsEnum.JPN: lang_jpn,
@@ -272,6 +311,7 @@ japanese = {StringsEnum.FILE: "ファイル",
             StringsEnum.DUT: lang_dut,
             StringsEnum.FRE: lang_fre,
             StringsEnum.GER: lang_ger,
+            StringsEnum.RUS: lang_rus,
             StringsEnum.SPA: lang_spa,
             StringsEnum.CHI: lang_chi,
             StringsEnum.JPN: lang_jpn,
@@ -281,6 +321,7 @@ strings = {LangEnum.ENG: english,
            LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
+           LangEnum.RUS: russian,
            LangEnum.SPA: spanish,
            LangEnum.CHI: chinese,
            LangEnum.JPN: japanese}

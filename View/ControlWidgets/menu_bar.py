@@ -106,6 +106,12 @@ class AppMenuBar(QMenuBar):
         self._german_action.setCheckable(True)
         self._german_action.triggered.connect(self._ger_clicked)
 
+        # Russian
+        self._russian_action = QAction(self)
+        self._lang_actions.append(self._russian_action)
+        self._russian_action.setCheckable(True)
+        self._russian_action.triggered.connect(self._rus_clicked)
+
         # Spanish
         self._spanish_action = QAction(self)
         self._lang_actions.append(self._spanish_action)
@@ -181,6 +187,7 @@ class AppMenuBar(QMenuBar):
         self._language_menu.addAction(self._french_action)
         self._language_menu.addAction(self._german_action)
         self._language_menu.addAction(self._spanish_action)
+        # self._language_menu.addAction(self._russian_action)
         # self._language_menu.addAction(self._chinese_action)
         # self._language_menu.addAction(self._japanese_action)
 
@@ -219,6 +226,8 @@ class AppMenuBar(QMenuBar):
             self._reset_lang_actions(self._german_action)
         elif lang == LangEnum.SPA:
             self._reset_lang_actions(self._spanish_action)
+        # elif lang == LangEnum.RUS:
+        #     self._reset_lang_actions(self._russian_action)
         # elif lang == LangEnum.CHI:
         #     self._reset_lang_actions(self._chinese_action)
         # elif lang == LangEnum.JPN:
@@ -462,6 +471,14 @@ class AppMenuBar(QMenuBar):
         if self._lang_callback:
             self._lang_callback(LangEnum.SPA)
 
+    def _rus_clicked(self) -> None:
+        """
+        Private handler for self._russian_action
+        :return None:
+        """
+        if self._lang_callback:
+            self._lang_callback(LangEnum.RUS)
+
     def _chi_clicked(self) -> None:
         """
         Private handler for self._chinese_action
@@ -542,6 +559,7 @@ class AppMenuBar(QMenuBar):
         self._french_action.setText(self._strings[StringsEnum.FRE])
         self._german_action.setText(self._strings[StringsEnum.GER])
         self._spanish_action.setText(self._strings[StringsEnum.SPA])
+        # self._russian_action.setText(self._strings[StringsEnum.RUS])
         # self._chinese_action.setText(self._strings[StringsEnum.CHI])
         # self._japanese_action.setText(self._strings[StringsEnum.JPN])
         self._help_menu.setTitle(self._strings[StringsEnum.HELP])

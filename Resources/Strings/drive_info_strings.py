@@ -82,6 +82,17 @@ german = {StringsEnum.TITLE: "Speicherinformationen",
           StringsEnum.MB_USED: "MB verwendet:",
           }
 
+# Russian strings
+russian = {StringsEnum.TITLE: "Хранение информации",
+           StringsEnum.STORAGE_ID: 'Хранение ID:',
+           StringsEnum.PERC_FREE: "неиспользуемый:",
+           StringsEnum.PERC_USED: "используемый:",
+           StringsEnum.GB_FREE: "GB неиспользуемый:",
+           StringsEnum.GB_USED: "GB используемый:",
+           StringsEnum.MB_FREE: "MB неиспользуемый:",
+           StringsEnum.MB_USED: "MB используемый:",
+           }
+
 # Spanish strings
 spanish = {StringsEnum.TITLE: "Información de almacenamiento",
            StringsEnum.STORAGE_ID: 'ID de almacenamiento:',
@@ -119,6 +130,7 @@ strings = {LangEnum.ENG: english,
            LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
+           LangEnum.RUS: russian,
            LangEnum.SPA: spanish,
            LangEnum.CHI: chinese,
            LangEnum.JPN: japanese}

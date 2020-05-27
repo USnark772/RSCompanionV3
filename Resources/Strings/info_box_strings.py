@@ -58,6 +58,12 @@ german = {StringsEnum.TITLE: "Information",
           StringsEnum.BLOCK_NO: "Blocknummer:"
           }
 
+# Russian strings
+russian = {StringsEnum.TITLE: "Информация",
+           StringsEnum.START_TIME: "Время начала эксперимента:",
+           StringsEnum.BLOCK_NO: "Номер блока:"
+           }
+
 # Spanish strings
 spanish = {StringsEnum.TITLE: "Información",
            StringsEnum.START_TIME: "Hora de inicio del experimento:",
@@ -80,6 +86,7 @@ strings = {LangEnum.ENG: english,
            LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
+           LangEnum.RUS: russian,
            LangEnum.SPA: spanish,
            LangEnum.CHI: chinese,
            LangEnum.JPN: japanese}

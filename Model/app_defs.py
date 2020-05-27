@@ -80,6 +80,7 @@ class LangEnum(Enum):
     DUT = auto()
     FRE = auto()
     GER = auto()
+    RUS = auto()
     SPA = auto()
     CHI = auto()
     JPN = auto()

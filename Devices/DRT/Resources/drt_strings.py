@@ -172,6 +172,34 @@ german = {StringsEnum.CUSTOM_LABEL: "Benutzerdefiniert",
           StringsEnum.GRAPH_TS: "Zeitstempel",
           }
 
+# Russian strings
+lower_isi_rus = "ниже ISI"
+upper_isi_rus = "верхний ISI"
+russian = {StringsEnum.CUSTOM_LABEL: "изготовленный на заказ",
+           StringsEnum.ISO_LABEL: iso,
+           StringsEnum.CONFIG_TAB_LABEL: "конфигурация",
+           StringsEnum.CONFIG_LABEL: "Текущая конфигурация:",
+           StringsEnum.ISO_BUTTON_LABEL: iso,
+           StringsEnum.UPLOAD_BUTTON_LABEL: "Загрузить настройки",
+           StringsEnum.DURATION_LABEL: "Стимул Продолжительность",
+           StringsEnum.INTENSITY_LABEL: "Интенсивность стимула",
+           StringsEnum.UPPER_ISI_LABEL: upper_isi_rus,
+           StringsEnum.LOWER_ISI_LABEL: lower_isi_rus,
+           StringsEnum.CONFIG_TAB_TOOLTIP: "Показать/Скрыть вкладку конфигурации",
+           StringsEnum.CONFIG_LABEL_TOOLTIP: "Текущая конфигурация устройства",
+           StringsEnum.ISO_BUTTON_TOOLTIP: "Установить устройство на стандарт ISO",
+           StringsEnum.UPLOAD_BUTTON_TOOLTIP: "Загрузить текущую конфигурацию на устройство",
+           StringsEnum.DURATION_TOOLTIP: "миллисекунды. Спектр: " + str(defs.duration_min) + "-" + str(
+               defs.duration_max),
+           StringsEnum.INTENSITY_TOOLTIP: "Intensity of the stimulus",
+           StringsEnum.UPPER_ISI_TOOLTIP: "миллисекунды. Спектр: " + lower_isi_rus + "-" + str(defs.ISI_max),
+           StringsEnum.LOWER_ISI_TOOLTIP: "миллисекунды. Спектр: " + str(defs.ISI_min) + "-" + upper_isi_rus,
+           StringsEnum.SAVE_HDR: "отметка времени, проба #, щелчки, миллисекунды с начала эксперимента, время отклика",
+           StringsEnum.PLOT_NAME_RT: "время отклика",
+           StringsEnum.PLOT_NAME_CLICKS: "щелчки",
+           StringsEnum.GRAPH_TS: "отметка времени",
+           }
+
 # Spanish strings
 lower_isi_spa = "Inferior ISI"
 upper_isi_spa = "Superior ISI"
@@ -261,6 +289,7 @@ strings = {LangEnum.ENG: english,
            LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
+           LangEnum.RUS: russian,
            LangEnum.SPA: spanish,
            LangEnum.CHI: chinese,
            LangEnum.JPN: japanese}

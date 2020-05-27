@@ -59,6 +59,12 @@ german = {StringsEnum.TITLE: app_name,
           StringsEnum.CLOSE_APP_CONFIRM: "App schließen? Jeder nicht gespeicherte Fortschritt geht verloren!",
           }
 
+# Russian strings
+russian = {StringsEnum.TITLE: app_name,
+           StringsEnum.CLOSE_TITLE: "закрывать " + company_name,
+           StringsEnum.CLOSE_APP_CONFIRM: "Закрыть приложение? Любой несохраненный прогресс будет потерян!",
+           }
+
 # Spanish strings
 spanish = {StringsEnum.TITLE: app_name,
            StringsEnum.CLOSE_TITLE: "Cerrar " + company_name,
@@ -81,6 +87,7 @@ strings = {LangEnum.ENG: english,
            LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
+           LangEnum.RUS: russian,
            LangEnum.SPA: spanish,
            LangEnum.CHI: chinese,
            LangEnum.JPN: japanese}

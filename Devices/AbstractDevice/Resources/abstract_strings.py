@@ -54,6 +54,10 @@ german = {StringsEnum.EXAMPLE_ENTRY: "Implementieren Sie diese Sprache.",
           StringsEnum.GRAPH_TS: "Zeitstempel",
           }
 
+russian = {StringsEnum.EXAMPLE_ENTRY: "Реализуйте этот язык.",
+           StringsEnum.GRAPH_TS: "Отметка",
+           }
+
 spanish = {StringsEnum.EXAMPLE_ENTRY: "Implementa este lenguaje.",
            StringsEnum.GRAPH_TS: "marca de tiempo",
            }
@@ -71,6 +75,7 @@ strings = {LangEnum.ENG: english,
            LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
+           LangEnum.RUS: russian,
            LangEnum.SPA: spanish,
            LangEnum.CHI: chinese,
            LangEnum.JPN: japanese}

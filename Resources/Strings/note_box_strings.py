@@ -63,6 +63,13 @@ german = {StringsEnum.TITLE: "Notiz",
           StringsEnum.SHADOW: "Notiz hier eingeben",
           }
 
+# Russian strings
+russian = {StringsEnum.TITLE: "Запись",
+           StringsEnum.POST: "Публиковать",
+           StringsEnum.POST_TT: "Опубликовать заметку",
+           StringsEnum.SHADOW: "Введите примечание здесь",
+           }
+
 # Spanish strings
 spanish = {StringsEnum.TITLE: "Nota",
            StringsEnum.POST: "Publicar",
@@ -88,6 +95,7 @@ strings = {LangEnum.ENG: english,
            LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
+           LangEnum.RUS: russian,
            LangEnum.SPA: spanish,
            LangEnum.CHI: chinese,
            LangEnum.JPN: japanese}

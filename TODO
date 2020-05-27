@@ -1,4 +1,5 @@
 # TODO: Pressing matters.
+    - App not closing
     - Look through all device MVC and update app closure processes to use async.
     - Implement camera handler in app_controller.py
     - Finish fine tuning MDI subwindows.
@@ -20,7 +21,10 @@
 
 # TODO: At some point
     - Check all files for proper and complete self._logger usage.
-    - Figure out how to get app to work with Chinese language.
+    - Figure out how to get app to work with other character languages.
+        - Chinese
+        - Japanese
+        - Russian
     - Add more languages.
     - Finish adding/translating languages for current string.py files.
     - Look over https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html and make edits to imports.

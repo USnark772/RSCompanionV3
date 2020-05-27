@@ -41,6 +41,8 @@ french = {StringsEnum.TITLE: app_name}
 
 german = {StringsEnum.TITLE: app_name}
 
+russian = {StringsEnum.TITLE: app_name}
+
 spanish = {StringsEnum.TITLE: app_name}
 
 chinese = {StringsEnum.TITLE: app_name}
@@ -51,5 +53,7 @@ strings = {LangEnum.ENG: english,
            LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
+           LangEnum.RUS: russian,
            LangEnum.SPA: spanish,
-           LangEnum.CHI: chinese}
+           LangEnum.CHI: chinese,
+           LangEnum.JPN: japanese}

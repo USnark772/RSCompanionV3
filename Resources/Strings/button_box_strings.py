@@ -88,6 +88,18 @@ german = {StringsEnum.TITLE: "Experiment",
           StringsEnum.COND_NAME_SHADOW: "Optionaler Bedingungsname",
           }
 
+# Russian strings
+russian = {StringsEnum.TITLE: "эксперимент",
+           StringsEnum.CREATE: "Создайте",
+           StringsEnum.END: "Конец",
+           StringsEnum.CREATE_TT: "Создать новый эксперимент",
+           StringsEnum.END_TT: "Конец эксперимента",
+           StringsEnum.START_TT: "Начать эксперимент",
+           StringsEnum.RESUME_TT: "Возобновить эксперимент",
+           StringsEnum.PAUSE_TT: "Пауза эксперимента",
+           StringsEnum.COND_NAME_SHADOW: "Необязательное имя условия",
+           }
+
 # Spanish strings
 spanish = {StringsEnum.TITLE: "Experimentar",
            StringsEnum.CREATE: "Crear",
@@ -128,6 +140,7 @@ strings = {LangEnum.ENG: english,
            LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
+           LangEnum.RUS: russian,
            LangEnum.SPA: spanish,
            LangEnum.CHI: chinese,
            LangEnum.JPN: japanese}

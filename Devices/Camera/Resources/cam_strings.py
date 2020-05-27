@@ -126,6 +126,25 @@ german = {StringsEnum.CONFIG_TAB_LABEL: "Konfiguration",
           StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Vorschau des Kamera-Feeds.",
           }
 
+# Russian strings
+russian = {StringsEnum.CONFIG_TAB_LABEL: "конфигурация",
+           StringsEnum.INITIALIZATION_BAR_LABEL: "Процесс инициализации",
+           StringsEnum.IMAGE_DISPLAY_LABEL: "предварительный просмотр",
+           StringsEnum.IMAGE_DISPLAY: "Инициализация",
+           StringsEnum.SHOW_CAM_CHECKBOX_LABEL: "Показать видео",
+           StringsEnum.FRAME_SIZE_SELECTOR_LABEL: "Размер кадра",
+           StringsEnum.FRAME_ROTATION_SETTING_LABEL: "Повернуть изображение",
+           StringsEnum.FPS_DISPLAY_LABEL: "FPS:",
+           StringsEnum.FPS_DISPLAY_VALUE: "0",
+           StringsEnum.CONFIG_TAB_TOOLTIP: "Показать/Скрыть вкладку конфигурации",
+           StringsEnum.FRAME_SIZE_TOOLTIP: "Выберите разрешение для этой камеры.",
+           StringsEnum.SHOW_CAM_TOOLTIP: "Показать или скрыть предварительный просмотр камеры. (Не отключает камеру)",
+           StringsEnum.FPS_DISPLAY_TOOLTIP: "Приблизительный кадр / с, с которым работает эта камера."
+                                            " На это значение может повлиять нагрузка на ваш компьютер.",
+           StringsEnum.ROTATION_TOOLTIP: "Установите степень поворота видео. -360 < значение < 360.",
+           StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Предварительный просмотр камеры.",
+           }
+
 # Spanish strings
 spanish = {StringsEnum.CONFIG_TAB_LABEL: "Configuración",
            StringsEnum.INITIALIZATION_BAR_LABEL: "Progreso de inicialización",
@@ -149,7 +168,22 @@ spanish = {StringsEnum.CONFIG_TAB_LABEL: "Configuración",
            }
 
 # Chinese strings
-chinese = english
+chinese = {StringsEnum.CONFIG_TAB_LABEL: "组态",
+           StringsEnum.INITIALIZATION_BAR_LABEL: "初始化进度",
+           StringsEnum.IMAGE_DISPLAY_LABEL: "预习",
+           StringsEnum.IMAGE_DISPLAY: "初始化中",
+           StringsEnum.SHOW_CAM_CHECKBOX_LABEL: "显示提要",
+           StringsEnum.FRAME_SIZE_SELECTOR_LABEL: "镜框尺寸",
+           StringsEnum.FRAME_ROTATION_SETTING_LABEL: "旋转影像",
+           StringsEnum.FPS_DISPLAY_LABEL: "FPS:",
+           StringsEnum.FPS_DISPLAY_VALUE: "0",
+           StringsEnum.CONFIG_TAB_TOOLTIP: "显示/隐藏配置选项卡",
+           StringsEnum.FRAME_SIZE_TOOLTIP: "选择此相机的分辨率。",
+           StringsEnum.SHOW_CAM_TOOLTIP: "显示或隐藏相机供稿预览。 （不禁用相机）",
+           StringsEnum.FPS_DISPLAY_TOOLTIP: "相机执行的大概fps。 该值可能会受到计算机当前负载的影响。",
+           StringsEnum.ROTATION_TOOLTIP: "设置视频馈送的旋转度。 -360 <值<360。",
+           StringsEnum.IMAGE_DISPLAY_TOOLTIP: "相机供稿预览。",
+           }
 
 # Japanese strings
 japanese = {StringsEnum.CONFIG_TAB_LABEL: "構成",
@@ -176,6 +210,7 @@ strings = {LangEnum.ENG: english,
            LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
+           LangEnum.RUS: russian,
            LangEnum.SPA: spanish,
            LangEnum.CHI: chinese,
            LangEnum.JPN: japanese}

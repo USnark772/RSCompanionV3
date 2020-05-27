@@ -204,6 +204,44 @@ german = {StringsEnum.COMPANY_NAME: company_name,
           StringsEnum.RESTART_PROG: "Diese App muss neu gestartet werden, damit die Änderungen wirksam werden."
           }
 
+# Russian strings
+russian = {StringsEnum.COMPANY_NAME: company_name,
+           StringsEnum.APP_NAME: app_name,
+           StringsEnum.LOG_OUT_NAME: log_out_filename,
+           StringsEnum.LOG_VER_ID: company_name + " версия приложения: ",
+           StringsEnum.PROG_OUT_HDR: "отметка времени, автор, Расположениеv, Сообщение\n",
+           StringsEnum.ABOUT_COMPANY: company_name + " Inc была основана в 2015 году Joel Cooper PhD\n\n"
+                                                     " Контакты:\n"
+                                                     " joel@redscientific.com\n"
+                                                     " 1-801-520-5408",
+           StringsEnum.ABOUT_APP: "- Большинство вещей в этом приложении имеют всплывающие подсказки. Наведите курсор"
+                                  " мыши на разные части, чтобы увидеть соответствующие подсказки для получения"
+                                  " дополнительной информации\n\n"
+                                  " В верхней части приложения вы найдете панель управления, содержащую следующее:\n"
+                                  " - Кнопка Создать / Завершить: Создать или завершить эксперимент."
+                                  " Выберите папку местоположения для приложения, чтобы сохранить данные устройства.\n"
+                                  " - Кнопка Play/Pause: начать/возобновить или приостановить эксперимент.\n"
+                                  " - Имя необязательного условия: необязательное имя, которое будет связано с вновь"
+                                  " созданным экспериментом.\n\n"
+                                  " - Флаг ключа: Нажмите любую буквенную клавишу в любое время, чтобы создать быструю"
+                                  " справочную клавишу, которая будет связана с данными, поступающими с устройств во"
+                                  " время эксперимента.\n\n"
+                                  " - Примечание: Введите примечание в поле и нажмите Опубликовать, чтобы применить"
+                                  " это примечание ко всем файлам данных устройства в текущем эксперименте.\n\n"
+                                  " - Информация: отображает информацию о текущем эксперименте.\n\n"
+                                  " - Disk Information: Displays information about the current volume to which data"
+                                  " is saved.",
+           StringsEnum.UPDATE_HDR: "Обновить",
+           StringsEnum.UPDATE_HDR_ERR: "ошибка",
+           StringsEnum.UPDATE_AVAILABLE: "Обновление доступно.",
+           StringsEnum.NO_UPDATE: "Ваша программа актуальна.",
+           StringsEnum.ERR_UPDATE_CHECK: "Произошла непредвиденная ошибка при подключении к хранилищу. Пожалуйста,"
+                                         " проверьте https://redscientific.com/downloads.html вручную или свяжитесь с"
+                                         " Red Scientific напрямую.",
+           StringsEnum.DEV_CON_ERR: "При подключении устройства произошла ошибка. Повторите попытку подключения.",
+           StringsEnum.RESTART_PROG: "Это приложение должно быть перезапущено, чтобы изменения вступили в силу."
+           }
+
 # Spanish strings
 spanish = {StringsEnum.COMPANY_NAME: company_name,
            StringsEnum.APP_NAME: app_name,
@@ -311,6 +349,7 @@ strings = {LangEnum.ENG: english,
            LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
+           LangEnum.RUS: russian,
            LangEnum.SPA: spanish,
            LangEnum.CHI: chinese,
            LangEnum.JPN: japanese}

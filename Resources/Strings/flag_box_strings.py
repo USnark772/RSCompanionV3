@@ -53,6 +53,11 @@ german = {StringsEnum.TITLE: "Schlüsselflagge",
           StringsEnum.FLAG_TT: "Die zuletzt als Referenz in der Sicherungsdatei gedrückte Taste",
           }
 
+# Russian strings
+russian = {StringsEnum.TITLE: "Ключ Флаг",
+           StringsEnum.FLAG_TT: "Самая последняя клавиша нажата для ссылки в файле сохранения",
+           }
+
 # Spanish strings
 spanish = {StringsEnum.TITLE: "Bandera clave",
            StringsEnum.FLAG_TT: "La tecla más reciente presionada para referencia en guardar archivo",
@@ -72,6 +77,7 @@ strings = {LangEnum.ENG: english,
            LangEnum.DUT: dutch,
            LangEnum.FRE: french,
            LangEnum.GER: german,
+           LangEnum.RUS: russian,
            LangEnum.SPA: spanish,
            LangEnum.CHI: chinese,
            LangEnum.JPN: japanese}
