@@ -71,11 +71,10 @@ class RSDeviceCommScanner:
 
     async def cleanup(self) -> None:
         """
-        Cleanup this class and prep for app closure.
+        Cleanup this object and prep for app closure.
         :return None:
         """
         self._logger.debug("running")
-        # create_task(end_tasks(self._tasks))
         self._running = False
         for task in self._tasks:
             task.cancel()
@@ -87,11 +86,12 @@ class RSDeviceCommScanner:
         :return bool, AioSerial: If there is an element to return, The next element to return.
         """
         self._logger.debug("running")
+        ret = False, None
         if len(self._new_coms) > 0:
             self._logger.debug("done with true")
-            return True, self._new_coms.pop(0)
-        self._logger.debug("done with false")
-        return False, None
+            ret = (True, self._new_coms.pop(0))
+        self._logger.debug("done with: " + str(ret[0]) + " " + str(ret[1]))
+        return ret
 
     def get_next_lost_com(self) -> (bool, AioSerial):
         """
@@ -99,11 +99,12 @@ class RSDeviceCommScanner:
         :return bool, AioSerial: If there is an element to return, The next element to return.
         """
         self._logger.debug("running")
+        ret = False, None
         if len(self._lost_coms) > 0:
             self._logger.debug("done with true")
-            return True, self._lost_coms.pop(0)
-        self._logger.debug("done with false")
-        return False, None
+            ret = (True, self._lost_coms.pop(0))
+        self._logger.debug("done with: " + str(ret[0]) + " " + str(ret[1]))
+        return ret
 
     def await_connect(self) -> futures:
         """

@@ -42,9 +42,13 @@ class StreamReader:
         self._logger.debug("Initializing")
         self.running = False
         self.stream = VideoCapture(index, defs.cap_backend)
+        start = time()
+        a, b = self.stream.read()  # Prime camera for reading.
+        end = time()
+        self.timeout_limit = end - start
         self._new_frame_event = Event()
         self._err_event = Event()
-        self._awaitable_tasks = []
+        self._tasks = list()
         self._internal_frame_q = SimpleQueue()
         self._loop = get_event_loop()
         self._logger.debug("Initialized")
@@ -64,7 +68,7 @@ class StreamReader:
         """
         self.running = True
         self._internal_frame_q = SimpleQueue()
-        self._awaitable_tasks.append(self._loop.run_in_executor(None, self._read_cam))
+        self._tasks.append(self._loop.run_in_executor(None, self._read_cam))
 
     def await_new_frame(self) -> futures:
         """
@@ -86,9 +90,8 @@ class StreamReader:
         :return None:
         """
         self.running = False
-        for task in self._awaitable_tasks:
+        for task in self._tasks:
             task.cancel()
-        # create_task(end_tasks(self._awaitable_tasks))
 
     def _read_cam(self) -> None:
         """
@@ -100,7 +103,8 @@ class StreamReader:
             ret, frame = self.stream.read()
             end = time()
             time_taken = end - start
-            if not ret or frame is None or time_taken > 0.2:
+            timeout = time_taken > self.timeout_limit
+            if not ret or frame is None or timeout:
                 self._loop.call_soon_threadsafe(self._err_event.set)
                 break
             else:

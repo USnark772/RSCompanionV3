@@ -24,12 +24,12 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from asyncio import create_task, sleep, Event
+from asyncio import create_task, sleep, Event, futures
 from multiprocessing import Process, Pipe
 from numpy import ndarray
 from PySide2.QtGui import QPixmap, QImage
-from PySide2.QtCore import Qt
 from cv2 import cvtColor, COLOR_BGR2RGB
+from Model.app_helpers import await_event
 from Devices.AbstractDevice.Controller.abstract_controller import AbstractController
 from Devices.Camera.View.cam_view import CamView
 from Devices.Camera.Model.cam_model import CamModel
@@ -44,27 +44,43 @@ class Controller(AbstractController):
             for h in log_handlers:
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
-        cam_name = "CAM_" + str(cam_index)
+        self.cam_index = cam_index
+        cam_name = "CAM_" + str(self.cam_index)
         view = CamView(cam_name, log_handlers)
         super().__init__(view)
         # TODO: Get logging in here. See https://docs.python.org/3/howto/logging-cookbook.html find multiprocessing.
         self._model_msg_pipe, msg_pipe = Pipe()  # For messages/commands.
         self._model_image_pipe, img_pipe = Pipe(False)  # For images.
-        self._model = Process(target=CamModel, args=(msg_pipe, img_pipe, cam_index))
-        self._model.start()
-        # self._model = CamModel(cam_name, cam_index, log_handlers)
+        self._model = Process(target=CamModel, args=(msg_pipe, img_pipe, self.cam_index))
+        # self._model = CamModel(cam_name, self.cam_index, log_handlers)
         self.set_lang(lang)
-        self._awaitable_tasks = []
+        self._tasks = []
         self._cancellable_tasks = []
-        self._awaitable_tasks.append(create_task(self._update_view()))
-        self._awaitable_tasks.append(create_task(self._handle_pipe()))
-        self._switcher = {defs.ModelEnum.FAILURE: self.cleanup,
+        self._tasks.append(create_task(self._update_view()))
+        self._tasks.append(create_task(self._handle_pipe()))
+        self._switcher = {defs.ModelEnum.FAILURE: self.err_cleanup,
                           defs.ModelEnum.CUR_FPS: self._update_view_fps,
                           defs.ModelEnum.CLEANUP: self._set_model_cleaned}
         self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, True))
         self._model_cleaned = Event()
         self._running = True
+        self._ended = Event()
+        self._model.start()
         self._logger.debug("Initialized")
+
+    def get_index(self) -> int:
+        """
+        Get this camera index.
+        :return int: The camera index.
+        """
+        return self.cam_index
+
+    def await_ended(self) -> futures:
+        """
+        Signal when there is a connect event.
+        :return futures: If the flag is set.
+        """
+        return await_event(self._ended)
 
     def set_lang(self, lang: LangEnum) -> None:
         """
@@ -76,18 +92,29 @@ class Controller(AbstractController):
         self.view.set_lang(lang)
         self._logger.debug("done")
 
+    def err_cleanup(self) -> None:
+        """
+        Handle cleanup when camera fails.
+        :return None:
+        """
+        self._logger.debug("running")
+        create_task(self.cleanup())
+        self._logger.debug("done")
+
     async def cleanup(self) -> None:
+        """
+        Cleanup this object and prep for app closure.
+        :return None:
+        """
         self._logger.debug("running")
         self.send_msg_to_model((defs.ModelEnum.CLEANUP, None))
         await self._model_cleaned.wait()
         if self._model.is_alive():
             self._model.join()
         self._running = False
-        # for task in self._cancellable_tasks:
-        #     task.cancel()
-        for task in self._awaitable_tasks:
-            await task
-        # create_task(end_tasks(self._awaitable_tasks))
+        for task in self._tasks:
+            task.cancel()
+        self._ended.set()
         self._logger.debug("done")
 
     def create_exp(self, path: str) -> None:

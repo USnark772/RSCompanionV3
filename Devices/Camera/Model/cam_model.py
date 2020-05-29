@@ -42,7 +42,7 @@ class CamModel:
         self._stop_event = Event()
         self._write_q = SimpleQueue()
         self._cam_writer = StreamWriter(self._write_q)
-        self._awaitable_tasks = []
+        self._tasks = []
         self._cancellable_tasks = []
         self._switcher = {defs.ModelEnum.STOP: self._stop_writing,
                           defs.ModelEnum.START: self._start_writing,
@@ -84,6 +84,15 @@ class CamModel:
         :return None:
         """
         create_task(self._cleanup())
+
+    async def _await_reader_err(self) -> None:
+        """
+        Handle if reader fails.
+        :return None:
+        """
+        while self._running:
+            await self._cam_reader.await_err()
+            self._msg_pipe.send((defs.ModelEnum.FAILURE, None))
 
     async def _cleanup(self) -> None:
         self._running = False
@@ -140,8 +149,9 @@ class CamModel:
         Run all async tasks in this model and wait for stop signal. (This method is the main loop for this process)
         :return None:
         """
-        self._awaitable_tasks.append(create_task(self._handle_pipe()))
-        self._awaitable_tasks.append(create_task(self._handle_new_frame()))
+        self._tasks.append(create_task(self._handle_pipe()))
+        self._tasks.append(create_task(self._handle_new_frame()))
+        self._tasks.append(create_task(self._await_reader_err()))
         await self._stop_event.wait()
 
     async def _stop(self) -> None:
@@ -149,8 +159,8 @@ class CamModel:
         Stop all async tasks.
         :return None:
         """
-        for task in self._awaitable_tasks:
-            await task
+        for task in self._tasks:
+            task.cancel()
         self._stop_event.set()
 
     async def _handle_new_frame(self) -> None:

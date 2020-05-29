@@ -62,15 +62,13 @@ class AppModel:
         self._dev_inits = dict()
         self._new_dev_views = []
         self._remove_dev_views = []
-        self._gatherable_tasks = []
-        self._cancelable_tasks = []
+        self._tasks = []
         self._note_filename = "notes.csv"
         self._flag_filename = "flags.csv"
+        self._saving = False
+        self._running = True
         self.exp_created = False
         self.exp_running = False
-        self.saving = False
-        self._running = True
-        self._make_cam_controller(0)
         self._logger.debug("Initialized")
 
     def await_new_view(self) -> futures:
@@ -251,7 +249,7 @@ class AppModel:
         """
         while self._running:
             await self._rs_dev_scanner.await_disconnect()
-            self._remove_lost_devices()
+            await self._remove_lost_devices()
 
     async def _await_new_cams(self) -> None:
         """
@@ -262,14 +260,14 @@ class AppModel:
             await self._cam_scanner.await_connect()
             self._setup_new_cams()
 
-    async def _await_remove_cams(self) -> None:
+    async def _await_remove_cam(self, cam_controller, cam_index: int) -> None:
         """
-        Wait for and handle cameras to remove.
+        Wait for and handle camera removal.
         :return None:
         """
-        while self._running:
-            await self._cam_scanner.await_disconnect()
-            self._remove_lost_devices()
+        await cam_controller.await_ended()
+        await self._remove_lost_cam(cam_index)
+        self._cam_scanner.remove_cam_index(cam_index)
 
     async def _save_exp(self, save: bool) -> None:
         """
@@ -277,11 +275,11 @@ class AppModel:
         :param save: Should experiment data be saved.
         :return None:
         """
-        self.saving = True
+        self._saving = True
         if save:
             await get_running_loop().run_in_executor(None, self._convert_to_rs_file)
         self._temp_folder.cleanup()
-        self.saving = False
+        self._saving = False
 
     def _convert_to_rs_file(self) -> None:
         """
@@ -365,7 +363,7 @@ class AppModel:
         ret, cam_index = self._cam_scanner.get_next_new_cam()
         while ret:
             self._make_cam_controller(cam_index)
-            ret, cam_index = self._rs_dev_scanner.get_next_new_com()
+            ret, cam_index = self._cam_scanner.get_next_new_cam()
         self._logger.debug("done")
 
     def _make_cam_controller(self, cam_index: int) -> bool:
@@ -379,6 +377,7 @@ class AppModel:
         try:
             controller = self._controllers["Camera"](cam_index, self._current_lang, self._log_handlers)
             self._devs[cam_index] = controller
+            self._tasks.append(create_task(self._await_remove_cam(controller, cam_index)))
             self._new_dev_views.append(controller.get_view())
             self._new_dev_view_flag.set()
         except Exception as e:
@@ -387,7 +386,7 @@ class AppModel:
         self._logger.debug("done")
         return ret
 
-    def _remove_lost_devices(self) -> None:
+    async def _remove_lost_devices(self) -> None:
         """
         For any lost device, destroy controller and signal view removal to controller.
         :return: None.
@@ -400,7 +399,7 @@ class AppModel:
                 conn = self._devs[key].get_conn()
                 if conn and conn.port == item.device:
                     self._remove_dev_views.append(self._devs[key].get_view())
-                    self._devs[key].cleanup()
+                    await self._devs[key].cleanup()
                     to_remove.append(key)
                     self._remove_dev_view_flag.set()
                     break
@@ -410,25 +409,15 @@ class AppModel:
                 del self._devs[ele]
         self._logger.debug("done")
 
-    def _remove_lost_cams(self) -> None:
+    async def _remove_lost_cam(self, cam_index: int) -> None:
         """
-        For any lost camera, destroy controller and signal view removal to controller.
+        Signal view removal to app controller and remove device controller.
         :return None:
         """
-        pass
         self._logger.debug("running")
-        ret, cam_index = self._cam_scanner.get_next_lost_cam()
-        to_remove = []
-        while ret:
-            if cam_index in self._devs.keys():
-                self._remove_dev_views.append(self._devs[cam_index].get_view())
-                self._devs[cam_index].cleanup()
-                to_remove.append(cam_index)
-                self._remove_dev_view_flag.set()
-            ret, cam_index = self._cam_scanner.get_next_lost_cam()
-        if len(to_remove) > 0:
-            for ele in to_remove:
-                del self._devs[ele]
+        self._remove_dev_views.append(self._devs[cam_index].get_view())
+        self._remove_dev_view_flag.set()
+        del self._devs[cam_index]
         self._logger.debug("done")
 
     def start(self) -> None:
@@ -437,9 +426,11 @@ class AppModel:
         :return None:
         """
         self._logger.debug("running")
-        self._cancelable_tasks.append(create_task(self._await_new_devs()))
-        self._cancelable_tasks.append(create_task(self._await_remove_devs()))
+        self._tasks.append(create_task(self._await_new_devs()))
+        self._tasks.append(create_task(self._await_remove_devs()))
+        self._tasks.append(create_task(self._await_new_cams()))
         self._rs_dev_scanner.start()
+        self._cam_scanner.start()
         self._logger.debug("done")
 
     async def cleanup(self) -> None:
@@ -448,14 +439,14 @@ class AppModel:
         :return None:
         """
         self._logger.debug("running")
-        for task in self._cancelable_tasks:
+        for task in self._tasks:
             task.cancel()
         await self._rs_dev_scanner.cleanup()
         if self.exp_running:
             self.signal_stop_exp()
         if self.exp_created:
             self.signal_end_exp(False)
-        while self.saving:  # TODO: change this to event?
+        while self._saving:  # TODO: change this to event?
             continue
         for dev in self._devs.values():
             await dev.cleanup()
