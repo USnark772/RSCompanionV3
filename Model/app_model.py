@@ -36,7 +36,7 @@ from aioserial import AioSerial
 from Model.rs_device_com_scanner import RSDeviceCommScanner
 from Model.cam_scanner import CamScanner
 from Model.app_defs import LangEnum
-from Model.app_helpers import await_event, end_tasks, write_line_to_file, format_current_time
+from Model.app_helpers import await_event, write_line_to_file, format_current_time
 from Model.version_checker import VersionChecker
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 

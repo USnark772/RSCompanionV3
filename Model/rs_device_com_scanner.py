@@ -30,7 +30,7 @@ from serial.serialutil import SerialException
 from serial.tools.list_ports import comports
 from serial.tools.list_ports_common import ListPortInfo
 from aioserial import AioSerial
-from Model.app_helpers import await_event, end_tasks
+from Model.app_helpers import await_event
 
 
 class RSDeviceCommScanner:
@@ -57,6 +57,7 @@ class RSDeviceCommScanner:
         self._serials = {}
         self._tasks = []
         self._loop = get_running_loop()
+        self._running = True
         self._logger.debug("Initialized")
 
     def start(self) -> None:
@@ -74,7 +75,10 @@ class RSDeviceCommScanner:
         :return None:
         """
         self._logger.debug("running")
-        create_task(end_tasks(self._tasks))
+        # create_task(end_tasks(self._tasks))
+        self._running = False
+        for task in self._tasks:
+            task.cancel()
         self._logger.debug("done")
 
     def get_next_new_com(self) -> (bool, AioSerial):
@@ -128,7 +132,7 @@ class RSDeviceCommScanner:
         :return None:
         """
         self._logger.debug("running")
-        while True:
+        while self._running:
             ports = await self._loop.run_in_executor(None, comports)
             if len(ports) > len(self._known_ports):
                 create_task(self._check_for_new_devices(ports))

@@ -27,7 +27,7 @@ from cv2 import VideoWriter
 from queue import SimpleQueue
 from asyncio import sleep, get_event_loop, create_task, Event, futures
 from Devices.Camera.Model import cam_defs as defs
-from Model.app_helpers import await_event, end_tasks
+from Model.app_helpers import await_event
 
 
 class StreamWriter:

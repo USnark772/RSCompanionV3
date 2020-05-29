@@ -30,7 +30,7 @@ from numpy import ndarray
 from time import time
 from asyncio import futures, Event, create_task, get_event_loop
 from Devices.Camera.Model import cam_defs as defs
-from Model.app_helpers import await_event, end_tasks
+from Model.app_helpers import await_event
 
 
 class StreamReader:

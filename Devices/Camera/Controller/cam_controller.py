@@ -31,7 +31,6 @@ from PySide2.QtGui import QPixmap, QImage
 from PySide2.QtCore import Qt
 from cv2 import cvtColor, COLOR_BGR2RGB
 from Devices.AbstractDevice.Controller.abstract_controller import AbstractController
-from Model.app_helpers import end_tasks
 from Devices.Camera.View.cam_view import CamView
 from Devices.Camera.Model.cam_model import CamModel
 from Devices.Camera.Model import cam_defs as defs

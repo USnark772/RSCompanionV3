@@ -127,16 +127,6 @@ async def await_event(event: Event) -> futures:
     return ret
 
 
-async def end_tasks(tasks: list) -> None:
-    """
-    Cleanup all async loops
-    :return None:
-    """
-    for task in tasks:
-        task.cancel()
-        await gather(tasks)
-
-
 class ClickAnimationButton(QPushButton):
     """ A button that shows better click and release animation. """
     def __init__(self, parent=None):

@@ -29,12 +29,13 @@ from logging import DEBUG
 from datetime import datetime
 from asyncio import create_task, sleep
 from aioserial import AioSerial
+from Model.logging_queue import setup_logging_queue
 from PySide2.QtWidgets import QFileDialog
 from PySide2.QtGui import QKeyEvent, QDesktopServices
 from PySide2.QtCore import QSettings, QSize, QUrl, QDir
 from Model.app_model import AppModel
 from Model.app_defs import current_version, log_format, LangEnum
-from Model.app_helpers import setup_log_file, get_disk_usage_stats, format_current_time, end_tasks
+from Model.app_helpers import setup_log_file, get_disk_usage_stats, format_current_time
 from Resources.Strings.app_strings import strings, StringsEnum, company_name, app_name
 from View.HelpWidgets.output_window import OutputWindow
 from View.MainWindow.main_window import AppMainWindow
@@ -78,6 +79,7 @@ class AppController:
         self._logger.addHandler(self.app_lh)
         self._logger.addHandler(self.stderr_lh)
         self._logger.info(self._strings[StringsEnum.LOG_VER_ID] + str(current_version))
+        setup_logging_queue()
 
         self._logger.debug("Initializing")
 
@@ -509,6 +511,7 @@ class AppController:
         self.main_window.add_control_bar_widget(self.d_info_box)
         self.main_window.add_mdi_area(self.mdi_area)
         self.main_window.show()
+        self._logger.debug("done")
 
     def _start(self) -> None:
         """
