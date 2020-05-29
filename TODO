@@ -7,6 +7,7 @@
         - Make subwindows not able to move outside the main window size.
             - Do we still want to do this now that we have scroll bars?
         - Redesign subwindow layouts for drt and vog to be the same. Remove config into pop up window, compact drt graphs into same graph.
+        - Make pop up window from MdiSubwindows be accessible through a menu bar in each subwindow instead of a QPushButton.
     - Implement CAM.
         - Model.
             - Fix app closure handling, sometimes hangs on cleanup() call.
