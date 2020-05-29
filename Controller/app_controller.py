@@ -535,10 +535,11 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
+        for task in self._tasks:
+            task.cancel()
         await self._model.cleanup()
         if self._drive_updater_task:
             self._drive_updater_task.cancel()
-        create_task(end_tasks(self._tasks))
         self.log_output.close()
         self.main_window.set_close_override(True)
         self._logger.debug("done")

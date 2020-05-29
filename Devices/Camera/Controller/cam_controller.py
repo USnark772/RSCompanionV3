@@ -64,6 +64,7 @@ class Controller(AbstractController):
                           defs.ModelEnum.CLEANUP: self._set_model_cleaned}
         self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, True))
         self._model_cleaned = Event()
+        self._running = True
         self._logger.debug("Initialized")
 
     def set_lang(self, lang: LangEnum) -> None:
@@ -80,9 +81,14 @@ class Controller(AbstractController):
         self._logger.debug("running")
         self.send_msg_to_model((defs.ModelEnum.CLEANUP, None))
         await self._model_cleaned.wait()
-        for task in self._cancellable_tasks:
-            task.cancel()
-        create_task(end_tasks(self._awaitable_tasks))
+        if self._model.is_alive():
+            self._model.join()
+        self._running = False
+        # for task in self._cancellable_tasks:
+        #     task.cancel()
+        for task in self._awaitable_tasks:
+            await task
+        # create_task(end_tasks(self._awaitable_tasks))
         self._logger.debug("done")
 
     def create_exp(self, path: str) -> None:
@@ -111,7 +117,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         try:
-            while True:
+            while self._running:
                 if self._model_msg_pipe.poll():
                     msg = self._model_msg_pipe.recv()
                     if msg[1] is not None:
@@ -131,7 +137,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         try:
-            while True:
+            while self._running:
                 if self._model_image_pipe.poll():
                     next_image = self._model_image_pipe.recv()
                     self.view.update_image(self.convert_frame_to_qt_image(next_image))

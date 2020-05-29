@@ -69,6 +69,7 @@ class AppModel:
         self.exp_created = False
         self.exp_running = False
         self.saving = False
+        self._running = True
         self._make_cam_controller(0)
         self._logger.debug("Initialized")
 
@@ -239,7 +240,7 @@ class AppModel:
         Wait for and handle new devices.
         :return None:
         """
-        while True:
+        while self._running:
             await self._rs_dev_scanner.await_connect()
             self._setup_new_devices()
 
@@ -248,7 +249,7 @@ class AppModel:
         Wait for and handle devices to remove.
         :return None:
         """
-        while True:
+        while self._running:
             await self._rs_dev_scanner.await_disconnect()
             self._remove_lost_devices()
 
@@ -257,7 +258,7 @@ class AppModel:
         Wait for and handle new cameras.
         :return None:
         """
-        while True:
+        while self._running:
             await self._cam_scanner.await_connect()
             self._setup_new_cams()
 
@@ -266,7 +267,7 @@ class AppModel:
         Wait for and handle cameras to remove.
         :return None:
         """
-        while True:
+        while self._running:
             await self._cam_scanner.await_disconnect()
             self._remove_lost_devices()
 
@@ -436,8 +437,8 @@ class AppModel:
         :return None:
         """
         self._logger.debug("running")
-        self._gatherable_tasks.append(create_task(self._await_new_devs()))
-        self._gatherable_tasks.append(create_task(self._await_remove_devs()))
+        self._cancelable_tasks.append(create_task(self._await_new_devs()))
+        self._cancelable_tasks.append(create_task(self._await_remove_devs()))
         self._rs_dev_scanner.start()
         self._logger.debug("done")
 
@@ -447,6 +448,8 @@ class AppModel:
         :return None:
         """
         self._logger.debug("running")
+        for task in self._cancelable_tasks:
+            task.cancel()
         await self._rs_dev_scanner.cleanup()
         if self.exp_running:
             self.signal_stop_exp()
@@ -456,9 +459,6 @@ class AppModel:
             continue
         for dev in self._devs.values():
             await dev.cleanup()
-        for task in self._cancelable_tasks:
-            task.cancel()
-        create_task(end_tasks(self._gatherable_tasks))
         self._logger.debug("done")
 
     # TODO add debugging
