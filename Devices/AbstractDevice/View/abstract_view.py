@@ -37,16 +37,18 @@ class AbstractMeta(ABCMeta, type(QMdiSubWindow)):
 
 
 class SubWindow(QMdiSubWindow):
-    def __init__(self):
+    def __init__(self, empty: bool = False):
         QMdiSubWindow.__init__(self)
         self.setWindowFlag(Qt.WindowMaximizeButtonHint, False)
-        self.setLayout(QHBoxLayout())
-        self.main_frame = EasyFrame()
-        self.main_frame.setMouseTracking(True)
-        super().layout().addWidget(self.main_frame)
-        self.main_frame.setLayout(QGridLayout())
+        if not empty:
+            self.setLayout(QHBoxLayout())
+            self.main_frame = EasyFrame()
+            self.main_frame.setMouseTracking(True)
+            super().layout().addWidget(self.main_frame)
+            self.main_frame.setLayout(QGridLayout())
+            self.layout = self.new_layout
 
-    def layout(self) -> QLayout:
+    def new_layout(self) -> QLayout:
         """
         Returns a QGridLayout.
         :return QLayout: The grid layout.
@@ -55,9 +57,9 @@ class SubWindow(QMdiSubWindow):
 
 
 class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
-    def __init__(self, name: str = "DEFAULT"):
+    def __init__(self, name: str = "DEFAULT", empty: bool = False):
         ABC.__init__(self)
-        SubWindow.__init__(self)
+        SubWindow.__init__(self, empty)
         self._name = name
         self.setWindowTitle(self._name)
 

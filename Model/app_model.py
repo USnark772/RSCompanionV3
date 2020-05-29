@@ -69,7 +69,7 @@ class AppModel:
         self.exp_created = False
         self.exp_running = False
         self.saving = False
-        # self._make_cam_controller(0)
+        self._make_cam_controller(0)
         self._logger.debug("Initialized")
 
     def await_new_view(self) -> futures:
