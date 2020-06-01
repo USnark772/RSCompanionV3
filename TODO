@@ -9,6 +9,7 @@
         - Redesign subwindow layouts for drt and vog to be the same. Remove config into pop up window, compact drt graphs into same graph.
         - Make pop up window from MdiSubwindows be accessible through a menu bar in each subwindow instead of a QPushButton.
     - Implement CAM.
+        - Add overlayed timestamps to each frame.
         - Figure out why multiple cameras are not in sync.
             (Seems to happen when one camera is unplugged and plugged back in. The camera that was reattached is in
             time and the rest are behind. Could be an issue with queues. This could mean that when plugging in a new
