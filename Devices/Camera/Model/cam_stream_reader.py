@@ -28,29 +28,33 @@ from cv2 import VideoCapture, CAP_PROP_FOURCC, CAP_PROP_FRAME_WIDTH, CAP_PROP_FR
 from queue import SimpleQueue
 from numpy import ndarray
 from time import time
-from asyncio import futures, Event, create_task, get_event_loop
+from asyncio import futures, Event, get_event_loop
 from Devices.Camera.Model import cam_defs as defs
 from Model.app_helpers import await_event
 
 
 class StreamReader:
-    def __init__(self, index: int = 0, log_handlers: [StreamHandler] = None):
+    def __init__(self, index: int = 0, frame_skip: int = 1, log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
         if log_handlers:
             for h in log_handlers:
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
+        self._frame_skip = frame_skip
         self.running = False
         self.stream = VideoCapture(index, defs.cap_backend)
         start = time()
         a, b = self.stream.read()  # Prime camera for reading.
         end = time()
-        self.timeout_limit = end - start
+        self.timeout_limit = end - start + 1  # + 1 to handle random uncommon slight discrepancies.
         self._new_frame_event = Event()
         self._err_event = Event()
         self._tasks = list()
         self._internal_frame_q = SimpleQueue()
         self._loop = get_event_loop()
+
+        self._index = index
+
         self._logger.debug("Initialized")
 
     def cleanup(self) -> None:
@@ -98,6 +102,7 @@ class StreamReader:
         Continuously check camera for new frames and put into queue. Raise error event if camera fails.
         :return None:
         """
+        num_frames = 0
         while self.running:
             start = time()
             ret, frame = self.stream.read()
@@ -107,9 +112,10 @@ class StreamReader:
             if not ret or frame is None or timeout:
                 self._loop.call_soon_threadsafe(self._err_event.set)
                 break
-            else:
+            if num_frames % self._frame_skip == 0:
                 self._internal_frame_q.put(frame)
                 self._loop.call_soon_threadsafe(self._new_frame_event.set)
+            num_frames += 1
 
     def get_next_new_frame(self) -> ndarray:
         """

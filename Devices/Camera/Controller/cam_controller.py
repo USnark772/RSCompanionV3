@@ -24,7 +24,10 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from asyncio import create_task, sleep, Event, futures
+from concurrent.futures import ThreadPoolExecutor
+from asyncio import create_task, sleep, Event, futures, get_running_loop
+from threading import Event as TEvent
+from time import sleep
 from multiprocessing import Process, Pipe
 from numpy import ndarray
 from PySide2.QtGui import QPixmap, QImage
@@ -34,7 +37,7 @@ from Devices.AbstractDevice.Controller.abstract_controller import AbstractContro
 from Devices.Camera.View.cam_view import CamView
 from Devices.Camera.Model.cam_model import CamModel
 from Devices.Camera.Model import cam_defs as defs
-from Devices.Camera.Resources.cam_strings import strings, StringsEnum, LangEnum
+from Devices.Camera.Resources.cam_strings import LangEnum
 
 
 class Controller(AbstractController):
@@ -53,19 +56,20 @@ class Controller(AbstractController):
         self._model_image_pipe, img_pipe = Pipe(False)  # For images.
         self._model = Process(target=CamModel, args=(msg_pipe, img_pipe, self.cam_index))
         # self._model = CamModel(cam_name, self.cam_index, log_handlers)
-        self.set_lang(lang)
         self._tasks = []
-        self._cancellable_tasks = []
-        self._tasks.append(create_task(self._update_view()))
-        self._tasks.append(create_task(self._handle_pipe()))
         self._switcher = {defs.ModelEnum.FAILURE: self.err_cleanup,
                           defs.ModelEnum.CUR_FPS: self._update_view_fps,
                           defs.ModelEnum.CLEANUP: self._set_model_cleaned}
-        self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, True))
+        self._stop = TEvent()
+        self._loop = get_running_loop()
+        self.set_lang(lang)
         self._model_cleaned = Event()
-        self._running = True
         self._ended = Event()
+        executor = ThreadPoolExecutor(2)
+        self._tasks.append(self._loop.run_in_executor(executor, self._update_view))
+        self._tasks.append(self._loop.run_in_executor(executor, self._handle_pipe))
         self._model.start()
+        self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, True))
         self._logger.debug("Initialized")
 
     def get_index(self) -> int:
@@ -98,6 +102,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
+        self._logger.warning("Camera error occurred.")
         create_task(self.cleanup())
         self._logger.debug("done")
 
@@ -109,11 +114,9 @@ class Controller(AbstractController):
         self._logger.debug("running")
         self.send_msg_to_model((defs.ModelEnum.CLEANUP, None))
         await self._model_cleaned.wait()
+        self._stop.set()
         if self._model.is_alive():
             self._model.join()
-        self._running = False
-        for task in self._tasks:
-            task.cancel()
         self._ended.set()
         self._logger.debug("done")
 
@@ -136,39 +139,40 @@ class Controller(AbstractController):
         self.send_msg_to_model((defs.ModelEnum.STOP, None))
         self._logger.debug("done")
 
-    async def _handle_pipe(self) -> None:
+    def _handle_pipe(self) -> None:
         """
         Handle msgs from model.
         :return None:
         """
         self._logger.debug("running")
         try:
-            while self._running:
+            while not self._stop.isSet():
                 if self._model_msg_pipe.poll():
                     msg = self._model_msg_pipe.recv()
                     if msg[1] is not None:
-                        self._switcher[msg[0]](msg[1])
+                        self._loop.call_soon_threadsafe(self._switcher[msg[0]], msg[1])
                     else:
-                        self._switcher[msg[0]]()
-                await sleep(.01)
+                        self._loop.call_soon_threadsafe(self._switcher[msg[0]])
+                sleep(1)
         except BrokenPipeError as bpe:
             pass
         except OSError as ose:
             pass
 
-    async def _update_view(self) -> None:
+    def _update_view(self) -> None:
         """
         Update view with latest image from camera.
         :return None:
         """
         self._logger.debug("running")
         try:
-            while self._running:
-                if self._model_image_pipe.poll():
+            while not self._stop.isSet():
+                next_image = None
+                while self._model_image_pipe.poll():
                     next_image = self._model_image_pipe.recv()
-                    self.view.update_image(self.convert_frame_to_qt_image(next_image))
-                else:
-                    await sleep(0)
+                if next_image is not None:
+                    self._loop.call_soon_threadsafe(self.view.update_image, self.convert_frame_to_qt_image(next_image))
+                sleep(.01)
         except BrokenPipeError as bpe:
             pass
         except OSError as ose:

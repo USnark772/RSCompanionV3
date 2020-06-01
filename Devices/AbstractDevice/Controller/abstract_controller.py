@@ -30,7 +30,7 @@ from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
 class AbstractController(ABC):
-    def __init__(self, view):
+    def __init__(self, view=None):
         super().__init__()
         self.view = view
 

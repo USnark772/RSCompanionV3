@@ -34,14 +34,14 @@ from Devices.Camera.Model.cam_stream_writer import StreamWriter
 
 
 class CamModel:
-    def __init__(self, msg_pipe: Connection, img_pipe: Connection, cam_index: int = 0):
+    def __init__(self, msg_pipe: Connection, img_pipe: Connection, cam_index: int = 0, frame_skip: int = 1):
         set_event_loop(new_event_loop())
         self._msg_pipe = msg_pipe
         self._img_pipe = img_pipe
-        self._cam_reader = StreamReader(cam_index)
+        self._cam_reader = StreamReader(cam_index, frame_skip)
         self._stop_event = Event()
         self._write_q = SimpleQueue()
-        self._cam_writer = StreamWriter(self._write_q)
+        self._cam_writer = StreamWriter()
         self._tasks = []
         self._cancellable_tasks = []
         self._switcher = {defs.ModelEnum.STOP: self._stop_writing,
@@ -98,7 +98,7 @@ class CamModel:
         self._running = False
         await create_task(self._stop())
         self._cam_reader.cleanup()
-        self._cam_writer.cleanup()
+        self._cam_writer.cleanup(False)
         self._msg_pipe.send((defs.ModelEnum.CLEANUP, None))
 
     def _use_cam(self, is_active: bool) -> None:
@@ -132,8 +132,8 @@ class CamModel:
         size = self._cam_reader.get_current_frame_size()
         size = (int(size[0]), int(size[1]))
         self._write_q = SimpleQueue()
-        self._cam_writer = StreamWriter(self._write_q)
-        self._cam_writer.start(filename, fps, size)
+        self._cam_writer = StreamWriter()
+        self._cam_writer.start(filename, fps, size, self._write_q)
         self._writing = True
 
     def _stop_writing(self) -> None:
@@ -141,7 +141,7 @@ class CamModel:
         Destroy writer and set boolean to stop putting frames in write queue.
         :return None:
         """
-        self._cam_writer.cleanup()
+        self._cam_writer.cleanup(True)
         self._writing = False
 
     async def _start_loop(self) -> None:
@@ -149,6 +149,7 @@ class CamModel:
         Run all async tasks in this model and wait for stop signal. (This method is the main loop for this process)
         :return None:
         """
+        # TODO: Consider putting these in threads like in cam_controller?
         self._tasks.append(create_task(self._handle_pipe()))
         self._tasks.append(create_task(self._handle_new_frame()))
         self._tasks.append(create_task(self._await_reader_err()))

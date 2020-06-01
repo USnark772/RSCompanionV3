@@ -24,17 +24,13 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from PySide2.QtWidgets import QVBoxLayout, QLabel, QProgressBar, QHBoxLayout, QCheckBox, QComboBox, QLineEdit, \
-    QSizePolicy, QSpacerItem, QBoxLayout, QLayout
+from PySide2.QtWidgets import QVBoxLayout, QLabel, QProgressBar, QHBoxLayout, QCheckBox, QComboBox, QLineEdit,\
+    QSizePolicy, QSpacerItem
 from PySide2.QtGui import QPixmap, QMouseEvent, QResizeEvent
 from PySide2.QtCore import Qt, QSize
 from Devices.AbstractDevice.View.abstract_view import AbstractView
-from Devices.AbstractDevice.View.collapsible_tab_widget import CollapsingTab
 from Devices.Camera.Resources.cam_strings import strings, StringsEnum, LangEnum
 from Model.app_helpers import EasyFrame
-
-max_height = 500
-combo_box_height = 22
 
 
 class CamView(AbstractView):
@@ -45,9 +41,6 @@ class CamView(AbstractView):
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(name, empty=True)
-
-        # self._subwindow_height = 350
-        # self._tab_height = int(self._subwindow_height * 0.9)
 
         self._initialization_bar_frame = EasyFrame()
         self._initialization_bar_frame.setMaximumHeight(70)
@@ -85,7 +78,7 @@ class CamView(AbstractView):
         self._frame_size_selector_label.setAlignment(Qt.AlignLeft)
 
         self._frame_size_selector = QComboBox(self._frame_size_selector_frame)
-        self._frame_size_selector.setMaximumHeight(combo_box_height)
+        self._frame_size_selector.setMaximumHeight(22)
 
         self._frame_size_selector_layout.addWidget(self._frame_size_selector_label)
         self._frame_size_selector_layout.addWidget(EasyFrame(vert=True))
@@ -111,7 +104,6 @@ class CamView(AbstractView):
 
         self._image_display_label = QLabel(self._image_display_frame)
         self._image_display_label.setAlignment(Qt.AlignHCenter)
-        # self._image_display_label.hide()
         self._image_display = QLabel(self._image_display_frame)
         self._image_display.setAlignment(Qt.AlignHCenter)
 
@@ -135,10 +127,6 @@ class CamView(AbstractView):
         self._dev_sets_frame = EasyFrame()
         self._dev_sets_layout = QVBoxLayout(self._dev_sets_frame)
 
-        # self._config_tab = CollapsingTab(self, self._dev_sets_frame, max_width=350, log_handlers=log_handlers)
-        # self._config_tab.set_tab_height(self._tab_height)
-        # self.layout().addWidget(self._config_tab, 0, 1, Qt.AlignRight)
-
         self._dev_sets_layout.addWidget(self._initialization_bar_frame)
         self._dev_sets_layout.addWidget(EasyFrame(line=True))
         self._dev_sets_layout.addWidget(self._frame_size_selector_frame)
@@ -148,14 +136,10 @@ class CamView(AbstractView):
         self._dev_sets_layout.addWidget(self._fps_display_frame)
         self._dev_sets_layout.addWidget(EasyFrame(line=True))
         self._dev_sets_layout.addItem(spacer)
-        # self.layout().addWidget(self._image_display_frame, 0, 0, alignment=Qt.AlignTop)
-        # self.layout().addWidget(self._image_display_frame)
         self.setLayout(QHBoxLayout())
         self.layout().addWidget(self._image_display)
 
-        # self._image_h = int(self.height() * 8)
-        # self._image_w = int(self.width() * 8)
-        self._aspect_ratio = 480/640  # default value
+        self._aspect_ratio = 3/4
         self._window_changing = False
         self.resize(400, int(400 * self._aspect_ratio))
         self._strings = dict()
@@ -251,7 +235,6 @@ class CamView(AbstractView):
         self._frame_rotation_setting_label.setText(self._strings[StringsEnum.FRAME_ROTATION_SETTING_LABEL])
         self._fps_display_label.setText(self._strings[StringsEnum.FPS_DISPLAY_LABEL])
         self._fps_display_value.setText(self._strings[StringsEnum.FPS_DISPLAY_VALUE])
-        # self._config_tab.set_tab_text(self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
     def _set_tooltips(self) -> None:
@@ -265,5 +248,4 @@ class CamView(AbstractView):
         self._frame_rotation_setting_frame.setToolTip(self._strings[StringsEnum.ROTATION_TOOLTIP])
         self._image_display_frame.setToolTip(self._strings[StringsEnum.IMAGE_DISPLAY_TOOLTIP])
         self._fps_display_frame.setToolTip(self._strings[StringsEnum.FPS_DISPLAY_TOOLTIP])
-        # self._config_tab.set_tab_tooltip(self._strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self._logger.debug("done")

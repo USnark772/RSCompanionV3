@@ -69,6 +69,7 @@ class AppModel:
         self._running = True
         self.exp_created = False
         self.exp_running = False
+        self._loop = get_running_loop()
         self._logger.debug("Initialized")
 
     def await_new_view(self) -> futures:
@@ -258,7 +259,7 @@ class AppModel:
         """
         while self._running:
             await self._cam_scanner.await_connect()
-            self._setup_new_cams()
+            await self._setup_new_cams()
 
     async def _await_remove_cam(self, cam_controller, cam_index: int) -> None:
         """
@@ -354,7 +355,7 @@ class AppModel:
         self._logger.debug("done")
         return ret
 
-    def _setup_new_cams(self) -> None:
+    async def _setup_new_cams(self) -> None:
         """
         Get new device info from new device queue and make new device.
         :return: None.
@@ -362,18 +363,17 @@ class AppModel:
         self._logger.debug("running")
         ret, cam_index = self._cam_scanner.get_next_new_cam()
         while ret:
-            self._make_cam_controller(cam_index)
+            await self._make_cam_controller(cam_index)
             ret, cam_index = self._cam_scanner.get_next_new_cam()
         self._logger.debug("done")
 
-    def _make_cam_controller(self, cam_index: int) -> bool:
+    async def _make_cam_controller(self, cam_index: int) -> None:
         """
         Create controller of type camera
         :param cam_index: The camera index to use.
-        :return:
+        :return None:
         """
         self._logger.debug("running")
-        ret = True
         try:
             controller = self._controllers["Camera"](cam_index, self._current_lang, self._log_handlers)
             self._devs[cam_index] = controller
@@ -382,9 +382,7 @@ class AppModel:
             self._new_dev_view_flag.set()
         except Exception as e:
             self._logger.exception("Problem making controller")
-            ret = False
         self._logger.debug("done")
-        return ret
 
     async def _remove_lost_devices(self) -> None:
         """
