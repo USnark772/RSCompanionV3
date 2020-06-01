@@ -24,6 +24,7 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
+from datetime import datetime
 from cv2 import VideoCapture, CAP_PROP_FOURCC, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
 from queue import SimpleQueue
 from numpy import ndarray
@@ -52,9 +53,6 @@ class StreamReader:
         self._tasks = list()
         self._internal_frame_q = SimpleQueue()
         self._loop = get_event_loop()
-
-        self._index = index
-
         self._logger.debug("Initialized")
 
     def cleanup(self) -> None:
@@ -113,7 +111,7 @@ class StreamReader:
                 self._loop.call_soon_threadsafe(self._err_event.set)
                 break
             if num_frames % self._frame_skip == 0:
-                self._internal_frame_q.put(frame)
+                self._internal_frame_q.put((frame, datetime.now()))
                 self._loop.call_soon_threadsafe(self._new_frame_event.set)
             num_frames += 1
 

@@ -67,6 +67,7 @@ class StreamWriter:
         :param q: The queue to write from.
         :return None:
         """
+        print(__name__, "Starting writer:", filename, fps, size, q)
         self._frame_queue = q
         self._running = True
         self._writer = VideoWriter(filename, defs.cap_codec, fps, size)

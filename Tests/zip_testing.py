@@ -3,7 +3,7 @@ import zipfile
 import tempfile
 
 # Setup foldername and filename
-zip_filename = "C:/Users/phill/Companion App Save Folder/exp1.rs"
+zip_filename = "C:/Users/phill/Companion App Save Folder/test2.rs"
 output_folder = zip_filename[:zip_filename.rfind("/")]
 #
 # # Make a temporary directory to put data into. This temporary directory will be removed by calling temp.cleanup()

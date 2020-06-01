@@ -172,7 +172,7 @@ class Controller(AbstractController):
                     next_image = self._model_image_pipe.recv()
                 if next_image is not None:
                     self._loop.call_soon_threadsafe(self.view.update_image, self.convert_frame_to_qt_image(next_image))
-                sleep(.01)
+                sleep(.008)
         except BrokenPipeError as bpe:
             pass
         except OSError as ose:
