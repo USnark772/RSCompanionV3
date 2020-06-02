@@ -62,7 +62,7 @@ def test_type_fps(cap, cam_index, num_frames):
 
     # Print results.
     print("Test type: fps"
-          "Camera:", cam_index,
+          "\n- Camera:", cam_index,
           "\n- Num_frames:", num_frames,
           "\n- Time_taken:", elapsed,
           "\n- fps:", num_frames / elapsed)
