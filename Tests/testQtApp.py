@@ -48,6 +48,25 @@ class MainWindow(QMainWindow):
 
     def button_test_1(self):
         print("button 1 pressed")
+        msg_box = QDialog()
+        # msg_box.setModal(True)
+        msg_box.setWindowTitle("Test message box")
+        # msg_box.setText("This is a message")
+        test_frame = EasyFrame()
+        test_layout = QVBoxLayout(test_frame)
+
+        test_button = ClickAnimationButton(test_frame)
+        test_button.setText("test button")
+        test_button.clicked.connect(self.button_test_2)
+
+        test_layout.addWidget(test_button)
+
+        # msg_box.layout().addWidget(test_layout)
+        # msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.setLayout(test_layout)
+
+        # msg_box.exec_()
+        msg_box.exec()
 
     def button_test_2(self):
         print("button 2 pressed")

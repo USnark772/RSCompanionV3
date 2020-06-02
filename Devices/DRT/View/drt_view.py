@@ -32,6 +32,7 @@ from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_st
 from Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 from Devices.AbstractDevice.View.collapsible_tab_widget import CollapsingTab
+from Devices.AbstractDevice.View.ConfigPopUp import ConfigPopUp
 
 
 class DRTView(AbstractView):
@@ -124,10 +125,18 @@ class DRTView(AbstractView):
         self.config_horizontal_layout = QHBoxLayout()
 
         """ Show/Hide Configuration tab """
-        self.config_tab = CollapsingTab(self, self.dev_sets_frame, log_handlers=log_handlers)
-        self.config_tab.set_tab_height(self.tab_height)
+        # check set_texts and set_tooltips if commenting/uncommenting
+        # self.config_tab = CollapsingTab(self, self.dev_sets_frame, log_handlers=log_handlers)
+        # self.config_tab.set_tab_height(self.tab_height)
+        # self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
 
-        self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
+        """ Configuration popup """
+        # check set_texts and set_tooltips if commenting/uncommenting
+        self.config_button = ClickAnimationButton()
+        self.layout().addWidget(self.config_button, 0, 0, Qt.AlignRight)
+        self.config_win = ConfigPopUp()
+        self.config_win.setLayout(self.dev_sets_layout)
+        self.config_button.clicked.connect(self.config_button_handler)
 
         """ Add all of the widgets to the layout. """
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
@@ -144,11 +153,25 @@ class DRTView(AbstractView):
 
         self.strings = dict()
         self.setMinimumWidth(760)
-        self.setFixedHeight(self.subwindow_height)
+        self.setMinimumHeight(self.subwindow_height)
         self._logger.debug("Initialized")
 
-    def add_graph(self, graph):
-        self.layout().addWidget(graph, 0, 0)
+    def add_graph(self, graph) -> None:
+        """
+        Add graph to view
+        :return None:
+        """
+        # use with config tab
+        # self.layout().addWidget(graph, 0, 0)
+        # use with config popup
+        self.layout().addWidget(graph, 1, 0)
+
+    def config_button_handler(self) -> None:
+        """
+        handles the config button
+        :return None:
+        """
+        self.config_win.exec_()
 
     def set_stim_dur_entry_changed_handler(self, func: classmethod) -> None:
         """
@@ -364,7 +387,9 @@ class DRTView(AbstractView):
         self.upper_isi_label.setText(self.strings[StringsEnum.UPPER_ISI_LABEL])
         self.lower_isi_label.setText(self.strings[StringsEnum.LOWER_ISI_LABEL])
         self.upload_settings_button.setText(self.strings[StringsEnum.UPLOAD_BUTTON_LABEL])
-        self.config_tab.set_tab_text(self.strings[StringsEnum.CONFIG_TAB_LABEL])
+        # self.config_tab.set_tab_text(self.strings[StringsEnum.CONFIG_TAB_LABEL])
+        self.config_button.setText(self.strings[StringsEnum.CONFIG_TAB_LABEL])
+        self.config_win.setWindowTitle("DRT: " + self.strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
     def _set_tooltips(self):
@@ -377,5 +402,6 @@ class DRTView(AbstractView):
         self.stim_intens_label.setToolTip(self.strings[StringsEnum.INTENSITY_TOOLTIP])
         self.upload_settings_button.setToolTip(self.strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
         self.stim_intens_slider.setToolTip(str(self.stim_intens_slider.value()) + "%")
-        self.config_tab.set_tab_tooltip(self.strings[StringsEnum.CONFIG_TAB_TOOLTIP])
+        # self.config_tab.set_tab_tooltip(self.strings[StringsEnum.CONFIG_TAB_TOOLTIP])
+        self.config_button.setToolTip(self.strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self._logger.debug("done")
