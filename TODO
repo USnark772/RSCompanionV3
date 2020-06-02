@@ -9,15 +9,8 @@
         - Redesign subwindow layouts for drt and vog to be the same. Remove config into pop up window, compact drt graphs into same graph.
         - Make pop up window from MdiSubwindows be accessible through a menu bar in each subwindow instead of a QPushButton.
     - Implement CAM.
-        - Add overlayed timestamps to each frame.
-        - Figure out why multiple cameras are not in sync.
-            (Seems to happen when one camera is unplugged and plugged back in. The camera that was reattached is in
-            time and the rest are behind. Could be an issue with queues. This could mean that when plugging in a new
-            camera that the entire app lags.)
-        - Model.
-            - Look into how saving video is handled when ending experiments vs. when closing app during experiment.
-        - Controller.
-            - Need to implement handlers.
+        - Figure out why multiple cameras are not in sync. Some cameras are displaying feed more slowly than others over time.
+        - Figure out why cams are not always getting max advertised fps.
     - Implement playback of experiment data.
         - Scanning through data example: DRT_7,_8,_9 clicks threshold x, scan through all by timestamp.
     - Alter save format to be folders instead of .rs files.
