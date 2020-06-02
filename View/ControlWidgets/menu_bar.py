@@ -106,19 +106,13 @@ class AppMenuBar(QMenuBar):
         self._german_action.setCheckable(True)
         self._german_action.triggered.connect(self._ger_clicked)
 
-        # Russian
-        self._russian_action = QAction(self)
-        self._lang_actions.append(self._russian_action)
-        self._russian_action.setCheckable(True)
-        self._russian_action.triggered.connect(self._rus_clicked)
-
         # Spanish
         self._spanish_action = QAction(self)
         self._lang_actions.append(self._spanish_action)
         self._spanish_action.setCheckable(True)
         self._spanish_action.triggered.connect(self._spa_clicked)
 
-        # TODO: issue with Chinese and Japanese characters.
+        # TODO: issue with Chinese, Japanese, and Russian characters.
         #       seems to be an issue with matplotlib
         # Chinese
         # self._chinese_action = QAction(self)
@@ -131,6 +125,12 @@ class AppMenuBar(QMenuBar):
         # self._lang_actions.append(self._japanese_action)
         # self._japanese_action.setCheckable(True)
         # self._japanese_action.triggered.connect(self._jpn_clicked)
+
+        # Russian
+        # self._russian_action = QAction(self)
+        # self._lang_actions.append(self._russian_action)
+        # self._russian_action.setCheckable(True)
+        # self._russian_action.triggered.connect(self._rus_clicked)
 
         """ Debug options """
         self._debug_actions = []

@@ -32,6 +32,7 @@ from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_st
 from Devices.VOG.Resources.vog_strings import strings, StringsEnum, LangEnum
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 from Devices.AbstractDevice.View.collapsible_tab_widget import CollapsingTab
+from Devices.AbstractDevice.View.ConfigPopUp import ConfigPopUp
 
 
 class VOGView(AbstractView):
@@ -143,9 +144,16 @@ class VOGView(AbstractView):
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         """ Show/Hide Configuration tab """
-        self.config_tab = CollapsingTab(self, self.dev_sets_frame, max_width=400, log_handlers=log_handlers)
-        self.config_tab.set_tab_height(self.tab_height)
-        self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
+        # self.config_tab = CollapsingTab(self, self.dev_sets_frame, max_width=400, log_handlers=log_handlers)
+        # self.config_tab.set_tab_height(self.tab_height)
+        # self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
+
+        """Configuration popup"""
+        self.config_button = ClickAnimationButton()
+        self.layout().addWidget(self.config_button, 0, 0, Qt.AlignRight)
+        self.config_win = ConfigPopUp()
+        self.config_win.setLayout(self.dev_sets_layout)
+        self.config_button.clicked.connect(self.config_button_handler)
 
         """ Add widgets to layout. """
         self.dev_sets_layout.addWidget(self._config_frame)
@@ -169,7 +177,17 @@ class VOGView(AbstractView):
         Add Graph to view.
         :return None:
         """
-        self.layout().addWidget(graph, 0, 0)
+        # use with config tab
+        # self.layout().addWidget(graph, 0, 0)
+        # use with config button
+        self.layout().addWidget(graph, 1, 0)
+
+    def config_button_handler(self) -> None:
+        """
+        handles the config button
+        :return None:
+        """
+        self.config_win.exec_()
 
     def set_config_val_line_edit_handler(self, func: classmethod) -> None:
         """
@@ -531,7 +549,9 @@ class VOGView(AbstractView):
         self._upload_settings_button.setText(self._strings[StringsEnum.UPLOAD_BUTTON_LABEL])
         self._manual_control_open_button.setText(self._strings[StringsEnum.MANUAL_OPEN_LABEL])
         self._manual_control_close_button.setText(self._strings[StringsEnum.MANUAL_CLOSE_LABEL])
-        self.config_tab.set_tab_text(self._strings[StringsEnum.CONFIG_TAB_LABEL])
+        # self.config_tab.set_tab_text(self._strings[StringsEnum.CONFIG_TAB_LABEL])
+        self.config_button.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
+        self.config_win.setWindowTitle("VOG: " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
     def _set_tooltips(self) -> None:
@@ -550,5 +570,6 @@ class VOGView(AbstractView):
         self._upload_settings_button.setToolTip(self._strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
         self._manual_control_open_button.setToolTip(self._strings[StringsEnum.MANUAL_OPEN_TOOLTIP])
         self._manual_control_close_button.setToolTip(self._strings[StringsEnum.MANUAL_CLOSE_TOOLTIP])
-        self.config_tab.set_tab_tooltip(self._strings[StringsEnum.CONFIG_TAB_TOOLTIP])
+        # self.config_tab.set_tab_tooltip(self._strings[StringsEnum.CONFIG_TAB_TOOLTIP])
+        self.config_button.setToolTip(self._strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self._logger.debug("done")
