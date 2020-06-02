@@ -44,8 +44,9 @@ class DRTView(AbstractView):
         self._logger.debug("Initializing")
         super().__init__(name)
 
-        self.subwindow_height = 450
-        self.tab_height = int(self.subwindow_height * 0.87)
+        self.subwindow_height = 300
+        self.subwindow_length = 550
+        # self.tab_height = int(self.subwindow_height * 0.9)
 
         """ Set configuration value display area """
         self.config_frame = EasyFrame()
@@ -152,8 +153,7 @@ class DRTView(AbstractView):
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         self.strings = dict()
-        self.setMinimumWidth(760)
-        self.setMinimumHeight(self.subwindow_height)
+        self.setMinimumSize(self.subwindow_length, self.subwindow_height)
         self._logger.debug("Initialized")
 
     def add_graph(self, graph) -> None:
