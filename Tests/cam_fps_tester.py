@@ -94,7 +94,8 @@ def test_cam(backend_to_use, cam_index: int = 0, info_level: bool = False) -> No
 
 def main():
     detailed = False  # Change to true to see more detailed output.
-    for cam_index in range(1, 3):
+    num_cams = 3      # Change this to the number of cams currently plugged in.
+    for cam_index in range(num_cams):
         test_cam(cap_backend, cam_index, detailed)
 
 
