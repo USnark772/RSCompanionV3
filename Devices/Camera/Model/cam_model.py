@@ -23,6 +23,7 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
+import time
 from datetime import datetime
 from asyncio import create_task, Event, sleep, set_event_loop, new_event_loop, get_event_loop
 from multiprocessing.connection import Connection
@@ -43,6 +44,7 @@ class CamModel:
         self._cam_reader = StreamReader(cam_index, frame_skip)
         self._stop_event = Event()
         self._write_q = SimpleQueue()
+        self.fps = 30
         self._cam_writer = StreamWriter()
         self._tasks = []
         self._cancellable_tasks = []
@@ -62,8 +64,9 @@ class CamModel:
         self._loop = get_event_loop()
 
         self._cam_name = "CAM_" + str(self._cam_index)
-        self._text_loc = (30, 50)
-        self._font_scale = .8
+        self.name_time_loc = (30, 50)
+        self.fps_loc = (30, 80)
+        self._font_scale = .6
         self._font_thickness = 1
         r = 211
         g = 250
@@ -142,12 +145,11 @@ class CamModel:
         :return None:
         """
         filename = path + "CAM_" + str(self._cam_index) + "_" + format_current_time(datetime.now(), save=True) + ".avi"
-        fps = 30  # TODO: Make this not hardcoded.
         self._frame_size = self._cam_reader.get_current_frame_size()
         self._frame_size = (int(self._frame_size[0]), int(self._frame_size[1]))
         self._write_q = SimpleQueue()
         self._cam_writer = StreamWriter()
-        self._cam_writer.start(filename, fps, self._frame_size, self._write_q)
+        self._cam_writer.start(filename, int(self.fps), self._frame_size, self._write_q)
         self._writing = True
 
     def _stop_writing(self) -> None:
@@ -190,14 +192,25 @@ class CamModel:
         Handle frames from camera
         :return None:
         """
+        times = list()
+        num_to_keep = 60
+        prev_time = time.time()
         while self._running:
             await self._using_cam.wait()
             await self._cam_reader.await_new_frame()
             (frame, timestamp) = self._cam_reader.get_next_new_frame()
+            now = time.mktime(timestamp.timetuple()) + timestamp.microsecond / 1E6
+            times.append(now - prev_time)
+            while len(times) > num_to_keep:
+                times = times[1:]
+            prev_time = now
+            self.fps = round(num_to_keep / sum(times))
+            fps = "FPS: " + str(self.fps)
             str_time = format_current_time(timestamp, True, True, True)
-            image_text = str_time + " " + self._cam_name
-            putText(frame, image_text, self._text_loc, FONT_FACE, self._font_scale, self._color, self._font_thickness,
-                    LINE_TYPE)
+            time_and_name = str_time + " " + self._cam_name
+            putText(frame, time_and_name, self.name_time_loc, FONT_FACE, self._font_scale, self._color,
+                    self._font_thickness, LINE_TYPE)
+            putText(frame, fps, self.fps_loc, FONT_FACE, self._font_scale, self._color, self._font_thickness, LINE_TYPE)
             if self._writing:
                 self._write_q.put(frame)
             if self._show_feed:
