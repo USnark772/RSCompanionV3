@@ -11,7 +11,7 @@ def test_type_read_times(cap, cam_index, num_frames, show_values):
     for i in range(num_frames):
         cap.read()
         now = time()
-        times.append((now - prev))
+        times.append(now - prev)
         prev = now
 
     # Sort times taken low to high.
@@ -69,7 +69,7 @@ def test_type_fps(cap, cam_index, num_frames):
     print("\n")
 
 
-def test_cam(backend_to_use, cam_index: int = 0, info_level: bool = False) -> None:
+def test_cam(backend_to_use, cam_index: int = 0, num_frames: int = 300, info_level: bool = False) -> None:
     # Open camera
     cap = cv2.VideoCapture(cam_index, backend_to_use)
 
@@ -88,12 +88,10 @@ def test_cam(backend_to_use, cam_index: int = 0, info_level: bool = False) -> No
     cap.set(cv2.CAP_PROP_FOURCC, cap_temp_codec)
     cap.set(cv2.CAP_PROP_FOURCC, cap_codec)
 
-    # Set max frame size.
+    # Set frame size to desired max.
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
-    # Set number of frames to read.
-    num_frames = 310
     # Run tests.
     test_type_fps(cap, cam_index, num_frames)
     test_type_read_times(cap, cam_index, num_frames, info_level)
@@ -102,8 +100,9 @@ def test_cam(backend_to_use, cam_index: int = 0, info_level: bool = False) -> No
 def main():
     detailed = False  # Change to true to see more detailed output.
     num_cams = 3      # Change this to the number of cams currently plugged in.
+    num_frames = 300  # Change this to number of frames to capture per test.
     for cam_index in range(num_cams):
-        test_cam(cap_backend, cam_index, detailed)
+        test_cam(cap_backend, cam_index, num_frames, detailed)
 
 
 if __name__ == '__main__':
