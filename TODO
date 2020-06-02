@@ -1,22 +1,20 @@
 # TODO: Pressing matters.
-    - App not closing
-    - Look through all device MVC and update app closure processes to use async.
-    - Implement camera handler in app_controller.py
+    - Implement camera handler in app_controller.py (Turning cameras on or off).
     - Finish fine tuning MDI subwindows.
         - Make subwindows rearrange/resize/move on main window resize.
-        - Make subwindows not able to move outside the main window size.
-            - Do we still want to do this now that we have scroll bars?
-        - Redesign subwindow layouts for drt and vog to be the same. Remove config into pop up window, compact drt graphs into same graph.
-        - Make pop up window from MdiSubwindows be accessible through a menu bar in each subwindow instead of a QPushButton.
+        - Redesign subwindow layouts for drt and vog to be the same.
+            - Compact drt graphs into same graph.
+            - Make subwindows smaller and same size as each other.
+            - Make subwindow config pop up activator be a menu bar item instead of a QPushButton.
     - Implement CAM.
-        - Figure out why multiple cameras are not in sync. Some cameras are displaying feed more slowly than others over time.
-        - Figure out why cams are not always getting max advertised fps.
+        - Cameras are not in sync over time.
+        - Cameras are not always getting max advertised fps.
     - Implement playback of experiment data.
         - Scanning through data example: DRT_7,_8,_9 clicks threshold x, scan through all by timestamp.
-    - Alter save format to be folders instead of .rs files.
+    - Alter save format to be folder per experiment instead of .rs files.
 
 # TODO: At some point
-    - Check all files for proper and complete self._logger usage.
+    - Check all files for proper and complete logging usage.
     - Figure out how to get app to work with other character languages.
         - Chinese
         - Japanese
@@ -24,6 +22,7 @@
     - Add more languages.
     - Finish adding/translating languages for current string.py files.
     - Look over https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html and make edits to imports.
+
 Languages:
     - Mandarin (Chinese simplified/formal)
     - Australian
