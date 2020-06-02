@@ -45,7 +45,7 @@ class DRTView(AbstractView):
         super().__init__(name)
 
         self.subwindow_height = 300
-        self.subwindow_length = 550
+        self.subwindow_width = 550
         # self.tab_height = int(self.subwindow_height * 0.9)
 
         """ Set configuration value display area """
