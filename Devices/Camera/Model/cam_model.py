@@ -91,12 +91,13 @@ class CamModel:
         except OSError as ose:
             pass
 
-    def cleanup(self) -> None:
+    def cleanup(self, discard: bool) -> None:
         """
         Cleanup this code and prep for app closure.
+        :param discard: Quit without saving.
         :return None:
         """
-        create_task(self._cleanup())
+        create_task(self._cleanup(discard))
 
     async def _await_reader_err(self) -> None:
         """
@@ -107,11 +108,11 @@ class CamModel:
             await self._cam_reader.await_err()
             self._msg_pipe.send((defs.ModelEnum.FAILURE, None))
 
-    async def _cleanup(self) -> None:
+    async def _cleanup(self, discard: bool) -> None:
         self._running = False
         await create_task(self._stop())
         self._cam_reader.cleanup()
-        self._cam_writer.cleanup(False)
+        self._cam_writer.cleanup(discard)
         self._msg_pipe.send((defs.ModelEnum.CLEANUP, None))
 
     def _use_cam(self, is_active: bool) -> None:
@@ -154,7 +155,8 @@ class CamModel:
         Destroy writer and set boolean to stop putting frames in write queue.
         :return None:
         """
-        self._cam_writer.cleanup(True)
+        print(__name__, "Stopping writer")
+        self._cam_writer.cleanup()
         self._writing = False
 
     async def _start_loop(self) -> None:
@@ -177,6 +179,12 @@ class CamModel:
             task.cancel()
         self._stop_event.set()
 
+    # How to handle newlines
+    # text = "This is \n some text"
+    # y0, dy = 50, 4
+    # for i, line in enumerate(text.split('\n')):
+    #     y = y0 + i * dy
+    #     cv2.putText(img, line, (50, y), cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
     async def _handle_new_frame(self) -> None:
         """
         Handle frames from camera

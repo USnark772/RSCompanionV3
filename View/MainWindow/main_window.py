@@ -125,7 +125,7 @@ class AppMainWindow(QMainWindow):
         :return None:
         """
         self._logger.debug("running")
-        self._close_override = True
+        self._close_override = override
         self._logger.debug("done")
 
     def add_mdi_area(self, mdi_area: QMdiArea) -> None:

@@ -36,27 +36,27 @@ class StreamWriter:
     def __init__(self):
         self._writer: VideoWriter = VideoWriter()
         self._frame_queue = SimpleQueue()
-        self._running = False
-        self._stopping = False
-        self._done_writing = False
-        self._done_writing_event = Event()
+        self._stopping_flag = TEvent()
+        self._done_writing_flag = Event()
         self._tasks = list()
-        self._stop = TEvent()
+        self._stop_flag = TEvent()
+        self._stop_flag.set()
         self._loop = get_event_loop()
 
-    def cleanup(self, finish: bool = True) -> None:
+    def cleanup(self, discard: bool = False) -> None:
         """
         Cleanup this object and prep for app closure.
+        :param discard: Quit without saving.
         :return None:
         """
-        self.stop(finish)
+        self.stop(discard)
 
     def await_done_writing(self) -> futures:
         """
         Signal when there is a done writing frames event.
         :return futures: If the flag is set.
         """
-        return await_event(self._done_writing_event)
+        return await_event(self._done_writing_flag)
 
     def start(self, filename: str, fps: int, size: (int, int), q: SimpleQueue) -> None:
         """
@@ -67,32 +67,30 @@ class StreamWriter:
         :param q: The queue to write from.
         :return None:
         """
-        print(__name__, "Starting writer:", filename, fps, size, q)
+        self._stop_flag.clear()
         self._frame_queue = q
-        self._running = True
         self._writer = VideoWriter(filename, defs.cap_codec, fps, size)
         self._tasks.append(self._loop.run_in_executor(None, self._update))
 
-    def stop(self, finish: bool) -> None:
+    def stop(self, discard: bool) -> None:
         """
         Stop this writer.
         :return None:
         """
-        if self._running:
-            create_task(self._stop_writer(finish))
+        if not self._stop_flag.isSet():
+            create_task(self._stop_writer(discard))
 
-    async def _stop_writer(self, finish: bool) -> None:
+    async def _stop_writer(self, discard: bool) -> None:
         """
         Signal stop and wait for writer to finish writing any frames not yet written.
         :return None:
         """
-        if finish:
-            self._stopping = True
-            await self._done_writing_event.wait()
-            self._stopping = False
-        self._stop.set()
+        if not discard:
+            self._stopping_flag.set()
+            await self._done_writing_flag.wait()
+            self._stopping_flag.clear()
+        self._stop_flag.set()
         self._writer.release()
-        self._stop.clear()
         await self._tasks[0]
 
     def _update(self) -> None:
@@ -101,13 +99,13 @@ class StreamWriter:
         frames are saved.
         :return None:
         """
-        while not self._stop.isSet():
+        while not self._stop_flag.isSet():
             if not self._frame_queue.empty():
                 self._writer.write(self._frame_queue.get())
-            if self._stopping:
+            if self._stopping_flag.isSet():
                 while not self._frame_queue.empty():
                     self._writer.write(self._frame_queue.get())
-                self._loop.call_soon_threadsafe(self._done_writing_event.set)
+                self._loop.call_soon_threadsafe(self._done_writing_flag.set)
                 break
             else:
                 sleep(.001)

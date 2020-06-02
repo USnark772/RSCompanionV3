@@ -65,16 +65,17 @@ class Controller(AbstractController):
         self.set_lang(lang)
         self._logger.debug("Initialized")
 
-    async def cleanup(self) -> None:
+    async def cleanup(self, discard: bool = False) -> None:
         """
         Cleanup this code for removal or app closure.
+        :param discard: Quit without saving.
         :return: None.
         """
         self._logger.debug("running")
-        if self._exp_created:
-            self.end_exp()
         if self._exp_running:
             self.stop_exp()
+        if self._exp_created:
+            self.end_exp()
         self._msg_handler_task.cancel()
         self._model.cleanup()
         self._logger.debug("done")

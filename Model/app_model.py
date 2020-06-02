@@ -55,6 +55,8 @@ class AppModel:
         self._log_handlers = log_handlers
         self._new_dev_view_flag = Event()
         self._remove_dev_view_flag = Event()
+        self._done_saving_flag = Event()
+        self._saving_flag = Event()
         self._current_lang = lang
         self._temp_folder = None
         self._save_path = str()
@@ -154,7 +156,7 @@ class AppModel:
             line = timestamp + ", " + note
             create_task(write_line_to_file(self._temp_folder.name + "/" + self._note_filename, line))
 
-    def save_flag(self, flag: str) -> None:
+    def save_keyflag(self, flag: str) -> None:
         """
         Save flag to experiment flag file if experiment created.
         :param flag: The flag to save.
@@ -181,6 +183,7 @@ class AppModel:
                 devices_running.append(controller)
             self._logger.debug("done")
             self.exp_created = True
+            self._done_saving_flag.clear()
         except Exception as e:
             self._logger.exception("Failed creating exp on a controller.")
             for controller in devices_running:
@@ -188,7 +191,7 @@ class AppModel:
             self._temp_folder.cleanup()
             self.exp_created = False
 
-    def signal_end_exp(self, save: bool = True) -> None:
+    def signal_end_exp(self) -> None:
         """
         Call end exp on all device controllers.
         :return bool: If there was an error.
@@ -198,7 +201,8 @@ class AppModel:
             for controller in self._devs.values():
                 controller.end_exp()
             self._logger.debug("done")
-            create_task(self._save_exp(save))
+            self._saving_flag.set()
+            create_task(self._save_exp())
         except Exception as e:
             self._logger.exception("Failed ending exp on a controller.")
         self.exp_created = False
@@ -270,17 +274,26 @@ class AppModel:
         await self._remove_lost_cam(cam_index)
         self._cam_scanner.remove_cam_index(cam_index)
 
-    async def _save_exp(self, save: bool) -> None:
+    async def _save_exp(self) -> None:
         """
         Save the latest exp and cleanup temp folder.
-        :param save: Should experiment data be saved.
         :return None:
         """
-        self._saving = True
-        if save:
-            await get_running_loop().run_in_executor(None, self._convert_to_rs_file)
-        self._temp_folder.cleanup()
-        self._saving = False
+        await get_running_loop().run_in_executor(None, self._convert_to_rs_file)
+        self._saving_flag.clear()
+        self._done_saving_flag.set()
+        self.cleanup_temp_folder()
+
+    def cleanup_temp_folder(self) -> None:
+        """
+        Cleanup and remove temp folder.
+        :return None:
+        """
+        self._logger.debug("running")
+        if self._temp_folder is not None:
+            self._temp_folder.cleanup()
+        self._temp_folder = None
+        self._logger.debug("done")
 
     def _convert_to_rs_file(self) -> None:
         """
@@ -397,7 +410,7 @@ class AppModel:
                 conn = self._devs[key].get_conn()
                 if conn and conn.port == item.device:
                     self._remove_dev_views.append(self._devs[key].get_view())
-                    await self._devs[key].cleanup()
+                    await self._devs[key].cleanup(True)
                     to_remove.append(key)
                     self._remove_dev_view_flag.set()
                     break
@@ -440,14 +453,12 @@ class AppModel:
         for task in self._tasks:
             task.cancel()
         await self._rs_dev_scanner.cleanup()
-        if self.exp_running:
-            self.signal_stop_exp()
-        if self.exp_created:
-            self.signal_end_exp(False)
-        while self._saving:  # TODO: change this to event?
-            continue
         for dev in self._devs.values():
-            await dev.cleanup()
+            await dev.cleanup(True)
+        if self._saving_flag.is_set():
+            print(__name__, "Waiting for saving to be done.")
+            await self._done_saving_flag.wait()
+        self.cleanup_temp_folder()
         self._logger.debug("done")
 
     # TODO add debugging

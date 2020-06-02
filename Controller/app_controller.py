@@ -349,16 +349,15 @@ class AppController:
             self.button_box.set_create_button_state(0)
         self._logger.debug("done")
 
-    def _end_exp(self, save: bool = True) -> None:
+    def _end_exp(self) -> None:
         """
         End an experiment. Stop experiment if running then signal devices and update view.
-        :param save: Save exp data.
         :return None:
         """
         self._logger.debug("running")
         if self._model.exp_running:
             self._stop_exp()
-        self._model.signal_end_exp(save)
+        self._model.signal_end_exp()
         self._check_toggle_post_button()
         if self._drive_updater_task:
             self._drive_updater_task.cancel()
@@ -457,7 +456,7 @@ class AppController:
         self._logger.debug("running")
         if 0x41 <= event.key() <= 0x5a:
             self.flag_box.set_flag(chr(event.key()))
-            self._model.save_flag(self.flag_box.get_flag())
+            self._model.save_keyflag(self.flag_box.get_flag())
         event.accept()
         self._logger.debug("done")
 

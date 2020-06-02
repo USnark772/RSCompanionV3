@@ -103,16 +103,17 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self._logger.warning("Camera error occurred.")
-        create_task(self.cleanup())
+        create_task(self.cleanup(True))
         self._logger.debug("done")
 
-    async def cleanup(self) -> None:
+    async def cleanup(self, discard: bool = False) -> None:
         """
         Cleanup this object and prep for app closure.
+        :param discard: Quit without saving.
         :return None:
         """
         self._logger.debug("running")
-        self.send_msg_to_model((defs.ModelEnum.CLEANUP, None))
+        self.send_msg_to_model((defs.ModelEnum.CLEANUP, discard))
         await self._model_cleaned.wait()
         self._stop.set()
         if self._model.is_alive():
