@@ -5,6 +5,7 @@ from Devices.Camera.Model.cam_defs import cap_backend, cap_temp_codec, cap_codec
 
 
 def test_type_read_times(cap, cam_index, num_frames, show_values):
+    # Read camera num_frames times and capture time taken per read.
     times = []
     prev = time()
     for i in range(num_frames):
@@ -13,7 +14,10 @@ def test_type_read_times(cap, cam_index, num_frames, show_values):
         times.append((now - prev))
         prev = now
 
+    # Sort times taken low to high.
     times.sort()
+
+    # Show basic output.
     to_print = "Test type: read time" \
                "Camera: " + str(cam_index) + \
                "\n- Mean time to read frame: " + str(sum(times) / len(times)) + \
@@ -21,12 +25,14 @@ def test_type_read_times(cap, cam_index, num_frames, show_values):
                "\n- Range of times to read frames: " + str(min(times)) + " to " + str(max(times))
     print(to_print)
 
+    # Create dictionary of intervals of 0.01 seconds.
     intervals = dict()
     i = 0
     while i <= times[-1]:
         i += .01
         intervals[round(i, 3)] = list()
 
+    # Sort times taken into dictionary.
     next_time = .01
     next_time = round(next_time, 3)
     for t in times:
@@ -35,6 +41,7 @@ def test_type_read_times(cap, cam_index, num_frames, show_values):
             next_time = round(next_time, 3)
         intervals[next_time].append(t)
 
+    # Output results.
     prev_key = 0
     for key in intervals:
         if len(intervals[key]) > 0:
