@@ -7,8 +7,12 @@
             - Make subwindows smaller and same size as each other.
             - Make subwindow config pop up activator be a menu bar item instead of a QPushButton.
     - Implement CAM.
-        - Cameras are not in sync over time.
-        - Cameras are not always getting max advertised fps.
+        - Implement camera initialization process again.
+            - Get supported frame sizes.
+            - Get fps sample.
+        - Give user options to downsample from initialized fps.
+        - Cameras are not in sync over time. (Only on Phillip's machine...sad)
+        - c920 not always getting max advertised fps. (Joel's machine has no problems...isn't he cool)
     - Implement playback of experiment data.
         - Scanning through data example: DRT_7,_8,_9 clicks threshold x, scan through all by timestamp.
     - Alter save format to be folder per experiment instead of .rs files.

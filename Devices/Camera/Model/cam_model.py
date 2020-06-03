@@ -157,9 +157,17 @@ class CamModel:
         Destroy writer and set boolean to stop putting frames in write queue.
         :return None:
         """
-        print(__name__, "Stopping writer")
         self._cam_writer.cleanup()
         self._writing = False
+
+    async def signal_done_writing(self) -> None:
+        """
+        Signal when writer is done writing to file.
+        :return None:
+        """
+        while self._running:
+            await self._cam_writer.await_done_writing()
+            self._msg_pipe.send((defs.ModelEnum.STOP, None))
 
     async def _start_loop(self) -> None:
         """
@@ -170,6 +178,7 @@ class CamModel:
         self._tasks.append(create_task(self._handle_pipe()))
         self._tasks.append(create_task(self._handle_new_frame()))
         self._tasks.append(create_task(self._await_reader_err()))
+        # self._tasks.append(create_task(self.signal_done_writing()))
         await self._stop_event.wait()
 
     async def _stop(self) -> None:

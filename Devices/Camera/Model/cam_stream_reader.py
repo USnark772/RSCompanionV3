@@ -108,6 +108,10 @@ class StreamReader:
             time_taken = end - start
             timeout = time_taken > self.timeout_limit
             if not ret or frame is None or timeout:
+                self._logger.warning("Camera failed. "
+                                     + "ret: " + str(ret)
+                                     + "frame is None: " + str(frame is None)
+                                     + "time taken: " + str(time_taken))
                 self._loop.call_soon_threadsafe(self._err_event.set)
                 break
             if num_frames % self._frame_skip == 0:

@@ -116,13 +116,17 @@ def format_current_time(to_format: datetime, day=False, time=False, mil=False, s
         return to_format.strftime("%Y-%m-%d-%H-%M-%S")
 
 
-async def await_event(event: Event) -> futures:
+async def await_event(event: Event, to_print: bool = False) -> futures:
     """
     Await and then reset an event.
     :param event: The event to await.
     :return futures:
     """
+    if to_print:
+        print("Awaiting event:", event)
     ret = await event.wait()
+    if to_print:
+        print("Event was set.", event)
     event.clear()
     return ret
 

@@ -59,7 +59,8 @@ class Controller(AbstractController):
         self._tasks = []
         self._switcher = {defs.ModelEnum.FAILURE: self.err_cleanup,
                           defs.ModelEnum.CUR_FPS: self._update_view_fps,
-                          defs.ModelEnum.CLEANUP: self._set_model_cleaned}
+                          defs.ModelEnum.CLEANUP: self._set_model_cleaned,
+                          defs.ModelEnum.STOP: self._set_saved}
         self._stop = TEvent()
         self._loop = get_running_loop()
         self.set_lang(lang)
@@ -120,6 +121,20 @@ class Controller(AbstractController):
             self._model.join()
         self._ended.set()
         self._logger.debug("done")
+
+    def await_saved(self) -> futures:
+        """
+        Signal main app that this device data has been saved.
+        :return futures: Event to signal saving done.
+        """
+        return await_event(self.saved)
+
+    def _set_saved(self) -> None:
+        """
+        Set saved signal.
+        :return None:
+        """
+        self._loop.call_soon_threadsafe(self.saved.set())
 
     def create_exp(self, path: str) -> None:
         """

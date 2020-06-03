@@ -279,6 +279,8 @@ class AppModel:
         Save the latest exp and cleanup temp folder.
         :return None:
         """
+        # for device in self._devs.values():
+        #     await device.await_saved()
         await get_running_loop().run_in_executor(None, self._convert_to_rs_file)
         self._saving_flag.clear()
         self._done_saving_flag.set()
@@ -456,7 +458,6 @@ class AppModel:
         for dev in self._devs.values():
             await dev.cleanup(True)
         if self._saving_flag.is_set():
-            print(__name__, "Waiting for saving to be done.")
             await self._done_saving_flag.wait()
         self.cleanup_temp_folder()
         self._logger.debug("done")
