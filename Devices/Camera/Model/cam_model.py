@@ -241,6 +241,7 @@ class CamModel:
             task.cancel()
         self._stop_event.set()
 
+    # TODO: Handle language changes?
     async def _handle_new_frame(self) -> None:
         """
         Handle frames from camera

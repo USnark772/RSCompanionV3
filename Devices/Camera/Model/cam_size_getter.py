@@ -47,6 +47,7 @@ class SizeGetter:
         """
         sizes = list()
         initial_size = self._stream.get_current_frame_size()
+        initial_size = (int(initial_size[0]), int(initial_size[1]))
         sizes.append(initial_size)
         if initial_size not in common_resolutions:
             list_index = 0
@@ -55,7 +56,7 @@ class SizeGetter:
         for i in range(list_index, len(common_resolutions)):
             ret, res = self._stream.test_frame_size(common_resolutions[i])
             if ret and res in common_resolutions:
-                sizes.append(res)
+                sizes.append((int(res[0]), int(res[1])))
             self._current_status = i / (len(common_resolutions) - list_index) * 100
             await sleep(.001)
         self._stream.change_frame_size(initial_size)

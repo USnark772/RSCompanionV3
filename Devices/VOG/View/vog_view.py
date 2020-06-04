@@ -46,7 +46,6 @@ class VOGView(AbstractView):
 
         self.subwindow_height = 300
         self.subwindow_width = 550
-        # self.tab_height = int(self.subwindow_height * 0.9)
 
         """ Set configuration value display area"""
         self._config_frame = EasyFrame()
@@ -177,17 +176,18 @@ class VOGView(AbstractView):
         Add Graph to view.
         :return None:
         """
-        # use with config tab
-        # self.layout().addWidget(graph, 0, 0)
-        # use with config button
+        self._logger.debug("running")
         self.layout().addWidget(graph, 1, 0)
+        self._logger.debug("done")
 
     def config_button_handler(self) -> None:
         """
         handles the config button
         :return None:
         """
+        self._logger.debug("running")
         self.config_win.exec_()
+        self._logger.debug("done")
 
     def set_config_val_line_edit_handler(self, func: classmethod) -> None:
         """
@@ -549,9 +549,8 @@ class VOGView(AbstractView):
         self._upload_settings_button.setText(self._strings[StringsEnum.UPLOAD_BUTTON_LABEL])
         self._manual_control_open_button.setText(self._strings[StringsEnum.MANUAL_OPEN_LABEL])
         self._manual_control_close_button.setText(self._strings[StringsEnum.MANUAL_CLOSE_LABEL])
-        # self.config_tab.set_tab_text(self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self.config_button.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
-        self.config_win.setWindowTitle("VOG: " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
+        self.config_win.setWindowTitle(self.get_name() + " " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
     def _set_tooltips(self) -> None:
@@ -570,6 +569,5 @@ class VOGView(AbstractView):
         self._upload_settings_button.setToolTip(self._strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
         self._manual_control_open_button.setToolTip(self._strings[StringsEnum.MANUAL_OPEN_TOOLTIP])
         self._manual_control_close_button.setToolTip(self._strings[StringsEnum.MANUAL_CLOSE_TOOLTIP])
-        # self.config_tab.set_tab_tooltip(self._strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self.config_button.setToolTip(self._strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self._logger.debug("done")

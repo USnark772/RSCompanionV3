@@ -47,7 +47,7 @@ class StreamReader:
         start = time()
         a, b = self.stream.read()  # Prime camera for reading.
         end = time()
-        self._frame_rate = 30
+        self._frame_rate_limiter = 1/120
         self.timeout_limit = end - start + 1  # + 1 to handle random uncommon slight discrepancies.
         self._new_frame_event = Event()
         self._err_event = Event()
@@ -107,7 +107,7 @@ class StreamReader:
         prev = time()
         while self.running:
             elapsed = time() - prev
-            if elapsed > self._frame_rate:
+            if elapsed > self._frame_rate_limiter:
                 prev = time()
                 start = prev
                 ret, frame = self.stream.read()
@@ -132,7 +132,7 @@ class StreamReader:
         :param new_fps: The new rate to read at.
         :return None:
         """
-        self._frame_rate = 1 / new_fps
+        self._frame_rate_limiter = 1 / new_fps
 
     def get_next_new_frame(self) -> ndarray:
         """
