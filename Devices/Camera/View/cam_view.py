@@ -127,7 +127,7 @@ class CamView(AbstractView):
         self._dev_sets_frame = EasyFrame()
         self._dev_sets_layout = QVBoxLayout(self._dev_sets_frame)
 
-        self._dev_sets_layout.addWidget(self._initialization_bar_frame)
+        # self._dev_sets_layout.addWidget(self._initialization_bar_frame)
         self._dev_sets_layout.addWidget(EasyFrame(line=True))
         self._dev_sets_layout.addWidget(self._frame_size_selector_frame)
         self._dev_sets_layout.addWidget(self._frame_rotation_setting_frame)
@@ -138,6 +138,7 @@ class CamView(AbstractView):
         self._dev_sets_layout.addItem(spacer)
         self.setLayout(QHBoxLayout())
         self.layout().addWidget(self._image_display)
+        self.layout().addWidget(self._initialization_bar_frame)
 
         self._aspect_ratio = 3/4
         self._window_changing = False
@@ -173,7 +174,30 @@ class CamView(AbstractView):
         self._frame_rotation_setting_entry_box.textChanged.connect(func)
         self._logger.debug("done")
 
-    # TODO: Fix this scaling ratio.
+    # TODO: Implement
+    def set_res_list(self, res_list: list) -> None:
+        """
+        Set list of resolutions available to res_list.
+        :param res_list: The list of available resolutions.
+        :return None:
+        """
+        self._logger.debug("running")
+        # for item in res_list:
+        #     self._frame_size_selector.addItem(text=item[0], userData=item[1])
+        self._logger.debug("done")
+
+    # TODO: Implement
+    def set_fps_list(self, fps_list: list) -> None:
+        """
+        Set list of available fps to fps_list.
+        :param fps_list:
+        :return:
+        """
+        self._logger.debug("running")
+        # for item in fps_list:
+        #     self._frame_size_selector.addItem(text=str(item), userData=item)
+        self._logger.debug("done")
+
     def update_image(self, image: QPixmap) -> None:
         """
         Update image viewer with new image.
@@ -219,6 +243,34 @@ class CamView(AbstractView):
         super(CamView, self).mousePressEvent(mouseEvent)
         self._image_display.show()
         self._logger.debug("done")
+
+    def show_images(self) -> None:
+        """
+        Show image display and hide initialization bar.
+        :return None:
+        """
+        self._initialization_bar_frame.hide()
+        self._image_display.show()
+
+    def show_initialization(self) -> None:
+        """
+        Show initialization bar and hide image display.
+        :return None:
+        """
+        self._image_display.hide()
+        self._initialization_bar_frame.show()
+
+    def update_init_bar(self, progress: int) -> None:
+        """
+        set progress bar value to progress.
+        :param progress: The value to set progress bar to.
+        :return None:
+        """
+        if progress > 100:
+            progress = 100
+        elif progress < 0:
+            progress = 0
+        self._initialization_bar.setValue(progress)
 
     def _set_texts(self) -> None:
         """

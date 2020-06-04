@@ -98,10 +98,11 @@ def test_cam(backend_to_use, cam_index: int = 0, num_reads: int = 300, info_leve
 
 
 def main():
-    detailed = False  # Change to true to see more detailed output.
-    num_cams = 3      # Change this to the number of cams currently plugged in.
-    num_reads = 300  # Change this to number of frames to capture per test.
-    for cam_index in range(num_cams):
+    detailed = False     # Change to true to see more detailed output.
+    cam_range_start = 2  # Change to index of first cam to test
+    cam_range_end = 3    # Change to index of last cam to test + 1
+    num_reads = 180      # Change to number of frames to capture per test.
+    for cam_index in range(cam_range_start, cam_range_end):
         test_cam(cap_backend, cam_index, num_reads, detailed)
 
 

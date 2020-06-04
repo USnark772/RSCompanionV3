@@ -50,6 +50,7 @@ class Controller(AbstractController):
         self.cam_index = cam_index
         cam_name = "CAM_" + str(self.cam_index)
         view = CamView(cam_name, log_handlers)
+        view.show_initialization()
         super().__init__(view)
         # TODO: Get logging in here. See https://docs.python.org/3/howto/logging-cookbook.html find multiprocessing.
         self._model_msg_pipe, msg_pipe = Pipe()  # For messages/commands.
@@ -60,7 +61,9 @@ class Controller(AbstractController):
         self._switcher = {defs.ModelEnum.FAILURE: self.err_cleanup,
                           defs.ModelEnum.CUR_FPS: self._update_view_fps,
                           defs.ModelEnum.CLEANUP: self._set_model_cleaned,
-                          defs.ModelEnum.STOP: self._set_saved}
+                          defs.ModelEnum.STOP: self._set_saved,
+                          defs.ModelEnum.STAT_UPD: self._show_init_progress,
+                          defs.ModelEnum.START: self._finalize}
         self._stop = TEvent()
         self._loop = get_running_loop()
         self.set_lang(lang)
@@ -70,7 +73,7 @@ class Controller(AbstractController):
         self._tasks.append(self._loop.run_in_executor(executor, self._update_view))
         self._tasks.append(self._loop.run_in_executor(executor, self._handle_pipe))
         self._model.start()
-        self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, True))
+        self.send_msg_to_model((defs.ModelEnum.INITIALIZE, None))
         self._logger.debug("Initialized")
 
     def get_index(self) -> int:
@@ -193,6 +196,31 @@ class Controller(AbstractController):
             pass
         except OSError as ose:
             pass
+
+    def _show_init_progress(self, progress: int) -> None:
+        """
+        Update user on camera initialization progress.
+        :param progress: The latest progress update.
+        :return None:
+        """
+        self.view.update_init_bar(progress)
+
+    def _finalize(self, init_results: tuple) -> None:
+        """
+        Tell model to start. Tell view to show images.
+        :return None:
+        """
+        max_fps = init_results[0]
+        res_list = init_results[1]
+        self._logger.debug("running")
+        self.view.show_images()
+        res_list = [((str(x[0]) + ", " + str(x[1])), x) for x in res_list]
+        self.view.set_res_list(res_list)
+        self.view.set_fps_list([x for x in range(max_fps + 1)])
+        self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, True))
+        self.send_msg_to_model((defs.ModelEnum.SET_USE_FEED, True))
+        self.send_msg_to_model((defs.ModelEnum.SET_FPS, 25))
+        self._logger.debug("done")
 
     def _update_view_fps(self, new_fps) -> None:
         """
