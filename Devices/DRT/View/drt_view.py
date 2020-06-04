@@ -31,7 +31,6 @@ from Model.app_helpers import ClickAnimationButton, EasyFrame
 from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style
 from Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
 from Devices.AbstractDevice.View.abstract_view import AbstractView
-from Devices.AbstractDevice.View.collapsible_tab_widget import CollapsingTab
 from Devices.AbstractDevice.View.ConfigPopUp import ConfigPopUp
 
 
@@ -125,12 +124,6 @@ class DRTView(AbstractView):
         self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
         self.config_horizontal_layout = QHBoxLayout()
 
-        """ Show/Hide Configuration tab """
-        # check set_texts and set_tooltips if commenting/uncommenting
-        # self.config_tab = CollapsingTab(self, self.dev_sets_frame, log_handlers=log_handlers)
-        # self.config_tab.set_tab_height(self.tab_height)
-        # self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
-
         """ Configuration popup """
         # check set_texts and set_tooltips if commenting/uncommenting
         self.config_button = ClickAnimationButton()
@@ -161,17 +154,18 @@ class DRTView(AbstractView):
         Add graph to view
         :return None:
         """
-        # use with config tab
-        # self.layout().addWidget(graph, 0, 0)
-        # use with config popup
+        self._logger.debug("running")
         self.layout().addWidget(graph, 1, 0)
+        self._logger.debug("done")
 
     def config_button_handler(self) -> None:
         """
         handles the config button
         :return None:
         """
+        self._logger.debug("running")
         self.config_win.exec_()
+        self._logger.debug("done")
 
     def set_stim_dur_entry_changed_handler(self, func: classmethod) -> None:
         """
@@ -229,7 +223,9 @@ class DRTView(AbstractView):
         :param func: The handler.
         :return: None.
         """
+        self._logger.debug("running")
         self.upload_settings_button.clicked.connect(func)
+        self._logger.debug("done")
 
     def set_config_val(self, val: str) -> None:
         """
@@ -373,9 +369,11 @@ class DRTView(AbstractView):
         :param lang: The lang enum to use.
         :return: None.
         """
+        self._logger.debug("running")
         self.strings = strings[lang]
         self._set_texts()
         self._set_tooltips()
+        self._logger.debug("done")
 
     def _set_texts(self):
         self._logger.debug("running")
@@ -387,9 +385,8 @@ class DRTView(AbstractView):
         self.upper_isi_label.setText(self.strings[StringsEnum.UPPER_ISI_LABEL])
         self.lower_isi_label.setText(self.strings[StringsEnum.LOWER_ISI_LABEL])
         self.upload_settings_button.setText(self.strings[StringsEnum.UPLOAD_BUTTON_LABEL])
-        # self.config_tab.set_tab_text(self.strings[StringsEnum.CONFIG_TAB_LABEL])
         self.config_button.setText(self.strings[StringsEnum.CONFIG_TAB_LABEL])
-        self.config_win.setWindowTitle("DRT: " + self.strings[StringsEnum.CONFIG_TAB_LABEL])
+        self.config_win.setWindowTitle(self.get_name() + " " + self.strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
     def _set_tooltips(self):
@@ -402,6 +399,5 @@ class DRTView(AbstractView):
         self.stim_intens_label.setToolTip(self.strings[StringsEnum.INTENSITY_TOOLTIP])
         self.upload_settings_button.setToolTip(self.strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
         self.stim_intens_slider.setToolTip(str(self.stim_intens_slider.value()) + "%")
-        # self.config_tab.set_tab_tooltip(self.strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self.config_button.setToolTip(self.strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self._logger.debug("done")

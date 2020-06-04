@@ -38,6 +38,7 @@ class StreamWriter:
         self._frame_queue = SimpleQueue()
         self._stopping_flag = TEvent()
         self._done_writing_flag = Event()
+        self._writer_released = Event()
         self._tasks = list()
         self._stop_flag = TEvent()
         self._stop_flag.set()
@@ -56,7 +57,7 @@ class StreamWriter:
         Signal when there is a done writing frames event.
         :return futures: If the flag is set.
         """
-        return await_event(self._done_writing_flag)
+        return await_event(self._writer_released, True)
 
     def start(self, filename: str, fps: int, size: (int, int), q: SimpleQueue) -> None:
         """
@@ -91,6 +92,7 @@ class StreamWriter:
             self._stopping_flag.clear()
         self._stop_flag.set()
         self._writer.release()
+        self._writer_released.set()  # TODO: Figure out why this is not noticed by await_done_writing()
         await self._tasks[0]
 
     def _update(self) -> None:

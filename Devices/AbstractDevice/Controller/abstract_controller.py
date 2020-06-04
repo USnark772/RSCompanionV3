@@ -24,6 +24,7 @@ https://redscientific.com/index.html
 """
 
 from abc import ABC, abstractmethod
+from asyncio import Event, futures
 from Model.app_defs import LangEnum
 from aioserial import AioSerial
 from Devices.AbstractDevice.View.abstract_view import AbstractView
@@ -33,6 +34,7 @@ class AbstractController(ABC):
     def __init__(self, view=None):
         super().__init__()
         self.view = view
+        self.saved = Event()
 
     def get_view(self) -> AbstractView:
         """
@@ -48,6 +50,15 @@ class AbstractController(ABC):
         :return: None.
         """
         pass
+
+    def await_saved(self) -> futures:
+        """
+        Signal main app that this device data has been saved.
+        :return:
+        """
+        self.saved.set()
+        print(__name__, "Saved is set, returning saved.")
+        return self.saved.wait()
 
     def get_conn(self) -> AioSerial:
         """

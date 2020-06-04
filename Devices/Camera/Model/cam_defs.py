@@ -30,19 +30,19 @@ cap_backend = CAP_DSHOW
 cap_temp_codec = VideoWriter_fourcc(*'mjpg')
 cap_codec = VideoWriter_fourcc(*'MJPG')
 
-list_of_common_sizes = [(640.0, 480.0),
-                        (640.0, 640.0),
-                        (800.0, 600.0),
-                        (960.0, 720.0),
-                        (1024.0, 768.0),
-                        (1248.0, 1536.0),
-                        (1280.0, 720.0),
-                        (1280.0, 960.0),
-                        (1440.0, 1080.0),
-                        (1600.0, 900.0),
-                        (1600.0, 1200.0),
-                        (1920.0, 1080.0),
-                        ]
+common_resolutions = [(640.0, 480.0),
+                      (640.0, 640.0),
+                      (800.0, 600.0),
+                      (960.0, 720.0),
+                      (1024.0, 768.0),
+                      (1248.0, 1536.0),
+                      (1280.0, 720.0),
+                      (1280.0, 960.0),
+                      (1440.0, 1080.0),
+                      (1600.0, 900.0),
+                      (1600.0, 1200.0),
+                      (1920.0, 1080.0),
+                      ]
 
 
 class ModelEnum(Enum):
@@ -57,3 +57,5 @@ class ModelEnum(Enum):
     SET_USE_CAM = auto()
     SET_USE_FEED = auto()
     FAILURE = auto()
+    STAT_UPD = auto()
+    INITIALIZE = auto()

@@ -33,46 +33,49 @@ from Model.app_helpers import format_current_time
 from Devices.Camera.Model import cam_defs as defs
 from Devices.Camera.Model.cam_stream_reader import StreamReader
 from Devices.Camera.Model.cam_stream_writer import StreamWriter
+from Devices.Camera.Model.cam_size_getter import SizeGetter
 
 
 class CamModel:
-    def __init__(self, msg_pipe: Connection, img_pipe: Connection, cam_index: int = 0, frame_skip: int = 1):
+    def __init__(self, msg_pipe: Connection, img_pipe: Connection, cam_index: int = 0):
         set_event_loop(new_event_loop())
         self._msg_pipe = msg_pipe
         self._img_pipe = img_pipe
         self._cam_index = cam_index
-        self._cam_reader = StreamReader(cam_index, frame_skip)
+        self._cam_reader = StreamReader(cam_index)
+        self.size_gtr = SizeGetter(self._cam_reader)
         self._stop_event = Event()
         self._write_q = SimpleQueue()
-        self.fps = 30
         self._cam_writer = StreamWriter()
         self._tasks = []
-        self._cancellable_tasks = []
         self._switcher = {defs.ModelEnum.STOP: self._stop_writing,
                           defs.ModelEnum.START: self._start_writing,
                           defs.ModelEnum.SET_USE_CAM: self._use_cam,
                           defs.ModelEnum.SET_USE_FEED: self._use_feed,
-                          defs.ModelEnum.CLEANUP: self.cleanup}
+                          defs.ModelEnum.CLEANUP: self.cleanup,
+                          defs.ModelEnum.INITIALIZE: self.init_cam,
+                          defs.ModelEnum.SET_FPS: self._cam_reader.set_fps}
         self._running = True
         self._writing = False
-        self._show_feed = True
+        self._show_feed = False
         self._pipe_handler_task = None
         self._frame_handler_task = None
         self._frame_size = self._cam_reader.get_current_frame_size()
         self._using_cam = Event()
-        self._using_cam.set()
         self._loop = get_event_loop()
 
+        self._sizes = list()
+        self._fps = 30
+        self._fps_status = 0
         self._cam_name = "CAM_" + str(self._cam_index)
-        self.name_time_loc = (30, 50)
-        self.fps_loc = (30, 80)
+        self._name_time_loc = (30, 50)
+        self._fps_loc = (30, 80)
         self._font_scale = .6
         self._font_thickness = 1
         r = 211
         g = 250
         b = 10
         self._color = (b, g, r)
-
         self._loop.run_until_complete(self._start_loop())
 
     async def _handle_pipe(self) -> None:
@@ -101,6 +104,54 @@ class CamModel:
         :return None:
         """
         create_task(self._cleanup(discard))
+
+    def init_cam(self) -> None:
+        """
+        Begin initializing camera.
+        :return None:
+        """
+        create_task(self._run_tests())
+
+    async def _run_tests(self) -> None:
+        """
+        Run each camera test in order.
+        :return None:
+        """
+        create_task(self._monitor_init_progress())
+        sizes = await self.size_gtr.get_sizes()
+        max_fps = await self._get_fps()
+        self._msg_pipe.send((defs.ModelEnum.START, (max_fps, sizes)))
+
+    async def _get_fps(self) -> int:
+        """
+        Get this camera's base fps.
+        :return None:
+        """
+        num_frames = 0
+        time_to_take = 30
+        self._cam_reader.stream.read()
+        s = time.time()
+        elapsed = time.time() - s
+        while elapsed < time_to_take:
+            self._cam_reader.stream.read()
+            num_frames += 1
+            elapsed = time.time() - s
+            self._fps_status = int(elapsed / 10 * 100)
+            await sleep(0)
+        ret = round(num_frames / time_to_take)
+        return ret
+
+    async def _monitor_init_progress(self) -> None:
+        """
+        Periodically update controller on init progress.
+        :return None:
+        """
+        while True:
+            status = (self._fps_status / 2) + (self.size_gtr.status / 2)
+            if status >= 100:
+                break
+            self._msg_pipe.send((defs.ModelEnum.STAT_UPD, status))
+            await sleep(.5)
 
     async def _await_reader_err(self) -> None:
         """
@@ -149,7 +200,7 @@ class CamModel:
         self._frame_size = (int(self._frame_size[0]), int(self._frame_size[1]))
         self._write_q = SimpleQueue()
         self._cam_writer = StreamWriter()
-        self._cam_writer.start(filename, int(self.fps), self._frame_size, self._write_q)
+        self._cam_writer.start(filename, int(self._fps), self._frame_size, self._write_q)
         self._writing = True
 
     def _stop_writing(self) -> None:
@@ -157,9 +208,17 @@ class CamModel:
         Destroy writer and set boolean to stop putting frames in write queue.
         :return None:
         """
-        print(__name__, "Stopping writer")
         self._cam_writer.cleanup()
         self._writing = False
+
+    async def signal_done_writing(self) -> None:
+        """
+        Signal when writer is done writing to file.
+        :return None:
+        """
+        while self._running:
+            await self._cam_writer.await_done_writing()
+            self._msg_pipe.send((defs.ModelEnum.STOP, None))
 
     async def _start_loop(self) -> None:
         """
@@ -170,6 +229,7 @@ class CamModel:
         self._tasks.append(create_task(self._handle_pipe()))
         self._tasks.append(create_task(self._handle_new_frame()))
         self._tasks.append(create_task(self._await_reader_err()))
+        # self._tasks.append(create_task(self.signal_done_writing()))
         await self._stop_event.wait()
 
     async def _stop(self) -> None:
@@ -181,12 +241,7 @@ class CamModel:
             task.cancel()
         self._stop_event.set()
 
-    # How to handle newlines
-    # text = "This is \n some text"
-    # y0, dy = 50, 4
-    # for i, line in enumerate(text.split('\n')):
-    #     y = y0 + i * dy
-    #     cv2.putText(img, line, (50, y), cv2.FONT_HERSHEY_SIMPLEX, 1, 2)
+    # TODO: Handle language changes?
     async def _handle_new_frame(self) -> None:
         """
         Handle frames from camera
@@ -204,13 +259,13 @@ class CamModel:
             while len(times) > num_to_keep:
                 times = times[1:]
             prev_time = now
-            self.fps = round(num_to_keep / sum(times))
-            fps = "FPS: " + str(self.fps)
+            self._fps = round(num_to_keep / sum(times))
+            fps = "FPS: " + str(self._fps)
             str_time = format_current_time(timestamp, True, True, True)
             time_and_name = str_time + " " + self._cam_name
-            putText(frame, time_and_name, self.name_time_loc, FONT_FACE, self._font_scale, self._color,
+            putText(frame, time_and_name, self._name_time_loc, FONT_FACE, self._font_scale, self._color,
                     self._font_thickness, LINE_TYPE)
-            putText(frame, fps, self.fps_loc, FONT_FACE, self._font_scale, self._color, self._font_thickness, LINE_TYPE)
+            putText(frame, fps, self._fps_loc, FONT_FACE, self._font_scale, self._color, self._font_thickness, LINE_TYPE)
             if self._writing:
                 self._write_q.put(frame)
             if self._show_feed:

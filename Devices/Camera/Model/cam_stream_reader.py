@@ -35,24 +35,28 @@ from Model.app_helpers import await_event
 
 
 class StreamReader:
-    def __init__(self, index: int = 0, frame_skip: int = 1, log_handlers: [StreamHandler] = None):
+    def __init__(self, index: int = 0, log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
         if log_handlers:
             for h in log_handlers:
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
-        self._frame_skip = frame_skip
         self.running = False
         self.stream = VideoCapture(index, defs.cap_backend)
+        self.change_frame_size(self.get_current_frame_size())
         start = time()
         a, b = self.stream.read()  # Prime camera for reading.
         end = time()
+        self._frame_rate_limiter = 1/120
         self.timeout_limit = end - start + 1  # + 1 to handle random uncommon slight discrepancies.
         self._new_frame_event = Event()
         self._err_event = Event()
         self._tasks = list()
         self._internal_frame_q = SimpleQueue()
         self._loop = get_event_loop()
+
+        self.index = index
+
         self._logger.debug("Initialized")
 
     def cleanup(self) -> None:
@@ -100,20 +104,35 @@ class StreamReader:
         Continuously check camera for new frames and put into queue. Raise error event if camera fails.
         :return None:
         """
-        num_frames = 0
+        prev = time()
         while self.running:
-            start = time()
-            ret, frame = self.stream.read()
-            end = time()
-            time_taken = end - start
-            timeout = time_taken > self.timeout_limit
-            if not ret or frame is None or timeout:
-                self._loop.call_soon_threadsafe(self._err_event.set)
-                break
-            if num_frames % self._frame_skip == 0:
+            elapsed = time() - prev
+            if elapsed > self._frame_rate_limiter:
+                prev = time()
+                start = prev
+                ret, frame = self.stream.read()
+                end = time()
+                time_taken = end - start
+                timeout = time_taken > self.timeout_limit
+                if not ret or frame is None or timeout:
+                    self._logger.warning("cam_stream_reader.py _read_cam(): Camera failed. "
+                                         + "ret: " + str(ret)
+                                         + ". Frame is None: " + str(frame is None)
+                                         + ". Time taken: " + str(time_taken))
+                    self._loop.call_soon_threadsafe(self._err_event.set)
+                    break
                 self._internal_frame_q.put((frame, datetime.now()))
                 self._loop.call_soon_threadsafe(self._new_frame_event.set)
-            num_frames += 1
+            else:
+                self.stream.grab()
+
+    def set_fps(self, new_fps: int) -> None:
+        """
+        Set read speed of this camera as fps
+        :param new_fps: The new rate to read at.
+        :return None:
+        """
+        self._frame_rate_limiter = 1 / new_fps
 
     def get_next_new_frame(self) -> ndarray:
         """
