@@ -69,7 +69,7 @@ class DRTGraph(BaseGraph):
         create_task(self.show())
         self._logger.debug("done")
 
-    async def plot_device_data(self, axes, name) -> []:
+    async def plot_device_data(self, axes, name, main_axes=None) -> []:
         self._logger.debug("running")
         data = list()
         for x in self._data:
@@ -78,7 +78,11 @@ class DRTGraph(BaseGraph):
         left = datetime.now()
         right = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         await sleep(.001)
-        axes.plot(data[1], data[2], marker='o')
+        if name == "Clicks":
+            axes.plot(data[1], data[2], marker='s', color='#ff7f0e')
+        else:
+            axes.plot(data[1], data[2], marker='o')
+
         await sleep(.001)
         if len(data[1]) > 0:
             if right < data[1][-1]:

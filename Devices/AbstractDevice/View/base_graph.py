@@ -103,22 +103,38 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
         self.figure.clear()
         self.figure.set_tight_layout(True)
         num_plots = len(self._plots)
+        axes = None
+        alt_axes = None
         for i in range(num_plots):
+            # print(i)
+            # print(self._plots)
             plot = self._plots[i]
             name = plot[0]
             active = plot[2]
             if active:
                 coords = plot[1]
-                axes = self.figure.add_subplot(coords[0], coords[1], coords[2])
-                axes.tick_params(axis='x', labelrotation=30)
-                axes.set_ylabel(name)
-                await sleep(.001)
-                if i == num_plots - 1:
+                if i == 0:
+                    # old code that can be deleted if new format is okay
+                    # axes = self.figure.add_subplot(coords[0], coords[1], coords[2])
+                    axes = self.figure.add_subplot(1, 1, 1)
+                    axes.tick_params(axis='x', labelrotation=30)
+                    axes.set_ylabel(name, color='#1f77b4')
                     await sleep(.001)
+                    # old code that can be deleted if new format is okay
+                    # if i == num_plots - 1:
+                    #     await sleep(.001)
+                    #     axes.set_xlabel(self._base_strings[StringsEnum.GRAPH_TS])
+                    #     await sleep(.001)
                     axes.set_xlabel(self._base_strings[StringsEnum.GRAPH_TS])
+                    if not new:
+                        await create_task(self.plot_device_data(axes, name))
+                else:
+                    alt_axes = axes.twinx()
+                    alt_axes.set_ylabel(name, color='#ff7f0e')
                     await sleep(.001)
-                if not new:
-                    await create_task(self.plot_device_data(axes, name))
+                    if not new:
+                        await create_task(self.plot_device_data(alt_axes, name, axes))
+
         if not new:
             self.add_vert_lines()
         await sleep(.001)
@@ -148,6 +164,7 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
         :param names: The names for the subplots. (Generally the same as the names of the y axes)
         :return None:
         """
+        # print(names)
         self._plots = list()
         self._logger.debug("running")
         if len(names) < 1:
