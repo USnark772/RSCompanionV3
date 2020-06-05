@@ -8,8 +8,6 @@
     - Implement CAM.
         - Consider passing selected fps to writer instead of current fps.
         - Implement fps selection and resolution selection
-        - View
-            - Implement config pop up.
         - Cameras are not in sync over time. (Only on Phillip's machine...sad)
         - c920 not always getting max advertised fps. (Joel's machine has no problems...isn't he cool)
     - Implement playback of experiment data.
