@@ -4,7 +4,6 @@
         - Make subwindows rearrange/resize/move on main window resize.
         - Redesign subwindow layouts for drt and vog to be the same.
             - Make subwindows smaller and same size as each other.
-            - Make subwindow config pop up activator be a menu bar item instead of a QPushButton.
     - Implement CAM.
         - Consider passing selected fps to writer instead of current fps.
         - Implement fps selection and resolution selection
