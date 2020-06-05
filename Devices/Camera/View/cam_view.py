@@ -107,6 +107,7 @@ class CamView(AbstractView):
         self._dev_sets_layout = QVBoxLayout(self._dev_sets_frame)
 
         self._menu_bar = QMenuBar()
+        self._menu_bar.setMaximumWidth(self.width()-17)
         self._menu_bar.setMouseTracking(True)
         self._config_action = QAction()
         self._menu_bar.addAction(self._config_action)
@@ -208,6 +209,7 @@ class CamView(AbstractView):
         elif resizeEvent.size().height() != self.old_size.height():
             self.resize(int(self.height() / self._aspect_ratio), self.height())
         self.old_size = resizeEvent.size()
+        self._menu_bar.setMaximumWidth(self.width()-17)
         return super().resizeEvent(resizeEvent)
 
     def mousePressEvent(self, mouseEvent: QMouseEvent) -> None:
