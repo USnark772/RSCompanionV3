@@ -25,8 +25,9 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from PySide2.QtWidgets import QHBoxLayout, QLabel, QSlider, QGridLayout, QLineEdit, QVBoxLayout, QTabWidget
+from PySide2.QtWidgets import QHBoxLayout, QLabel, QSlider, QGridLayout, QLineEdit, QVBoxLayout, QMenuBar, QAction
 from PySide2.QtCore import Qt, QSize
+from PySide2.QtGui import QResizeEvent
 from Model.app_helpers import ClickAnimationButton, EasyFrame
 from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style
 from Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
@@ -126,11 +127,23 @@ class DRTView(AbstractView):
 
         """ Configuration popup """
         # check set_texts and set_tooltips if commenting/uncommenting
-        self.config_button = ClickAnimationButton()
-        self.layout().addWidget(self.config_button, 0, 0, Qt.AlignRight)
+        # self.config_button = ClickAnimationButton()
+        # self.layout().addWidget(self.config_button, 0, 0, Qt.AlignRight)
+        # self.config_win = ConfigPopUp()
+        # self.config_win.setLayout(self.dev_sets_layout)
+        # self.config_button.clicked.connect(self.config_button_handler)
+
+        """ Configuration menu """
+        self._menu_bar = QMenuBar()
+        self._menu_bar.setMaximumWidth(self.width() - 17)
+        self._menu_bar.setMouseTracking(True)
+        self._config_action = QAction()
+        self._menu_bar.addAction(self._config_action)
+        self._config_action.triggered.connect(self._config_button_handler)
+        self.layout().setMenuBar(self._menu_bar)
+
         self.config_win = ConfigPopUp()
         self.config_win.setLayout(self.dev_sets_layout)
-        self.config_button.clicked.connect(self.config_button_handler)
 
         """ Add all of the widgets to the layout. """
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
@@ -155,10 +168,10 @@ class DRTView(AbstractView):
         :return None:
         """
         self._logger.debug("running")
-        self.layout().addWidget(graph, 1, 0)
+        self.layout().addWidget(graph, 0, 0)
         self._logger.debug("done")
 
-    def config_button_handler(self) -> None:
+    def _config_button_handler(self) -> None:
         """
         handles the config button
         :return None:
@@ -385,7 +398,8 @@ class DRTView(AbstractView):
         self.upper_isi_label.setText(self.strings[StringsEnum.UPPER_ISI_LABEL])
         self.lower_isi_label.setText(self.strings[StringsEnum.LOWER_ISI_LABEL])
         self.upload_settings_button.setText(self.strings[StringsEnum.UPLOAD_BUTTON_LABEL])
-        self.config_button.setText(self.strings[StringsEnum.CONFIG_TAB_LABEL])
+        # self.config_button.setText(self.strings[StringsEnum.CONFIG_TAB_LABEL])
+        self._config_action.setText(self.strings[StringsEnum.CONFIG_TAB_LABEL])
         self.config_win.setWindowTitle(self.get_name() + " " + self.strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
@@ -399,5 +413,9 @@ class DRTView(AbstractView):
         self.stim_intens_label.setToolTip(self.strings[StringsEnum.INTENSITY_TOOLTIP])
         self.upload_settings_button.setToolTip(self.strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
         self.stim_intens_slider.setToolTip(str(self.stim_intens_slider.value()) + "%")
-        self.config_button.setToolTip(self.strings[StringsEnum.CONFIG_TAB_TOOLTIP])
+        # self.config_button.setToolTip(self.strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self._logger.debug("done")
+
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self._menu_bar.setMaximumWidth(self.width())
+        return super().resizeEvent(event)
