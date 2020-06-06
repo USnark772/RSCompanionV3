@@ -46,8 +46,13 @@ class VOGView(AbstractView):
         self._logger.debug("Initializing")
         super().__init__(name)
 
+        """ Min size for the VOG window """
         self.subwindow_height = 300
         self.subwindow_width = 550
+
+        """ min and max sizes for the configuration popup (width, height) """
+        self.popup_min = (229, 409)
+        self.popup_max = (300, 409)
 
         """ Set configuration value display area"""
         self._config_frame = EasyFrame()
@@ -168,6 +173,8 @@ class VOGView(AbstractView):
         self.layout().setMenuBar(self._menu_bar)
 
         self.config_win = ConfigPopUp()
+        self.config_win.setMinimumSize(self.popup_min[0], self.popup_min[1])
+        self.config_win.setMaximumSize(self.popup_max[0], self.popup_max[1])
         self.config_win.setLayout(self.dev_sets_layout)
 
         """ Add widgets to layout. """

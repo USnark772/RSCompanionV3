@@ -44,9 +44,14 @@ class DRTView(AbstractView):
         self._logger.debug("Initializing")
         super().__init__(name)
 
+        """ Min size for the DRT window """
         self.subwindow_height = 300
         self.subwindow_width = 550
+
         # self.tab_height = int(self.subwindow_height * 0.9)
+        """ min and max sizes for the configuration popup """
+        self.popup_min = (168, 313)
+        self.popup_max = (300, 313)
 
         """ Set configuration value display area """
         self.config_frame = EasyFrame()
@@ -138,6 +143,8 @@ class DRTView(AbstractView):
         self.layout().setMenuBar(self._menu_bar)
 
         self.config_win = ConfigPopUp()
+        self.config_win.setMinimumSize(self.popup_min[0], self.popup_min[1])
+        self.config_win.setMaximumSize(self.popup_max[0], self.popup_max[1])
         self.config_win.setLayout(self.dev_sets_layout)
 
         """ Add all of the widgets to the layout. """

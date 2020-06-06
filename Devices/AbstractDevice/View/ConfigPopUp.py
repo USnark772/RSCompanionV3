@@ -27,7 +27,7 @@ https://redscientific.com/index.html
 
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QDialog
-from PySide2.QtGui import QCloseEvent
+from PySide2.QtGui import QCloseEvent, QResizeEvent
 
 
 class ConfigPopUp(QDialog):
@@ -36,6 +36,12 @@ class ConfigPopUp(QDialog):
     """
     def __init__(self, parent=None):
         super(ConfigPopUp, self).__init__(parent)
+
+    """ Used for testing purposes """
+    # def resizeEvent(self, event: QResizeEvent):
+    #     print("popup width:", self.width())
+    #     print("popup height:", self.height())
+    #     return super().resizeEvent(event)
 
     def closeEvent(self, event: QCloseEvent) -> None:
         """
