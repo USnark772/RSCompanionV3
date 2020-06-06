@@ -62,12 +62,7 @@ class DRTView(AbstractView):
         self.config_layout.addWidget(self.config_val)
 
         """ Set preset button selection area. """
-        self.presets_frame = EasyFrame()
-        self.presets_layout = QVBoxLayout(self.presets_frame)
-
-        self.iso_button = ClickAnimationButton(self.presets_frame)
-
-        self.presets_layout.addWidget(self.iso_button)
+        self.iso_button = ClickAnimationButton()
 
         """ Set stim intensity settings display area. """
         self.slider_frame = EasyFrame()
@@ -146,20 +141,16 @@ class DRTView(AbstractView):
         self.config_win.setLayout(self.dev_sets_layout)
 
         """ Add all of the widgets to the layout. """
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
         self.dev_sets_layout.addWidget(self.config_frame)
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
-        self.dev_sets_layout.addWidget(self.presets_frame)
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self.dev_sets_layout.addWidget(self.input_box_frame)
         self.dev_sets_layout.addWidget(self.slider_frame)
         self.dev_sets_layout.addWidget(EasyFrame(line=True))
-        self.dev_sets_layout.addWidget(self.input_box_frame)
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self.dev_sets_layout.addWidget(self.iso_button)
         self.dev_sets_layout.addWidget(self.upload_settings_button)
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         self.strings = dict()
         self.setMinimumSize(self.subwindow_width, self.subwindow_height)
+        self.resize(self.subwindow_width, self.subwindow_height)
         self._logger.debug("Initialized")
 
     def add_graph(self, graph) -> None:

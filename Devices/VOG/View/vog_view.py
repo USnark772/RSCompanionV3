@@ -61,15 +61,15 @@ class VOGView(AbstractView):
         self._config_vertical_layout.addWidget(self._config_val_line_edit)
 
         """ Set preset button selection area. """
-        self._presets_frame = EasyFrame()
-        self._presets_vert_layout = QVBoxLayout(self._presets_frame)
-        self._nhtsa_button = ClickAnimationButton(self._presets_frame)
-        self._eblindfold_button = ClickAnimationButton(self._presets_frame)
-        self._direct_control_button = ClickAnimationButton(self._presets_frame)
+        # self._presets_frame = EasyFrame()
+        # self._presets_vert_layout = QVBoxLayout(self._presets_frame)
+        self._nhtsa_button = ClickAnimationButton()
+        self._eblindfold_button = ClickAnimationButton()
+        self._direct_control_button = ClickAnimationButton()
 
-        self._presets_vert_layout.addWidget(self._nhtsa_button)
-        self._presets_vert_layout.addWidget(self._eblindfold_button)
-        self._presets_vert_layout.addWidget(self._direct_control_button)
+        # self._presets_vert_layout.addWidget(self._nhtsa_button)
+        # self._presets_vert_layout.addWidget(self._eblindfold_button)
+        # self._presets_vert_layout.addWidget(self._direct_control_button)
 
         """ Set open duration, close duration, and debounce time settings display area. """
         self._input_box_frame = EasyFrame()
@@ -123,10 +123,9 @@ class VOGView(AbstractView):
         self._button_mode_horiz_layout.addWidget(self._control_mode_selector, 1, 1, 1, 1)
 
         """ Set upload button selection area. """
-        self._upload_control_buttons_frame = EasyFrame()
-        self._upload_control_buttons_layout = QVBoxLayout(self._upload_control_buttons_frame)
+        # self._upload_control_buttons_frame = EasyFrame()
+        # self._upload_control_buttons_layout = QVBoxLayout(self._upload_control_buttons_frame)
         self._upload_settings_button = ClickAnimationButton()
-        self._upload_control_buttons_layout.addWidget(self._upload_settings_button)
 
         """ Set manual control selection area. """
         self._manual_control_button_frame = EasyFrame()
@@ -137,13 +136,15 @@ class VOGView(AbstractView):
 
         self._manual_control_button_layout.addWidget(self._manual_control_open_button)
         self._manual_control_button_layout.addWidget(self._manual_control_close_button)
-        self._upload_control_buttons_layout.addWidget(self._manual_control_button_frame)
+
+        # self._upload_control_buttons_layout.addWidget(self._manual_control_button_frame)
+        # self._upload_control_buttons_layout.addWidget(self._presets_frame)
+        # self._upload_control_buttons_layout.addWidget(self._upload_settings_button)
 
         """ device settings display """
         self.dev_sets_frame = EasyFrame()
 
         self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
 
         """ Show/Hide Configuration tab """
         # self.config_tab = CollapsingTab(self, self.dev_sets_frame, max_width=400, log_handlers=log_handlers)
@@ -171,18 +172,17 @@ class VOGView(AbstractView):
 
         """ Add widgets to layout. """
         self.dev_sets_layout.addWidget(self._config_frame)
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
-        self.dev_sets_layout.addWidget(self._presets_frame)
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
         self.dev_sets_layout.addWidget(self._input_box_frame)
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
         self.dev_sets_layout.addWidget(self._button_mode_frame)
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
-        self.dev_sets_layout.addWidget(self._upload_control_buttons_frame)
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
+        self.dev_sets_layout.addWidget(self._manual_control_button_frame)
+        self.dev_sets_layout.addWidget(self._nhtsa_button)
+        self.dev_sets_layout.addWidget(self._eblindfold_button)
+        self.dev_sets_layout.addWidget(self._direct_control_button)
+        self.dev_sets_layout.addWidget(self._upload_settings_button)
 
         self._strings = dict()
         self.setMinimumSize(self.subwindow_width, self.subwindow_height)
+        self.resize(self.subwindow_width, self.subwindow_height)
         self._logger.debug("Initialized")
 
     def add_graph(self, graph) -> None:
@@ -191,7 +191,7 @@ class VOGView(AbstractView):
         :return None:
         """
         self._logger.debug("running")
-        self.layout().addWidget(graph, 1, 0)
+        self.layout().addWidget(graph, 0, 0)
         self._logger.debug("done")
 
     def _config_button_handler(self) -> None:

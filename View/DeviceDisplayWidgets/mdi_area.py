@@ -89,7 +89,14 @@ class MDIArea(QMdiArea):
         """
         self._logger.debug("running")
         self.setActivationOrder(QMdiArea.StackingOrder)
+        sizes = dict()
+        window_list = self.subWindowList()
+        for win in window_list:
+            sizes[win] = (win.width(), win.height())
         self.cascadeSubWindows()
+        for win in window_list:
+            size = sizes[win]
+            win.resize(size[0], size[1])
         self.setActivationOrder(QMdiArea.CreationOrder)
         self._logger.debug("done")
 
@@ -103,7 +110,6 @@ class MDIArea(QMdiArea):
         self.tileSubWindows()
         self._logger.debug("done")
 
-    # TODO: Implement this
     def sort_windows_horizontal(self) -> None:
         """
         Sort subwindows horizontally
@@ -119,7 +125,6 @@ class MDIArea(QMdiArea):
                 window_list[i].move(prev.pos().x() + prev.width(), 0)
         self._logger.debug("done")
 
-    # TODO: Implement this
     def sort_windows_vertical(self) -> None:
         """
         Sort subwindows vertically
