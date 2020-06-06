@@ -46,7 +46,7 @@ class SizeGetter:
         :return list: The list of supported frame resolutions for the given StreamReader.
         """
         sizes = list()
-        initial_size = self._stream.get_current_frame_size()
+        initial_size = self._stream.get_resolution()
         initial_size = (int(initial_size[0]), int(initial_size[1]))
         sizes.append(initial_size)
         if initial_size not in common_resolutions:
@@ -54,12 +54,12 @@ class SizeGetter:
         else:
             list_index = common_resolutions.index(initial_size) + 1
         for i in range(list_index, len(common_resolutions)):
-            ret, res = self._stream.test_frame_size(common_resolutions[i])
+            ret, res = self._stream.test_resolution(common_resolutions[i])
             if ret and res in common_resolutions:
                 sizes.append((int(res[0]), int(res[1])))
             self._current_status = i / (len(common_resolutions) - list_index) * 100
             await sleep(.001)
-        self._stream.change_frame_size(initial_size)
+        self._stream.set_resolution(initial_size)
         sizes.sort()
         return sizes
 
