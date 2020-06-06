@@ -80,15 +80,15 @@ class CamView(AbstractView):
         self._cam_settings_layout.addWidget(self._fps_selector_label, 1, 0)
         self._cam_settings_layout.addWidget(self._fps_selector, 1, 1)
 
-        self._show_cam_checkbox_label = QLabel(self._cam_settings_frame)
-        self._show_cam_checkbox_label.setAlignment(Qt.AlignLeft)
+        self._show_feed_checkbox_label = QLabel(self._cam_settings_frame)
+        self._show_feed_checkbox_label.setAlignment(Qt.AlignLeft)
 
-        self._show_cam_checkbox = QCheckBox()
-        self._show_cam_checkbox.setChecked(True)
-        self._show_cam_checkbox.setLayoutDirection(Qt.RightToLeft)
+        self._show_feed_checkbox = QCheckBox()
+        self._show_feed_checkbox.setChecked(True)
+        self._show_feed_checkbox.setLayoutDirection(Qt.RightToLeft)
 
-        self._cam_settings_layout.addWidget(self._show_cam_checkbox_label, 2, 0)
-        self._cam_settings_layout.addWidget(self._show_cam_checkbox, 2, 1)
+        self._cam_settings_layout.addWidget(self._show_feed_checkbox_label, 2, 0)
+        self._cam_settings_layout.addWidget(self._show_feed_checkbox, 2, 1)
 
         self._image_display_frame = EasyFrame()
         self._image_display_layout = QVBoxLayout(self._image_display_frame)
@@ -128,29 +128,38 @@ class CamView(AbstractView):
         self._window_changing = False
         self.resize(400, int(400 * self._aspect_ratio))
         self._strings = dict()
+        self._lang_enum = LangEnum.ENG
         self.old_size = QSize(self.width(), self.height())
         self._logger.debug("Initialized")
 
-    def set_lang(self, lang: LangEnum) -> None:
+    def set_show_feed_button_handler(self, func) -> None:
         """
-        Set the language for this view object.
-        :param lang: The language to use.
+        Add handler for show camera selector.
+        :param func: The handler.
         :return None:
         """
         self._logger.debug("running")
-        self._strings = strings[lang]
-        self._set_texts()
-        self._set_tooltips()
+        self._show_feed_checkbox.toggled.connect(func)
         self._logger.debug("done")
 
-    def set_show_cam_button_handler(self, func):
-        self._logger.debug("running")
-        self._show_cam_checkbox.toggled.connect(func)
-        self._logger.debug("done")
-
-    def set_frame_size_selector_handler(self, func):
+    def set_resolution_selector_handler(self, func) -> None:
+        """
+        Add handler for resolution selector.
+        :param func: The handler.
+        :return None:
+        """
         self._logger.debug("running")
         self._resolution_selector.activated.connect(func)
+        self._logger.debug("done")
+
+    def set_fps_selector_handler(self, func) -> None:
+        """
+        Add handler for resolution selector.
+        :param func: The handler.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._fps_selector.activated.connect(func)
         self._logger.debug("done")
 
     def set_frame_rotation_handler(self, func):
@@ -167,41 +176,123 @@ class CamView(AbstractView):
         self._config_win.exec_()
         self._logger.debug("done")
 
-    def set_res_list(self, res_list: list) -> None:
+    @property
+    def language(self) -> LangEnum:
+        """
+        :return: The current lang enum being used.
+        """
+        return self._lang_enum
+
+    @language.setter
+    def language(self, lang: LangEnum) -> None:
+        """
+        Set the language for this view object.
+        :param lang: The language to use.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._lang_enum = lang
+        self._strings = strings[lang]
+        self._set_texts()
+        self._set_tooltips()
+        self._logger.debug("done")
+
+    @property
+    def resolution_list(self) -> list:
+        """
+        Get list of resolutions.
+        :return list: The list of resolutions.
+        """
+        ret = list()
+        return ret
+
+    @resolution_list.setter
+    def resolution_list(self, res_list: list) -> None:
         """
         Set list of resolutions available to res_list.
         :param res_list: The list of available resolutions.
         :return None:
         """
         self._logger.debug("running")
+        self._resolution_selector.clear()
         for item in res_list:
             self._resolution_selector.addItem(str(item))
         self._logger.debug("done")
 
-    def set_fps_list(self, fps_list: list) -> None:
+    @property
+    def resolution(self) -> str:
+        """
+        Get the current resolution selection.
+        :return str: The current resolution.
+        """
+        return self._resolution_selector.currentText()
+
+    @resolution.setter
+    def resolution(self, res: str) -> None:
+        """
+        Set the current resolution selection.
+        :param res: The resolution to set to.
+        :return None:
+        """
+        self._resolution_selector.setCurrentIndex(self._resolution_selector.findText(res))
+
+    @property
+    def fps_list(self) -> list:
+        """
+        Get list of fps options.
+        :return list: The list of fps options.
+        """
+        ret = list()
+        return ret
+
+    @fps_list.setter
+    def fps_list(self, fps_list: list) -> None:
         """
         Set list of available fps to fps_list.
         :param fps_list:
-        :return:
+        :return None:
         """
         self._logger.debug("running")
+        self._fps_selector.clear()
         for item in fps_list:
             self._fps_selector.addItem(str(item))
         self._logger.debug("done")
 
-    def update_image(self, image: QPixmap) -> None:
+    @property
+    def fps(self) -> str:
         """
-        Update image viewer with new image.
-        :param image: The new image to show.
+        Get the current fps selection.
+        :return str: The current fps selection.
+        """
+        return self._fps_selector.currentText()
+
+    @fps.setter
+    def fps(self, fps: str) -> None:
+        """
+        Set the current fps selection.
+        :param fps: The fps to set to.
+        :return None:
+        """
+        self._fps_selector.setCurrentIndex(self._fps_selector.findText(fps))
+
+    @property
+    def use_feed(self) -> bool:
+        """
+        Get the current use_cam setting.
+        :return bool: User selection for using cam.
+        """
+        return self._show_feed_checkbox.isChecked()
+
+    @use_feed.setter
+    def use_feed(self, useable: bool) -> None:
+        """
+        Set use_cam setting.
+        :param useable: The setting to set to.
         :return None:
         """
         self._logger.debug("running")
-        if not self._window_changing:
-            h = image.height()
-            w = image.width()
-            self._aspect_ratio = h/w
-            self._image_display.setPixmap(image.scaled(self.width(), self.width() * self._aspect_ratio))
-        self._logger.debug("done")
+        self._show_feed_checkbox.setChecked(useable)
+        self._logger.debug("Done")
 
     def resizeEvent(self, resizeEvent: QResizeEvent) -> None:
         if resizeEvent.size().width() != self.old_size.width():
@@ -220,10 +311,8 @@ class CamView(AbstractView):
         """
         self._logger.debug("running")
         super(CamView, self).mousePressEvent(mouseEvent)
-        print(mouseEvent.localPos())
         pos = mouseEvent.localPos()
         if 8 < pos.x() < self.width() - 8 and 48 < pos.y() < self.height() - 8:
-            print("ignoring click event")
             return
         self._window_changing = True
         self._image_display.hide()
@@ -239,10 +328,23 @@ class CamView(AbstractView):
         super(CamView, self).mousePressEvent(mouseEvent)
         pos = mouseEvent.localPos()
         if 9 < pos.x() < self.width() - 9 and 49 < pos.y() < self.height() - 9:
-            print("ignoring click event")
             return
         self._window_changing = False
         self._image_display.show()
+        self._logger.debug("done")
+
+    def update_image(self, image: QPixmap) -> None:
+        """
+        Update image viewer with new image.
+        :param image: The new image to show.
+        :return None:
+        """
+        self._logger.debug("running")
+        if not self._window_changing:
+            h = image.height()
+            w = image.width()
+            self._aspect_ratio = h/w
+            self._image_display.setPixmap(image.scaled(self.width(), self.width() * self._aspect_ratio))
         self._logger.debug("done")
 
     def show_images(self) -> None:
@@ -289,12 +391,9 @@ class CamView(AbstractView):
         self._initialization_bar.setValue(0)
         self._image_display_label.setText(self._strings[StringsEnum.IMAGE_DISPLAY_LABEL])
         self._image_display.setText(self._strings[StringsEnum.IMAGE_DISPLAY])
-        self._show_cam_checkbox_label.setText(self._strings[StringsEnum.SHOW_CAM_CHECKBOX_LABEL])
+        self._show_feed_checkbox_label.setText(self._strings[StringsEnum.SHOW_FEED_CHECKBOX_LABEL])
         self._resolution_selector_label.setText(self._strings[StringsEnum.RESOLUTION_SELECTOR_LABEL])
         self._fps_selector_label.setText(self._strings[StringsEnum.FPS_SELECTOR_LABEL])
-        # self._frame_rotation_setting_label.setText(self._strings[StringsEnum.FRAME_ROTATION_SETTING_LABEL])
-        # self._fps_display_label.setText(self._strings[StringsEnum.FPS_DISPLAY_LABEL])
-        # self._fps_display_value.setText(self._strings[StringsEnum.FPS_DISPLAY_VALUE])
         self._config_win.setWindowTitle(self.get_name() + " " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._config_action.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
@@ -305,9 +404,6 @@ class CamView(AbstractView):
         :return None:
         """
         self._logger.debug("running")
-        # self._show_cam_checkbox_frame.setToolTip(self._strings[StringsEnum.SHOW_CAM_TOOLTIP])
         self._cam_settings_frame.setToolTip(self._strings[StringsEnum.FRAME_SIZE_TOOLTIP])
-        # self._frame_rotation_setting_frame.setToolTip(self._strings[StringsEnum.ROTATION_TOOLTIP])
         self._image_display_frame.setToolTip(self._strings[StringsEnum.IMAGE_DISPLAY_TOOLTIP])
-        # self._fps_display_frame.setToolTip(self._strings[StringsEnum.FPS_DISPLAY_TOOLTIP])
         self._logger.debug("done")

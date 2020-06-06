@@ -70,11 +70,12 @@ class Controller(AbstractController):
         self._model_cleaned = Event()
         self._ended = Event()
         executor = ThreadPoolExecutor(2)
-        self._tasks.append(self._loop.run_in_executor(executor, self._update_view))
+        self._tasks.append(self._loop.run_in_executor(executor, self._update_feed))
         self._tasks.append(self._loop.run_in_executor(executor, self._handle_pipe))
         self._model.start()
         self._res_list = list()
         self.send_msg_to_model((defs.ModelEnum.INITIALIZE, None))
+        self._setup_handlers()
         self._logger.debug("Initialized")
 
     def set_lang(self, lang: LangEnum) -> None:
@@ -84,7 +85,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        self.view.set_lang(lang)
+        self.view.language = lang
         self._logger.debug("done")
 
     async def cleanup(self, discard: bool = False) -> None:
@@ -134,7 +135,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        cur_res = self.view.get_res()
+        cur_res = self.view.resolution
         for res in self._res_list:
             if res[0] == cur_res:
                 self.send_msg_to_model((defs.ModelEnum.SET_RES, res[1]))
@@ -147,7 +148,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        self.send_msg_to_model((defs.ModelEnum.SET_FPS, int(self.view.get_fps())))
+        self.send_msg_to_model((defs.ModelEnum.SET_FPS, int(self.view.fps)))
         self._logger.debug("done")
 
     def update_show_feed(self) -> None:
@@ -156,16 +157,18 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        self.send_msg_to_model((defs.ModelEnum.SET_USE_FEED, self.view.get_use_feed()))
+        self.send_msg_to_model((defs.ModelEnum.SET_USE_FEED, self.view.use_feed))
         self._logger.debug("done")
 
-    def update_use_cam(self) -> None:
+    # TODO: Finish implementing this.
+    def update_use_cam(self, is_active: bool) -> None:
         """
-        Get use cam bool from view and pass to model.
+        Set this camera active or inactive.
+        :param is_active: Whether to use this camera or not.
         :return None:
         """
         self._logger.debug("running")
-        self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, self.view.get_use_cam()))
+        self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, is_active))
         self._logger.debug("done")
 
     def get_index(self) -> int:
@@ -218,8 +221,10 @@ class Controller(AbstractController):
             pass
         except OSError as ose:
             pass
+        except Exception as e:
+            raise e
 
-    def _update_view(self) -> None:
+    def _update_feed(self) -> None:
         """
         Update view with latest image from camera.
         :return None:
@@ -257,19 +262,33 @@ class Controller(AbstractController):
         max_fps = init_results[0]
         res_list = init_results[1]
         self._res_list = [((str(x[0]) + ", " + str(x[1])), x) for x in res_list]
-        self.view.set_res_list([x[0] for x in self._res_list])
-        self.view.set_fps_list([x for x in range(1, max_fps + 1)])
+        self.view.resolution_list = [x[0] for x in self._res_list]
+        self.view.fps_list = [x for x in range(1, max_fps + 1)]
+        self.send_msg_to_model((defs.ModelEnum.GET_FPS, None))
+        self.send_msg_to_model((defs.ModelEnum.GET_RES, None))
         self.view.show_images()
         self._logger.debug("done")
 
-    def _update_view_fps(self, new_fps) -> None:
+    def _update_view_fps(self, new_fps: int) -> None:
         """
         Update view object fps display with new value.
         :param new_fps: The new value.
         :return None:
         """
         self._logger.debug("running")
-        self.view.set_fps_val(new_fps)
+        self.view.fps = str(new_fps)
+        self._logger.debug("done")
+
+    def _update_view_resolution(self, new_resolution: tuple) -> None:
+        """
+        Update view object fps display with new value.
+        :param new_fps: The new value.
+        :return None:
+        """
+        self._logger.debug("running")
+        for res in self._res_list:
+            if res[1] == new_resolution:
+                self.view.fps = res[0]
         self._logger.debug("done")
 
     def _setup_handlers(self) -> None:
@@ -278,6 +297,9 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
+        self.view.set_fps_selector_handler(self.update_fps)
+        self.view.set_resolution_selector_handler(self.update_resolution)
+        self.view.set_show_feed_button_handler(self.update_show_feed)
         self._logger.debug("done")
 
     def _set_model_cleaned(self) -> None:
@@ -301,6 +323,8 @@ class Controller(AbstractController):
             pass
         except OSError as ose:
             pass
+        except Exception as e:
+            raise e
 
     @staticmethod
     def convert_frame_to_qt_image(frame: ndarray) -> QPixmap:

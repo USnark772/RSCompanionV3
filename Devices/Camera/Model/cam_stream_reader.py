@@ -43,11 +43,12 @@ class StreamReader:
         self._logger.debug("Initializing")
         self.running = False
         self.stream = VideoCapture(index, defs.cap_backend)
-        self.change_frame_size(self.get_current_frame_size())
+        self.set_resolution(self.get_resolution())
         start = time()
         a, b = self.stream.read()  # Prime camera for reading.
         end = time()
-        self._frame_rate_limiter = 1/120
+        self._fps_limit = 120
+        self._frame_rate_limiter = 1/self._fps_limit
         self.timeout_limit = end - start + 1  # + 1 to handle random uncommon slight discrepancies.
         self._new_frame_event = Event()
         self._err_event = Event()
@@ -114,6 +115,7 @@ class StreamReader:
                 end = time()
                 time_taken = end - start
                 timeout = time_taken > self.timeout_limit
+                # TODO: Make the timout bigger to handle computers that once in a while lag just a little too much?
                 if not ret or frame is None or timeout:
                     self._logger.warning("cam_stream_reader.py _read_cam(): Camera failed. "
                                          + "ret: " + str(ret)
@@ -126,13 +128,21 @@ class StreamReader:
             else:
                 self.stream.grab()
 
+    def get_fps(self) -> int:
+        """
+        Return the current fps limit for this camera.
+        :return int: The current fps limit.
+        """
+        return self._fps_limit
+
     def set_fps(self, new_fps: int) -> None:
         """
         Set read speed of this camera as fps
         :param new_fps: The new rate to read at.
         :return None:
         """
-        self._frame_rate_limiter = 1 / new_fps
+        self._fps_limit = new_fps
+        self._frame_rate_limiter = 1 / self._fps_limit
 
     def get_next_new_frame(self) -> ndarray:
         """
@@ -146,7 +156,7 @@ class StreamReader:
         self._logger.debug("done with None")
         return None
 
-    def test_frame_size(self, size: (float, float)) -> (bool, (float, float)):
+    def test_resolution(self, size: (float, float)) -> (bool, (float, float)):
         """
         Test given frame size to see if camera supports it.
         :param size: The size to test.
@@ -159,13 +169,13 @@ class StreamReader:
         else:
             return False, (self.stream.get(CAP_PROP_FRAME_WIDTH), self.stream.get(CAP_PROP_FRAME_HEIGHT))
 
-    def get_current_frame_size(self) -> (float, float):
+    def get_resolution(self) -> (float, float):
         """
         :return (float, float): The current camera frame size.
         """
         return self.stream.get(CAP_PROP_FRAME_WIDTH), self.stream.get(CAP_PROP_FRAME_HEIGHT)
 
-    def change_frame_size(self, size: (float, float)) -> None:
+    def set_resolution(self, size: (float, float)) -> None:
         """
         Handle changing frame size on this camera.
         :param size: The new frame size to use.
@@ -175,11 +185,11 @@ class StreamReader:
         if was_running:
             self.stop()
         self._set_fourcc()
-        self._set_size(size)
+        self._set_resolution(size)
         if was_running:
             self.start()
 
-    def _set_size(self, size: (float, float)) -> None:
+    def _set_resolution(self, size: (float, float)) -> None:
         """
         Set camera frame size to new size.
         :param size: The new size to use.

@@ -27,7 +27,7 @@ import time
 from datetime import datetime
 from asyncio import create_task, Event, sleep, set_event_loop, new_event_loop, get_event_loop
 from multiprocessing.connection import Connection
-from cv2 import putText, FONT_HERSHEY_COMPLEX as FONT_FACE, LINE_AA as LINE_TYPE
+from cv2 import putText, FONT_HERSHEY_COMPLEX as FONT_FACE, LINE_AA as LINE_TYPE, resize
 from queue import SimpleQueue
 from Model.app_helpers import format_current_time
 from Devices.Camera.Model import cam_defs as defs
@@ -54,13 +54,17 @@ class CamModel:
                           defs.ModelEnum.SET_USE_FEED: self._use_feed,
                           defs.ModelEnum.CLEANUP: self.cleanup,
                           defs.ModelEnum.INITIALIZE: self.init_cam,
-                          defs.ModelEnum.SET_FPS: self._cam_reader.set_fps}
+                          defs.ModelEnum.GET_FPS: self._cam_reader.get_fps,
+                          defs.ModelEnum.SET_FPS: self._cam_reader.set_fps,
+                          defs.ModelEnum.GET_RES: self._cam_reader.get_resolution,
+                          defs.ModelEnum.SET_RES: self._cam_reader.set_resolution,
+                          }
         self._running = True
         self._writing = False
         self._show_feed = False
         self._pipe_handler_task = None
         self._frame_handler_task = None
-        self._frame_size = self._cam_reader.get_current_frame_size()
+        self._frame_size = self._cam_reader.get_resolution()
         self._using_cam = Event()
         self._loop = get_event_loop()
 
@@ -96,6 +100,8 @@ class CamModel:
             pass
         except OSError as ose:
             pass
+        except Exception as e:
+            raise e
 
     def cleanup(self, discard: bool) -> None:
         """
@@ -119,13 +125,14 @@ class CamModel:
         """
         create_task(self._monitor_init_progress())
         sizes = await self.size_gtr.get_sizes()
-        max_fps = await self._get_fps()
+        max_fps = await self._get_max_fps()
         self._msg_pipe.send((defs.ModelEnum.START, (max_fps, sizes)))
 
-    async def _get_fps(self) -> int:
+    # TODO: Is there a way to make this more accurate?
+    async def _get_max_fps(self) -> int:
         """
-        Get this camera's base fps.
-        :return None:
+        Get this camera's actual max fps.
+        :return int: The max supported fps.
         """
         num_frames = 0
         time_to_take = 30
@@ -139,6 +146,7 @@ class CamModel:
             self._fps_status = int(elapsed / 10 * 100)
             await sleep(0)
         ret = round(num_frames / time_to_take)
+        self._cam_reader.set_fps(ret)
         return ret
 
     async def _monitor_init_progress(self) -> None:
@@ -196,7 +204,7 @@ class CamModel:
         :return None:
         """
         filename = path + "CAM_" + str(self._cam_index) + "_" + format_current_time(datetime.now(), save=True) + ".avi"
-        self._frame_size = self._cam_reader.get_current_frame_size()
+        self._frame_size = self._cam_reader.get_resolution()
         self._frame_size = (int(self._frame_size[0]), int(self._frame_size[1]))
         self._write_q = SimpleQueue()
         self._cam_writer = StreamWriter()
@@ -247,7 +255,7 @@ class CamModel:
         Handle frames from camera
         :return None:
         """
-        times = list()
+        self._times = list()
         num_to_keep = 60
         prev_time = time.time()
         while self._running:
@@ -255,18 +263,21 @@ class CamModel:
             await self._cam_reader.await_new_frame()
             (frame, timestamp) = self._cam_reader.get_next_new_frame()
             now = time.mktime(timestamp.timetuple()) + timestamp.microsecond / 1E6
-            times.append(now - prev_time)
-            while len(times) > num_to_keep:
-                times = times[1:]
+            self._times.append(now - prev_time)
+            while len(self._times) > num_to_keep:
+                self._times = self._times[1:]
             prev_time = now
-            self._fps = round(num_to_keep / sum(times))
+            self._fps = round(len(self._times) / sum(self._times))
             fps = "FPS: " + str(self._fps)
             str_time = format_current_time(timestamp, True, True, True)
             time_and_name = str_time + " " + self._cam_name
             putText(frame, time_and_name, self._name_time_loc, FONT_FACE, self._font_scale, self._color,
                     self._font_thickness, LINE_TYPE)
-            putText(frame, fps, self._fps_loc, FONT_FACE, self._font_scale, self._color, self._font_thickness, LINE_TYPE)
+            putText(frame, fps, self._fps_loc, FONT_FACE, self._font_scale, self._color, self._font_thickness,
+                    LINE_TYPE)
             if self._writing:
                 self._write_q.put(frame)
             if self._show_feed:
+                # dim = (int(frame.shape[1]), int(frame.shape[0]))
+                # self._img_pipe.send(resize(frame, dim))
                 self._img_pipe.send(frame)
