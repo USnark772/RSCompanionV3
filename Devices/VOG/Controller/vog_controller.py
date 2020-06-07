@@ -89,7 +89,8 @@ class Controller(AbstractController):
         self._logger.debug("running")
         self._strings = strings[lang]
         self._model.set_lang(lang)
-        self.view.set_lang(lang)
+        # self.view.set_lang(lang)
+        self.view.language = lang
         self._graph.set_lang(lang)
         self._logger.debug("done")
 

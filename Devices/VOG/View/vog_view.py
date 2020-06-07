@@ -47,12 +47,12 @@ class VOGView(AbstractView):
         super().__init__(name)
 
         """ Min size for the VOG window """
-        self.subwindow_height = 300
-        self.subwindow_width = 550
+        self._subwindow_height = 300
+        self._subwindow_width = 550
 
         """ min and max sizes for the configuration popup (width, height) """
-        self.popup_min = (229, 409)
-        self.popup_max = (300, 409)
+        self._popup_min = (229, 409)
+        self._popup_max = (300, 409)
 
         """ Set configuration value display area"""
         self._config_frame = EasyFrame()
@@ -147,9 +147,9 @@ class VOGView(AbstractView):
         # self._upload_control_buttons_layout.addWidget(self._upload_settings_button)
 
         """ device settings display """
-        self.dev_sets_frame = EasyFrame()
+        self._dev_sets_frame = EasyFrame()
 
-        self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
+        self._dev_sets_layout = QVBoxLayout(self._dev_sets_frame)
 
         """ Show/Hide Configuration tab """
         # self.config_tab = CollapsingTab(self, self.dev_sets_frame, max_width=400, log_handlers=log_handlers)
@@ -172,24 +172,25 @@ class VOGView(AbstractView):
         self._config_action.triggered.connect(self._config_button_handler)
         self.layout().setMenuBar(self._menu_bar)
 
-        self.config_win = ConfigPopUp()
-        self.config_win.setMinimumSize(self.popup_min[0], self.popup_min[1])
-        self.config_win.setMaximumSize(self.popup_max[0], self.popup_max[1])
-        self.config_win.setLayout(self.dev_sets_layout)
+        self._config_win = ConfigPopUp()
+        self._config_win.setMinimumSize(self._popup_min[0], self._popup_min[1])
+        self._config_win.setMaximumSize(self._popup_max[0], self._popup_max[1])
+        self._config_win.setLayout(self._dev_sets_layout)
 
         """ Add widgets to layout. """
-        self.dev_sets_layout.addWidget(self._config_frame)
-        self.dev_sets_layout.addWidget(self._input_box_frame)
-        self.dev_sets_layout.addWidget(self._button_mode_frame)
-        self.dev_sets_layout.addWidget(self._manual_control_button_frame)
-        self.dev_sets_layout.addWidget(self._nhtsa_button)
-        self.dev_sets_layout.addWidget(self._eblindfold_button)
-        self.dev_sets_layout.addWidget(self._direct_control_button)
-        self.dev_sets_layout.addWidget(self._upload_settings_button)
+        self._dev_sets_layout.addWidget(self._config_frame)
+        self._dev_sets_layout.addWidget(self._input_box_frame)
+        self._dev_sets_layout.addWidget(self._button_mode_frame)
+        self._dev_sets_layout.addWidget(self._manual_control_button_frame)
+        self._dev_sets_layout.addWidget(self._nhtsa_button)
+        self._dev_sets_layout.addWidget(self._eblindfold_button)
+        self._dev_sets_layout.addWidget(self._direct_control_button)
+        self._dev_sets_layout.addWidget(self._upload_settings_button)
 
         self._strings = dict()
-        self.setMinimumSize(self.subwindow_width, self.subwindow_height)
-        self.resize(self.subwindow_width, self.subwindow_height)
+        self._lang_enum = LangEnum.ENG
+        self.setMinimumSize(self._subwindow_width, self._subwindow_height)
+        self.resize(self._subwindow_width, self._subwindow_height)
         self._logger.debug("Initialized")
 
     def add_graph(self, graph) -> None:
@@ -207,7 +208,7 @@ class VOGView(AbstractView):
         :return None:
         """
         self._logger.debug("running")
-        self.config_win.exec_()
+        self._config_win.exec_()
         self._logger.debug("done")
 
     def set_config_val_line_edit_handler(self, func: classmethod) -> None:
@@ -523,11 +524,20 @@ class VOGView(AbstractView):
             self._debounce_time_line_edit.setStyleSheet(tab_line_edit_compliant_style)
         self._logger.debug("done")
 
-    def set_lang(self, lang: LangEnum) -> None:
+    @property
+    def language(self) -> LangEnum:
         """
-        Set this view's language and reload the text and tooltips.
-        :param lang: The lang enum to use.
-        :return: None.
+        Get the current language setting
+        :return LangEnum: The current language enumerator being used
+        """
+        return self._lang_enum
+
+    @language.setter
+    def language(self, lang: LangEnum) -> None:
+        """
+        Set the language for this view object and reload the text and tooltips.
+        :param lang: the language to use.
+        :return None:
         """
         self._logger.debug("running")
         self._strings = strings[lang]
@@ -572,7 +582,7 @@ class VOGView(AbstractView):
         self._manual_control_close_button.setText(self._strings[StringsEnum.MANUAL_CLOSE_LABEL])
         # self.config_button.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._config_action.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
-        self.config_win.setWindowTitle(self.get_name() + " " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
+        self._config_win.setWindowTitle(self.get_name() + " " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
     def _set_tooltips(self) -> None:

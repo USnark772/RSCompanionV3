@@ -84,7 +84,8 @@ class Controller(AbstractController):
         self._logger.debug("running")
         self._strings = strings[lang]
         self._model.set_lang(lang)
-        self.view.set_lang(lang)
+        # self.view.set_lang(lang)
+        self.view.language = lang
         self._graph.set_lang(lang)
         self._logger.debug("done")
 
@@ -180,13 +181,13 @@ class Controller(AbstractController):
             self._model.send_stim_intensity(self.view.get_stim_intens())
             changed = True
         if self._model.upper_changed():
-            self._model.send_upper_isi(self.view.get_upper_isi())
+            self._model.send_upper_isi(self.view.upper_isi)
             changed = True
         if self._model.lower_changed():
-            self._model.send_lower_isi(self.view.get_lower_isi())
+            self._model.send_lower_isi(self.view.lower_isi)
             changed = True
         if changed:
-            self.view.set_config_val(self.view.strings[StringsEnum.CUSTOM_LABEL])
+            self.view.set_config_val(self._strings[StringsEnum.CUSTOM_LABEL])
         self._model.reset_changed()
         self._check_for_upload()
         self._logger.debug("done")
@@ -234,11 +235,11 @@ class Controller(AbstractController):
             self.view.set_stim_intens(self._model.calc_val_to_percent(val))
         elif var == "upperISI":
             self._model.set_current_vals(upper_isi=val)
-            self.view.set_upper_isi(val)
+            self.view.upper_isi = val
             self.view.set_upper_isi_err(False)
         elif var == "lowerISI":
             self._model.set_current_vals(lower_isi=val)
-            self.view.set_lower_isi(val)
+            self.view.lower_isi = val
             self.view.set_lower_isi_err(False)
         self._logger.debug("done")
 
@@ -272,8 +273,8 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         if not self._updating_config:
-            upper = self.view.get_upper_isi()
-            lower = self.view.get_lower_isi()
+            upper = self.view.upper_isi
+            lower = self.view.lower_isi
             err_upper = not self._model.check_upper_isi_entry(upper, lower)
             err_lower = not self._model.check_lower_isi_entry(upper, lower)
             self.view.set_upper_isi_err(err_upper)
@@ -296,7 +297,7 @@ class Controller(AbstractController):
         :return: None.
         """
         self._logger.debug("running")
-        self.view.set_config_val(self.view.strings[StringsEnum.ISO_LABEL])
+        self.view.set_config_val(self._strings[StringsEnum.ISO_LABEL])
         self._model.send_iso()
         self.view.set_upload_button(False)
         self._logger.debug("done")

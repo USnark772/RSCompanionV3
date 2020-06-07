@@ -45,85 +45,85 @@ class DRTView(AbstractView):
         super().__init__(name)
 
         """ Min size for the DRT window """
-        self.subwindow_height = 300
-        self.subwindow_width = 550
+        self._subwindow_height = 300
+        self._subwindow_width = 550
 
         # self.tab_height = int(self.subwindow_height * 0.9)
         """ min and max sizes for the configuration popup """
-        self.popup_min = (168, 313)
-        self.popup_max = (300, 313)
+        self._popup_min = (168, 313)
+        self._popup_max = (300, 313)
 
         """ Set configuration value display area """
-        self.config_frame = EasyFrame()
-        self.config_layout = QVBoxLayout(self.config_frame)
+        self._config_frame = EasyFrame()
+        self._config_layout = QVBoxLayout(self._config_frame)
 
-        self.config_label = QLabel(self.config_frame)
-        self.config_label.setAlignment(Qt.AlignCenter)
+        self._config_label = QLabel(self._config_frame)
+        self._config_label.setAlignment(Qt.AlignCenter)
 
-        self.config_val = QLabel(self.config_frame)
-        self.config_val.setAlignment(Qt.AlignCenter)
+        self._config_val = QLabel(self._config_frame)
+        self._config_val.setAlignment(Qt.AlignCenter)
 
-        self.config_layout.addWidget(self.config_label)
-        self.config_layout.addWidget(self.config_val)
+        self._config_layout.addWidget(self._config_label)
+        self._config_layout.addWidget(self._config_val)
 
         """ Set preset button selection area. """
-        self.iso_button = ClickAnimationButton()
+        self._iso_button = ClickAnimationButton()
 
         """ Set stim intensity settings display area. """
-        self.slider_frame = EasyFrame()
-        self.slider_layout = QVBoxLayout(self.slider_frame)
-        self.slider_label_layout = QHBoxLayout(self.slider_frame)
+        self._slider_frame = EasyFrame()
+        self._slider_layout = QVBoxLayout(self._slider_frame)
+        self._slider_label_layout = QHBoxLayout(self._slider_frame)
 
-        self.stim_intens_label = QLabel(self.slider_frame)
-        self.stim_intens_label.setAlignment(Qt.AlignLeft)
-        self.stim_intens_val = QLabel(self.slider_frame)
-        self.stim_intens_val.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
+        self._stim_intens_label = QLabel(self._slider_frame)
+        self._stim_intens_label.setAlignment(Qt.AlignLeft)
+        self._stim_intens_val = QLabel(self._slider_frame)
+        self._stim_intens_val.setAlignment(Qt.AlignRight | Qt.AlignTrailing | Qt.AlignVCenter)
 
-        self.slider_layout.addLayout(self.slider_label_layout)
+        self._slider_layout.addLayout(self._slider_label_layout)
 
-        self.stim_intens_slider = QSlider(self.slider_frame)
-        self.stim_intens_slider.setMinimum(1)
-        self.stim_intens_slider.setMaximum(100)
-        self.stim_intens_slider.setSliderPosition(100)
-        self.stim_intens_slider.setOrientation(Qt.Horizontal)
-        self.stim_intens_slider.setTickPosition(QSlider.TicksBelow)
-        self.stim_intens_slider.setTickInterval(10)
+        self._stim_intens_slider = QSlider(self._slider_frame)
+        self._stim_intens_slider.setMinimum(1)
+        self._stim_intens_slider.setMaximum(100)
+        self._stim_intens_slider.setSliderPosition(100)
+        self._stim_intens_slider.setOrientation(Qt.Horizontal)
+        self._stim_intens_slider.setTickPosition(QSlider.TicksBelow)
+        self._stim_intens_slider.setTickInterval(10)
 
-        self.slider_label_layout.addWidget(self.stim_intens_label)
-        self.slider_label_layout.addWidget(self.stim_intens_val)
-        self.slider_layout.addWidget(self.stim_intens_slider)
+        self._slider_label_layout.addWidget(self._stim_intens_label)
+        self._slider_label_layout.addWidget(self._stim_intens_val)
+        self._slider_layout.addWidget(self._stim_intens_slider)
 
         """ Set stim duration, upper isi and lower isi settings display area. """
-        self.input_box_frame = EasyFrame()
-        self.input_box_layout = QGridLayout(self.input_box_frame)
+        self._input_box_frame = EasyFrame()
+        self._input_box_layout = QGridLayout(self._input_box_frame)
 
-        self.stim_dur_line_edit = QLineEdit(self.input_box_frame)
-        self.stim_dur_line_edit.setMaximumSize(QSize(100, 16777215))
-        self.stim_dur_label = QLabel(self.input_box_frame)
+        self._stim_dur_line_edit = QLineEdit(self._input_box_frame)
+        self._stim_dur_line_edit.setMaximumSize(QSize(100, 16777215))
+        self._stim_dur_label = QLabel(self._input_box_frame)
 
-        self.upper_isi_label = QLabel(self.input_box_frame)
-        self.upper_isi_line_edit = QLineEdit(self.input_box_frame)
-        self.upper_isi_line_edit.setMaximumSize(QSize(100, 16777215))
+        self._upper_isi_label = QLabel(self._input_box_frame)
+        self._upper_isi_line_edit = QLineEdit(self._input_box_frame)
+        self._upper_isi_line_edit.setMaximumSize(QSize(100, 16777215))
 
-        self.lower_isi_line_edit = QLineEdit(self.input_box_frame)
-        self.lower_isi_line_edit.setMaximumSize(QSize(100, 16777215))
-        self.lower_isi_label = QLabel(self.input_box_frame)
+        self._lower_isi_line_edit = QLineEdit(self._input_box_frame)
+        self._lower_isi_line_edit.setMaximumSize(QSize(100, 16777215))
+        self._lower_isi_label = QLabel(self._input_box_frame)
 
-        self.input_box_layout.addWidget(self.stim_dur_line_edit, 0, 1, 1, 1)
-        self.input_box_layout.addWidget(self.upper_isi_label, 1, 0, 1, 1)
-        self.input_box_layout.addWidget(self.upper_isi_line_edit, 1, 1, 1, 1)
-        self.input_box_layout.addWidget(self.stim_dur_label, 0, 0, 1, 1)
-        self.input_box_layout.addWidget(self.lower_isi_line_edit, 2, 1, 1, 1)
-        self.input_box_layout.addWidget(self.lower_isi_label, 2, 0, 1, 1)
+        self._input_box_layout.addWidget(self._stim_dur_line_edit, 0, 1, 1, 1)
+        self._input_box_layout.addWidget(self._upper_isi_label, 1, 0, 1, 1)
+        self._input_box_layout.addWidget(self._upper_isi_line_edit, 1, 1, 1, 1)
+        self._input_box_layout.addWidget(self._stim_dur_label, 0, 0, 1, 1)
+        self._input_box_layout.addWidget(self._lower_isi_line_edit, 2, 1, 1, 1)
+        self._input_box_layout.addWidget(self._lower_isi_label, 2, 0, 1, 1)
 
         """ Set upload button selection area. """
-        self.upload_settings_button = ClickAnimationButton()
-        self.upload_settings_button.setEnabled(False)
+        self._upload_settings_button = ClickAnimationButton()
+        self._upload_settings_button.setEnabled(False)
 
         """ device settings display """
-        self.dev_sets_frame = EasyFrame()
-        self.dev_sets_layout = QVBoxLayout(self.dev_sets_frame)
-        self.config_horizontal_layout = QHBoxLayout()
+        self._dev_sets_frame = EasyFrame()
+        self._dev_sets_layout = QVBoxLayout(self._dev_sets_frame)
+        self._config_horizontal_layout = QHBoxLayout()
 
         """ Configuration popup """
         # check set_texts and set_tooltips if commenting/uncommenting
@@ -142,22 +142,23 @@ class DRTView(AbstractView):
         self._config_action.triggered.connect(self._config_button_handler)
         self.layout().setMenuBar(self._menu_bar)
 
-        self.config_win = ConfigPopUp()
-        self.config_win.setMinimumSize(self.popup_min[0], self.popup_min[1])
-        self.config_win.setMaximumSize(self.popup_max[0], self.popup_max[1])
-        self.config_win.setLayout(self.dev_sets_layout)
+        self._config_win = ConfigPopUp()
+        self._config_win.setMinimumSize(self._popup_min[0], self._popup_min[1])
+        self._config_win.setMaximumSize(self._popup_max[0], self._popup_max[1])
+        self._config_win.setLayout(self._dev_sets_layout)
 
         """ Add all of the widgets to the layout. """
-        self.dev_sets_layout.addWidget(self.config_frame)
-        self.dev_sets_layout.addWidget(self.input_box_frame)
-        self.dev_sets_layout.addWidget(self.slider_frame)
-        self.dev_sets_layout.addWidget(EasyFrame(line=True))
-        self.dev_sets_layout.addWidget(self.iso_button)
-        self.dev_sets_layout.addWidget(self.upload_settings_button)
+        self._dev_sets_layout.addWidget(self._config_frame)
+        self._dev_sets_layout.addWidget(self._input_box_frame)
+        self._dev_sets_layout.addWidget(self._slider_frame)
+        self._dev_sets_layout.addWidget(EasyFrame(line=True))
+        self._dev_sets_layout.addWidget(self._iso_button)
+        self._dev_sets_layout.addWidget(self._upload_settings_button)
 
-        self.strings = dict()
-        self.setMinimumSize(self.subwindow_width, self.subwindow_height)
-        self.resize(self.subwindow_width, self.subwindow_height)
+        self._strings = dict()
+        self._lang_enum = LangEnum.ENG
+        self.setMinimumSize(self._subwindow_width, self._subwindow_height)
+        self.resize(self._subwindow_width, self._subwindow_height)
         self._logger.debug("Initialized")
 
     def add_graph(self, graph) -> None:
@@ -175,7 +176,7 @@ class DRTView(AbstractView):
         :return None:
         """
         self._logger.debug("running")
-        self.config_win.exec_()
+        self._config_win.exec_()
         self._logger.debug("done")
 
     def set_stim_dur_entry_changed_handler(self, func: classmethod) -> None:
@@ -185,7 +186,7 @@ class DRTView(AbstractView):
         :return: None.
         """
         self._logger.debug("running")
-        self.stim_dur_line_edit.textChanged.connect(func)
+        self._stim_dur_line_edit.textChanged.connect(func)
         self._logger.debug("done")
 
     def set_stim_intens_entry_changed_handler(self, func: classmethod) -> None:
@@ -195,7 +196,7 @@ class DRTView(AbstractView):
         :return: None.
         """
         self._logger.debug("running")
-        self.stim_intens_slider.valueChanged.connect(func)
+        self._stim_intens_slider.valueChanged.connect(func)
         self._logger.debug("done")
 
     def set_upper_isi_entry_changed_handler(self, func: classmethod) -> None:
@@ -205,7 +206,7 @@ class DRTView(AbstractView):
         :return: None.
         """
         self._logger.debug("running")
-        self.upper_isi_line_edit.textChanged.connect(func)
+        self._upper_isi_line_edit.textChanged.connect(func)
         self._logger.debug("done")
 
     def set_lower_isi_entry_changed_handler(self, func: classmethod) -> None:
@@ -215,7 +216,7 @@ class DRTView(AbstractView):
         :return: None.
         """
         self._logger.debug("running")
-        self.lower_isi_line_edit.textChanged.connect(func)
+        self._lower_isi_line_edit.textChanged.connect(func)
         self._logger.debug("done")
 
     def set_iso_button_handler(self, func: classmethod) -> None:
@@ -225,7 +226,7 @@ class DRTView(AbstractView):
         :return: None.
         """
         self._logger.debug("running")
-        self.iso_button.clicked.connect(func)
+        self._iso_button.clicked.connect(func)
         self._logger.debug("done")
 
     def set_upload_button_handler(self, func: classmethod) -> None:
@@ -235,7 +236,7 @@ class DRTView(AbstractView):
         :return: None.
         """
         self._logger.debug("running")
-        self.upload_settings_button.clicked.connect(func)
+        self._upload_settings_button.clicked.connect(func)
         self._logger.debug("done")
 
     def set_config_val(self, val: str) -> None:
@@ -245,7 +246,7 @@ class DRTView(AbstractView):
         :return:
         """
         self._logger.debug("running")
-        self.config_val.setText(val)
+        self._config_val.setText(val)
         self._logger.debug("done")
 
     def get_stim_dur(self):
@@ -253,7 +254,7 @@ class DRTView(AbstractView):
 
         :return:
         """
-        return self.stim_dur_line_edit.text()
+        return self._stim_dur_line_edit.text()
 
     def set_stim_dur(self, val: str) -> None:
         """
@@ -262,7 +263,7 @@ class DRTView(AbstractView):
         :return:
         """
         self._logger.debug("running")
-        self.stim_dur_line_edit.setText(str(val))
+        self._stim_dur_line_edit.setText(str(val))
         self._logger.debug("done")
 
     def set_stim_dur_err(self, is_error: bool) -> None:
@@ -273,9 +274,9 @@ class DRTView(AbstractView):
         """
         self._logger.debug("running")
         if is_error:
-            self.stim_dur_line_edit.setStyleSheet(tab_line_edit_error_style)
+            self._stim_dur_line_edit.setStyleSheet(tab_line_edit_error_style)
         else:
-            self.stim_dur_line_edit.setStyleSheet(tab_line_edit_compliant_style)
+            self._stim_dur_line_edit.setStyleSheet(tab_line_edit_compliant_style)
         self._logger.debug("done")
 
     def get_stim_intens(self):
@@ -283,7 +284,7 @@ class DRTView(AbstractView):
 
         :return:
         """
-        return self.stim_intens_slider.value()
+        return self._stim_intens_slider.value()
 
     def set_stim_intens(self, val: int) -> None:
         """
@@ -292,7 +293,7 @@ class DRTView(AbstractView):
         :return:
         """
         self._logger.debug("running")
-        self.stim_intens_slider.setValue(int(val))
+        self._stim_intens_slider.setValue(int(val))
         self.update_stim_intens_val_tooltip()
         self._logger.debug("done")
 
@@ -302,24 +303,26 @@ class DRTView(AbstractView):
         :return: None.
         """
         self._logger.debug("running")
-        self.stim_intens_slider.setToolTip(str(self.stim_intens_slider.value()) + "%")
+        self._stim_intens_slider.setToolTip(str(self._stim_intens_slider.value()) + "%")
         self._logger.debug("done")
 
-    def get_upper_isi(self):
+    @property
+    def upper_isi(self) -> str:
         """
 
-        :return:
+        :return str:
         """
-        return self.upper_isi_line_edit.text()
+        return self._upper_isi_line_edit.text()
 
-    def set_upper_isi(self, val: str) -> None:
+    @upper_isi.setter
+    def upper_isi(self, val: str) -> None:
         """
         Set display value of upper isi
         :param val:
         :return:
         """
         self._logger.debug("running")
-        self.upper_isi_line_edit.setText(str(val))
+        self._upper_isi_line_edit.setText(str(val))
         self._logger.debug("done")
 
     def set_upper_isi_err(self, is_error: bool) -> None:
@@ -330,26 +333,28 @@ class DRTView(AbstractView):
         """
         self._logger.debug("running")
         if is_error:
-            self.upper_isi_line_edit.setStyleSheet(tab_line_edit_error_style)
+            self._upper_isi_line_edit.setStyleSheet(tab_line_edit_error_style)
         else:
-            self.upper_isi_line_edit.setStyleSheet(tab_line_edit_compliant_style)
+            self._upper_isi_line_edit.setStyleSheet(tab_line_edit_compliant_style)
         self._logger.debug("done")
 
-    def get_lower_isi(self):
+    @property
+    def lower_isi(self) -> str:
         """
 
-        :return:
+        :return str:
         """
-        return self.lower_isi_line_edit.text()
+        return self._lower_isi_line_edit.text()
 
-    def set_lower_isi(self, val: str) -> None:
+    @lower_isi.setter
+    def lower_isi(self, val: str) -> None:
         """
         Set display value of lower isi
-        :param val:
-        :return:
+        :param val: string value the display will be set to
+        :return None:
         """
         self._logger.debug("running")
-        self.lower_isi_line_edit.setText(str(val))
+        self._lower_isi_line_edit.setText(str(val))
         self._logger.debug("done")
 
     def set_lower_isi_err(self, is_error: bool) -> None:
@@ -360,9 +365,9 @@ class DRTView(AbstractView):
         """
         self._logger.debug("running")
         if is_error:
-            self.lower_isi_line_edit.setStyleSheet(tab_line_edit_error_style)
+            self._lower_isi_line_edit.setStyleSheet(tab_line_edit_error_style)
         else:
-            self.lower_isi_line_edit.setStyleSheet(tab_line_edit_compliant_style)
+            self._lower_isi_line_edit.setStyleSheet(tab_line_edit_compliant_style)
         self._logger.debug("done")
 
     def set_upload_button(self, is_active) -> None:
@@ -371,47 +376,56 @@ class DRTView(AbstractView):
         :return:
         """
         self._logger.debug("running")
-        self.upload_settings_button.setEnabled(is_active)
+        self._upload_settings_button.setEnabled(is_active)
         self._logger.debug("done")
 
-    def set_lang(self, lang: LangEnum) -> None:
+    @property
+    def language(self) -> LangEnum:
         """
-        Set this view's language and reload the text and tooltips.
-        :param lang: The lang enum to use.
-        :return: None.
+        Get the current language setting
+        :return LangEnum: The current language enumerator being used
+        """
+        return self._lang_enum
+
+    @language.setter
+    def language(self, lang: LangEnum) -> None:
+        """
+        Set the language for this view object and reload the text and tooltips.
+        :param lang: the language to use.
+        :return None:
         """
         self._logger.debug("running")
-        self.strings = strings[lang]
+        self._strings = strings[lang]
         self._set_texts()
         self._set_tooltips()
         self._logger.debug("done")
 
     def _set_texts(self):
         self._logger.debug("running")
-        self.config_label.setText(self.strings[StringsEnum.CONFIG_LABEL])
-        self.config_val.setText(self.strings[StringsEnum.ISO_LABEL])
-        self.iso_button.setText(self.strings[StringsEnum.ISO_BUTTON_LABEL])
-        self.stim_dur_label.setText(self.strings[StringsEnum.DURATION_LABEL])
-        self.stim_intens_label.setText(self.strings[StringsEnum.INTENSITY_LABEL])
-        self.upper_isi_label.setText(self.strings[StringsEnum.UPPER_ISI_LABEL])
-        self.lower_isi_label.setText(self.strings[StringsEnum.LOWER_ISI_LABEL])
-        self.upload_settings_button.setText(self.strings[StringsEnum.UPLOAD_BUTTON_LABEL])
-        # self.config_button.setText(self.strings[StringsEnum.CONFIG_TAB_LABEL])
-        self._config_action.setText(self.strings[StringsEnum.CONFIG_TAB_LABEL])
-        self.config_win.setWindowTitle(self.get_name() + " " + self.strings[StringsEnum.CONFIG_TAB_LABEL])
+        self._config_label.setText(self._strings[StringsEnum.CONFIG_LABEL])
+        self._config_val.setText(self._strings[StringsEnum.ISO_LABEL])
+        self._iso_button.setText(self._strings[StringsEnum.ISO_BUTTON_LABEL])
+        self._stim_dur_label.setText(self._strings[StringsEnum.DURATION_LABEL])
+        self._stim_intens_label.setText(self._strings[StringsEnum.INTENSITY_LABEL])
+        self._upper_isi_label.setText(self._strings[StringsEnum.UPPER_ISI_LABEL])
+        self._lower_isi_label.setText(self._strings[StringsEnum.LOWER_ISI_LABEL])
+        self._upload_settings_button.setText(self._strings[StringsEnum.UPLOAD_BUTTON_LABEL])
+        # self.config_button.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
+        self._config_action.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
+        self._config_win.setWindowTitle(self.get_name() + " " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
     def _set_tooltips(self):
         self._logger.debug("running")
-        self.config_label.setToolTip(self.strings[StringsEnum.CONFIG_LABEL_TOOLTIP])
-        self.iso_button.setToolTip(self.strings[StringsEnum.ISO_BUTTON_TOOLTIP])
-        self.upper_isi_label.setToolTip(self.strings[StringsEnum.UPPER_ISI_TOOLTIP])
-        self.lower_isi_label.setToolTip(self.strings[StringsEnum.LOWER_ISI_TOOLTIP])
-        self.stim_dur_label.setToolTip(self.strings[StringsEnum.DURATION_TOOLTIP])
-        self.stim_intens_label.setToolTip(self.strings[StringsEnum.INTENSITY_TOOLTIP])
-        self.upload_settings_button.setToolTip(self.strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
-        self.stim_intens_slider.setToolTip(str(self.stim_intens_slider.value()) + "%")
-        # self.config_button.setToolTip(self.strings[StringsEnum.CONFIG_TAB_TOOLTIP])
+        self._config_label.setToolTip(self._strings[StringsEnum.CONFIG_LABEL_TOOLTIP])
+        self._iso_button.setToolTip(self._strings[StringsEnum.ISO_BUTTON_TOOLTIP])
+        self._upper_isi_label.setToolTip(self._strings[StringsEnum.UPPER_ISI_TOOLTIP])
+        self._lower_isi_label.setToolTip(self._strings[StringsEnum.LOWER_ISI_TOOLTIP])
+        self._stim_dur_label.setToolTip(self._strings[StringsEnum.DURATION_TOOLTIP])
+        self._stim_intens_label.setToolTip(self._strings[StringsEnum.INTENSITY_TOOLTIP])
+        self._upload_settings_button.setToolTip(self._strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
+        self._stim_intens_slider.setToolTip(str(self._stim_intens_slider.value()) + "%")
+        # self.config_button.setToolTip(self._strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self._logger.debug("done")
 
     def resizeEvent(self, event: QResizeEvent) -> None:
