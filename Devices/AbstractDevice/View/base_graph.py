@@ -125,7 +125,7 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
                     #     await sleep(.001)
                     #     axes.set_xlabel(self._base_strings[StringsEnum.GRAPH_TS])
                     #     await sleep(.001)
-                    axes.set_xlabel(self._base_strings[StringsEnum.GRAPH_TS])
+                    # axes.set_xlabel(self._base_strings[StringsEnum.GRAPH_TS])
                     if not new:
                         await create_task(self.plot_device_data(axes, name))
                 else:

@@ -103,7 +103,7 @@ english = {StringsEnum.CUSTOM_LABEL: "Custom",
            StringsEnum.MANUAL_OPEN_TOOLTIP: "Manually open lens.",
            StringsEnum.MANUAL_CLOSE_TOOLTIP: "Manually close lens.",
            StringsEnum.SAVE_HDR: "timestamp, trial, open, close, ",
-           StringsEnum.PLOT_NAME_OPEN_CLOSE: "Time Open/Close",
+           StringsEnum.PLOT_NAME_OPEN_CLOSE: "Milliseconds",
            StringsEnum.GRAPH_TS: "Timestamp",
            }
 
@@ -143,7 +143,7 @@ dutch = {StringsEnum.CUSTOM_LABEL: "Op maat",
          StringsEnum.MANUAL_OPEN_TOOLTIP: "Handmatig geopende lens.",
          StringsEnum.MANUAL_CLOSE_TOOLTIP: "Lens handmatig sluiten.",
          StringsEnum.SAVE_HDR: "tijdstempel, proef, open, sluiten, ",
-         StringsEnum.PLOT_NAME_OPEN_CLOSE: "Tijd openen/sluiten",
+         StringsEnum.PLOT_NAME_OPEN_CLOSE: "Milliseconden",
          StringsEnum.GRAPH_TS: "tijdstempel",
          }
 
@@ -182,7 +182,7 @@ french = {StringsEnum.CUSTOM_LABEL: "Douane",
           StringsEnum.MANUAL_OPEN_TOOLTIP: "Ouverture manuelle de l'objectif.",
           StringsEnum.MANUAL_CLOSE_TOOLTIP: "Fermeture manuelle de l'objectif.",
           StringsEnum.SAVE_HDR: "horodatage, procès, ouvert, Fermer, ",
-          StringsEnum.PLOT_NAME_OPEN_CLOSE: "Heure d'ouverture/fermeture",
+          StringsEnum.PLOT_NAME_OPEN_CLOSE: "Millisecondes",
           StringsEnum.GRAPH_TS: "Horodatage",
           }
 
@@ -221,7 +221,7 @@ german = {StringsEnum.CUSTOM_LABEL: "Benutzerdefiniert",
           StringsEnum.MANUAL_OPEN_TOOLTIP: "Linse manuell öffnen.",
           StringsEnum.MANUAL_CLOSE_TOOLTIP: "Linse manuell schließen.",
           StringsEnum.SAVE_HDR: "Zeitstempel, Versuch, öffnen, schließen, ",
-          StringsEnum.PLOT_NAME_OPEN_CLOSE: "Zeit Öffnen/Schließen",
+          StringsEnum.PLOT_NAME_OPEN_CLOSE: "Millisekunden",
           StringsEnum.GRAPH_TS: "Zeitstempel",
           }
 
@@ -260,7 +260,7 @@ russian = {StringsEnum.CUSTOM_LABEL: "изготовленный на заказ
            StringsEnum.MANUAL_OPEN_TOOLTIP: "Вручную откройте объектив.",
            StringsEnum.MANUAL_CLOSE_TOOLTIP: "Вручную закройте объектив.",
            StringsEnum.SAVE_HDR: "отметка времени, пробный, открытый, закрывать, ",
-           StringsEnum.PLOT_NAME_OPEN_CLOSE: "Время открытия/закрытия",
+           StringsEnum.PLOT_NAME_OPEN_CLOSE: "миллисекунды",
            StringsEnum.GRAPH_TS: "отметка времени",
            }
 
@@ -299,7 +299,7 @@ spanish = {StringsEnum.CUSTOM_LABEL: "Personalizado",
            StringsEnum.MANUAL_OPEN_TOOLTIP: "Lente abierta manualmente.",
            StringsEnum.MANUAL_CLOSE_TOOLTIP: "Lente manualmente cerrado.",
            StringsEnum.SAVE_HDR: "marca de tiempo, juicio, abierto, cerca, ",
-           StringsEnum.PLOT_NAME_OPEN_CLOSE: "Hora de apertura/cierre",
+           StringsEnum.PLOT_NAME_OPEN_CLOSE: "Milisegundos",
            StringsEnum.GRAPH_TS: "marca de tiempo",
            }
 
@@ -338,7 +338,7 @@ chinese = {StringsEnum.CUSTOM_LABEL: "自订",
            StringsEnum.MANUAL_OPEN_TOOLTIP: "手动打开镜头。",
            StringsEnum.MANUAL_CLOSE_TOOLTIP: "手动关闭镜头。",
            StringsEnum.SAVE_HDR: "时间戳记, 试用版, 打开, 关, ",
-           StringsEnum.PLOT_NAME_OPEN_CLOSE: "时间开/关",
+           StringsEnum.PLOT_NAME_OPEN_CLOSE: "毫秒",
            StringsEnum.GRAPH_TS: "时间戳记",
            }
 
@@ -377,7 +377,7 @@ japanese = {StringsEnum.CUSTOM_LABEL: "カスタム",
             StringsEnum.MANUAL_OPEN_TOOLTIP: "レンズを手動で開きます。",
             StringsEnum.MANUAL_CLOSE_TOOLTIP: "レンズを手動で閉じます。",
             StringsEnum.SAVE_HDR: "タイムスタンプ, トライアル, 開いた, 閉じる, ",
-            StringsEnum.PLOT_NAME_OPEN_CLOSE: "時間の開閉",
+            StringsEnum.PLOT_NAME_OPEN_CLOSE: "ミリ秒",
             StringsEnum.GRAPH_TS: "タイムスタンプ",
             }
 

@@ -78,7 +78,7 @@ class DRTGraph(BaseGraph):
         left = datetime.now()
         right = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         await sleep(.001)
-        if name == "Clicks":
+        if name == self._strings[StringsEnum.PLOT_NAME_CLICKS]:
             axes.plot(data[1], data[2], marker='s', color='#ff7f0e')
         else:
             axes.plot(data[1], data[2], marker='o')
