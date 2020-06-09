@@ -239,24 +239,35 @@ class DRTView(AbstractView):
         self._upload_settings_button.clicked.connect(func)
         self._logger.debug("done")
 
-    def set_config_val(self, val: str) -> None:
+    @property
+    def config_text(self) -> str:
         """
+        Get configuration text value
+        :return str: text value
+        """
+        return self._config_val.text()
 
-        :param val:
-        :return:
+    @config_text.setter
+    def config_text(self, val: str) -> None:
+        """
+        Set configuration text value
+        :param val: text to set
+        :return None:
         """
         self._logger.debug("running")
         self._config_val.setText(val)
         self._logger.debug("done")
 
-    def get_stim_dur(self):
+    @property
+    def stim_duration(self) -> str:
         """
-
-        :return:
+        Get the display value of stim duration
+        :return str: the display value
         """
         return self._stim_dur_line_edit.text()
 
-    def set_stim_dur(self, val: str) -> None:
+    @stim_duration.setter
+    def stim_duration(self, val: str) -> None:
         """
         Set display value of stim duration
         :param val:
@@ -279,14 +290,16 @@ class DRTView(AbstractView):
             self._stim_dur_line_edit.setStyleSheet(tab_line_edit_compliant_style)
         self._logger.debug("done")
 
-    def get_stim_intens(self):
+    @property
+    def stim_intensity(self) -> int:
         """
-
-        :return:
+        Get the integer value for the stim intensity
+        :return int: stim intensity
         """
         return self._stim_intens_slider.value()
 
-    def set_stim_intens(self, val: int) -> None:
+    @stim_intensity.setter
+    def stim_intensity(self, val: str) -> None:
         """
         Set display value of stim intensity
         :param val:

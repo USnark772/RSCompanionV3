@@ -351,14 +351,16 @@ class VOGView(AbstractView):
         self._manual_control_close_button.clicked.connect(func)
         self._logger.debug("done")
 
-    def get_config_val(self) -> str:
+    @property
+    def config_text(self) -> str:
         """
         Get the string value found in the config text box.
         :return str: string value in the text box.
         """
         return self._config_val_line_edit.text()
 
-    def set_config_val(self, val: str) -> None:
+    @config_text.setter
+    def config_text(self, val: str) -> None:
         """
         Set the string value found in the config text box.
         :param val: string value to set the config text box.
@@ -368,14 +370,16 @@ class VOGView(AbstractView):
         self._config_val_line_edit.setText(val)
         self._logger.debug("done")
 
-    def get_open_dur_val(self) -> str:
+    @property
+    def open_duration(self) -> str:
         """
         Get the string value found in the open duration text box.
         :return str: string value in the text box.
         """
         return self._open_dur_line_edit.text()
 
-    def set_open_dur_val(self, val: str) -> None:
+    @open_duration.setter
+    def open_duration(self, val: str) -> None:
         """
         Set the string value found in the open duration text box.
         :param val: string value to set the open duration text box.
@@ -385,14 +389,16 @@ class VOGView(AbstractView):
         self._open_dur_line_edit.setText(val)
         self._logger.debug("done")
 
-    def get_close_dur_val(self) -> str:
+    @property
+    def close_duration(self) -> str:
         """
         Get the string value found in the close duration text box.
         :return str: string value in the text box.
         """
         return self._close_dur_line_edit.text()
 
-    def set_close_dur_val(self, val: str) -> None:
+    @close_duration.setter
+    def close_duration(self, val: str) -> None:
         """
         Set the string value found in the close duration text box.
         :param val: string value to set the close duration text box.
@@ -402,14 +408,16 @@ class VOGView(AbstractView):
         self._close_dur_line_edit.setText(val)
         self._logger.debug("done")
 
-    def get_debounce_val(self) -> str:
+    @property
+    def debounce_val(self) -> str:
         """
         Get the string value found in the debounce time text box.
         :return str: string value in the text box.
         """
         return self._debounce_time_line_edit.text()
 
-    def set_debounce_val(self, val: str) -> None:
+    @debounce_val.setter
+    def debounce_val(self, val: str) -> None:
         """
         Set the string value found in the debounce time text box.
         :param val: string value to set the debounce text box.
@@ -419,14 +427,16 @@ class VOGView(AbstractView):
         self._debounce_time_line_edit.setText(val)
         self._logger.debug("done")
 
-    def get_open_inf_check_box(self) -> bool:
+    @property
+    def open_inf_check_box(self) -> bool:
         """
         Get the check box state.
         :return bool: returns true if the box is checked.
         """
         return self._open_inf_check_box.isChecked()
 
-    def set_open_inf_check_box(self, val: bool) -> None:
+    @open_inf_check_box.setter
+    def open_inf_check_box(self, val: bool) -> None:
         """
         Set the check box state.
         :param val: bool value to set the check box.
@@ -436,14 +446,16 @@ class VOGView(AbstractView):
         self._open_inf_check_box.setChecked(val)
         self._logger.debug("done")
 
-    def get_close_inf_check_box(self) -> bool:
+    @property
+    def close_inf_check_box(self) -> bool:
         """
         Get the check box state.
         :return bool: returns true if the box is checked.
         """
         return self._close_inf_check_box.isChecked()
 
-    def set_close_inf_check_box(self, val: bool) -> None:
+    @close_inf_check_box.setter
+    def close_inf_check_box(self, val: bool) -> None:
         """
         Set the check box state.
         :param val: bool value to set the check box.
@@ -453,14 +465,16 @@ class VOGView(AbstractView):
         self._close_inf_check_box.setChecked(val)
         self._logger.debug("done")
 
-    def get_button_mode(self) -> int:
+    @property
+    def button_mode(self) -> int:
         """
         Get index of button mode.
         :return int: index of current button mode.
         """
         return self._button_mode_selector.currentIndex()
 
-    def set_button_mode(self, val: int) -> None:
+    @button_mode.setter
+    def button_mode(self, val: int) -> None:
         """
         Set index of button mode.
         :return None:
@@ -469,14 +483,16 @@ class VOGView(AbstractView):
         self._button_mode_selector.setCurrentIndex(val)
         self._logger.debug("done")
 
-    def get_control_mode(self) -> int:
+    @property
+    def control_mode(self) -> int:
         """
         Get index of button mode.
         :return int: index of current button mode.
         """
         return self._control_mode_selector.currentIndex()
 
-    def set_control_mode(self, val: int) -> None:
+    @control_mode.setter
+    def control_mode(self, val: int) -> None:
         """
         Set index of button mode.
         :return None:

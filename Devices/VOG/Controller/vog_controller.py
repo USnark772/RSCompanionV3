@@ -192,7 +192,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         if not self._updating_config:
-            self._model.check_config_entry(self.view.get_config_val())
+            self._model.check_config_entry(self.view.config_text)
             self._check_for_upload()
         self._logger.debug("done")
 
@@ -203,7 +203,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         if not self._updating_config:
-            self.view.set_open_dur_err(not self._model.check_open_entry(self.view.get_open_dur_val()))
+            self.view.set_open_dur_err(not self._model.check_open_entry(self.view.open_duration))
             self._check_for_upload()
         self._logger.debug("done")
 
@@ -214,7 +214,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         if not self._updating_config:
-            self.view.set_close_dur_err(not self._model.check_close_entry(self.view.get_close_dur_val()))
+            self.view.set_close_dur_err(not self._model.check_close_entry(self.view.close_duration))
             self._check_for_upload()
         self._logger.debug("done")
 
@@ -227,11 +227,11 @@ class Controller(AbstractController):
         self._logger.debug("running")
         if not self._updating_config:
             if state == 2:
-                self._prev_vals[0] = self.view.get_open_dur_val()
-                self.view.set_open_dur_val(str(defs.max_open_close))
+                self._prev_vals[0] = self.view.open_duration
+                self.view.open_duration = str(defs.max_open_close)
             elif state == 0:
-                self.view.set_open_dur_val(self._prev_vals[0])
-            self.view.set_open_dur_err(not self._model.check_open_entry(self.view.get_open_dur_val()))
+                self.view.open_duration = self._prev_vals[0]
+            self.view.set_open_dur_err(not self._model.check_open_entry(self.view.open_duration))
             self._check_for_upload()
         self._logger.debug("done")
 
@@ -244,11 +244,11 @@ class Controller(AbstractController):
         self._logger.debug("running")
         if not self._updating_config:
             if state == 2:
-                self._prev_vals[1] = self.view.get_close_dur_val()
-                self.view.set_close_dur_val(str(defs.max_open_close))
+                self._prev_vals[1] = self.view.close_duration
+                self.view.close_duration = str(defs.max_open_close)
             elif state == 0:
-                self.view.set_close_dur_val(self._prev_vals[1])
-            self.view.set_close_dur_err(not self._model.check_close_entry(self.view.get_close_dur_val()))
+                self.view.close_duration = self._prev_vals[1]
+            self.view.set_close_dur_err(not self._model.check_close_entry(self.view.close_duration))
             self._check_for_upload()
         self._logger.debug("done")
 
@@ -259,7 +259,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         if not self._updating_config:
-            self.view.set_debounce_err(not self._model.check_debounce_entry(self.view.get_debounce_val()))
+            self.view.set_debounce_err(not self._model.check_debounce_entry(self.view.debounce_val))
             self._check_for_upload()
         self._logger.debug("done")
 
@@ -270,7 +270,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         if not self._updating_config:
-            self._model.check_button_mode_entry(self.view.get_button_mode())
+            self._model.check_button_mode_entry(self.view.button_mode)
             self._check_for_upload()
         self._logger.debug("done")
 
@@ -281,7 +281,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         if not self._updating_config:
-            self._model.check_control_mode_entry(self.view.get_control_mode())
+            self._model.check_control_mode_entry(self.view.control_mode)
             self._check_for_upload()
         self._logger.debug("done")
 
@@ -292,17 +292,17 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         if self._model.name_changed():
-            self._model.send_name(self.view.get_config_val())
+            self._model.send_name(self.view.config_text)
         if self._model.open_changed():
-            self._model.send_open(self.view.get_open_dur_val())
+            self._model.send_open(self.view.open_duration)
         if self._model.close_changed():
-            self._model.send_close(self.view.get_close_dur_val())
+            self._model.send_close(self.view.close_duration)
         if self._model.debounce_changed():
-            self._model.send_debounce(self.view.get_debounce_val())
+            self._model.send_debounce(self.view.debounce_val)
         if self._model.button_mode_changed():
-            self._model.send_button_control(self.view.get_button_mode())
+            self._model.send_button_control(self.view.button_mode)
         if self._model.control_mode_changed():
-            self._model.send_click(self.view.get_control_mode())
+            self._model.send_click(self.view.control_mode)
         self._model.reset_changed()
         self._check_for_upload()
         self._logger.debug("done")
@@ -385,40 +385,40 @@ class Controller(AbstractController):
         self._logger.debug("running")
         if var == "Name":
             self._model.set_current_vals(name=val)
-            self.view.set_config_val(val)
+            self.view.config_text = val
         elif var == "MaxOpen":
             int_val = int(val)
             if int_val == defs.max_open_close:
-                self.view.set_open_inf_check_box(True)
+                self.view.open_inf_check_box = True
             else:
-                self.view.set_open_inf_check_box(False)
+                self.view.open_inf_check_box = False
             self._model.set_current_vals(max_open=int_val)
-            self.view.set_open_dur_val(val)
+            self.view.open_duration = val
             self._prev_vals[0] = val  # TODO: Does this overwrite after we hit upload?
             self.view.set_open_dur_err(False)
         elif var == "MaxClose":
             int_val = int(val)
             if int_val == defs.max_open_close:
-                self.view.set_close_inf_check_box(True)
+                self.view.close_inf_check_box = True
             else:
-                self.view.set_close_inf_check_box(False)
+                self.view.close_inf_check_box = False
             self._model.set_current_vals(max_close=int_val)
-            self.view.set_close_dur_val(val)
+            self.view.close_duration = val
             self._prev_vals[1] = val  # TODO: Does this overwrite after we hit upload?
             self.view.set_close_dur_err(False)
         elif var == "Debounce":
             int_val = int(val)
             self._model.set_current_vals(debounce=int_val)
-            self.view.set_debounce_val(val)
+            self.view.debounce_val = val
             self.view.set_debounce_err(False)
         elif var == "ClickMode":
             int_val = int(val)
             self._model.set_current_vals(button_mode=int_val)
-            self.view.set_button_mode(int_val)
+            self.view.button_mode = int_val
         elif var == "buttonControl":
             int_val = int(val)
             self._model.set_current_vals(control_mode=int_val)
-            self.view.set_control_mode(int_val)
+            self.view.control_mode = int_val
         self._logger.debug("done")
 
     def _check_for_upload(self) -> None:

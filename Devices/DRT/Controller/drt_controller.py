@@ -175,10 +175,10 @@ class Controller(AbstractController):
         changed = False
         self._logger.debug("running")
         if self._model.dur_changed():
-            self._model.send_stim_dur(self.view.get_stim_dur())
+            self._model.send_stim_dur(self.view.stim_duration)
             changed = True
         if self._model.int_changed():
-            self._model.send_stim_intensity(self.view.get_stim_intens())
+            self._model.send_stim_intensity(self.view.stim_intensity)
             changed = True
         if self._model.upper_changed():
             self._model.send_upper_isi(self.view.upper_isi)
@@ -187,7 +187,7 @@ class Controller(AbstractController):
             self._model.send_lower_isi(self.view.lower_isi)
             changed = True
         if changed:
-            self.view.set_config_val(self._strings[StringsEnum.CUSTOM_LABEL])
+            self.view.config_text = self._strings[StringsEnum.CUSTOM_LABEL]
         self._model.reset_changed()
         self._check_for_upload()
         self._logger.debug("done")
@@ -228,11 +228,11 @@ class Controller(AbstractController):
         self._logger.debug("running")
         if var == "stimDur":
             self._model.set_current_vals(duration=val)
-            self.view.set_stim_dur(val)
+            self.view.stim_duration = val
             self.view.set_stim_dur_err(False)
         elif var == "intensity":
             self._model.set_current_vals(intensity=val)
-            self.view.set_stim_intens(self._model.calc_val_to_percent(val))
+            self.view.stim_intensity = self._model.calc_val_to_percent(val)
         elif var == "upperISI":
             self._model.set_current_vals(upper_isi=val)
             self.view.upper_isi = val
@@ -250,7 +250,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         if not self._updating_config:
-            self.view.set_stim_dur_err(not self._model.check_stim_dur_entry(self.view.get_stim_dur()))
+            self.view.set_stim_dur_err(not self._model.check_stim_dur_entry(self.view.stim_duration))
             self._check_for_upload()
         self._logger.debug("done")
 
@@ -261,7 +261,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         if not self._updating_config:
-            self._model.check_stim_int_entry(self.view.get_stim_intens())
+            self._model.check_stim_int_entry(self.view.stim_intensity)
             self.view.update_stim_intens_val_tooltip()
             self._check_for_upload()
         self._logger.debug("done")
@@ -297,7 +297,7 @@ class Controller(AbstractController):
         :return: None.
         """
         self._logger.debug("running")
-        self.view.set_config_val(self._strings[StringsEnum.ISO_LABEL])
+        self.view.config_text = self._strings[StringsEnum.ISO_LABEL]
         self._model.send_iso()
         self.view.set_upload_button(False)
         self._logger.debug("done")
