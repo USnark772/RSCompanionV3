@@ -29,7 +29,7 @@ from cv2 import VideoCapture, CAP_PROP_FOURCC, CAP_PROP_FRAME_WIDTH, CAP_PROP_FR
 from queue import SimpleQueue
 from numpy import ndarray
 from time import time
-from asyncio import futures, Event, get_event_loop
+from asyncio import futures, Event, get_event_loop, sleep
 from Devices.Camera.Model import cam_defs as defs
 from Model.app_helpers import await_event
 
@@ -42,10 +42,11 @@ class StreamReader:
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
         self._running = False
+        self._closing_flag = Event()
         self._timeout_limit = 0
         self._stream = VideoCapture(index, defs.cap_backend)
         self.set_resolution(self.get_resolution())
-        # self._calc_timeout()
+        self._fps_test_status = 0
         self._fps_limit = 120
         self._frame_rate_limiter = 1/self._fps_limit
         self._new_frame_event = Event()
@@ -60,6 +61,7 @@ class StreamReader:
         Cleanup this object and prep for app closure.
         :return None:
         """
+        self._closing_flag.set()
         self.stop()
         self._stream.release()
 
@@ -105,7 +107,7 @@ class StreamReader:
         :return None:
         """
         self._running = False
-        if self._read_loop_task:
+        if self._read_loop_task is not None:
             self._read_loop_task.cancel()
             self._read_loop_task = None
 
@@ -214,3 +216,38 @@ class StreamReader:
         """
         self._stream.set(CAP_PROP_FOURCC, defs.cap_temp_codec)
         self._stream.set(CAP_PROP_FOURCC, defs.cap_codec)
+
+    def get_fps_status(self) -> int:
+        """
+        :return int: The current percentage of testing done.
+        """
+        return self._fps_test_status
+
+    async def calc_max_fps(self, res_to_test: (float, float), num_reads: int = 180) -> int:
+        """
+        Calculate this camera's actual max fps.
+        :return int: The max supported fps.
+        """
+        self._logger.debug("running")
+        self._fps_test_status = 0
+        cur_res = self.get_resolution()
+        self.set_resolution(res_to_test)
+        self._stream.read()
+        divisor = num_reads / 100
+        s = time()
+        for i in range(num_reads):
+            if self._closing_flag.is_set():
+                return 0
+            self._stream.read()
+            self._fps_test_status = int(i / divisor)
+            await sleep(0)
+        e = time()
+        self.set_resolution(cur_res)
+        time_taken = e - s
+        if time_taken > 0:
+            ret = round(num_reads / time_taken)
+            self.set_fps(ret)
+        else:
+            ret = -1
+        self._logger.debug("done with: " + str(ret))
+        return ret

@@ -27,7 +27,7 @@ import time
 from datetime import datetime
 from asyncio import create_task, Event, sleep, set_event_loop, new_event_loop, get_event_loop
 from multiprocessing.connection import Connection
-from cv2 import putText, FONT_HERSHEY_COMPLEX as FONT_FACE, LINE_AA as LINE_TYPE, resize
+from cv2 import putText, FONT_HERSHEY_COMPLEX as FONT_FACE, LINE_AA as LINE_TYPE, resize, INTER_AREA
 from queue import SimpleQueue
 from Model.app_helpers import format_current_time
 from Devices.Camera.Model import cam_defs as defs
@@ -70,7 +70,6 @@ class CamModel:
 
         self._sizes = list()
         self._fps = 30
-        self._fps_status = 0
         self._cam_name = "CAM_" + str(self._cam_index)
         self._name_time_loc = (30, 50)
         self._fps_loc = (30, 80)
@@ -123,31 +122,11 @@ class CamModel:
         Run each camera test in order.
         :return None:
         """
-        create_task(self._monitor_init_progress())
+        prog_tracker = create_task(self._monitor_init_progress())
         sizes = await self.size_gtr.get_sizes()
-        max_fps = await self._get_max_fps()
+        max_fps = await self._cam_reader.calc_max_fps(max(sizes))
         self._msg_pipe.send((defs.ModelEnum.START, (max_fps, sizes)))
-
-    # TODO: Is there a way to make this more accurate?
-    async def _get_max_fps(self) -> int:
-        """
-        Get this camera's actual max fps.
-        :return int: The max supported fps.
-        """
-        num_frames = 0
-        time_to_take = 30
-        self._cam_reader.stream.read()
-        s = time.time()
-        elapsed = time.time() - s
-        while elapsed < time_to_take:
-            self._cam_reader.stream.read()
-            num_frames += 1
-            elapsed = time.time() - s
-            self._fps_status = int(elapsed / 10 * 100)
-            await sleep(0)
-        ret = round(num_frames / time_to_take)
-        self._cam_reader.set_fps(ret)
-        return ret
+        prog_tracker.cancel()
 
     async def _monitor_init_progress(self) -> None:
         """
@@ -155,7 +134,7 @@ class CamModel:
         :return None:
         """
         while True:
-            status = (self._fps_status / 2) + (self.size_gtr.status / 2)
+            status = (self._cam_reader.get_fps_status() / 2) + (self.size_gtr.status / 2)
             if status >= 100:
                 break
             self._msg_pipe.send((defs.ModelEnum.STAT_UPD, status))
@@ -172,6 +151,7 @@ class CamModel:
 
     async def _cleanup(self, discard: bool) -> None:
         self._running = False
+        self.size_gtr.stop()
         await create_task(self._stop())
         self._cam_reader.cleanup()
         self._cam_writer.cleanup(discard)
@@ -192,8 +172,8 @@ class CamModel:
 
     def _use_feed(self, is_active: bool) -> None:
         """
-        Toggle whether this cam feed is being used.
-        :param is_active: Whether thsi cam feed is being used.
+        Toggle whether this cam feed is being passed to the view.
+        :param is_active: Whether this cam feed is being passed to the view.
         :return None:
         """
         self._show_feed = is_active
@@ -233,7 +213,7 @@ class CamModel:
         Run all async tasks in this model and wait for stop signal. (This method is the main loop for this process)
         :return None:
         """
-        # TODO: Consider putting these in threads like in cam_controller?
+        # TODO: Consider putting these in threads like in cam_controller.
         self._tasks.append(create_task(self._handle_pipe()))
         self._tasks.append(create_task(self._handle_new_frame()))
         self._tasks.append(create_task(self._await_reader_err()))
@@ -263,9 +243,10 @@ class CamModel:
             await self._cam_reader.await_new_frame()
             (frame, timestamp) = self._cam_reader.get_next_new_frame()
             now = time.mktime(timestamp.timetuple()) + timestamp.microsecond / 1E6
-            self._times.append(now - prev_time)
+            diff = now - prev_time
+            self._times.append(diff)
             while len(self._times) > num_to_keep:
-                self._times = self._times[1:]
+                self._times.pop(0)
             prev_time = now
             self._fps = round(len(self._times) / sum(self._times))
             fps = "FPS: " + str(self._fps)
@@ -278,6 +259,38 @@ class CamModel:
             if self._writing:
                 self._write_q.put(frame)
             if self._show_feed:
-                # dim = (int(frame.shape[1]), int(frame.shape[0]))
-                # self._img_pipe.send(resize(frame, dim))
-                self._img_pipe.send(frame)
+                to_send = self.image_resize(frame, width=640)
+                self._img_pipe.send(to_send)
+
+    # from https://stackoverflow.com/questions/44650888/resize-an-image-without-distortion-opencv
+    @staticmethod
+    def image_resize(image, width=None, height=None, inter=INTER_AREA):
+        # initialize the dimensions of the image to be resized and
+        # grab the image size
+        dim = None
+        (h, w) = image.shape[:2]
+
+        # if both the width and height are None, then return the
+        # original image
+        if width is None and height is None:
+            return image
+
+        # check to see if the width is None
+        if width is None:
+            # calculate the ratio of the height and construct the
+            # dimensions
+            r = height / float(h)
+            dim = (int(w * r), height)
+
+        # otherwise, the height is None
+        else:
+            # calculate the ratio of the width and construct the
+            # dimensions
+            r = width / float(w)
+            dim = (width, int(h * r))
+
+        # resize the image
+        resized = resize(image, dim, interpolation=inter)
+
+        # return the resized image
+        return resized

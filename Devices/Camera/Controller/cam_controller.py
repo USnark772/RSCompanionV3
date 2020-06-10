@@ -50,14 +50,14 @@ class Controller(AbstractController):
         self.cam_index = cam_index
         cam_name = "CAM_" + str(self.cam_index)
         view = CamView(cam_name, log_handlers)
-        view.show_initialization()
         super().__init__(view)
+        self.view.show_initialization()
+        self.view.set_config_active(False)
         # TODO: Get logging in here. See https://docs.python.org/3/howto/logging-cookbook.html find multiprocessing.
         self._model_msg_pipe, msg_pipe = Pipe()  # For messages/commands.
         self._model_image_pipe, img_pipe = Pipe(False)  # For images.
         self._model = Process(target=CamModel, args=(msg_pipe, img_pipe, self.cam_index))
         # TODO: Multiprocessing could cause issues when packaging app.
-        self._tasks = []
         self._switcher = {defs.ModelEnum.FAILURE: self.err_cleanup,
                           defs.ModelEnum.CUR_FPS: self._update_view_fps,
                           defs.ModelEnum.CLEANUP: self._set_model_cleaned,
@@ -66,13 +66,16 @@ class Controller(AbstractController):
                           defs.ModelEnum.START: self._finalize}
         self._stop = TEvent()
         self._loop = get_running_loop()
-        self.set_lang(lang)
         self._model_cleaned = Event()
         self._ended = Event()
-        executor = ThreadPoolExecutor(2)
-        self._tasks.append(self._loop.run_in_executor(executor, self._update_feed))
-        self._tasks.append(self._loop.run_in_executor(executor, self._handle_pipe))
+        self._executor = ThreadPoolExecutor(2)
+        self._loop.run_in_executor(self._executor, self._handle_pipe)
+        self._update_feed_flag = TEvent()
+        self._update_feed_flag.set()
+        self._handle_pipe_flag = TEvent()
+        self._handle_pipe_flag.set()
         self._model.start()
+        self.set_lang(lang)
         self._res_list = list()
         self.send_msg_to_model((defs.ModelEnum.INITIALIZE, None))
         self._setup_handlers()
@@ -101,6 +104,7 @@ class Controller(AbstractController):
         if self._model.is_alive():
             self._model.join()
         self._ended.set()
+        self.view.save_window_state()
         self._logger.debug("done")
 
     def await_saved(self) -> futures:
@@ -157,18 +161,24 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        self.send_msg_to_model((defs.ModelEnum.SET_USE_FEED, self.view.use_feed))
+        if not self.view.use_feed or not self.view.use_cam:
+            self._update_feed_flag.clear()
+            self.view.update_image(msg="No Feed")
+        elif self.view.use_feed and self.view.use_cam:
+            self._update_feed_flag.set()
+        self.send_msg_to_model((defs.ModelEnum.SET_USE_FEED, self.view.use_feed and self.view.use_cam))
         self._logger.debug("done")
 
     # TODO: Finish implementing this.
-    def update_use_cam(self, is_active: bool) -> None:
+    def update_use_cam(self) -> None:
         """
         Set this camera active or inactive.
         :param is_active: Whether to use this camera or not.
         :return None:
         """
         self._logger.debug("running")
-        self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, is_active))
+        self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, self.view.use_cam))
+        self.update_show_feed()
         self._logger.debug("done")
 
     def get_index(self) -> int:
@@ -235,8 +245,9 @@ class Controller(AbstractController):
                 next_image = None
                 while self._model_image_pipe.poll():
                     next_image = self._model_image_pipe.recv()
-                if next_image is not None:
-                    self._loop.call_soon_threadsafe(self.view.update_image, self.convert_frame_to_qt_image(next_image))
+                if next_image is not None and self._update_feed_flag.isSet():
+                    converted_image = self.convert_image_to_qt_format(next_image)
+                    self._loop.call_soon_threadsafe(self.view.update_image, converted_image)
                 sleep(.008)
         except BrokenPipeError as bpe:
             pass
@@ -257,6 +268,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
+        self._loop.run_in_executor(self._executor, self._update_feed)
         self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, True))
         self.send_msg_to_model((defs.ModelEnum.SET_USE_FEED, True))
         max_fps = init_results[0]
@@ -266,6 +278,7 @@ class Controller(AbstractController):
         self.view.fps_list = [x for x in range(1, max_fps + 1)]
         self.send_msg_to_model((defs.ModelEnum.GET_FPS, None))
         self.send_msg_to_model((defs.ModelEnum.GET_RES, None))
+        self.view.set_config_active(True)
         self.view.show_images()
         self._logger.debug("done")
 
@@ -300,6 +313,7 @@ class Controller(AbstractController):
         self.view.set_fps_selector_handler(self.update_fps)
         self.view.set_resolution_selector_handler(self.update_resolution)
         self.view.set_show_feed_button_handler(self.update_show_feed)
+        self.view.set_use_cam_button_handler(self.update_use_cam)
         self._logger.debug("done")
 
     def _set_model_cleaned(self) -> None:
@@ -327,13 +341,13 @@ class Controller(AbstractController):
             raise e
 
     @staticmethod
-    def convert_frame_to_qt_image(frame: ndarray) -> QPixmap:
+    def convert_image_to_qt_format(image: ndarray) -> QPixmap:
         """
         Convert image to suitable format for display in Qt.
-        :param frame: The image to convert.
+        :param image: The image to convert.
         :return QPixmap: The converted image.
         """
-        rgb_image = cvtColor(frame, COLOR_BGR2RGB)
+        rgb_image = cvtColor(image, COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
         res = QImage(rgb_image.data, w, h, ch * w, QImage.Format_RGB888)
         ret = QPixmap.fromImage(res)
