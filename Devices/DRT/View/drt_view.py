@@ -127,20 +127,24 @@ class DRTView(AbstractView):
 
         """ Configuration popup """
         # check set_texts and set_tooltips if commenting/uncommenting
-        # self.config_button = ClickAnimationButton()
-        # self.layout().addWidget(self.config_button, 0, 0, Qt.AlignRight)
-        # self.config_win = ConfigPopUp()
-        # self.config_win.setLayout(self.dev_sets_layout)
-        # self.config_button.clicked.connect(self.config_button_handler)
+        self._config_button_frame = EasyFrame()
+        self._config_button_frame_layout = QHBoxLayout(self._config_button_frame)
+
+        self.config_button = ClickAnimationButton()
+        self.config_button.clicked.connect(self._config_button_handler)
+
+        self._config_button_frame_layout.addWidget(self.config_button)
+        self.layout().addWidget(self._config_button_frame, 0, 0, Qt.AlignTop)
+        self._config_button_frame.setFixedSize(50, 40)
 
         """ Configuration menu """
-        self._menu_bar = QMenuBar()
-        self._menu_bar.setMaximumWidth(self.width() - 17)
-        self._menu_bar.setMouseTracking(True)
-        self._config_action = QAction()
-        self._menu_bar.addAction(self._config_action)
-        self._config_action.triggered.connect(self._config_button_handler)
-        self.layout().setMenuBar(self._menu_bar)
+        # self._menu_bar = QMenuBar()
+        # self._menu_bar.setMaximumWidth(self.width() - 17)
+        # self._menu_bar.setMouseTracking(True)
+        # self._config_action = QAction()
+        # self._menu_bar.addAction(self._config_action)
+        # self._config_action.triggered.connect(self._config_button_handler)
+        # self.layout().setMenuBar(self._menu_bar)
 
         self._config_win = ConfigPopUp()
         self._config_win.setMinimumSize(self._popup_min[0], self._popup_min[1])
@@ -168,6 +172,7 @@ class DRTView(AbstractView):
         """
         self._logger.debug("running")
         self.layout().addWidget(graph, 0, 0)
+        self._config_button_frame.raise_()
         self._logger.debug("done")
 
     def _config_button_handler(self) -> None:
@@ -424,7 +429,8 @@ class DRTView(AbstractView):
         self._lower_isi_label.setText(self._strings[StringsEnum.LOWER_ISI_LABEL])
         self._upload_settings_button.setText(self._strings[StringsEnum.UPLOAD_BUTTON_LABEL])
         # self.config_button.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
-        self._config_action.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
+        self.config_button.setText("...")
+        # self._config_action.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._config_win.setWindowTitle(self.get_name() + " " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
@@ -438,9 +444,9 @@ class DRTView(AbstractView):
         self._stim_intens_label.setToolTip(self._strings[StringsEnum.INTENSITY_TOOLTIP])
         self._upload_settings_button.setToolTip(self._strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
         self._stim_intens_slider.setToolTip(str(self._stim_intens_slider.value()) + "%")
-        # self.config_button.setToolTip(self._strings[StringsEnum.CONFIG_TAB_TOOLTIP])
+        self.config_button.setToolTip(self._strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self._logger.debug("done")
 
-    def resizeEvent(self, event: QResizeEvent) -> None:
-        self._menu_bar.setMaximumWidth(self.width())
-        return super().resizeEvent(event)
+    # def resizeEvent(self, event: QResizeEvent) -> None:
+    #     self._menu_bar.setMaximumWidth(self.width())
+    #     return super().resizeEvent(event)

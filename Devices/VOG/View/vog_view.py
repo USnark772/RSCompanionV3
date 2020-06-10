@@ -157,20 +157,22 @@ class VOGView(AbstractView):
         # self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
 
         """Configuration popup"""
-        # self.config_button = ClickAnimationButton()
-        # self.layout().addWidget(self.config_button, 0, 0, Qt.AlignRight)
-        # self.config_win = ConfigPopUp()
-        # self.config_win.setLayout(self.dev_sets_layout)
-        # self.config_button.clicked.connect(self.config_button_handler)
+        self._config_button_frame = EasyFrame()
+        self._config_button_frame_layout = QHBoxLayout(self._config_button_frame)
+
+        self.config_button = ClickAnimationButton()
+        self.config_button.clicked.connect(self._config_button_handler)
+
+        self._config_button_frame_layout.addWidget(self.config_button)
 
         """ Configuration menu """
-        self._menu_bar = QMenuBar()
-        self._menu_bar.setMaximumWidth(self.width() - 17)
-        self._menu_bar.setMouseTracking(True)
-        self._config_action = QAction()
-        self._menu_bar.addAction(self._config_action)
-        self._config_action.triggered.connect(self._config_button_handler)
-        self.layout().setMenuBar(self._menu_bar)
+        # self._menu_bar = QMenuBar()
+        # self._menu_bar.setMaximumWidth(self.width() - 17)
+        # self._menu_bar.setMouseTracking(True)
+        # self._config_action = QAction()
+        # self._menu_bar.addAction(self._config_action)
+        # self._config_action.triggered.connect(self._config_button_handler)
+        # self.layout().setMenuBar(self._menu_bar)
 
         self._config_win = ConfigPopUp()
         self._config_win.setMinimumSize(self._popup_min[0], self._popup_min[1])
@@ -181,11 +183,17 @@ class VOGView(AbstractView):
         self._dev_sets_layout.addWidget(self._config_frame)
         self._dev_sets_layout.addWidget(self._input_box_frame)
         self._dev_sets_layout.addWidget(self._button_mode_frame)
-        self._dev_sets_layout.addWidget(self._manual_control_button_frame)
+        # self._dev_sets_layout.addWidget(self._manual_control_button_frame)
         self._dev_sets_layout.addWidget(self._nhtsa_button)
         self._dev_sets_layout.addWidget(self._eblindfold_button)
         self._dev_sets_layout.addWidget(self._direct_control_button)
         self._dev_sets_layout.addWidget(self._upload_settings_button)
+
+        self.layout().addWidget(self._config_button_frame, 0, 0, Qt.AlignTop)
+        self._config_button_frame.setFixedSize(50, 40)
+
+        self.layout().addWidget(self._manual_control_button_frame, 0, 0, Qt.AlignBottom)
+        self._manual_control_button_frame.setFixedSize(150, 35)
 
         self._strings = dict()
         self._lang_enum = LangEnum.ENG
@@ -200,6 +208,8 @@ class VOGView(AbstractView):
         """
         self._logger.debug("running")
         self.layout().addWidget(graph, 0, 0)
+        self._config_button_frame.raise_()
+        self._manual_control_button_frame.raise_()
         self._logger.debug("done")
 
     def _config_button_handler(self) -> None:
@@ -596,8 +606,9 @@ class VOGView(AbstractView):
         self._upload_settings_button.setText(self._strings[StringsEnum.UPLOAD_BUTTON_LABEL])
         self._manual_control_open_button.setText(self._strings[StringsEnum.MANUAL_OPEN_LABEL])
         self._manual_control_close_button.setText(self._strings[StringsEnum.MANUAL_CLOSE_LABEL])
-        # self.config_button.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
-        self._config_action.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
+        self.config_button.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
+        self.config_button.setText("...")
+        # self._config_action.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._config_win.setWindowTitle(self.get_name() + " " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")
 
@@ -617,9 +628,9 @@ class VOGView(AbstractView):
         self._upload_settings_button.setToolTip(self._strings[StringsEnum.UPLOAD_BUTTON_TOOLTIP])
         self._manual_control_open_button.setToolTip(self._strings[StringsEnum.MANUAL_OPEN_TOOLTIP])
         self._manual_control_close_button.setToolTip(self._strings[StringsEnum.MANUAL_CLOSE_TOOLTIP])
-        # self.config_button.setToolTip(self._strings[StringsEnum.CONFIG_TAB_TOOLTIP])
+        self.config_button.setToolTip(self._strings[StringsEnum.CONFIG_TAB_TOOLTIP])
         self._logger.debug("done")
 
-    def resizeEvent(self, event: QResizeEvent) -> None:
-        self._menu_bar.setMaximumWidth(self.width())
-        return super().resizeEvent(event)
+    # def resizeEvent(self, event: QResizeEvent) -> None:
+    #     self._menu_bar.setMaximumWidth(self.width())
+    #     return super().resizeEvent(event)
