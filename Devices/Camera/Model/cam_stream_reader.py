@@ -108,7 +108,7 @@ class StreamReader:
         prev = time()
         while self.running:
             elapsed = time() - prev
-            if elapsed > self._frame_rate_limiter:
+            if elapsed >= self._frame_rate_limiter:
                 prev = time()
                 start = prev
                 ret, frame = self.stream.read()

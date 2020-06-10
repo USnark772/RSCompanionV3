@@ -37,6 +37,7 @@ class SizeGetter:
                 self._logger.addHandler(h)
         self._stream = stream
         self._done_flag = Event()
+        self._cancel_bool = False
         self._current_status = 0
         self.running = True
 
@@ -54,6 +55,8 @@ class SizeGetter:
         else:
             list_index = common_resolutions.index(initial_size) + 1
         for i in range(list_index, len(common_resolutions)):
+            if self._cancel_bool:
+                return list()
             ret, res = self._stream.test_resolution(common_resolutions[i])
             if ret and res in common_resolutions:
                 sizes.append((int(res[0]), int(res[1])))
@@ -66,3 +69,12 @@ class SizeGetter:
     @property
     def status(self) -> int:
         return self._current_status
+
+    def stop(self) -> None:
+        """
+        Stop get_sizes if running.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._cancel_bool = True
+        self._logger.debug("done")
