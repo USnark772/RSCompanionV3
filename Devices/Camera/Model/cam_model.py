@@ -124,7 +124,15 @@ class CamModel:
         """
         prog_tracker = create_task(self._monitor_init_progress())
         sizes = await self.size_gtr.get_sizes()
+        if len(sizes) < 1:
+            self._msg_pipe.send((defs.ModelEnum.FAILURE, None))
+            prog_tracker.cancel()
+            return
         max_fps = await self._cam_reader.calc_max_fps(max(sizes))
+        if max_fps < 0:
+            self._msg_pipe.send((defs.ModelEnum.FAILURE, None))
+            prog_tracker.cancel()
+            return
         self._msg_pipe.send((defs.ModelEnum.START, (max_fps, sizes)))
         prog_tracker.cancel()
 

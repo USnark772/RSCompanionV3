@@ -139,11 +139,13 @@ class CamView(AbstractView):
                               self._use_cam_checkbox,
                               self._show_feed_checkbox]
 
-        self._aspect_ratio = 3/4
         self._window_changing = False
         self._showing_images = False
         self._hidden = False
-        self.resize(400, int(400 * self._aspect_ratio))
+        h = 240
+        w = 320
+        self._aspect_ratio = h/w
+        self.resize(w, h)
         self._strings = dict()
         self._lang_enum = LangEnum.ENG
         self.old_size = QSize(self.width(), self.height())
@@ -408,7 +410,7 @@ class CamView(AbstractView):
         self._logger.debug("running")
         if not self._window_changing:
             if image is not None:
-                h = image.height()
+                h = image.height() + 30
                 w = image.width()
                 self._aspect_ratio = h/w
                 self._image_display.setPixmap(image.scaled(self.width(), self.width() * self._aspect_ratio))
