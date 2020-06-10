@@ -26,7 +26,7 @@ https://redscientific.com/index.html
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QVBoxLayout, QLabel, QProgressBar, QHBoxLayout, QCheckBox, QComboBox, QLineEdit, \
     QSizePolicy, QSpacerItem, QMenuBar, QAction, QGridLayout
-from PySide2.QtGui import QPixmap, QMouseEvent, QResizeEvent
+from PySide2.QtGui import QPixmap, QMouseEvent, QResizeEvent, QHideEvent, QShowEvent
 from PySide2.QtCore import Qt, QSize
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 from Devices.AbstractDevice.View.ConfigPopUp import ConfigPopUp
@@ -137,6 +137,7 @@ class CamView(AbstractView):
         self._aspect_ratio = 3/4
         self._window_changing = False
         self._showing_images = False
+        self._hidden = False
         self.resize(400, int(400 * self._aspect_ratio))
         self._strings = dict()
         self._lang_enum = LangEnum.ENG
@@ -336,13 +337,30 @@ class CamView(AbstractView):
 
     # TODO: This could be much better.
     def resizeEvent(self, resizeEvent: QResizeEvent) -> None:
-        if resizeEvent.size().width() != self.old_size.width():
-            self.resize(self.width(), int(self.width() * self._aspect_ratio))
-        elif resizeEvent.size().height() != self.old_size.height():
-            self.resize(int(self.height() / self._aspect_ratio), self.height())
-        self.old_size = resizeEvent.size()
-        self._menu_bar.setMaximumWidth(self.width()-17)
+        if not self._hidden:
+            if resizeEvent.size().width() != self.old_size.width():
+                self.resize(self.width(), int(self.width() * self._aspect_ratio))
+            elif resizeEvent.size().height() != self.old_size.height():
+                self.resize(int(self.height() / self._aspect_ratio), self.height())
+            self.old_size = resizeEvent.size()
+            self._menu_bar.setMaximumWidth(self.width()-17)
         return super().resizeEvent(resizeEvent)
+
+    def hideEvent(self, hideEvent: QHideEvent):
+        """
+        Track minimize event.
+        :param hideEvent:
+        :return None:
+        """
+        self._hidden = True
+
+    def showEvent(self, showEvent: QShowEvent):
+        """
+        Track restore event.
+        :param showEvent:
+        :return None:
+        """
+        self._hidden = False
 
     def mousePressEvent(self, mouseEvent: QMouseEvent) -> None:
         """

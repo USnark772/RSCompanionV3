@@ -45,9 +45,9 @@ class MDIArea(QMdiArea):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
         # Dummy subwindows for testing.
-        # from PySide2.QtWidgets import QMdiSubWindow as subwindow
         # from Devices.DRT.View.drt_view import DRTView as subwindow
         # from Devices.VOG.View.vog_view import VOGView as subwindow
+        from Devices.Camera.View.cam_view import CamView as subwindow
         # for i in range(6):
         #     window = subwindow()
         #     self.add_window(window)
@@ -62,6 +62,7 @@ class MDIArea(QMdiArea):
         window.setParent(self)
         self.addSubWindow(window)
         window.show()
+        window.restore_window()
         self._logger.debug("done")
 
     def remove_window(self, window: AbstractView) -> None:

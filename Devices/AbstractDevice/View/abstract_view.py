@@ -27,9 +27,10 @@ https://redscientific.com/index.html
 
 from abc import ABCMeta, ABC
 from Model.app_helpers import EasyFrame
+from Resources.Strings.app_strings import company_name, app_name
 from PySide2.QtWidgets import QMdiSubWindow, QHBoxLayout, QGridLayout, QLayout
-from PySide2.QtCore import Qt
-from PySide2.QtGui import QCloseEvent, QMoveEvent
+from PySide2.QtCore import Qt, QSettings
+from PySide2.QtGui import QCloseEvent
 
 
 class AbstractMeta(ABCMeta, type(QMdiSubWindow)):
@@ -62,6 +63,9 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
         SubWindow.__init__(self, empty)
         self._name = name
         self.setWindowTitle(self._name)
+        self._win_geo_ident = self._name + "_geo"
+        self._win_state_ident = self._name + "_state"
+        self._settings_group_ident = "subwindow_settings"
 
     def get_name(self) -> str:
         """
@@ -99,3 +103,30 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
             self.setWindowState(Qt.WindowNoState)
         elif self.windowState() == Qt.WindowNoState:
             self.setWindowState(Qt.WindowMinimized)
+
+    def save_window_state(self) -> None:
+        """
+        Save this window's current state for next time app is used.
+        :return None:
+        """
+        self._logger.debug("running")
+        settings = QSettings(company_name, app_name)
+        settings.beginGroup(self._settings_group_ident)
+        cur_geo = self.saveGeometry()
+        settings.setValue(self._win_geo_ident, cur_geo)
+        settings.endGroup()
+        self._logger.debug("done")
+
+    def restore_window(self) -> None:
+        """
+        Restore window state and geometry from previous session if exists.
+        :return None:
+        """
+        self._logger.debug("running")
+        settings = QSettings(company_name, app_name)
+        settings.beginGroup(self._settings_group_ident)
+        if not settings.contains(self._win_geo_ident):
+            settings.setValue(self._win_geo_ident, self.saveGeometry())
+        self.restoreGeometry(settings.value(self._win_geo_ident))
+        settings.endGroup()
+        self._logger.debug("done")

@@ -110,9 +110,7 @@ class AppMainWindow(QMainWindow):
                 event.ignore()
                 self._logger.debug("done with event.ignore()")
                 return
-        settings = QSettings(company_name, app_name)
-        settings.setValue(window_geometry, self.saveGeometry())
-        settings.setValue(window_state, self.saveState())
+        self._save_window_settings()
         if self._close_callback:
             self._close_callback()
         event.ignore()
@@ -189,6 +187,17 @@ class AppMainWindow(QMainWindow):
         self._help_window = HelpWindow(title, msg)
         self._help_window.setWindowIcon(self._icon)
         self._help_window.show()
+        self._logger.debug("done")
+
+    def _save_window_settings(self) -> None:
+        """
+        Save this window's current state for next time app is used.
+        :return None:
+        """
+        self._logger.debug("running")
+        settings = QSettings(company_name, app_name)
+        settings.setValue(window_geometry, self.saveGeometry())
+        settings.setValue(window_state, self.saveState())
         self._logger.debug("done")
 
     def _restore_window(self) -> None:
