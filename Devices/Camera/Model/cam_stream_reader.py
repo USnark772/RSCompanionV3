@@ -125,6 +125,7 @@ class StreamReader:
                 start = prev
                 ret, frame = self._stream.read()
                 end = time()
+                dt = datetime.now()
                 time_taken = end - start
                 timeout = time_taken > self._timeout_limit
                 if not ret or frame is None or timeout:
@@ -134,7 +135,7 @@ class StreamReader:
                                          + ". Time taken: " + str(time_taken))
                     self._loop.call_soon_threadsafe(self._err_event.set)
                     break
-                self._internal_frame_q.put((frame, datetime.now()))
+                self._internal_frame_q.put((frame, dt))
                 self._loop.call_soon_threadsafe(self._new_frame_event.set)
             else:
                 self._stream.grab()
