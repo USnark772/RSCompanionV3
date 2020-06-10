@@ -4,12 +4,14 @@ TODO: Pressing matters.
         - Make subwindows rearrange/resize/move on main window resize.
     - Implement CAM.
         - Finish implementing camera feed toggle.
-        - Handle app closure during init process.
+        - subwindow not resizing properly with different image resolutions.
         - Don't let image view pop up when mouse click is handled before done initializing.
         - Figure out bug with video feed failing or having extreme lag on resolution change.
             - cam_reader is not lagging. (Though it is possibly failing here, needs more testing.)
             - model's handle new frames function is not lagging. (Needs more testing here.)
             - Possible lag with pipe having to handle too much data? (This did not seem to happen in old code.)
+        - Consider getting max fps at largest resolution.
+        - Figure out how to minimize cam subwindows properly.
         - Consider resetting fps tracker in model when setting new fps.
         - Consider passing selected fps to writer instead of current fps.
         - Cameras are not in sync over time. (Only on Phillip's machine...sad)
