@@ -134,6 +134,11 @@ class CamView(AbstractView):
         self._config_win.setLayout(self._dev_sets_layout)
         self._config_win.setFixedSize(350, 130)
 
+        self._config_items = [self._resolution_selector,
+                              self._fps_selector,
+                              self._use_cam_checkbox,
+                              self._show_feed_checkbox]
+
         self._aspect_ratio = 3/4
         self._window_changing = False
         self._showing_images = False
@@ -445,6 +450,17 @@ class CamView(AbstractView):
         elif progress < 0:
             progress = 0
         self._initialization_bar.setValue(progress)
+        self._logger.debug("done")
+
+    def set_config_active(self, is_active: bool) -> None:
+        """
+        Set whether this camera config options are usable.
+        :param is_active: Usable.
+        :return None:
+        """
+        self._logger.debug("running")
+        for item in self._config_items:
+            item.setEnabled(is_active)
         self._logger.debug("done")
 
     def _set_texts(self) -> None:

@@ -41,23 +41,18 @@ class StreamReader:
             for h in log_handlers:
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
-        self.running = False
-        self.stream = VideoCapture(index, defs.cap_backend)
+        self._running = False
+        self._timeout_limit = 0
+        self._stream = VideoCapture(index, defs.cap_backend)
         self.set_resolution(self.get_resolution())
-        start = time()
-        a, b = self.stream.read()  # Prime camera for reading.
-        end = time()
+        # self._calc_timeout()
         self._fps_limit = 120
         self._frame_rate_limiter = 1/self._fps_limit
-        self.timeout_limit = end - start + 1  # + 1 to handle random uncommon slight discrepancies.
         self._new_frame_event = Event()
         self._err_event = Event()
-        self._tasks = list()
         self._internal_frame_q = SimpleQueue()
         self._loop = get_event_loop()
-
-        self.index = index
-
+        self._read_loop_task = None
         self._logger.debug("Initialized")
 
     def cleanup(self) -> None:
@@ -66,16 +61,29 @@ class StreamReader:
         :return None:
         """
         self.stop()
-        self.stream.release()
+        self._stream.release()
+
+    def _calc_timeout(self) -> None:
+        """
+        Get small sample of reads and pick longest read time for timeout.
+        :return None:
+        """
+        tries = list()
+        for i in range(10):
+            start = time()
+            self._stream.read()  # Prime camera for reading.
+            end = time()
+            tries.append(end - start)
+        self._timeout_limit = max(tries) + 1.5  # + 1.5 to handle possible lag spikes.
 
     def start(self) -> None:
         """
         Reset internal frame queue so we have no leftover frames and run read_cam in thread.
         :return None:
         """
-        self.running = True
+        self._running = True
         self._internal_frame_q = SimpleQueue()
-        self._tasks.append(self._loop.run_in_executor(None, self._read_cam))
+        self._read_loop_task = self._loop.run_in_executor(None, self._read_cam)
 
     def await_new_frame(self) -> futures:
         """
@@ -96,26 +104,27 @@ class StreamReader:
         End any looping tasks.
         :return None:
         """
-        self.running = False
-        for task in self._tasks:
-            task.cancel()
+        self._running = False
+        if self._read_loop_task:
+            self._read_loop_task.cancel()
+            self._read_loop_task = None
 
     def _read_cam(self) -> None:
         """
         Continuously check camera for new frames and put into queue. Raise error event if camera fails.
         :return None:
         """
+        self._calc_timeout()
         prev = time()
-        while self.running:
+        while self._running:
             elapsed = time() - prev
             if elapsed >= self._frame_rate_limiter:
                 prev = time()
                 start = prev
-                ret, frame = self.stream.read()
+                ret, frame = self._stream.read()
                 end = time()
                 time_taken = end - start
-                timeout = time_taken > self.timeout_limit
-                # TODO: Make the timout bigger to handle computers that once in a while lag just a little too much?
+                timeout = time_taken > self._timeout_limit
                 if not ret or frame is None or timeout:
                     self._logger.warning("cam_stream_reader.py _read_cam(): Camera failed. "
                                          + "ret: " + str(ret)
@@ -126,7 +135,7 @@ class StreamReader:
                 self._internal_frame_q.put((frame, datetime.now()))
                 self._loop.call_soon_threadsafe(self._new_frame_event.set)
             else:
-                self.stream.grab()
+                self._stream.grab()
 
     def get_fps(self) -> int:
         """
@@ -151,7 +160,7 @@ class StreamReader:
         """
         self._logger.debug("running")
         if not self._internal_frame_q.empty():
-            self._logger.debug("done with ndarray")
+            self._logger.debug("done with next element")
             return self._internal_frame_q.get()
         self._logger.debug("done with None")
         return None
@@ -160,20 +169,20 @@ class StreamReader:
         """
         Test given frame size to see if camera supports it.
         :param size: The size to test.
-        :return (bool, (float, float)): Whether test succeeded and what the resultant frame size is.
+        :return (bool, (float, float)): Whether test succeeded and what the resultant resolution is.
         """
-        ret1 = self.stream.set(CAP_PROP_FRAME_WIDTH, size[0])
-        ret2 = self.stream.set(CAP_PROP_FRAME_HEIGHT, size[1])
+        ret1 = self._stream.set(CAP_PROP_FRAME_WIDTH, size[0])
+        ret2 = self._stream.set(CAP_PROP_FRAME_HEIGHT, size[1])
         if ret1 and ret2:
             return True, size
         else:
-            return False, (self.stream.get(CAP_PROP_FRAME_WIDTH), self.stream.get(CAP_PROP_FRAME_HEIGHT))
+            return False, (self._stream.get(CAP_PROP_FRAME_WIDTH), self._stream.get(CAP_PROP_FRAME_HEIGHT))
 
     def get_resolution(self) -> (float, float):
         """
         :return (float, float): The current camera frame size.
         """
-        return self.stream.get(CAP_PROP_FRAME_WIDTH), self.stream.get(CAP_PROP_FRAME_HEIGHT)
+        return self._stream.get(CAP_PROP_FRAME_WIDTH), self._stream.get(CAP_PROP_FRAME_HEIGHT)
 
     def set_resolution(self, size: (float, float)) -> None:
         """
@@ -181,7 +190,7 @@ class StreamReader:
         :param size: The new frame size to use.
         :return None:
         """
-        was_running = self.running
+        was_running = self._running
         if was_running:
             self.stop()
         self._set_fourcc()
@@ -195,13 +204,13 @@ class StreamReader:
         :param size: The new size to use.
         :return none:
         """
-        self.stream.set(CAP_PROP_FRAME_WIDTH, size[0])
-        self.stream.set(CAP_PROP_FRAME_HEIGHT, size[1])
+        self._stream.set(CAP_PROP_FRAME_WIDTH, size[0])
+        self._stream.set(CAP_PROP_FRAME_HEIGHT, size[1])
 
     def _set_fourcc(self) -> None:
         """
         Reset fourcc on this camera. Generally done after changing frame size.
         :return None:
         """
-        self.stream.set(CAP_PROP_FOURCC, defs.cap_temp_codec)
-        self.stream.set(CAP_PROP_FOURCC, defs.cap_codec)
+        self._stream.set(CAP_PROP_FOURCC, defs.cap_temp_codec)
+        self._stream.set(CAP_PROP_FOURCC, defs.cap_codec)
