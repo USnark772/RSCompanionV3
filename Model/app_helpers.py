@@ -99,7 +99,7 @@ def format_current_time(to_format: datetime, day=False, time=False, mil=False, m
     logger.debug("running")
     if day and time and mil:
         logger.debug("day, time, mil. done")
-        return to_format.strftime("%Y-%m-%d %H:%M:%S.%f")[:-4]
+        return to_format.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
     elif day and time and micro:
         logger.debug("day, time, mil. done")
         return to_format.strftime("%Y-%m-%d %H:%M:%S.%f")
