@@ -28,7 +28,7 @@ from datetime import datetime
 from cv2 import VideoCapture, CAP_PROP_FOURCC, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
 from queue import SimpleQueue
 from numpy import ndarray
-from time import time
+from time import time, sleep as tsleep
 from asyncio import futures, Event, get_event_loop, sleep
 from Devices.Camera.Model import cam_defs as defs
 from Model.app_helpers import await_event
@@ -122,11 +122,10 @@ class StreamReader:
             elapsed = time() - prev
             if elapsed >= self._frame_rate_limiter:
                 prev = time()
-                start = prev
                 ret, frame = self._stream.read()
                 end = time()
                 dt = datetime.now()
-                time_taken = end - start
+                time_taken = end - prev
                 timeout = time_taken > self._timeout_limit
                 if not ret or frame is None or timeout:
                     self._logger.warning("cam_stream_reader.py _read_cam(): Camera failed. "
@@ -139,6 +138,7 @@ class StreamReader:
                 self._loop.call_soon_threadsafe(self._new_frame_event.set)
             else:
                 self._stream.grab()
+                tsleep(.0001)
 
     def get_fps(self) -> int:
         """
@@ -176,7 +176,9 @@ class StreamReader:
         """
         ret1 = self._stream.set(CAP_PROP_FRAME_WIDTH, size[0])
         ret2 = self._stream.set(CAP_PROP_FRAME_HEIGHT, size[1])
-        if ret1 and ret2:
+        ret, frame = self._stream.read()
+        y, x = frame.shape[0], frame.shape[1]
+        if ret1 and ret2 and size[0] == x and size[1] == y:
             return True, size
         else:
             return False, (self._stream.get(CAP_PROP_FRAME_WIDTH), self._stream.get(CAP_PROP_FRAME_HEIGHT))

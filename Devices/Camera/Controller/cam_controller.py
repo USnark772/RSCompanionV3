@@ -278,6 +278,7 @@ class Controller(AbstractController):
         self.view.fps_list = [x for x in range(1, max_fps + 1)]
         self.send_msg_to_model((defs.ModelEnum.GET_FPS, None))
         self.send_msg_to_model((defs.ModelEnum.GET_RES, None))
+        self.send_msg_to_model((defs.ModelEnum.SET_FPS, max_fps + 400))
         self.view.set_config_active(True)
         self.view.show_images()
         self._logger.debug("done")
