@@ -46,19 +46,35 @@ class InfoBox(QGroupBox):
 
         self.__start_time_label = QLabel()
         self.__start_time_label.setAlignment(Qt.AlignLeft)
-        self.layout().addWidget(self.__start_time_label, 1, 0, 1, 1)
+        self.layout().addWidget(self.__start_time_label, 0, 0, 1, 1)
 
         self.__start_time_val = QLabel()
         self.__start_time_val.setAlignment(Qt.AlignRight)
-        self.layout().addWidget(self.__start_time_val, 1, 1, 1, 1)
+        self.layout().addWidget(self.__start_time_val, 0, 1, 1, 1)
 
         self.__block_num_label = QLabel()
         self.__block_num_label.setAlignment(Qt.AlignLeft)
-        self.layout().addWidget(self.__block_num_label, 2, 0, 1, 1)
+        self.layout().addWidget(self.__block_num_label, 1, 0, 1, 1)
 
         self.__block_num_val = QLabel()
         self.__block_num_val.setAlignment(Qt.AlignRight)
-        self.layout().addWidget(self.__block_num_val, 2, 1, 1, 1)
+        self.layout().addWidget(self.__block_num_val, 1, 1, 1, 1)
+
+        self._empty_block_1_label = QLabel()
+        self._empty_block_1_label.setAlignment(Qt.AlignLeft)
+        self.layout().addWidget(self._empty_block_1_label, 2, 0, 1, 1)
+
+        self._empty_block_1_val = QLabel()
+        self._empty_block_1_val.setAlignment(Qt.AlignRight)
+        self.layout().addWidget(self._empty_block_1_val, 2, 1, 1, 1)
+
+        self._empty_block_2_label = QLabel()
+        self._empty_block_2_label.setAlignment(Qt.AlignLeft)
+        self.layout().addWidget(self._empty_block_2_label, 3, 0, 1, 1)
+
+        self._empty_block_2_val = QLabel()
+        self._empty_block_2_val.setAlignment(Qt.AlignRight)
+        self.layout().addWidget(self._empty_block_2_val, 3, 1, 1, 1)
 
         self._strings = dict()
         self.set_lang(lang)
