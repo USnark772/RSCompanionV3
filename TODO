@@ -4,7 +4,6 @@ TODO: Pressing matters.
         - Make subwindows rearrange/resize/move on main window resize.
     - Implement CAM.
         - Figure out bug with video feed failing or having extreme lag on resolution change.
-        s- Consider resetting fps tracker in model when setting new fps.
         - Consider passing selected fps to writer instead of current fps.
         - handle other to do items listed in cam modules
         - subwindow not resizing properly with different image resolutions.

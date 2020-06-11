@@ -55,7 +55,7 @@ class CamModel:
                           defs.ModelEnum.CLEANUP: self.cleanup,
                           defs.ModelEnum.INITIALIZE: self.init_cam,
                           defs.ModelEnum.GET_FPS: self._cam_reader.get_fps,
-                          defs.ModelEnum.SET_FPS: self._cam_reader.set_fps,
+                          defs.ModelEnum.SET_FPS: self._set_new_fps,
                           defs.ModelEnum.GET_RES: self._cam_reader.get_resolution,
                           defs.ModelEnum.SET_RES: self._cam_reader.set_resolution,
                           }
@@ -237,6 +237,15 @@ class CamModel:
             task.cancel()
         self._stop_event.set()
 
+    def _set_new_fps(self, new_fps: float) -> None:
+        """
+        Set new fps and reset fps tracking.
+        :param new_fps: The new fps to use.
+        :return None:
+        """
+        self._times = list()
+        self._cam_reader.set_fps(new_fps)
+
     # TODO: Handle language changes?
     async def _handle_new_frame(self) -> None:
         """
@@ -258,7 +267,7 @@ class CamModel:
             prev_time = now
             self._fps = round(len(self._times) / sum(self._times))
             fps = "FPS: " + str(self._fps)
-            str_time = format_current_time(timestamp, True, True, True)
+            str_time = format_current_time(timestamp, day=True, time=True, mil=True)
             time_and_name = str_time + " " + self._cam_name
             putText(frame, time_and_name, self._name_time_loc, FONT_FACE, self._font_scale, self._color,
                     self._font_thickness, LINE_TYPE)

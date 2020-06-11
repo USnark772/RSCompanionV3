@@ -84,7 +84,7 @@ async def write_line_to_file(fname, line, new=False):
     logger.debug("done")
 
 
-def format_current_time(to_format: datetime, day=False, time=False, mil=False, save=False):
+def format_current_time(to_format: datetime, day=False, time=False, mil=False, micro=False, save=False):
     """
     Returns a datetime string with day, time, and milliseconds options. If save then returned string has dashes
     instead of periods for use in filenames.
@@ -92,11 +92,15 @@ def format_current_time(to_format: datetime, day=False, time=False, mil=False, s
     :param day: If day should be included in the returned string.
     :param time: If time should be included in the returned string.
     :param mil: If milliseconds should be included in the returned string.
+    :param micro: If not milliseconds then microseconds will be included in the returned string.
     :param save: Changes the output to include - instead of . between values. Mills are removed from return value.
     :return str: The formatted datetime string.
     """
     logger.debug("running")
     if day and time and mil:
+        logger.debug("day, time, mil. done")
+        return to_format.strftime("%Y-%m-%d %H:%M:%S.%f")[:-4]
+    elif day and time and micro:
         logger.debug("day, time, mil. done")
         return to_format.strftime("%Y-%m-%d %H:%M:%S.%f")
     elif day and time and not mil:

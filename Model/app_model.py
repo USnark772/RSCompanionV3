@@ -152,7 +152,7 @@ class AppModel:
         :return None:
         """
         if self.exp_created:
-            timestamp = format_current_time(datetime.now(), True, True, True)
+            timestamp = format_current_time(datetime.now(), day=True, time=True, micro=True)
             line = timestamp + ", " + note
             create_task(write_line_to_file(self._temp_folder.name + "/" + self._note_filename, line))
 
@@ -163,7 +163,7 @@ class AppModel:
         :return None:
         """
         if self.exp_created:
-            timestamp = format_current_time(datetime.now(), True, True, True)
+            timestamp = format_current_time(datetime.now(), day=True, time=True, micro=True)
             line = timestamp + ", " + flag
             create_task(write_line_to_file(self._temp_folder.name + "/" + self._flag_filename, line))
 
