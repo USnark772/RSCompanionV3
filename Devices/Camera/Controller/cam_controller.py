@@ -75,6 +75,7 @@ class Controller(AbstractController):
         self._handle_pipe_flag = TEvent()
         self._handle_pipe_flag.set()
         self._model.start()
+        self._max_fps = float("inf")
         self.set_lang(lang)
         self._res_list = list()
         self.send_msg_to_model((defs.ModelEnum.INITIALIZE, None))
@@ -152,7 +153,13 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        self.send_msg_to_model((defs.ModelEnum.SET_FPS, int(self.view.fps)))
+        if self.view.fps == "\u221e":
+            print("Got inf")
+            new_fps = self._max_fps
+        else:
+            print("got not inf")
+            new_fps = float(self.view.fps)
+        self.send_msg_to_model((defs.ModelEnum.SET_FPS, new_fps))
         self._logger.debug("done")
 
     def update_show_feed(self) -> None:
@@ -169,7 +176,6 @@ class Controller(AbstractController):
         self.send_msg_to_model((defs.ModelEnum.SET_USE_FEED, self.view.use_feed and self.view.use_cam))
         self._logger.debug("done")
 
-    # TODO: Finish implementing this.
     def update_use_cam(self) -> None:
         """
         Set this camera active or inactive.
@@ -272,13 +278,15 @@ class Controller(AbstractController):
         self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, True))
         self.send_msg_to_model((defs.ModelEnum.SET_USE_FEED, True))
         max_fps = init_results[0]
+        fps_list = [str(x) for x in range(1, max_fps + 1)]
+        fps_list.append("\u221e")
         res_list = init_results[1]
         self._res_list = [((str(x[0]) + ", " + str(x[1])), x) for x in res_list]
         self.view.resolution_list = [x[0] for x in self._res_list]
-        self.view.fps_list = [x for x in range(1, max_fps + 1)]
+        self.view.fps_list = fps_list
         self.send_msg_to_model((defs.ModelEnum.GET_FPS, None))
         self.send_msg_to_model((defs.ModelEnum.GET_RES, None))
-        self.send_msg_to_model((defs.ModelEnum.SET_FPS, max_fps + 400))
+        self.send_msg_to_model((defs.ModelEnum.SET_FPS, self._max_fps))
         self.view.set_config_active(True)
         self.view.show_images()
         self._logger.debug("done")
