@@ -78,6 +78,7 @@ class Controller(AbstractController):
             self.end_exp()
         self._msg_handler_task.cancel()
         self._model.cleanup()
+        self.view.save_window_state()
         self._logger.debug("done")
 
     def set_lang(self, lang: LangEnum) -> None:
