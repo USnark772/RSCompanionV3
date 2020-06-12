@@ -71,14 +71,14 @@ class CamView(AbstractView):
         self._cam_settings_layout.addWidget(self._resolution_selector_label, 0, 0)
         self._cam_settings_layout.addWidget(self._resolution_selector, 0, 1)
 
-        self._fps_selector_label = QLabel(self._cam_settings_frame)
-        self._fps_selector_label.setAlignment(Qt.AlignLeft)
+        # self._fps_selector_label = QLabel(self._cam_settings_frame)
+        # self._fps_selector_label.setAlignment(Qt.AlignLeft)
 
-        self._fps_selector = QComboBox(self._cam_settings_frame)
-        self._fps_selector.setMaximumHeight(22)
+        # self._fps_selector = QComboBox(self._cam_settings_frame)
+        # self._fps_selector.setMaximumHeight(22)
 
-        self._cam_settings_layout.addWidget(self._fps_selector_label, 1, 0)
-        self._cam_settings_layout.addWidget(self._fps_selector, 1, 1)
+        # self._cam_settings_layout.addWidget(self._fps_selector_label, 1, 0)
+        # self._cam_settings_layout.addWidget(self._fps_selector, 1, 1)
 
         self._show_feed_checkbox_label = QLabel(self._cam_settings_frame)
         self._show_feed_checkbox_label.setAlignment(Qt.AlignLeft)
@@ -130,22 +130,25 @@ class CamView(AbstractView):
         self.layout().addWidget(self._image_display)
         self.layout().addWidget(self._initialization_bar_frame)
 
-        self._config_win = ConfigPopUp()
-        self._config_win.setLayout(self._dev_sets_layout)
-        self._config_win.setFixedSize(350, 130)
-
         self._config_items = [self._resolution_selector,
-                              self._fps_selector,
+                              # self._fps_selector,
                               self._use_cam_checkbox,
                               self._show_feed_checkbox]
+
+        config_win_w = 350
+        config_win_h = len(self._config_items) * 30
+
+        self._config_win = ConfigPopUp()
+        self._config_win.setLayout(self._dev_sets_layout)
+        self._config_win.setFixedSize(config_win_w, config_win_h)
 
         self._window_changing = False
         self._showing_images = False
         self._hidden = False
-        h = 240
+        # h = 240
         w = 320
-        self._aspect_ratio = h/w
-        self.resize(w, h)
+        self._aspect_ratio = 9/16
+        self.resize(w, int(w * self._aspect_ratio))
         self._strings = dict()
         self._lang_enum = LangEnum.ENG
         self.old_size = QSize(self.width(), self.height())
@@ -171,15 +174,15 @@ class CamView(AbstractView):
         self._resolution_selector.activated.connect(func)
         self._logger.debug("done")
 
-    def set_fps_selector_handler(self, func) -> None:
-        """
-        Add handler for resolution selector.
-        :param func: The handler.
-        :return None:
-        """
-        self._logger.debug("running")
-        self._fps_selector.activated.connect(func)
-        self._logger.debug("done")
+    # def set_fps_selector_handler(self, func) -> None:
+    #     """
+    #     Add handler for resolution selector.
+    #     :param func: The handler.
+    #     :return None:
+    #     """
+    #     self._logger.debug("running")
+    #     self._fps_selector.activated.connect(func)
+    #     self._logger.debug("done")
 
     def set_frame_rotation_handler(self, func):
         self._logger.debug("running")
@@ -265,44 +268,44 @@ class CamView(AbstractView):
         """
         self._resolution_selector.setCurrentIndex(self._resolution_selector.findText(res))
 
-    @property
-    def fps_list(self) -> list:
-        """
-        Get list of fps options.
-        :return list: The list of fps options.
-        """
-        ret = list()
-        return ret
+    # @property
+    # def fps_list(self) -> list:
+    #     """
+    #     Get list of fps options.
+    #     :return list: The list of fps options.
+    #     """
+    #     ret = list()
+    #     return ret
+    #
+    # @fps_list.setter
+    # def fps_list(self, fps_list: list) -> None:
+    #     """
+    #     Set list of available fps to fps_list.
+    #     :param fps_list:
+    #     :return None:
+    #     """
+    #     self._logger.debug("running")
+    #     self._fps_selector.clear()
+    #     for item in fps_list:
+    #         self._fps_selector.addItem(str(item))
+    #     self._logger.debug("done")
 
-    @fps_list.setter
-    def fps_list(self, fps_list: list) -> None:
-        """
-        Set list of available fps to fps_list.
-        :param fps_list:
-        :return None:
-        """
-        self._logger.debug("running")
-        self._fps_selector.clear()
-        for item in fps_list:
-            self._fps_selector.addItem(str(item))
-        self._logger.debug("done")
-
-    @property
-    def fps(self) -> str:
-        """
-        Get the current fps selection.
-        :return str: The current fps selection.
-        """
-        return self._fps_selector.currentText()
-
-    @fps.setter
-    def fps(self, fps: str) -> None:
-        """
-        Set the current fps selection.
-        :param fps: The fps to set to.
-        :return None:
-        """
-        self._fps_selector.setCurrentIndex(self._fps_selector.findText(fps))
+    # @property
+    # def fps(self) -> str:
+    #     """
+    #     Get the current fps selection.
+    #     :return str: The current fps selection.
+    #     """
+    #     return self._fps_selector.currentText()
+    #
+    # @fps.setter
+    # def fps(self, fps: str) -> None:
+    #     """
+    #     Set the current fps selection.
+    #     :param fps: The fps to set to.
+    #     :return None:
+    #     """
+    #     self._fps_selector.setCurrentIndex(self._fps_selector.findText(fps))
 
     @property
     def use_feed(self) -> bool:
@@ -410,10 +413,10 @@ class CamView(AbstractView):
         self._logger.debug("running")
         if not self._window_changing:
             if image is not None:
-                h = image.height() + 30
-                w = image.width()
-                self._aspect_ratio = h/w
-                self._image_display.setPixmap(image.scaled(self.width(), self.width() * self._aspect_ratio))
+                # h = image.height() + 30
+                # w = image.width()
+                # self._aspect_ratio = h/w
+                self._image_display.setPixmap(image.scaled(self.width(), self.width() * self._aspect_ratio))  # TODO: Fix this.
             elif msg is not None:
                 self._image_display.setText(msg)
         self._logger.debug("done")
@@ -478,7 +481,7 @@ class CamView(AbstractView):
         self._show_feed_checkbox_label.setText(self._strings[StringsEnum.SHOW_FEED_CHECKBOX_LABEL])
         self._use_cam_checkbox_label.setText(self._strings[StringsEnum.USE_CAM_CHECKBOX_LABEL])
         self._resolution_selector_label.setText(self._strings[StringsEnum.RESOLUTION_SELECTOR_LABEL])
-        self._fps_selector_label.setText(self._strings[StringsEnum.FPS_SELECTOR_LABEL])
+        # self._fps_selector_label.setText(self._strings[StringsEnum.FPS_SELECTOR_LABEL])
         self._config_win.setWindowTitle(self.get_name() + " " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._config_action.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self._logger.debug("done")

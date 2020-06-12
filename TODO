@@ -3,6 +3,8 @@ TODO: Pressing matters.
     - Finish fine tuning MDI subwindows.
         - Make subwindows rearrange/resize/move on main window resize.
     - Implement CAM.
+        - Use standard aspect ratio for subwindows.
+        - Figure out bug with using close/minimize buttons.
         - Figure out bug with video feed failing or having extreme lag on resolution change.
         - Consider passing selected fps to writer instead of current fps.
         - handle other to do items listed in cam modules
@@ -15,6 +17,9 @@ TODO: Pressing matters.
     - Alter save format to be folder per experiment instead of .rs files.
 
 TODO: At some point
+    - Implement audio recording
+        - Try to figure out which camera each mic belongs to and make that an mp4.
+        - If mic is not attached to camera then save as audio file.
     - Consider making properties out of our getter/setter methods.
         - https://www.python-course.eu/python3_properties.php
     - Check all files for proper and complete logging usage.

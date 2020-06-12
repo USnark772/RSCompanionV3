@@ -128,12 +128,13 @@ class CamModel:
             self._msg_pipe.send((defs.ModelEnum.FAILURE, None))
             prog_tracker.cancel()
             return
-        max_fps = await self._cam_reader.calc_max_fps(max(sizes))
-        if max_fps < 0:
-            self._msg_pipe.send((defs.ModelEnum.FAILURE, None))
-            prog_tracker.cancel()
-            return
-        self._msg_pipe.send((defs.ModelEnum.START, (max_fps, sizes)))
+        # max_fps = await self._cam_reader.calc_max_fps(max(sizes))
+        # if max_fps < 0:
+        #     self._msg_pipe.send((defs.ModelEnum.FAILURE, None))
+        #     prog_tracker.cancel()
+        #     return
+        # self._msg_pipe.send((defs.ModelEnum.START, (max_fps, sizes)))
+        self._msg_pipe.send((defs.ModelEnum.START, sizes))
         prog_tracker.cancel()
 
     async def _monitor_init_progress(self) -> None:
@@ -142,7 +143,8 @@ class CamModel:
         :return None:
         """
         while True:
-            status = (self._cam_reader.get_fps_status() / 2) + (self.size_gtr.status / 2)
+            # status = (self._cam_reader.get_fps_status() / 2) + (self.size_gtr.status / 2)
+            status = self.size_gtr.status
             if status >= 100:
                 break
             self._msg_pipe.send((defs.ModelEnum.STAT_UPD, status))

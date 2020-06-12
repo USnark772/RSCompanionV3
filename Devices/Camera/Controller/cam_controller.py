@@ -75,7 +75,7 @@ class Controller(AbstractController):
         self._handle_pipe_flag = TEvent()
         self._handle_pipe_flag.set()
         self._model.start()
-        self._max_fps = float("inf")
+        # self._max_fps = float("inf")
         self.set_lang(lang)
         self._res_list = list()
         self.send_msg_to_model((defs.ModelEnum.INITIALIZE, None))
@@ -153,13 +153,11 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        if self.view.fps == "\u221e":
-            print("Got inf")
-            new_fps = self._max_fps
-        else:
-            print("got not inf")
-            new_fps = float(self.view.fps)
-        self.send_msg_to_model((defs.ModelEnum.SET_FPS, new_fps))
+        # if self.view.fps == "\u221e":
+        #     new_fps = self._max_fps
+        # else:
+        #     new_fps = float(self.view.fps)
+        # self.send_msg_to_model((defs.ModelEnum.SET_FPS, new_fps))
         self._logger.debug("done")
 
     def update_show_feed(self) -> None:
@@ -179,7 +177,6 @@ class Controller(AbstractController):
     def update_use_cam(self) -> None:
         """
         Set this camera active or inactive.
-        :param is_active: Whether to use this camera or not.
         :return None:
         """
         self._logger.debug("running")
@@ -268,25 +265,27 @@ class Controller(AbstractController):
         """
         self.view.update_init_bar(progress)
 
-    def _finalize(self, init_results: tuple) -> None:
+    def _finalize(self, init_results: list) -> None:
         """
         Tell model to start. Tell view to show images.
+        :param init_results: List of resolutions supported by the camera.
         :return None:
         """
         self._logger.debug("running")
         self._loop.run_in_executor(self._executor, self._update_feed)
         self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, True))
         self.send_msg_to_model((defs.ModelEnum.SET_USE_FEED, True))
-        max_fps = init_results[0]
-        fps_list = [str(x) for x in range(1, max_fps + 1)]
-        fps_list.append("\u221e")
-        res_list = init_results[1]
+        # max_fps = init_results[0]
+        # fps_list = [str(x) for x in range(1, max_fps + 1)]
+        # fps_list.append("\u221e")
+        # res_list = init_results[1]
+        res_list = init_results
         self._res_list = [((str(x[0]) + ", " + str(x[1])), x) for x in res_list]
         self.view.resolution_list = [x[0] for x in self._res_list]
-        self.view.fps_list = fps_list
-        self.send_msg_to_model((defs.ModelEnum.GET_FPS, None))
+        # self.view.fps_list = fps_list
+        # self.send_msg_to_model((defs.ModelEnum.GET_FPS, None))
         self.send_msg_to_model((defs.ModelEnum.GET_RES, None))
-        self.send_msg_to_model((defs.ModelEnum.SET_FPS, self._max_fps))
+        # self.send_msg_to_model((defs.ModelEnum.SET_FPS, self._max_fps))
         self.view.set_config_active(True)
         self.view.show_images()
         self._logger.debug("done")
@@ -298,19 +297,19 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        self.view.fps = str(new_fps)
+        # self.view.fps = str(new_fps)
         self._logger.debug("done")
 
     def _update_view_resolution(self, new_resolution: tuple) -> None:
         """
-        Update view object fps display with new value.
-        :param new_fps: The new value.
+        Update view object resolution display with new value.
+        :param new_resolution: The new value.
         :return None:
         """
         self._logger.debug("running")
         for res in self._res_list:
             if res[1] == new_resolution:
-                self.view.fps = res[0]
+                self.view.resolution = res[0]
         self._logger.debug("done")
 
     def _setup_handlers(self) -> None:
@@ -319,7 +318,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        self.view.set_fps_selector_handler(self.update_fps)
+        # self.view.set_fps_selector_handler(self.update_fps)
         self.view.set_resolution_selector_handler(self.update_resolution)
         self.view.set_show_feed_button_handler(self.update_show_feed)
         self.view.set_use_cam_button_handler(self.update_use_cam)
