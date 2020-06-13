@@ -190,10 +190,10 @@ class VOGView(AbstractView):
         self._dev_sets_layout.addWidget(self._upload_settings_button)
 
         self.layout().addWidget(self._config_button_frame, 0, 0, Qt.AlignTop)
-        self._config_button_frame.setFixedSize(50, 40)
+        self._config_button_frame.setFixedSize(50, 45)
 
         self.layout().addWidget(self._manual_control_button_frame, 0, 0, Qt.AlignBottom)
-        self._manual_control_button_frame.setFixedSize(150, 35)
+        self._manual_control_button_frame.setFixedSize(150, 45)
 
         self._strings = dict()
         self._lang_enum = LangEnum.ENG
