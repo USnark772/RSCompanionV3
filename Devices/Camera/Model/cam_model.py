@@ -90,10 +90,11 @@ class CamModel:
             while self._running:
                 if self._msg_pipe.poll():
                     msg = self._msg_pipe.recv()
-                    if msg[1] is not None:
-                        self._switcher[msg[0]](msg[1])
-                    else:
-                        self._switcher[msg[0]]()
+                    if msg[0] in self._switcher.keys():
+                        if msg[1] is not None:
+                            self._switcher[msg[0]](msg[1])
+                        else:
+                            self._switcher[msg[0]]()
                 await sleep(.01)
         except BrokenPipeError as bpe:
             pass

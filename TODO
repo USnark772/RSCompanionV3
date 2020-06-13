@@ -3,12 +3,10 @@ TODO: Pressing matters.
     - Finish fine tuning MDI subwindows.
         - Make subwindows rearrange/resize/move on main window resize.
     - Implement CAM.
-        - Use standard aspect ratio for subwindows.
-        - Figure out bug with using close/minimize buttons.
         - Figure out bug with video feed failing or having extreme lag on resolution change.
+        - Figure out bug with using close/minimize buttons. (What was this bug?)
         - Consider passing selected fps to writer instead of current fps.
         - handle other to do items listed in cam modules
-        - subwindow not resizing properly with different image resolutions.
         - Cameras are not in sync over time. (Only on Phillip's machine...sad)
         - c920 not always getting max advertised fps. (Joel's machine has no problems...isn't he cool)
     - Ensure app does not save experiment before devices finish saving. (Can we tell if a file is still opened?)

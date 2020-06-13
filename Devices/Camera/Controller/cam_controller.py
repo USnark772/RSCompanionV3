@@ -59,7 +59,7 @@ class Controller(AbstractController):
         self._model = Process(target=CamModel, args=(msg_pipe, img_pipe, self.cam_index))
         # TODO: Multiprocessing could cause issues when packaging app.
         self._switcher = {defs.ModelEnum.FAILURE: self.err_cleanup,
-                          defs.ModelEnum.CUR_FPS: self._update_view_fps,
+                          # defs.ModelEnum.CUR_FPS: self._update_view_fps,
                           defs.ModelEnum.CLEANUP: self._set_model_cleaned,
                           defs.ModelEnum.STOP: self._set_saved,
                           defs.ModelEnum.STAT_UPD: self._show_init_progress,
@@ -147,18 +147,18 @@ class Controller(AbstractController):
                 break
         self._logger.debug("done")
 
-    def update_fps(self) -> None:
-        """
-        Get fps selection from View and pass to model.
-        :return None:
-        """
-        self._logger.debug("running")
-        # if self.view.fps == "\u221e":
-        #     new_fps = self._max_fps
-        # else:
-        #     new_fps = float(self.view.fps)
-        # self.send_msg_to_model((defs.ModelEnum.SET_FPS, new_fps))
-        self._logger.debug("done")
+    # def update_fps(self) -> None:
+    #     """
+    #     Get fps selection from View and pass to model.
+    #     :return None:
+    #     """
+    #     self._logger.debug("running")
+    #     if self.view.fps == "\u221e":
+    #         new_fps = self._max_fps
+    #     else:
+    #         new_fps = float(self.view.fps)
+    #     self.send_msg_to_model((defs.ModelEnum.SET_FPS, new_fps))
+    #     self._logger.debug("done")
 
     def update_show_feed(self) -> None:
         """
@@ -225,10 +225,11 @@ class Controller(AbstractController):
             while not self._stop.isSet():
                 if self._model_msg_pipe.poll():
                     msg = self._model_msg_pipe.recv()
-                    if msg[1] is not None:
-                        self._loop.call_soon_threadsafe(self._switcher[msg[0]], msg[1])
-                    else:
-                        self._loop.call_soon_threadsafe(self._switcher[msg[0]])
+                    if msg[0] in self._switcher.keys():
+                        if msg[1] is not None:
+                            self._loop.call_soon_threadsafe(self._switcher[msg[0]], msg[1])
+                        else:
+                            self._loop.call_soon_threadsafe(self._switcher[msg[0]])
                 sleep(1)
         except BrokenPipeError as bpe:
             pass
