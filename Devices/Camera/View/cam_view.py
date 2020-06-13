@@ -26,12 +26,12 @@ https://redscientific.com/index.html
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QVBoxLayout, QLabel, QProgressBar, QHBoxLayout, QCheckBox, QComboBox, QLineEdit, \
     QSizePolicy, QSpacerItem, QMenuBar, QAction, QGridLayout
-from PySide2.QtGui import QPixmap, QMouseEvent, QResizeEvent, QHideEvent, QShowEvent
+from PySide2.QtGui import QPixmap, QMouseEvent, QResizeEvent, QHideEvent, QShowEvent, QPalette, QColor
 from PySide2.QtCore import Qt, QSize
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 from Devices.AbstractDevice.View.ConfigPopUp import ConfigPopUp
 from Devices.Camera.Resources.cam_strings import strings, StringsEnum, LangEnum
-from Model.app_helpers import EasyFrame
+from Model.app_helpers import EasyFrame, ClickAnimationButton
 
 
 class CamView(AbstractView):
@@ -41,7 +41,7 @@ class CamView(AbstractView):
             for h in log_handlers:
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
-        super().__init__(name, empty=True)
+        super().__init__(name)
 
         self._initialization_bar_frame = EasyFrame()
         self._initialization_bar_frame.setMouseTracking(True)
@@ -116,19 +116,40 @@ class CamView(AbstractView):
         self._dev_sets_frame = EasyFrame()
         self._dev_sets_layout = QVBoxLayout(self._dev_sets_frame)
 
-        self._menu_bar = QMenuBar()
-        self._menu_bar.setMaximumWidth(self.width()-17)
-        self._menu_bar.setMouseTracking(True)
-        self._config_action = QAction()
-        self._menu_bar.addAction(self._config_action)
-        self._config_action.triggered.connect(self._config_button_handler)
-        self.layout().setMenuBar(self._menu_bar)
+        # self.setLayout(QGridLayout())
+        # self.layout = self.new_layout
+
+        """ Configuration popup """
+        self._config_button_frame = EasyFrame()
+        self._config_button_frame_layout = QHBoxLayout(self._config_button_frame)
+
+        self.config_button = ClickAnimationButton()
+        self.config_button.clicked.connect(self._config_button_handler)
+
+        self._config_button_frame_layout.addWidget(self.config_button)
+        self.layout().addWidget(self._config_button_frame, 0, 0, Qt.AlignTop)
+        self._config_button_frame.setFixedSize(50, 45)
+
+        # trying to set the alpha for the config button.
+        self._button_palette = self.config_button.palette()
+        self._button_color = self._button_palette.color(QPalette.Window)
+        self._button_color.setAlpha(200)
+        self._button_palette.setColor(QPalette.Text, self._button_color)
+        self.config_button.setPalette(self._button_palette)
+        print(self.config_button.palette())
+
+        # self._menu_bar = QMenuBar()
+        # self._menu_bar.setMaximumWidth(self.width()-17)
+        # self._menu_bar.setMouseTracking(True)
+        # self._config_action = QAction()
+        # self._menu_bar.addAction(self._config_action)
+        # self._config_action.triggered.connect(self._config_button_handler)
+        # self.layout().setMenuBar(self._menu_bar)
 
         self._dev_sets_layout.addWidget(self._cam_settings_frame)
         self._dev_sets_layout.addItem(spacer)
-        self.setLayout(QHBoxLayout())
-        self.layout().addWidget(self._image_display)
-        self.layout().addWidget(self._initialization_bar_frame)
+        self.layout().addWidget(self._image_display, 0, 0)
+        self.layout().addWidget(self._initialization_bar_frame, 0, 0)
 
         self._config_items = [self._resolution_selector,
                               # self._fps_selector,
@@ -136,7 +157,10 @@ class CamView(AbstractView):
                               self._show_feed_checkbox]
 
         config_win_w = 350
-        config_win_h = len(self._config_items) * 30
+        config_win_h = len(self._config_items) * 40
+
+        self._config_button_frame.raise_()
+        self._config_button_frame.hide()
 
         self._config_win = ConfigPopUp()
         self._config_win.setLayout(self._dev_sets_layout)
@@ -148,7 +172,7 @@ class CamView(AbstractView):
         # h = 240
         w = 320
         self._aspect_ratio = 9/16
-        self.resize(w, int(w * self._aspect_ratio))
+        self.resize(w, self.heightForWidth(w))
         self._strings = dict()
         self._lang_enum = LangEnum.ENG
         self.old_size = QSize(self.width(), self.height())
@@ -353,8 +377,14 @@ class CamView(AbstractView):
             elif resizeEvent.size().height() != self.old_size.height():
                 self.resize(int(self.height() / self._aspect_ratio), self.height())
             self.old_size = resizeEvent.size()
-            self._menu_bar.setMaximumWidth(self.width()-17)
+            # self._menu_bar.setMaximumWidth(self.width()-17)
         return super().resizeEvent(resizeEvent)
+
+    def heightForWidth(self, w: int) -> int:
+        return w * self._aspect_ratio
+
+    def widthForHeight(self, h: int) -> int:
+        return h / self._aspect_ratio
 
     def hideEvent(self, hideEvent: QHideEvent):
         """
@@ -416,7 +446,7 @@ class CamView(AbstractView):
                 # h = image.height() + 30
                 # w = image.width()
                 # self._aspect_ratio = h/w
-                self._image_display.setPixmap(image.scaled(self.width(), self.width() * self._aspect_ratio))  # TODO: Fix this.
+                self._image_display.setPixmap(image.scaled(self.width(), self.heightForWidth(self.width())))  # TODO: Fix this.
             elif msg is not None:
                 self._image_display.setText(msg)
         self._logger.debug("done")
@@ -430,6 +460,7 @@ class CamView(AbstractView):
         self._showing_images = True
         self._initialization_bar_frame.hide()
         self._image_display.show()
+        self._config_button_frame.show()
         self._logger.debug("done")
 
     def show_initialization(self) -> None:
@@ -440,6 +471,7 @@ class CamView(AbstractView):
         self._logger.debug("running")
         self._showing_images = False
         self._image_display.hide()
+        self._config_button_frame.hide()
         self._initialization_bar_frame.show()
         self._logger.debug("done")
 
@@ -483,7 +515,8 @@ class CamView(AbstractView):
         self._resolution_selector_label.setText(self._strings[StringsEnum.RESOLUTION_SELECTOR_LABEL])
         # self._fps_selector_label.setText(self._strings[StringsEnum.FPS_SELECTOR_LABEL])
         self._config_win.setWindowTitle(self.get_name() + " " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
-        self._config_action.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
+        # self._config_action.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
+        self.config_button.setText("...")
         self._logger.debug("done")
 
     def _set_tooltips(self) -> None:
