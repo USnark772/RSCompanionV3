@@ -54,10 +54,10 @@ class CamModel:
                           defs.ModelEnum.SET_USE_FEED: self._use_feed,
                           defs.ModelEnum.CLEANUP: self.cleanup,
                           defs.ModelEnum.INITIALIZE: self.init_cam,
-                          defs.ModelEnum.GET_FPS: self._cam_reader.get_fps,
-                          defs.ModelEnum.SET_FPS: self._set_new_fps,
-                          defs.ModelEnum.GET_RES: self._cam_reader.get_resolution,
-                          defs.ModelEnum.SET_RES: self._cam_reader.set_resolution,
+                          defs.ModelEnum.GET_FPS: self._get_fps,
+                          defs.ModelEnum.SET_FPS: self._set_fps,
+                          defs.ModelEnum.GET_RES: self._get_res,
+                          defs.ModelEnum.SET_RES: self._set_res,
                           }
         self._running = True
         self._writing = False
@@ -65,7 +65,7 @@ class CamModel:
         self._pipe_handler_task = None
         self._frame_handler_task = None
         self._frame_size = self._cam_reader.get_resolution()
-        self._using_cam = Event()
+        self._handle_frames = Event()
         self._loop = get_event_loop()
 
         self._sizes = list()
@@ -132,13 +132,13 @@ class CamModel:
             self._msg_pipe.send((defs.ModelEnum.FAILURE, None))
             prog_tracker.cancel()
             return
-        # max_fps = await self._cam_reader.calc_max_fps(max(sizes))
-        # if max_fps < 0:
-        #     self._msg_pipe.send((defs.ModelEnum.FAILURE, None))
-        #     prog_tracker.cancel()
-        #     return
-        # self._msg_pipe.send((defs.ModelEnum.START, (max_fps, sizes)))
-        self._msg_pipe.send((defs.ModelEnum.START, sizes))
+        max_fps = await self._cam_reader.calc_max_fps(max(sizes))
+        if max_fps < 0:
+            self._msg_pipe.send((defs.ModelEnum.FAILURE, None))
+            prog_tracker.cancel()
+            return
+        self._msg_pipe.send((defs.ModelEnum.START, (max_fps, sizes)))
+        # self._msg_pipe.send((defs.ModelEnum.START, sizes))
         prog_tracker.cancel()
 
     async def _monitor_init_progress(self) -> None:
@@ -147,8 +147,8 @@ class CamModel:
         :return None:
         """
         while True:
-            # status = (self._cam_reader.get_fps_status() / 2) + (self.size_gtr.status / 2)
-            status = self.size_gtr.status
+            status = (self._cam_reader.get_fps_status() / 2) + (self.size_gtr.status / 2)
+            # status = self.size_gtr.status
             if status >= 100:
                 break
             self._msg_pipe.send((defs.ModelEnum.STAT_UPD, status))
@@ -171,6 +171,27 @@ class CamModel:
         self._cam_writer.cleanup(discard)
         self._msg_pipe.send((defs.ModelEnum.CLEANUP, None))
 
+    def _get_res(self) -> None:
+        """
+        Send the current resolution of this camera.
+        :return None:
+        """
+        self._msg_pipe.send((defs.ModelEnum.CUR_RES, self._cam_reader.get_resolution()))
+
+    def _set_res(self, new_res: (float, float)) -> None:
+        """
+        Change the resolution on this camera.
+        :param new_res: The new resolution to use.
+        :return None:
+        """
+        self._show_feed = False
+        self._cam_reader.stop()
+        self._cam_reader.set_resolution(new_res)
+        self._times = list()
+        time.sleep(1)
+        self._cam_reader.start()
+        self._show_feed = True
+
     def _use_cam(self, is_active: bool) -> None:
         """
         Toggle whether this cam is being used.
@@ -179,10 +200,10 @@ class CamModel:
         """
         if is_active:
             self._cam_reader.start()
-            self._using_cam.set()
+            self._handle_frames.set()
         else:
             self._cam_reader.stop()
-            self._using_cam.clear()
+            self._handle_frames.clear()
 
     def _use_feed(self, is_active: bool) -> None:
         """
@@ -243,7 +264,14 @@ class CamModel:
             task.cancel()
         self._stop_event.set()
 
-    def _set_new_fps(self, new_fps: float) -> None:
+    def _get_fps(self) -> None:
+        """
+        Send the current fps of this camera.
+        :return None:
+        """
+        self._msg_pipe.send((defs.ModelEnum.CUR_FPS, self._cam_reader.get_fps()))
+
+    def _set_fps(self, new_fps: float) -> None:
         """
         Set new fps and reset fps tracking.
         :param new_fps: The new fps to use.
@@ -262,7 +290,7 @@ class CamModel:
         num_to_keep = 60
         prev_time = time.time()
         while self._running:
-            await self._using_cam.wait()
+            await self._handle_frames.wait()
             await self._cam_reader.await_new_frame()
             ret, (frame, timestamp) = self._cam_reader.get_next_new_frame()
             if not ret:

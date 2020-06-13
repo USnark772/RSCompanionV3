@@ -3,8 +3,7 @@ TODO: Pressing matters.
     - Finish fine tuning MDI subwindows.
         - Make subwindows rearrange/resize/move on main window resize.
     - Implement CAM.
-        - Figure out bug with video feed failing or having extreme lag on resolution change.
-        - Figure out bug with using close/minimize buttons. (What was this bug?)
+        - Make image fit fully into subwindow display area.
         - Consider passing selected fps to writer instead of current fps.
         - handle other to do items listed in cam modules
         - Cameras are not in sync over time. (Only on Phillip's machine...sad)

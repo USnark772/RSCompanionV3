@@ -134,7 +134,7 @@ class DRTView(AbstractView):
         self.config_button.clicked.connect(self._config_button_handler)
 
         self._config_button_frame_layout.addWidget(self.config_button)
-        self.layout().addWidget(self._config_button_frame, 0, 0, Qt.AlignTop)
+        self.layout().addWidget(self._config_button_frame, 0, 0, Qt.AlignTop | Qt.AlignRight)
         self._config_button_frame.setFixedSize(50, 45)
 
         """ Configuration menu """

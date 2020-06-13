@@ -189,7 +189,7 @@ class VOGView(AbstractView):
         self._dev_sets_layout.addWidget(self._direct_control_button)
         self._dev_sets_layout.addWidget(self._upload_settings_button)
 
-        self.layout().addWidget(self._config_button_frame, 0, 0, Qt.AlignTop)
+        self.layout().addWidget(self._config_button_frame, 0, 0, Qt.AlignTop | Qt.AlignRight)
         self._config_button_frame.setFixedSize(50, 45)
 
         self.layout().addWidget(self._manual_control_button_frame, 0, 0, Qt.AlignBottom)

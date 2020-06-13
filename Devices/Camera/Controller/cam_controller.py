@@ -59,7 +59,8 @@ class Controller(AbstractController):
         self._model = Process(target=CamModel, args=(msg_pipe, img_pipe, self.cam_index))
         # TODO: Multiprocessing could cause issues when packaging app.
         self._switcher = {defs.ModelEnum.FAILURE: self.err_cleanup,
-                          # defs.ModelEnum.CUR_FPS: self._update_view_fps,
+                          defs.ModelEnum.CUR_FPS: self._update_view_fps,
+                          defs.ModelEnum.CUR_RES: self._update_view_resolution,
                           defs.ModelEnum.CLEANUP: self._set_model_cleaned,
                           defs.ModelEnum.STOP: self._set_saved,
                           defs.ModelEnum.STAT_UPD: self._show_init_progress,
@@ -75,7 +76,9 @@ class Controller(AbstractController):
         self._handle_pipe_flag = TEvent()
         self._handle_pipe_flag.set()
         self._model.start()
-        # self._max_fps = float("inf")
+        self._fps_inf = float("inf")
+        self._fps_inf_str = "\u221e"
+        self._max_fps = 30
         self.set_lang(lang)
         self._res_list = list()
         self.send_msg_to_model((defs.ModelEnum.INITIALIZE, None))
@@ -122,6 +125,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
+        self.view.set_config_active(False)
         self.send_msg_to_model((defs.ModelEnum.START, path))
         self._logger.debug("done")
 
@@ -132,6 +136,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self.send_msg_to_model((defs.ModelEnum.STOP, None))
+        self.view.set_config_active(True)
         self._logger.debug("done")
 
     def update_resolution(self) -> None:
@@ -147,18 +152,18 @@ class Controller(AbstractController):
                 break
         self._logger.debug("done")
 
-    # def update_fps(self) -> None:
-    #     """
-    #     Get fps selection from View and pass to model.
-    #     :return None:
-    #     """
-    #     self._logger.debug("running")
-    #     if self.view.fps == "\u221e":
-    #         new_fps = self._max_fps
-    #     else:
-    #         new_fps = float(self.view.fps)
-    #     self.send_msg_to_model((defs.ModelEnum.SET_FPS, new_fps))
-    #     self._logger.debug("done")
+    def update_fps(self) -> None:
+        """
+        Get fps selection from View and pass to model.
+        :return None:
+        """
+        self._logger.debug("running")
+        if self.view.fps == self._fps_inf_str:
+            new_fps = self._fps_inf
+        else:
+            new_fps = float(self.view.fps)
+        self.send_msg_to_model((defs.ModelEnum.SET_FPS, new_fps))
+        self._logger.debug("done")
 
     def update_show_feed(self) -> None:
         """
@@ -276,17 +281,17 @@ class Controller(AbstractController):
         self._loop.run_in_executor(self._executor, self._update_feed)
         self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, True))
         self.send_msg_to_model((defs.ModelEnum.SET_USE_FEED, True))
-        # max_fps = init_results[0]
-        # fps_list = [str(x) for x in range(1, max_fps + 1)]
-        # fps_list.append("\u221e")
-        # res_list = init_results[1]
-        res_list = init_results
+        self._max_fps = init_results[0]
+        fps_list = [str(x) for x in range(1, self._max_fps + 1)]
+        fps_list.append(self._fps_inf_str)
+        res_list = init_results[1]
+        # res_list = init_results
         self._res_list = [((str(x[0]) + ", " + str(x[1])), x) for x in res_list]
         self.view.resolution_list = [x[0] for x in self._res_list]
-        # self.view.fps_list = fps_list
-        # self.send_msg_to_model((defs.ModelEnum.GET_FPS, None))
+        self.view.fps_list = fps_list
+        self.send_msg_to_model((defs.ModelEnum.SET_FPS, self._fps_inf))
+        self.send_msg_to_model((defs.ModelEnum.GET_FPS, None))
         self.send_msg_to_model((defs.ModelEnum.GET_RES, None))
-        # self.send_msg_to_model((defs.ModelEnum.SET_FPS, self._max_fps))
         self.view.set_config_active(True)
         self.view.show_images()
         self._logger.debug("done")
@@ -298,7 +303,11 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        # self.view.fps = str(new_fps)
+        if new_fps > self._max_fps:
+            new_fps = self._fps_inf_str
+        else:
+            new_fps = str(new_fps)
+        self.view.fps = new_fps
         self._logger.debug("done")
 
     def _update_view_resolution(self, new_resolution: tuple) -> None:
@@ -319,7 +328,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        # self.view.set_fps_selector_handler(self.update_fps)
+        self.view.set_fps_selector_handler(self.update_fps)
         self.view.set_resolution_selector_handler(self.update_resolution)
         self.view.set_show_feed_button_handler(self.update_show_feed)
         self.view.set_use_cam_button_handler(self.update_use_cam)

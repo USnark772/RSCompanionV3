@@ -51,6 +51,7 @@ class ModelEnum(Enum):
     STOP = auto()
     SET_RES = auto()
     GET_RES = auto()
+    CUR_RES = auto()
     SET_FPS = auto()
     GET_FPS = auto()
     CUR_FPS = auto()

@@ -215,14 +215,14 @@ class StreamReader:
         :param size: The new frame size to use.
         :return None:
         """
-        was_running = self._running
-        if was_running:
-            self.stop()
+        # was_running = self._running
+        # if was_running:
+        #     self.stop()
         self._internal_frame_q = SimpleQueue()
         self._set_fourcc()
         self._set_resolution(size)
-        if was_running:
-            self.start()
+        # if was_running:
+        #     self.start()
 
     def _set_resolution(self, size: (float, float)) -> None:
         """
