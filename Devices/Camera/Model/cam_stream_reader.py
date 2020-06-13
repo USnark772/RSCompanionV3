@@ -41,6 +41,7 @@ class StreamReader:
             for h in log_handlers:
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
+        self.index = index
         self._running = False
         self._closing_flag = Event()
         self._timeout_limit = 0
@@ -175,17 +176,17 @@ class StreamReader:
         self._fps_limit = new_fps
         self._frame_rate_limiter = 1 / self._fps_limit - .001
 
-    def get_next_new_frame(self) -> ndarray:
+    def get_next_new_frame(self) -> (bool, (ndarray, datetime)):
         """
         Get next frame from queue if it exists and return it, else return None.
-        :return ndarray or None:
+        :return (bool, (ndarray, datetime)): (Whether there is a frame, (frame/None, datetime/None))
         """
         self._logger.debug("running")
         if not self._internal_frame_q.empty():
             self._logger.debug("done with next element")
-            return self._internal_frame_q.get()
+            return True, self._internal_frame_q.get()
         self._logger.debug("done with None")
-        return None
+        return False, (None, None)
 
     def test_resolution(self, size: (float, float)) -> (bool, (float, float)):
         """
@@ -217,6 +218,7 @@ class StreamReader:
         was_running = self._running
         if was_running:
             self.stop()
+        self._internal_frame_q = SimpleQueue()
         self._set_fourcc()
         self._set_resolution(size)
         if was_running:

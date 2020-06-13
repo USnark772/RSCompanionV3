@@ -91,6 +91,9 @@ class CamModel:
                 if self._msg_pipe.poll():
                     msg = self._msg_pipe.recv()
                     if msg[0] in self._switcher.keys():
+                        # if self._cam_index == 1:
+                        #     if msg[0] == defs.ModelEnum.SET_RES:
+                        #         print(__name__, "Line 95. Got resolution change msg:", msg)
                         if msg[1] is not None:
                             self._switcher[msg[0]](msg[1])
                         else:
@@ -261,7 +264,9 @@ class CamModel:
         while self._running:
             await self._using_cam.wait()
             await self._cam_reader.await_new_frame()
-            (frame, timestamp) = self._cam_reader.get_next_new_frame()
+            ret, (frame, timestamp) = self._cam_reader.get_next_new_frame()
+            if not ret:
+                continue
             now = time.mktime(timestamp.timetuple()) + timestamp.microsecond / 1E6
             diff = now - prev_time
             self._times.append(diff)
