@@ -66,6 +66,7 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
         self._win_geo_ident = self._name + "_geo"
         self._win_state_ident = self._name + "_state"
         self._settings_group_ident = "subwindow_settings"
+        self._minimized = False
 
     def get_name(self) -> str:
         """
@@ -98,11 +99,12 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
         :return: None
         """
         event.ignore()
-        self.setWindowState(Qt.WindowMinimized)
-        if self.windowState() == Qt.WindowMinimized:
+        if self._minimized:
             self.setWindowState(Qt.WindowNoState)
-        elif self.windowState() == Qt.WindowNoState:
+            self._minimized = False
+        elif not self._minimized:
             self.setWindowState(Qt.WindowMinimized)
+            self._minimized = True
 
     def save_window_state(self) -> None:
         """

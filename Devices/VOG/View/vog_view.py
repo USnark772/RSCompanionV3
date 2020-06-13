@@ -47,7 +47,7 @@ class VOGView(AbstractView):
         super().__init__(name)
 
         """ Min size for the VOG window """
-        self._subwindow_height = 300
+        self._subwindow_height = 309
         self._subwindow_width = 550
 
         """ min and max sizes for the configuration popup (width, height) """

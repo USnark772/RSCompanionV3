@@ -45,7 +45,7 @@ class DRTView(AbstractView):
         super().__init__(name)
 
         """ Min size for the DRT window """
-        self._subwindow_height = 300
+        self._subwindow_height = 309
         self._subwindow_width = 550
 
         # self.tab_height = int(self.subwindow_height * 0.9)

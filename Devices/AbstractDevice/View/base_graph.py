@@ -29,7 +29,9 @@ from logging import getLogger, StreamHandler
 from datetime import datetime
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as Canvas
 from matplotlib.figure import Figure
+from matplotlib.ticker import MaxNLocator, OldAutoLocator
 from Devices.AbstractDevice.Resources.abstract_strings import strings, StringsEnum, LangEnum
+import numpy as np
 
 
 class AbstractMeta(ABCMeta, type(Canvas)):
@@ -119,6 +121,7 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
                     axes = self.figure.add_subplot(1, 1, 1)
                     axes.tick_params(axis='x', labelrotation=30)
                     axes.set_ylabel(name, color='#1f77b4')
+                    # axes.set_yticks(step=50)
                     await sleep(.001)
                     # old code that can be deleted if new format is okay
                     # if i == num_plots - 1:
@@ -127,10 +130,13 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
                     #     await sleep(.001)
                     # axes.set_xlabel(self._base_strings[StringsEnum.GRAPH_TS])
                     if not new:
+                        # axes.set_yticks(np.arange(0, 1000, step=25))
                         await create_task(self.plot_device_data(axes, name))
                 else:
                     alt_axes = axes.twinx()
                     alt_axes.set_ylabel(name, color='#ff7f0e')
+                    alt_axes.tick_params(axis='y', labelcolor='#ff7f0e')
+                    alt_axes.set_yticks(np.arange(0, 5, step=1))
                     await sleep(.001)
                     if not new:
                         await create_task(self.plot_device_data(alt_axes, name, axes))

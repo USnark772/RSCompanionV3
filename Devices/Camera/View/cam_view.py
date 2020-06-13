@@ -43,6 +43,10 @@ class CamView(AbstractView):
         self._logger.debug("Initializing")
         super().__init__(name)
 
+        """ Min size for cam window """
+        self._subwindow_height = 300
+        self._subwindow_width = 550
+
         self._initialization_bar_frame = EasyFrame()
         self._initialization_bar_frame.setMouseTracking(True)
         self._initialization_bar_frame.setMaximumHeight(70)
@@ -136,7 +140,7 @@ class CamView(AbstractView):
         self._button_color.setAlpha(200)
         self._button_palette.setColor(QPalette.Text, self._button_color)
         self.config_button.setPalette(self._button_palette)
-        print(self.config_button.palette())
+        # print(self.config_button.palette())
 
         # self._menu_bar = QMenuBar()
         # self._menu_bar.setMaximumWidth(self.width()-17)
@@ -175,7 +179,9 @@ class CamView(AbstractView):
         self.resize(w, self.heightForWidth(w))
         self._strings = dict()
         self._lang_enum = LangEnum.ENG
+        self.setMinimumSize(self._subwindow_width, self._subwindow_height)
         self.old_size = QSize(self.width(), self.height())
+
         self._logger.debug("Initialized")
 
     def set_show_feed_button_handler(self, func) -> None:
@@ -372,19 +378,22 @@ class CamView(AbstractView):
     # TODO: This could be much better.
     def resizeEvent(self, resizeEvent: QResizeEvent) -> None:
         if not self._hidden:
-            if resizeEvent.size().width() != self.old_size.width():
-                self.resize(self.width(), int(self.width() * self._aspect_ratio))
-            elif resizeEvent.size().height() != self.old_size.height():
-                self.resize(int(self.height() / self._aspect_ratio), self.height())
-            self.old_size = resizeEvent.size()
+            # if resizeEvent.size().width() != self.old_size.width():
+            #     self.resize(self.width(), int(self.width() * self._aspect_ratio))
+            # elif resizeEvent.size().height() != self.old_size.height():
+            #     self.resize(int(self.height() / self._aspect_ratio), self.height())
+
+            resizeEvent.accept()
+            self.resize(self.width(), self.heightForWidth(self.width()))
+            # self.old_size = resizeEvent.size()
             # self._menu_bar.setMaximumWidth(self.width()-17)
         return super().resizeEvent(resizeEvent)
 
     def heightForWidth(self, w: int) -> int:
-        return w * self._aspect_ratio
+        return int(w * self._aspect_ratio)
 
     def widthForHeight(self, h: int) -> int:
-        return h / self._aspect_ratio
+        return int(h / self._aspect_ratio)
 
     def hideEvent(self, hideEvent: QHideEvent):
         """
@@ -402,36 +411,36 @@ class CamView(AbstractView):
         """
         self._hidden = False
 
-    def mousePressEvent(self, mouseEvent: QMouseEvent) -> None:
-        """
-        Detect when user is possibly resizing window.
-        :param mouseEvent: The event to check.
-        :return None:
-        """
-        self._logger.debug("running")
-        super(CamView, self).mousePressEvent(mouseEvent)
-        pos = mouseEvent.localPos()
-        if 8 < pos.x() < self.width() - 8 and 48 < pos.y() < self.height() - 8:
-            return
-        self._window_changing = True
-        self._image_display.hide()
-        self._logger.debug("done")
-
-    def mouseReleaseEvent(self, mouseEvent: QMouseEvent) -> None:
-        """
-        Detect when use releases mouse event to tell when user is possibly done resizing window.
-        :param mouseEvent: The event to check.
-        :return None:
-        """
-        self._logger.debug("running")
-        super(CamView, self).mousePressEvent(mouseEvent)
-        pos = mouseEvent.localPos()
-        if 9 < pos.x() < self.width() - 9 and 49 < pos.y() < self.height() - 9:
-            return
-        self._window_changing = False
-        if self._showing_images:
-            self._image_display.show()
-        self._logger.debug("done")
+    # def mousePressEvent(self, mouseEvent: QMouseEvent) -> None:
+    #     """
+    #     Detect when user is possibly resizing window.
+    #     :param mouseEvent: The event to check.
+    #     :return None:
+    #     """
+    #     self._logger.debug("running")
+    #     super(CamView, self).mousePressEvent(mouseEvent)
+    #     pos = mouseEvent.localPos()
+    #     if 8 < pos.x() < self.width() - 8 and 48 < pos.y() < self.height() - 8:
+    #         return
+    #     self._window_changing = True
+    #     self._image_display.hide()
+    #     self._logger.debug("done")
+    #
+    # def mouseReleaseEvent(self, mouseEvent: QMouseEvent) -> None:
+    #     """
+    #     Detect when use releases mouse event to tell when user is possibly done resizing window.
+    #     :param mouseEvent: The event to check.
+    #     :return None:
+    #     """
+    #     self._logger.debug("running")
+    #     super(CamView, self).mousePressEvent(mouseEvent)
+    #     pos = mouseEvent.localPos()
+    #     if 9 < pos.x() < self.width() - 9 and 49 < pos.y() < self.height() - 9:
+    #         return
+    #     self._window_changing = False
+    #     if self._showing_images:
+    #         self._image_display.show()
+    #     self._logger.debug("done")
 
     def update_image(self, image: QPixmap = None, msg: str = None) -> None:
         """
