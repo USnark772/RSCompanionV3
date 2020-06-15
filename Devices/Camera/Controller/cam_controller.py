@@ -118,13 +118,16 @@ class Controller(AbstractController):
         """
         return await_event(self.saved)
 
-    def create_exp(self, path: str) -> None:
+    def create_exp(self, path: str, cond_name: str) -> None:
         """
         Handle experiment created for this device.
         :param path: The path to use to save data.
+        :param cond_name: The optional condition name for this experiment.
         :return None:
         """
         self._logger.debug("running")
+        # TODO: Send cond_name to model.
+        # self.send_msg_to_model((defs.ModelEnum., cond_name))
         self.view.set_config_active(False)
         self.send_msg_to_model((defs.ModelEnum.START, path))
         self._logger.debug("done")
@@ -137,6 +140,17 @@ class Controller(AbstractController):
         self._logger.debug("running")
         self.send_msg_to_model((defs.ModelEnum.STOP, None))
         self.view.set_config_active(True)
+        self._logger.debug("done")
+
+    def start_exp(self, block_num: int) -> None:
+        """
+        Handle start exp signal for this camera.
+        :param block_num: The current block number.
+        :return None:
+        """
+        self._logger.debug("running")
+        # TODO: Send block_num to model.
+        # self.send_msg_to_model((defs.ModelEnum., block_num))
         self._logger.debug("done")
 
     def update_resolution(self) -> None:
