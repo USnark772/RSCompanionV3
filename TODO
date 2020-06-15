@@ -38,3 +38,4 @@ TODO: At some point
         - 10 most spoken languages would be nice.
     - Finish adding/translating languages for current string.py files.
     - Look over https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html and make edits to imports.
+    - Look at info_box.py empty QLabel items and consider a spacer item instead.

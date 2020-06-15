@@ -111,10 +111,11 @@ class Controller(AbstractController):
             elif msg_type == "settings":
                 self._update_view_config(msg['values'])
 
-    def create_exp(self, path: str) -> None:
+    def create_exp(self, path: str, cond_name: str) -> None:
         """
         Set this device's save dir.
         :param path: The save dir.
+        :param cond_name: The optional condition name for this experiment.
         :return None:
         """
         self._logger.debug("running")
@@ -123,9 +124,10 @@ class Controller(AbstractController):
         self._model.add_save_hdr()
         self._logger.debug("done")
 
-    def start_exp(self) -> None:
+    def start_exp(self, block_num: int) -> None:
         """
         Start this device.
+        :param block_num: The block number for this exp block.
         :return: None.
         """
         self._logger.debug("running")

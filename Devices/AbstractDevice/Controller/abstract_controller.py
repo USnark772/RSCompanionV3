@@ -76,7 +76,7 @@ class AbstractController(ABC):
         """
         pass
 
-    def create_exp(self, path: str) -> None:
+    def create_exp(self, path: str, cond_name: str) -> None:
         """
         Set the current experiment save directory for this device if this device needs to save data to file.
         Logic for if this device needs to know about when an experiment is created.
@@ -91,7 +91,7 @@ class AbstractController(ABC):
         """
         pass
 
-    def start_exp(self) -> None:
+    def start_exp(self, block_num: int) -> None:
         """
         Logic for if this device needs to know about when an experiment is running.
         :return: None.
