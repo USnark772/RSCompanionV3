@@ -17,6 +17,7 @@ TODO: At some point
     - Implement audio recording
         - Try to figure out which camera each mic belongs to and make that an mp4.
         - If mic is not attached to camera then save as audio file.
+        - https://stackoverflow.com/questions/14140495/how-to-capture-a-video-and-audio-in-python-from-a-camera-or-webcam
     - Consider making properties out of our getter/setter methods.
         - https://www.python-course.eu/python3_properties.php
     - Check all files for proper and complete logging usage.
