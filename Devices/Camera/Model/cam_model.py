@@ -71,8 +71,7 @@ class CamModel:
         self._sizes = list()
         self._fps = 30
         self._cam_name = "CAM_" + str(self._cam_index)
-        self._name_time_loc = (30, 50)
-        self._fps_loc = (30, 80)
+        self._first_line_loc = (30, 50)
         self._font_scale = .6
         self._font_thickness = 1
         r = 211
@@ -305,10 +304,11 @@ class CamModel:
             fps = "FPS: " + str(self._fps)
             str_time = format_current_time(timestamp, day=True, time=True, mil=True)
             time_and_name = str_time + " " + self._cam_name
-            putText(frame, time_and_name, self._name_time_loc, FONT_FACE, self._font_scale, self._color,
-                    self._font_thickness, LINE_TYPE)
-            putText(frame, fps, self._fps_loc, FONT_FACE, self._font_scale, self._color, self._font_thickness,
-                    LINE_TYPE)
+            to_write = [time_and_name, fps, "Hello world!"]
+            x, y = self._first_line_loc
+            for line in to_write:
+                putText(frame, line, (x, y), FONT_FACE, self._font_scale, self._color, self._font_thickness, LINE_TYPE)
+                y += 30
             if self._writing:
                 self._write_q.put(frame)
             if self._show_feed:

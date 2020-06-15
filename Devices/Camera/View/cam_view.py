@@ -438,7 +438,15 @@ class CamView(AbstractView):
         self._logger.debug("running")
         if not self._window_changing:
             if image is not None:
-                self._image_display.setPixmap(image.scaled(self.width(), self.heightForWidth(self.width())))
+                temp_image_w = image.scaledToWidth(self.width())
+                temp_image_h = image.scaledToHeight(self.heightForWidth(self.width()))
+                if not (temp_image_w.width() > self.width() or temp_image_w.height() > self.height()):
+                    # print("Setting as temp_image_w")
+                    self._image_display.setPixmap(temp_image_w)
+                else:
+                    # print("Setting as temp_image_h")
+                    self._image_display.setPixmap(temp_image_h)
+                # self._image_display.setPixmap(image.scaled(self.width(), self.heightForWidth(self.width()), Qt.KeepAspectRatio))
             elif msg is not None:
                 self._image_display.setText(msg)
         self._logger.debug("done")
