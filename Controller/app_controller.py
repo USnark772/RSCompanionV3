@@ -337,7 +337,7 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        self._model.signal_create_exp(self._save_file_name)
+        self._model.signal_create_exp(self._save_file_name, self.button_box.get_condition_name())
         if self._model.exp_created:
             self.button_box.set_start_button_enabled(True)
             self.button_box.set_create_button_state(1)

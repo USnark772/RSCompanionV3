@@ -167,10 +167,11 @@ class AppModel:
             line = timestamp + ", " + flag
             create_task(write_line_to_file(self._temp_folder.name + "/" + self._flag_filename, line))
 
-    def signal_create_exp(self, path: str) -> None:
+    def signal_create_exp(self, path: str, cond_name: str) -> None:
         """
         Call create_exp on all device controllers.
         :param path: The save dir for this experiment.
+        :param cond_name: The optional condition name for this experiment.
         :return bool: If there was an error.
         """
         self._logger.debug("running")
@@ -179,7 +180,7 @@ class AppModel:
         self._save_path = path
         try:
             for controller in self._devs.values():
-                controller.create_exp(self._temp_folder.name + "/")
+                controller.create_exp(self._temp_folder.name + "/", cond_name)
                 devices_running.append(controller)
             self._logger.debug("done")
             self.exp_created = True
@@ -207,16 +208,17 @@ class AppModel:
             self._logger.exception("Failed ending exp on a controller.")
         self.exp_created = False
 
-    def signal_start_exp(self) -> None:
+    def signal_start_exp(self, block_num: int) -> None:
         """
         Starts an experiment.
+        :param block_num: The number of this block.
         :return bool: Return false if an experiment failed to start, otherwise return true.
         """
         self._logger.debug("running")
         devices = list()
         try:
             for controller in self._devs.values():
-                controller.start_exp()
+                controller.start_exp(block_num)
                 devices.append(controller)
                 self.exp_running = True
         except Exception as e:
