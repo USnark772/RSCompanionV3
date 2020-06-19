@@ -26,12 +26,13 @@ https://redscientific.com/index.html
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QVBoxLayout, QLabel, QProgressBar, QHBoxLayout, QCheckBox, QComboBox, QLineEdit, \
     QSizePolicy, QSpacerItem, QMenuBar, QAction, QGridLayout
-from PySide2.QtGui import QPixmap, QMouseEvent, QResizeEvent, QHideEvent, QShowEvent, QPalette, QColor
+from PySide2.QtGui import QPixmap, QMouseEvent, QResizeEvent, QHideEvent, QShowEvent, QPalette, QColor, QIcon
 from PySide2.QtCore import Qt, QSize
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 from Devices.AbstractDevice.View.ConfigPopUp import ConfigPopUp
 from Devices.Camera.Resources.cam_strings import strings, StringsEnum, LangEnum
 from Model.app_helpers import EasyFrame, ClickAnimationButton
+from Model.app_defs import image_file_path
 
 
 class CamView(AbstractView):
@@ -42,6 +43,9 @@ class CamView(AbstractView):
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(name)
+
+        self._icon = QIcon(image_file_path + "rs_icon.png")
+        self.setWindowIcon(self._icon)
 
         """ Min size for cam window """
         self._subwindow_height = 300
@@ -121,23 +125,26 @@ class CamView(AbstractView):
         self._dev_sets_layout = QVBoxLayout(self._dev_sets_frame)
 
         """ Configuration popup """
-        self._config_button_frame = EasyFrame()
-        self._config_button_frame_layout = QHBoxLayout(self._config_button_frame)
+        # self._config_button_frame = EasyFrame()
+        # self._config_button_frame_layout = QHBoxLayout(self._config_button_frame)
 
         self.config_button = ClickAnimationButton()
         self.config_button.clicked.connect(self._config_button_handler)
 
-        self._config_button_frame_layout.addWidget(self.config_button)
-        self.layout().addWidget(self._config_button_frame, 0, 0, Qt.AlignTop | Qt.AlignRight)
-        self._config_button_frame.setFixedSize(50, 45)
+        # self._config_button_frame_layout.addWidget(self.config_button)
+        self.layout().addWidget(self.config_button, 0, 0, Qt.AlignTop | Qt.AlignRight)
+        self.config_button.setFixedSize(30, 25)
 
         # trying to set the alpha for the config button.
-        self._button_palette = self.config_button.palette()
-        self._button_color = self._button_palette.color(QPalette.Window)
-        self._button_color.setAlpha(200)
-        self._button_palette.setColor(QPalette.Text, self._button_color)
-        self.config_button.setPalette(self._button_palette)
+        # self._button_palette = self.config_button.palette()
+        # self._button_color = self._button_palette.color(QPalette.Window)
+        # self._button_color.setAlpha(100)
+        # self._button_palette.setColor(QPalette.Text, self._button_color)
+        # self.config_button.setPalette(self._button_palette)
         # print(self.config_button.palette())
+
+        # print(self.config_button.styleSheet())
+        self.config_button.setStyleSheet("background-color: rgba(200, 200, 200, 50%)")
 
         # self._menu_bar = QMenuBar()
         # self._menu_bar.setMaximumWidth(self.width()-17)
@@ -160,12 +167,20 @@ class CamView(AbstractView):
         config_win_w = 350
         config_win_h = len(self._config_items) * 40
 
-        self._config_button_frame.raise_()
-        self._config_button_frame.hide()
+        self.config_button.raise_()
+        # self._config_button_frame.hide()
 
         self._config_win = ConfigPopUp()
         self._config_win.setLayout(self._dev_sets_layout)
         self._config_win.setFixedSize(config_win_w, config_win_h)
+
+        self._rec_label = QLabel()
+        self._rec_label.setStyleSheet("background-color: rgba(0, 0, 0, 0%); color: red; font: 20px")
+        self._rec_label.hide()
+
+        self.layout().addWidget(self._rec_label, 0, 0, Qt.AlignBottom | Qt.AlignRight)
+
+        self.layout().setMargin(0)
 
         self._window_changing = False
         self._showing_images = False
@@ -227,6 +242,7 @@ class CamView(AbstractView):
         :return None:
         """
         self._logger.debug("running")
+        self.config_button.setStyleSheet("background-color: rgba(200, 200, 200, 50%)")
         self._config_win.exec_()
         self._logger.debug("done")
 
@@ -460,7 +476,8 @@ class CamView(AbstractView):
         self._showing_images = True
         self._initialization_bar_frame.hide()
         self._image_display.show()
-        self._config_button_frame.show()
+        self.config_button.show()
+        self.setStyleSheet("background-color: black")
         self._logger.debug("done")
 
     def show_initialization(self) -> None:
@@ -471,7 +488,7 @@ class CamView(AbstractView):
         self._logger.debug("running")
         self._showing_images = False
         self._image_display.hide()
-        self._config_button_frame.hide()
+        self.config_button.hide()
         self._initialization_bar_frame.show()
         self._logger.debug("done")
 
@@ -496,6 +513,11 @@ class CamView(AbstractView):
         :return None:
         """
         self._logger.debug("running")
+        if self._showing_images:
+            if is_active:
+                self._rec_label.hide()
+            else:
+                self._rec_label.show()
         for item in self._config_items:
             item.setEnabled(is_active)
         self._logger.debug("done")
@@ -517,6 +539,7 @@ class CamView(AbstractView):
         self._config_win.setWindowTitle(self.get_name() + " " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
         # self._config_action.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self.config_button.setText("...")
+        self._rec_label.setText("rec ●")
         self._logger.debug("done")
 
     def _set_tooltips(self) -> None:

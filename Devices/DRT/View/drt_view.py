@@ -27,9 +27,9 @@ https://redscientific.com/index.html
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QHBoxLayout, QLabel, QSlider, QGridLayout, QLineEdit, QVBoxLayout, QMenuBar, QAction
 from PySide2.QtCore import Qt, QSize
-from PySide2.QtGui import QResizeEvent
+from PySide2.QtGui import QResizeEvent, QIcon
 from Model.app_helpers import ClickAnimationButton, EasyFrame
-from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style
+from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style, image_file_path
 from Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 from Devices.AbstractDevice.View.ConfigPopUp import ConfigPopUp
@@ -43,6 +43,9 @@ class DRTView(AbstractView):
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(name)
+
+        self._icon = QIcon(image_file_path + "rs_icon.png")
+        self.setWindowIcon(self._icon)
 
         """ Min size for the DRT window """
         self._subwindow_height = 309
@@ -127,15 +130,15 @@ class DRTView(AbstractView):
 
         """ Configuration popup """
         # check set_texts and set_tooltips if commenting/uncommenting
-        self._config_button_frame = EasyFrame()
-        self._config_button_frame_layout = QHBoxLayout(self._config_button_frame)
+        # self._config_button_frame = EasyFrame()
+        # self._config_button_frame_layout = QHBoxLayout(self._config_button_frame)
 
         self.config_button = ClickAnimationButton()
         self.config_button.clicked.connect(self._config_button_handler)
 
-        self._config_button_frame_layout.addWidget(self.config_button)
-        self.layout().addWidget(self._config_button_frame, 0, 0, Qt.AlignTop | Qt.AlignRight)
-        self._config_button_frame.setFixedSize(50, 45)
+        # self._config_button_frame_layout.addWidget(self.config_button)
+        self.layout().addWidget(self.config_button, 0, 0, Qt.AlignTop | Qt.AlignRight)
+        self.config_button.setFixedSize(30, 25)
 
         """ Configuration menu """
         # self._menu_bar = QMenuBar()
@@ -159,6 +162,8 @@ class DRTView(AbstractView):
         self._dev_sets_layout.addWidget(self._iso_button)
         self._dev_sets_layout.addWidget(self._upload_settings_button)
 
+        self.layout().setMargin(0)
+
         self._strings = dict()
         self._lang_enum = LangEnum.ENG
         self.setMinimumSize(self._subwindow_width, self._subwindow_height)
@@ -172,7 +177,7 @@ class DRTView(AbstractView):
         """
         self._logger.debug("running")
         self.layout().addWidget(graph, 0, 0)
-        self._config_button_frame.raise_()
+        self.config_button.raise_()
         self._logger.debug("done")
 
     def _config_button_handler(self) -> None:
