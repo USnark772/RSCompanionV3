@@ -63,6 +63,7 @@ class CamModel:
                           defs.ModelEnum.BLOCK_NUM: self._update_block_num,
                           defs.ModelEnum.KEYFLAG: self._update_keyflag,
                           defs.ModelEnum.EXP_STATUS: self._update_exp_status,
+                          defs.ModelEnum.LANGUAGE: self.set_lang,
                           }
         self._running = True
         self._writing = False
@@ -77,13 +78,11 @@ class CamModel:
         self._sizes = list()
         self._fps = 30
         self._cam_name = "CAM_" + str(self._cam_index)
-        self._lines_to_write = [self._strings[StringsEnum.OVERLAY_COND_NAME_LABEL],
-                                "",
-                                "",
-                                self._strings[StringsEnum.OVERLAY_EXP_STATUS_LABEL] + " Not running",
-                                self._strings[StringsEnum.OVERLAY_BLOCK_NUM_LABEL] + " 0",
-                                self._strings[StringsEnum.OVERLAY_KEYFLAG_LABEL],
-                                ]
+        self._cond_name = str()
+        self._exp_status = "Not running"
+        self._block_num = 0
+        self._keyflag = str()
+        self._lines_to_write = []
         self._first_line_loc = (10, 20)
         self._font_scale = .6
         self._font_thickness = 1
@@ -91,6 +90,7 @@ class CamModel:
         g = 250
         b = 10
         self._color = (b, g, r)
+        self.set_lang()
         self._loop.run_until_complete(self._start_loop())
 
     async def _handle_pipe(self) -> None:
@@ -129,6 +129,15 @@ class CamModel:
         :return None:
         """
         create_task(self._run_tests())
+
+    def set_lang(self, lang: LangEnum = LangEnum.ENG) -> None:
+        """
+        Set this camera's language.
+        :param lang: The new language enum.
+        :return None:
+        """
+        self._strings = strings[lang]
+        self._set_texts()
 
     async def _run_tests(self) -> None:
         """
@@ -324,7 +333,6 @@ class CamModel:
         self._times = list()
         self._cam_reader.set_fps(new_fps)
 
-    # TODO: Handle language changes?
     async def _handle_new_frame(self) -> None:
         """
         Handle frames from camera
@@ -392,3 +400,16 @@ class CamModel:
 
         # return the resized image
         return resized
+
+    def _set_texts(self) -> None:
+        """
+        Set the initial texts for this camera.
+        :return None:
+        """
+        self._lines_to_write = [self._strings[StringsEnum.OVERLAY_COND_NAME_LABEL] + " " + self._cond_name,
+                                "",
+                                "",
+                                self._strings[StringsEnum.OVERLAY_EXP_STATUS_LABEL] + " " + self._exp_status,
+                                self._strings[StringsEnum.OVERLAY_BLOCK_NUM_LABEL] + " " + str(self._block_num),
+                                self._strings[StringsEnum.OVERLAY_KEYFLAG_LABEL] + " " + self._keyflag,
+                                ]

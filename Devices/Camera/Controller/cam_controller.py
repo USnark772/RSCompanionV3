@@ -93,6 +93,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self.view.language = lang
+        self.send_msg_to_model((defs.ModelEnum.LANGUAGE, lang))
         self._logger.debug("done")
 
     async def cleanup(self, discard: bool = False) -> None:

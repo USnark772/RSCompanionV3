@@ -64,3 +64,4 @@ class ModelEnum(Enum):
     BLOCK_NUM = auto()
     KEYFLAG = auto()
     EXP_STATUS = auto()
+    LANGUAGE = auto()

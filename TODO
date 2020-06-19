@@ -6,15 +6,6 @@ TODO: Pressing matters.
         - Make image fit fully into subwindow display area.
         - Consider passing selected fps to writer instead of current fps.
         - handle other to do items listed in cam modules
-        - Cameras are not in sync over time. (Only on Phillip's machine...sad)
-        - c920 not always getting max advertised fps. (Joel's machine has no problems...isn't he cool)
-        - Video overlay:
-            - Block number
-            - Condition name
-            - Key flag
-            - Play/Pause status. (Signal to the user whether devices are running or not)
-        - subwindow display:
-            - create/end status. (Signal whether cameras are recording or not)
     - Ensure app does not save experiment before devices finish saving. (Can we tell if a file is still opened?)
     - Alter save format to be folder per experiment instead of .rs files.
 
