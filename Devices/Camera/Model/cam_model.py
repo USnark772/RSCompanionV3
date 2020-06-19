@@ -34,6 +34,7 @@ from Devices.Camera.Model import cam_defs as defs
 from Devices.Camera.Model.cam_stream_reader import StreamReader
 from Devices.Camera.Model.cam_stream_writer import StreamWriter
 from Devices.Camera.Model.cam_size_getter import SizeGetter
+from Devices.Camera.Resources.cam_strings import strings, StringsEnum, LangEnum
 
 
 class CamModel:
@@ -68,10 +69,20 @@ class CamModel:
         self._handle_frames = Event()
         self._loop = get_event_loop()
 
+        self._strings = dict()
+        self._lang_enum = LangEnum.ENG
+
+        self._exp_status = ""
+        self._exp_stop = ""
+        self._exp_run = ""
+        self._exp_pause = ""
+        self._block_key = ""
+        # self._set_texts()
+
         self._sizes = list()
         self._fps = 30
         self._cam_name = "CAM_" + str(self._cam_index)
-        self._first_line_loc = (30, 50)
+        self._first_line_loc = (10, 20)
         self._font_scale = .6
         self._font_thickness = 1
         r = 211
@@ -279,6 +290,35 @@ class CamModel:
         self._times = list()
         self._cam_reader.set_fps(new_fps)
 
+    @property
+    def language(self) -> LangEnum:
+        """
+        Get the current language setting
+        :return LangEnum: The current language enumerator being used
+        """
+        return self._lang_enum
+
+    @language.setter
+    def language(self, lang: LangEnum) -> None:
+        """
+        Set the language for the strings inserted into the camera feed.
+        :param lang: the language to use.
+        :return None:
+        """
+        self._strings = strings[lang]
+        self._set_texts()
+
+    def _set_texts(self) -> None:
+        """
+        Set texts to be inserted into the camera feed.
+        :return None:
+        """
+        self._exp_status = self._strings[StringsEnum.EXP_STATUS_LABEL]
+        self._exp_stop = self._strings[StringsEnum.EXP_STATUS_STOP]
+        self._exp_run = self._strings[StringsEnum.EXP_STATUS_RUN]
+        self._exp_pause = self._strings[StringsEnum.EXP_STATUS_PAUSE]
+        self._block_key = self._strings[StringsEnum.BLOCK_KEY_FLAG]
+
     # TODO: Handle language changes?
     async def _handle_new_frame(self) -> None:
         """
@@ -304,7 +344,7 @@ class CamModel:
             fps = "FPS: " + str(self._fps)
             str_time = format_current_time(timestamp, day=True, time=True, mil=True)
             time_and_name = str_time + " " + self._cam_name
-            to_write = [time_and_name, fps, "Hello world!"]
+            to_write = ["", time_and_name, fps, self._block_key, self._exp_status]
             x, y = self._first_line_loc
             for line in to_write:
                 putText(frame, line, (x, y), FONT_FACE, self._font_scale, self._color, self._font_thickness, LINE_TYPE)

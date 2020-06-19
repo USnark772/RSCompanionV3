@@ -28,9 +28,9 @@ from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QHBoxLayout, QLabel, QGridLayout, QLineEdit, QVBoxLayout, QCheckBox, QComboBox, QFrame,\
      QMenuBar, QAction
 from PySide2.QtCore import Qt, QSize
-from PySide2.QtGui import QResizeEvent
+from PySide2.QtGui import QResizeEvent, QIcon
 from Model.app_helpers import ClickAnimationButton, EasyFrame
-from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style
+from Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style, image_file_path
 from Devices.VOG.Resources.vog_strings import strings, StringsEnum, LangEnum
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 from Devices.AbstractDevice.View.collapsible_tab_widget import CollapsingTab
@@ -45,6 +45,9 @@ class VOGView(AbstractView):
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__(name)
+
+        self._icon = QIcon(image_file_path + "rs_icon.png")
+        self.setWindowIcon(self._icon)
 
         """ Min size for the VOG window """
         self._subwindow_height = 309
@@ -141,6 +144,7 @@ class VOGView(AbstractView):
 
         self._manual_control_button_layout.addWidget(self._manual_control_open_button)
         self._manual_control_button_layout.addWidget(self._manual_control_close_button)
+        self._manual_control_button_layout.setMargin(0)
 
         # self._upload_control_buttons_layout.addWidget(self._manual_control_button_frame)
         # self._upload_control_buttons_layout.addWidget(self._presets_frame)
@@ -157,13 +161,13 @@ class VOGView(AbstractView):
         # self.layout().addWidget(self.config_tab, 0, 1, Qt.AlignRight)
 
         """Configuration popup"""
-        self._config_button_frame = EasyFrame()
-        self._config_button_frame_layout = QHBoxLayout(self._config_button_frame)
+        # self._config_button_frame = EasyFrame()
+        # self._config_button_frame_layout = QHBoxLayout(self._config_button_frame)
 
         self.config_button = ClickAnimationButton()
         self.config_button.clicked.connect(self._config_button_handler)
 
-        self._config_button_frame_layout.addWidget(self.config_button)
+        # self._config_button_frame_layout.addWidget(self.config_button)
 
         """ Configuration menu """
         # self._menu_bar = QMenuBar()
@@ -189,11 +193,19 @@ class VOGView(AbstractView):
         self._dev_sets_layout.addWidget(self._direct_control_button)
         self._dev_sets_layout.addWidget(self._upload_settings_button)
 
-        self.layout().addWidget(self._config_button_frame, 0, 0, Qt.AlignTop | Qt.AlignRight)
-        self._config_button_frame.setFixedSize(50, 45)
+        self.layout().addWidget(self.config_button, 0, 0, Qt.AlignTop | Qt.AlignRight)
+        self.config_button.setFixedSize(30, 25)
 
-        self.layout().addWidget(self._manual_control_button_frame, 0, 0, Qt.AlignBottom)
-        self._manual_control_button_frame.setFixedSize(150, 45)
+        # self.layout().addWidget(self._manual_control_button_frame, 0, 0, Qt.AlignBottom)
+        # self._manual_control_button_frame.setFixedSize(150, 45)
+
+        self.layout().addWidget(self._manual_control_button_frame, 0, 0, Qt.AlignBottom | Qt.AlignLeft)
+        # self.layout().addWidget(self._manual_control_open_button, 0, 0, Qt.AlignBottom | Qt.AlignLeft)
+        # self.layout().addWidget(self._manual_control_close_button, 0, 0, Qt.AlignBottom | Qt.AlignRight)
+        self._manual_control_open_button.setFixedSize(70, 25)
+        self._manual_control_close_button.setFixedSize(70, 25)
+
+        self.layout().setMargin(0)
 
         self._strings = dict()
         self._lang_enum = LangEnum.ENG
@@ -208,8 +220,10 @@ class VOGView(AbstractView):
         """
         self._logger.debug("running")
         self.layout().addWidget(graph, 0, 0)
-        self._config_button_frame.raise_()
+        self.config_button.raise_()
         self._manual_control_button_frame.raise_()
+        # self._manual_control_open_button.raise_()
+        # self._manual_control_close_button.raise_()
         self._logger.debug("done")
 
     def _config_button_handler(self) -> None:
