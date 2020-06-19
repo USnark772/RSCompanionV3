@@ -75,14 +75,21 @@ class MDIArea(QMdiArea):
         self.removeSubWindow(window)
         self._logger.debug("done")
 
-    # TODO: Implement this
-    def set_window_order(self):
-        # order = QMdiArea.ActivationHistoryOrder
-        # order = QMdiArea.StackingOrder
-        order = QMdiArea.CreationOrder
-        self.setActivationOrder(order)
+    def set_window_order(self, order: int = 0) -> None:
+        """
+        Set the order of the subwindows when put into a list
+        :param order: int 0-2; 0 = Creation order, 1 = Stacking order, 2 = Activation order
 
-    # TODO: Implement this
+        """
+        if order == 0:
+            setval = QMdiArea.CreationOrder
+        if order == 1:
+            setval = QMdiArea.StackingOrder
+        if order == 2:
+            setval = QMdiArea.ActivationHistoryOrder
+
+        self.setActivationOrder(setval)
+
     def sort_windows_cascade(self) -> None:
         """
         Sort subwindows in a cascade format
@@ -101,7 +108,6 @@ class MDIArea(QMdiArea):
         self.setActivationOrder(QMdiArea.CreationOrder)
         self._logger.debug("done")
 
-    # TODO: Implement this
     def sort_windows_tiled(self) -> None:
         """
         Tile subwindows
