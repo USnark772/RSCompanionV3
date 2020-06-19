@@ -374,7 +374,7 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        self._model.signal_start_exp()
+        self._model.signal_start_exp(self.info_box.get_block_num())
         if not self._model.exp_running:
             return
         self.info_box.set_block_num(str(int(self.info_box.get_block_num()) + 1))
