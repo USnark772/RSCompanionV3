@@ -337,7 +337,9 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        self._model.signal_create_exp(self._save_file_name, self.button_box.get_condition_name())
+        # TODO: switch these back when .rs file reading is implemented.
+        # self._model.signal_create_exp(self._save_file_name, self.button_box.get_condition_name())
+        self._model.signal_create_exp(self._save_dir, self.button_box.get_condition_name())
         if self._model.exp_created:
             self.button_box.set_start_button_enabled(True)
             self.button_box.set_create_button_state(1)
@@ -402,8 +404,11 @@ class AppController:
         :return None:
         """
         ret = True
-        if not filename and not self._save_dir == "":
-            self._drive_path = self._save_dir
+        if not filename:
+            if not self._save_dir == "":
+                self._drive_path = self._save_dir
+            else:
+                ret = False
         elif len(filename) > 0:
             self._drive_path = filename
         else:
@@ -430,12 +435,16 @@ class AppController:
         :return bool: True if the file name is longer than 1 character
         """
         self._logger.debug("running")
-        self._save_file_name = self._file_dialog.getSaveFileName(filter="*.rs")[0]
-        valid = len(self._save_file_name) > 1
-        if valid:
-            self._save_dir = self._dir_name_from_file_name(self._save_file_name)
+        # TODO: Use save_file_name again when reading .rs files is implemented.
+        # self._save_file_name = self._file_dialog.getSaveFileName(filter="*.rs")[0]
+        self._save_dir = self._file_dialog.getExistingDirectory()  # filter="*.rs")[0]
+        # valid = len(self._save_file_name) > 1
+        # if valid:
+        #     self._save_dir = self._dir_name_from_file_name(self._save_file_name)
         self._logger.debug("done")
-        return valid
+        if len(self._save_dir) > 0:
+            return True
+        return False
 
     def _dir_name_from_file_name(self, filename: str) -> str:
         """

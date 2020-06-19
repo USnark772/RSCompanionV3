@@ -28,6 +28,7 @@ import os
 import glob
 import importlib.util
 import zipfile
+from shutil import move, rmtree
 import tempfile
 from logging import StreamHandler, getLogger
 from datetime import datetime
@@ -190,7 +191,9 @@ class AppModel:
         self._logger.debug("running")
         devices_running = list()
         self._temp_folder = tempfile.TemporaryDirectory()
+        print("Trying to set self._save_path to:", path)
         self._save_path = path
+        print("self._save_path:", self._save_path)
         try:
             for controller in self._devs.values():
                 controller.create_exp(self._temp_folder.name + "/", cond_name)
@@ -317,9 +320,17 @@ class AppModel:
         Transfer latest experiment data to .rs file.
         :return None:
         """
-        with zipfile.ZipFile(self._save_path, "w") as zipper:
-            for file in os.listdir(self._temp_folder.name):
-                zipper.write(self._temp_folder.name + "/" + file, file)
+        # TODO: Use zipfile code when reading .rs files is implemented.
+        # with zipfile.ZipFile(self._save_path, "w") as zipper:
+        #     for file in os.listdir(self._temp_folder.name):
+        #         zipper.write(self._temp_folder.name + "/" + file, file)
+        if not os.path.isdir(self._save_path):
+            os.mkdir(self._save_path)
+        cur_dur = os.getcwd()
+        os.chdir(self._temp_folder.name)
+        for file in os.listdir(self._temp_folder.name):
+            move(file, self._save_path)
+        os.chdir(cur_dur)
 
     def _signal_lang_change(self) -> bool:
         """
