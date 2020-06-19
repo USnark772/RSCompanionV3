@@ -34,6 +34,7 @@ from Devices.Camera.Model import cam_defs as defs
 from Devices.Camera.Model.cam_stream_reader import StreamReader
 from Devices.Camera.Model.cam_stream_writer import StreamWriter
 from Devices.Camera.Model.cam_size_getter import SizeGetter
+from Devices.Camera.Resources.cam_strings import LangEnum, strings, StringsEnum
 
 
 class CamModel:
@@ -58,6 +59,10 @@ class CamModel:
                           defs.ModelEnum.SET_FPS: self._set_fps,
                           defs.ModelEnum.GET_RES: self._get_res,
                           defs.ModelEnum.SET_RES: self._set_res,
+                          defs.ModelEnum.COND_NAME: self._update_cond_name,
+                          defs.ModelEnum.BLOCK_NUM: self._update_block_num,
+                          defs.ModelEnum.KEYFLAG: self._update_keyflag,
+                          defs.ModelEnum.EXP_STATUS: self._update_exp_status,
                           }
         self._running = True
         self._writing = False
@@ -68,10 +73,18 @@ class CamModel:
         self._handle_frames = Event()
         self._loop = get_event_loop()
 
+        self._strings = strings[LangEnum.ENG]
         self._sizes = list()
         self._fps = 30
         self._cam_name = "CAM_" + str(self._cam_index)
-        self._first_line_loc = (30, 50)
+        self._lines_to_write = [self._strings[StringsEnum.OVERLAY_COND_NAME_LABEL],
+                                "",
+                                "",
+                                self._strings[StringsEnum.OVERLAY_EXP_STATUS_LABEL] + " Not running",
+                                self._strings[StringsEnum.OVERLAY_BLOCK_NUM_LABEL] + " 0",
+                                self._strings[StringsEnum.OVERLAY_KEYFLAG_LABEL],
+                                ]
+        self._first_line_loc = (10, 20)
         self._font_scale = .6
         self._font_thickness = 1
         r = 211
@@ -90,9 +103,6 @@ class CamModel:
                 if self._msg_pipe.poll():
                     msg = self._msg_pipe.recv()
                     if msg[0] in self._switcher.keys():
-                        # if self._cam_index == 1:
-                        #     if msg[0] == defs.ModelEnum.SET_RES:
-                        #         print(__name__, "Line 95. Got resolution change msg:", msg)
                         if msg[1] is not None:
                             self._switcher[msg[0]](msg[1])
                         else:
@@ -137,7 +147,6 @@ class CamModel:
             prog_tracker.cancel()
             return
         self._msg_pipe.send((defs.ModelEnum.START, (max_fps, sizes)))
-        # self._msg_pipe.send((defs.ModelEnum.START, sizes))
         prog_tracker.cancel()
 
     async def _monitor_init_progress(self) -> None:
@@ -147,7 +156,6 @@ class CamModel:
         """
         while True:
             status = (self._cam_reader.get_fps_status() / 2) + (self.size_gtr.status / 2)
-            # status = self.size_gtr.status
             if status >= 100:
                 break
             self._msg_pipe.send((defs.ModelEnum.STAT_UPD, status))
@@ -169,6 +177,43 @@ class CamModel:
         self._cam_reader.cleanup()
         self._cam_writer.cleanup(discard)
         self._msg_pipe.send((defs.ModelEnum.CLEANUP, None))
+
+    def _update_block_num(self, num: int) -> None:
+        """
+        Update the block num shown on camera details.
+        :param num: The new num to show.
+        :return None:
+        """
+        self._lines_to_write[4] = self._strings[StringsEnum.OVERLAY_BLOCK_NUM_LABEL] + " " + str(num)
+
+    def _update_cond_name(self, name: str) -> None:
+        """
+        Update the condition name shown on camera details.
+        :param name: The new name to show.
+        :return None:
+        """
+        self._lines_to_write[0] = self._strings[StringsEnum.OVERLAY_COND_NAME_LABEL] + " " + str(name)
+
+    def _update_keyflag(self, flag: str) -> None:
+        """
+        Update the key flag shown on camera details.
+        :param flag: The new key flag to show.
+        :return None:
+        """
+        self._lines_to_write[5] = self._strings[StringsEnum.OVERLAY_KEYFLAG_LABEL] + " " + str(flag)
+
+    def _update_exp_status(self, status: bool) -> None:
+        """
+        Update the experiment status shown on the camera details.
+        :param status: The new status to show.
+        :return None:
+        """
+        output = str()
+        if status:
+            output = "Running"
+        else:
+            output = "Not running"
+        self._lines_to_write[3] = self._strings[StringsEnum.OVERLAY_EXP_STATUS_LABEL] + " " + str(output)
 
     def _get_res(self) -> None:
         """
@@ -301,13 +346,13 @@ class CamModel:
                 self._times.pop(0)
             prev_time = now
             self._fps = round(len(self._times) / sum(self._times))
-            fps = "FPS: " + str(self._fps)
-            str_time = format_current_time(timestamp, day=True, time=True, mil=True)
-            time_and_name = str_time + " " + self._cam_name
-            to_write = [time_and_name, fps, "Hello world!"]
+            self._lines_to_write[1] = format_current_time(timestamp, day=True, time=True, mil=True)
+            self._lines_to_write[2] = self._strings[StringsEnum.OVERLAY_FPS_LABEL] + " " + str(self._fps)
             x, y = self._first_line_loc
-            for line in to_write:
-                putText(frame, line, (x, y), FONT_FACE, self._font_scale, self._color, self._font_thickness, LINE_TYPE)
+            for line in self._lines_to_write:
+                if len(line) > 0:
+                    putText(frame, line, (x, y), FONT_FACE, self._font_scale, self._color, self._font_thickness,
+                            LINE_TYPE)
                 y += 30
             if self._writing:
                 self._write_q.put(frame)

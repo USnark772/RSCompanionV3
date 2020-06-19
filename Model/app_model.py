@@ -156,16 +156,29 @@ class AppModel:
             line = timestamp + ", " + note
             create_task(write_line_to_file(self._temp_folder.name + "/" + self._note_filename, line))
 
+    def keyflag_to_devs(self, flag: str) -> None:
+        """
+        Pass the new flag to devices.
+        :param flag: The new flag.
+        :return None:
+        """
+        self._logger.debug("running")
+        for controller in self._devs.values():
+            controller.update_keyflag(flag)
+        self._logger.debug("done")
+
     def save_keyflag(self, flag: str) -> None:
         """
         Save flag to experiment flag file if experiment created.
         :param flag: The flag to save.
         :return None:
         """
+        self._logger.debug("running")
         if self.exp_created:
             timestamp = format_current_time(datetime.now(), day=True, time=True, micro=True)
             line = timestamp + ", " + flag
             create_task(write_line_to_file(self._temp_folder.name + "/" + self._flag_filename, line))
+        self._logger.debug("done")
 
     def signal_create_exp(self, path: str, cond_name: str) -> None:
         """

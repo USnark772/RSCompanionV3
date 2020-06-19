@@ -126,8 +126,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        # TODO: Send cond_name to model.
-        # self.send_msg_to_model((defs.ModelEnum., cond_name))
+        self.send_msg_to_model((defs.ModelEnum.COND_NAME, cond_name))
         self.view.set_config_active(False)
         self.send_msg_to_model((defs.ModelEnum.START, path))
         self._logger.debug("done")
@@ -149,8 +148,28 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        # TODO: Send block_num to model.
-        # self.send_msg_to_model((defs.ModelEnum., block_num))
+        print("")
+        self.send_msg_to_model((defs.ModelEnum.BLOCK_NUM, block_num))
+        self.send_msg_to_model((defs.ModelEnum.EXP_STATUS, True))
+        self._logger.debug("done")
+
+    def stop_exp(self) -> None:
+        """
+        Alert this camera when experiment stops.
+        :return None:
+        """
+        self._logger.debug("running")
+        self.send_msg_to_model((defs.ModelEnum.EXP_STATUS, False))
+        self._logger.debug("done")
+
+    def update_keyflag(self, flag: str) -> None:
+        """
+        Handle keflag changes for this camera.
+        :param flag: The new flag.
+        :return None:
+        """
+        self._logger.debug("running")
+        self.send_msg_to_model((defs.ModelEnum.KEYFLAG, flag))
         self._logger.debug("done")
 
     def update_resolution(self) -> None:

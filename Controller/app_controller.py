@@ -374,10 +374,11 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        self._model.signal_start_exp(self.info_box.get_block_num())
+        block_num = int(self.info_box.get_block_num()) + 1
+        self._model.signal_start_exp(block_num)
         if not self._model.exp_running:
             return
-        self.info_box.set_block_num(str(int(self.info_box.get_block_num()) + 1))
+        self.info_box.set_block_num(str(block_num))
         self.button_box.set_start_button_state(1)
         self.button_box.set_condition_name_box_enabled(False)
         self._curr_cond_name = self.button_box.get_condition_name()
@@ -456,7 +457,9 @@ class AppController:
         self._logger.debug("running")
         if 0x41 <= event.key() <= 0x5a:
             self.flag_box.set_flag(chr(event.key()))
-            self._model.save_keyflag(self.flag_box.get_flag())
+            flag = self.flag_box.get_flag()
+            self._model.keyflag_to_devs(flag)
+            self._model.save_keyflag(flag)
         event.accept()
         self._logger.debug("done")
 

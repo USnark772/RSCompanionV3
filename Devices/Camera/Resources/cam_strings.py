@@ -27,6 +27,8 @@ from Model.app_defs import LangEnum
 from enum import Enum, auto
 
 
+# TODO: Check translations.
+
 # Define enum like this.
 class StringsEnum(Enum):
     CONFIG_TAB_LABEL = auto()
@@ -48,6 +50,11 @@ class StringsEnum(Enum):
     FPS_DISPLAY_TOOLTIP = auto()
     ROTATION_TOOLTIP = auto()
     IMAGE_DISPLAY_TOOLTIP = auto()
+    OVERLAY_COND_NAME_LABEL = auto()
+    OVERLAY_BLOCK_NUM_LABEL = auto()
+    OVERLAY_KEYFLAG_LABEL = auto()
+    OVERLAY_FPS_LABEL = auto()
+    OVERLAY_EXP_STATUS_LABEL = auto()
 
 
 # Define languages like this.
@@ -72,6 +79,11 @@ english = {StringsEnum.CONFIG_TAB_LABEL: "Configuration",
                                             " affected by the load your computer is currently under.",
            StringsEnum.ROTATION_TOOLTIP: "Set degree of rotation for video feed. -360 < value < 360.",
            StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Preview of camera feed.",
+           StringsEnum.OVERLAY_COND_NAME_LABEL: "Cond Name:",
+           StringsEnum.OVERLAY_FPS_LABEL: "FPS:",
+           StringsEnum.OVERLAY_KEYFLAG_LABEL: "Keyflag:",
+           StringsEnum.OVERLAY_BLOCK_NUM_LABEL: "Block #:",
+           StringsEnum.OVERLAY_EXP_STATUS_LABEL: "Exp Status:",
            }
 
 # TODO: Verify translations
@@ -97,6 +109,11 @@ dutch = {StringsEnum.CONFIG_TAB_LABEL: "Configuratie",
                                           " beïnvloed door de belasting van uw computer.",
          StringsEnum.ROTATION_TOOLTIP: "Stel de mate van rotatie in voor videofeed. -360 < waarde < 360.",
          StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Voorbeeld van camerafeed.",
+         StringsEnum.OVERLAY_COND_NAME_LABEL: "Cond Name:",
+         StringsEnum.OVERLAY_FPS_LABEL: "FPS:",
+         StringsEnum.OVERLAY_KEYFLAG_LABEL: "Keyflag:",
+         StringsEnum.OVERLAY_BLOCK_NUM_LABEL: "Block #:",
+         StringsEnum.OVERLAY_EXP_STATUS_LABEL: "Exp Status:",
          }
 
 # French strings
@@ -121,6 +138,11 @@ french = {StringsEnum.CONFIG_TAB_LABEL: "Configuration",
                                            " Cette valeur peut être affectée par la charge de votre ordinateur.",
           StringsEnum.ROTATION_TOOLTIP: "Définissez le degré de rotation du flux vidéo. -360 < valeur < 360.",
           StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Aperçu du flux de la caméra.",
+          StringsEnum.OVERLAY_COND_NAME_LABEL: "Cond Name:",
+          StringsEnum.OVERLAY_FPS_LABEL: "FPS:",
+          StringsEnum.OVERLAY_KEYFLAG_LABEL: "Keyflag:",
+          StringsEnum.OVERLAY_BLOCK_NUM_LABEL: "Block #:",
+          StringsEnum.OVERLAY_EXP_STATUS_LABEL: "Exp Status:",
           }
 
 # German strings
@@ -145,6 +167,11 @@ german = {StringsEnum.CONFIG_TAB_LABEL: "Konfiguration",
                                            " Dieser Wert kann durch die Belastung Ihres Computers beeinflusst werden.",
           StringsEnum.ROTATION_TOOLTIP: "Stellen Sie den Rotationsgrad für den Video-Feed ein. -360 < Wert < 360.",
           StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Vorschau des Kamera-Feeds.",
+          StringsEnum.OVERLAY_COND_NAME_LABEL: "Cond Name:",
+          StringsEnum.OVERLAY_FPS_LABEL: "FPS:",
+          StringsEnum.OVERLAY_KEYFLAG_LABEL: "Keyflag:",
+          StringsEnum.OVERLAY_BLOCK_NUM_LABEL: "Block #:",
+          StringsEnum.OVERLAY_EXP_STATUS_LABEL: "Exp Status:",
           }
 
 # Russian strings
@@ -169,6 +196,11 @@ russian = {StringsEnum.CONFIG_TAB_LABEL: "конфигурация",
                                             " На это значение может повлиять нагрузка на ваш компьютер.",
            StringsEnum.ROTATION_TOOLTIP: "Установите степень поворота видео. -360 < значение < 360.",
            StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Предварительный просмотр камеры.",
+           StringsEnum.OVERLAY_COND_NAME_LABEL: "Cond Name:",
+           StringsEnum.OVERLAY_FPS_LABEL: "FPS:",
+           StringsEnum.OVERLAY_KEYFLAG_LABEL: "Keyflag:",
+           StringsEnum.OVERLAY_BLOCK_NUM_LABEL: "Block #:",
+           StringsEnum.OVERLAY_EXP_STATUS_LABEL: "Exp Status:",
            }
 
 # Spanish strings
@@ -195,6 +227,11 @@ spanish = {StringsEnum.CONFIG_TAB_LABEL: "Configuración",
            StringsEnum.ROTATION_TOOLTIP: "Establecer el grado de rotación para la alimentación de video."
                                          " -360 < valor < 360.",
            StringsEnum.IMAGE_DISPLAY_TOOLTIP: "Vista previa de la alimentación de la cámara.",
+           StringsEnum.OVERLAY_COND_NAME_LABEL: "Cond Name:",
+           StringsEnum.OVERLAY_FPS_LABEL: "FPS:",
+           StringsEnum.OVERLAY_KEYFLAG_LABEL: "Keyflag:",
+           StringsEnum.OVERLAY_BLOCK_NUM_LABEL: "Block #:",
+           StringsEnum.OVERLAY_EXP_STATUS_LABEL: "Exp Status:",
            }
 
 # Chinese simplified strings
@@ -218,6 +255,11 @@ chinese = {StringsEnum.CONFIG_TAB_LABEL: "组态",
            StringsEnum.FPS_DISPLAY_TOOLTIP: "相机执行的大概fps。 该值可能会受到计算机当前负载的影响。",
            StringsEnum.ROTATION_TOOLTIP: "设置视频馈送的旋转度。 -360 <值<360。",
            StringsEnum.IMAGE_DISPLAY_TOOLTIP: "相机供稿预览。",
+           StringsEnum.OVERLAY_COND_NAME_LABEL: "Cond Name:",
+           StringsEnum.OVERLAY_FPS_LABEL: "FPS:",
+           StringsEnum.OVERLAY_KEYFLAG_LABEL: "Keyflag:",
+           StringsEnum.OVERLAY_BLOCK_NUM_LABEL: "Block #:",
+           StringsEnum.OVERLAY_EXP_STATUS_LABEL: "Exp Status:",
            }
 
 # Japanese strings
@@ -242,6 +284,11 @@ japanese = {StringsEnum.CONFIG_TAB_LABEL: "構成",
                                              "かっている負荷の影響を受ける可能性があります。",
             StringsEnum.ROTATION_TOOLTIP: "ビデオフィードの回転角度を設定します。 -360 <値<360。",
             StringsEnum.IMAGE_DISPLAY_TOOLTIP: "カメラフィードのプレビュー。",
+            StringsEnum.OVERLAY_COND_NAME_LABEL: "Cond Name:",
+            StringsEnum.OVERLAY_FPS_LABEL: "FPS:",
+            StringsEnum.OVERLAY_KEYFLAG_LABEL: "Keyflag:",
+            StringsEnum.OVERLAY_BLOCK_NUM_LABEL: "Block #:",
+            StringsEnum.OVERLAY_EXP_STATUS_LABEL: "Exp Status:",
             }
 
 # Add defined languages to strings dictionary.

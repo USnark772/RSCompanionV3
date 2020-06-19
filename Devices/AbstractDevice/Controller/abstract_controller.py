@@ -47,14 +47,14 @@ class AbstractController(ABC):
         """
         Handle cleanup and shut down of this code.
         :param discard: Quit without saving.
-        :return: None.
+        :return None:
         """
         pass
 
     def await_saved(self) -> futures:
         """
         Signal main app that this device data has been saved.
-        :return:
+        :return futures: An asyncio awaitable.
         """
         self.saved.set()
         print(__name__, "Saved is set, returning saved.")
@@ -63,7 +63,7 @@ class AbstractController(ABC):
     def get_conn(self) -> AioSerial:
         """
         Return this device's com port if it exists.
-        :return: This device's com port.
+        :return AioSerial: This device's com port.
         """
         pass
 
@@ -72,7 +72,7 @@ class AbstractController(ABC):
         """
         Set this device's language.
         :param lang: The enum for the language.
-        :return: None.
+        :return None:
         """
         pass
 
@@ -87,20 +87,28 @@ class AbstractController(ABC):
     def end_exp(self) -> None:
         """
         Logic for if this device needs to know about when an experiment is ended.
-        :return: None.
+        :return None:
         """
         pass
 
     def start_exp(self, block_num: int) -> None:
         """
         Logic for if this device needs to know about when an experiment is running.
-        :return: None.
+        :return None:
         """
         pass
 
     def stop_exp(self) -> None:
         """
         Logic for if this device needs to know about when an experiment is stopped.
-        :return: None.
+        :return None:
+        """
+        pass
+
+    def update_keyflag(self, flag: str) -> None:
+        """
+        Logic for if this device needs to know about keflag updates.
+        :param flag: The new flag.
+        :return None:
         """
         pass
