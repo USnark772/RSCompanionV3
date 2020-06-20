@@ -138,6 +138,7 @@ class ButtonBox(QGroupBox):
         :return: None.
         """
         self.logger.debug("running")
+        self._create_button_state = button_state
         if button_state == 0:
             self._create_button.setText(self._strings[StringsEnum.CREATE])
             self._create_button.setToolTip(self._strings[StringsEnum.CREATE_TT])
@@ -161,6 +162,7 @@ class ButtonBox(QGroupBox):
         :return: None.
         """
         self.logger.debug("running")
+        self._start_button_state = button_state
         if button_state == 0:
             self._start_button.setIcon(self._play_icon)
             self._start_button.setIconSize(QSize(26, 26))

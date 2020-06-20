@@ -27,10 +27,11 @@ https://redscientific.com/index.html
 
 from abc import ABCMeta, ABC
 from Model.app_helpers import EasyFrame
+from Model.app_defs import image_file_path
 from Resources.Strings.app_strings import company_name, app_name
 from PySide2.QtWidgets import QMdiSubWindow, QHBoxLayout, QGridLayout, QLayout
 from PySide2.QtCore import Qt, QSettings
-from PySide2.QtGui import QCloseEvent
+from PySide2.QtGui import QCloseEvent, QIcon
 
 
 class AbstractMeta(ABCMeta, type(QMdiSubWindow)):
@@ -48,6 +49,9 @@ class SubWindow(QMdiSubWindow):
             super().layout().addWidget(self.main_frame)
             self.main_frame.setLayout(QGridLayout())
             self.layout = self.new_layout
+
+            self._icon = QIcon(image_file_path + "rs_icon.png")
+            self.setWindowIcon(self._icon)
 
     def new_layout(self) -> QLayout:
         """

@@ -76,6 +76,8 @@ class InfoBox(QGroupBox):
         self._empty_block_2_val.setAlignment(Qt.AlignRight)
         self.layout().addWidget(self._empty_block_2_val, 3, 1, 1, 1)
 
+        self.setMinimumWidth(260)
+
         self._strings = dict()
         self.set_lang(lang)
         self.logger.debug("Initialized")

@@ -46,9 +46,6 @@ class VOGView(AbstractView):
         self._logger.debug("Initializing")
         super().__init__(name)
 
-        self._icon = QIcon(image_file_path + "rs_icon.png")
-        self.setWindowIcon(self._icon)
-
         """ Min size for the VOG window """
         self._subwindow_height = 309
         self._subwindow_width = 550

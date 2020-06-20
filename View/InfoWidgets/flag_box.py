@@ -49,6 +49,8 @@ class FlagBox(QGroupBox):
         self._flag.setFont(font)
         self.layout().addWidget(self._flag, 0, Qt.AlignHCenter)
 
+        self.setMinimumWidth(105)
+
         self._strings = dict()
         self.set_lang(lang)
         self._logger.debug("Initialized")

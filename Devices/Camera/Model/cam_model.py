@@ -79,7 +79,8 @@ class CamModel:
         self._fps = 30
         self._cam_name = "CAM_" + str(self._cam_index)
         self._cond_name = str()
-        self._exp_status = "Not running"
+        self._exp_status = self._strings[StringsEnum.EXP_STATUS_STOP]
+        self._exp_running = False
         self._block_num = 0
         self._keyflag = str()
         self._lines_to_write = []
@@ -193,7 +194,7 @@ class CamModel:
         :param num: The new num to show.
         :return None:
         """
-        self._lines_to_write[4] = self._strings[StringsEnum.OVERLAY_BLOCK_NUM_LABEL] + " " + str(num)
+        self._lines_to_write[3] = self._strings[StringsEnum.OVERLAY_BLOCK_NUM_LABEL] + " " + str(num)
 
     def _update_cond_name(self, name: str) -> None:
         """
@@ -209,7 +210,7 @@ class CamModel:
         :param flag: The new key flag to show.
         :return None:
         """
-        self._lines_to_write[5] = self._strings[StringsEnum.OVERLAY_KEYFLAG_LABEL] + " " + str(flag)
+        self._lines_to_write[4] = self._strings[StringsEnum.OVERLAY_KEYFLAG_LABEL] + " " + str(flag)
 
     def _update_exp_status(self, status: bool) -> None:
         """
@@ -218,11 +219,12 @@ class CamModel:
         :return None:
         """
         output = str()
+        self._exp_running = status
         if status:
-            output = "Running"
+            self._exp_status = self._strings[StringsEnum.EXP_STATUS_RUN]
         else:
-            output = "Not running"
-        self._lines_to_write[3] = self._strings[StringsEnum.OVERLAY_EXP_STATUS_LABEL] + " " + str(output)
+            self._exp_status = self._strings[StringsEnum.EXP_STATUS_STOP]
+        self._lines_to_write[2] = self._strings[StringsEnum.OVERLAY_EXP_STATUS_LABEL] + " " + self._exp_status
 
     def _get_res(self) -> None:
         """
@@ -355,7 +357,7 @@ class CamModel:
             prev_time = now
             self._fps = round(len(self._times) / sum(self._times))
             self._lines_to_write[1] = format_current_time(timestamp, day=True, time=True, mil=True)
-            self._lines_to_write[2] = self._strings[StringsEnum.OVERLAY_FPS_LABEL] + " " + str(self._fps)
+            self._lines_to_write[-1] = self._strings[StringsEnum.OVERLAY_FPS_LABEL] + " " + str(self._fps)
             x, y = self._first_line_loc
             for line in self._lines_to_write:
                 if len(line) > 0:
@@ -406,10 +408,15 @@ class CamModel:
         Set the initial texts for this camera.
         :return None:
         """
+        if self._exp_running:
+            self._exp_status = self._strings[StringsEnum.EXP_STATUS_RUN]
+        else:
+            self._exp_status = self._strings[StringsEnum.EXP_STATUS_STOP]
         self._lines_to_write = [self._strings[StringsEnum.OVERLAY_COND_NAME_LABEL] + " " + self._cond_name,
-                                "",
                                 "",
                                 self._strings[StringsEnum.OVERLAY_EXP_STATUS_LABEL] + " " + self._exp_status,
                                 self._strings[StringsEnum.OVERLAY_BLOCK_NUM_LABEL] + " " + str(self._block_num),
                                 self._strings[StringsEnum.OVERLAY_KEYFLAG_LABEL] + " " + self._keyflag,
+                                "",
                                 ]
+
