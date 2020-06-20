@@ -51,11 +51,8 @@ class GraphFrame(QFrame):
         self._graph = graph
         self._graph_height = 400
 
-        # self.layout().setMargin(5)
-
         if graph:
             self.layout().addWidget(self._graph)
-        # self.setFixedHeight(self._graph_height)
         self._logger.debug("Initialized")
 
     def set_graph_height(self, height: int = None):

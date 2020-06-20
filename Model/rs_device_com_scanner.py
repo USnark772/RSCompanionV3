@@ -88,7 +88,6 @@ class RSDeviceCommScanner:
         self._logger.debug("running")
         ret = False, None
         if len(self._new_coms) > 0:
-            self._logger.debug("done with true")
             ret = (True, self._new_coms.pop(0))
         self._logger.debug("done with: " + str(ret[0]) + " " + str(ret[1]))
         return ret
