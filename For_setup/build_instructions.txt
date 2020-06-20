@@ -1,4 +1,4 @@
-To build app executable and package into installer:
+To build/package app:
 -   Update version number and set release bool to True in app_defs.py
 -   Update build path in comp_app_setup.py
 -   Update version and build path in comp_app_inno.iss

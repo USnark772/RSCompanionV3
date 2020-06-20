@@ -2,11 +2,11 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 ; EDIT THESE VARIABLES AS NEEDED
-; ***********************************************************************
+; ******************************************************************************************
 #define BuildDir "C:\RSDev\Builds\"  ; SET TO YOUR BUILDS FOLDER
 #define AppVMaj "2"                  ; UPDATE TO CORRECT MAJOR VERSION Ex. 2.01 would be 2
 #define AppVMin "0"                  ; UPDATE TO CORRECT MINOR VERSION Ex. 2.01 would be 01
-; ***********************************************************************
+; ******************************************************************************************
 
 #define MyAppName "RS Companion"
 #define MyAppPublisher "Red Scientific"
