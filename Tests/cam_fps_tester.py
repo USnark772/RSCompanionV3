@@ -1,7 +1,7 @@
 import cv2
 from statistics import median
 from time import time
-from Devices.Camera.Model.cam_defs import cap_backend, cap_temp_codec, cap_codec
+from RSCompanionAsync.Devices.Camera.Model.cam_defs import cap_backend, cap_temp_codec, cap_codec
 
 
 def test_type_read_times(cap: cv2.VideoCapture, cam_index: int, num_reads: int, show_values: bool):

@@ -1,7 +1,7 @@
 import sys
 from PySide2.QtWidgets import *
-from View.MainWindow.central_widget import CentralWidget
-from Model.app_helpers import EasyFrame, ClickAnimationButton
+from RSCompanionAsync.View import CentralWidget
+from RSCompanionAsync.Model.app_helpers import EasyFrame, ClickAnimationButton
 
 
 class MainWindow(QMainWindow):

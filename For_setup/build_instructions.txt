@@ -1,11 +1,7 @@
--   Add new folder for build version (ex. Build 1.1) in your builds folder
--   Update version number in app_defs.py and comp_app_setup.py
--   in cmd go to build version directory
--   command: python (full path to comp_app_setup.py) build
--   Update comp_app_inno.iss with latest version and filepaths.
--   compile .iss
-
-Things to check for each build:
--   general_defs.py filepaths and version number
--   setup.py version number
--   inno setup version number and filepaths
+To build app executable and package into installer:
+-   Update version number and set release bool to True in app_defs.py
+-   Update build path in comp_app_setup.py
+-   Update version and build path in comp_app_inno.iss
+-   run in console: python (path to comp_app_setup.py) build
+        - example: "python C:\RSDev\asyncCompanion\For_setup\comp_app_setup.py build"
+-   compile .iss using Inno Setup Compiler app

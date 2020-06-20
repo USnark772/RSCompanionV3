@@ -1,5 +1,6 @@
-""" Licensed under GNU GPL-3.0-or-later """
 """
+Licensed under GNU GPL-3.0-or-later
+
 This file is part of RS Companion.
 
 RS Companion is free software: you can redistribute it and/or modify
@@ -14,34 +15,51 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
-"""
 
-# Author: Phillip Riskin
-# Date: 2019
-# Project: Companion App
-# Company: Red Scientific
-# https://redscientific.com/index.html
+Author: Phillip Riskin
+Date: 2019 - 2020
+Project: Companion App
+Company: Red Scientific
+https://redscientific.com/index.html
+"""
 
 
 import sys
 import os
 from cx_Freeze import setup, Executable
+from RSCompanionAsync.Model.app_defs import current_version
 
-build_output_path = "C:/RSDev/Builds/Version 2/Build 2.0"
-app_version = '2.0'  # TODO: Increment for each new version.
+# EDIT THESE VARIABLES AS NEEDED.
+##########################################################################
+builds_path = 'C:/RSDev/Builds/'  # Set to your Builds folder.
+##########################################################################
+
+# Version number.
+app_version = str(current_version)
+# Output path.
+app_v_maj, app_v_min = app_version.split('.')
+out_path = builds_path + 'Version ' + app_v_maj + '/Build ' + app_v_maj + '.' + app_v_min + '/RSCompanion/'
+# Ensure output path exists.
+if not os.path.exists(out_path):
+    os.mkdir(out_path)
+# App information.
 app_name = 'RS Companion'
-exe_name = 'Companion.exe'
-app_description = 'RS Companion'
+exe_name = 'RSCompanion.exe'
+app_description = app_name
+# Paths to different components of app required for building.
+root_path = 'C:/RSDev/'
+redist_path = root_path + 'redist/'
+proj_path = root_path + 'asyncCompanion/'
+package_path = proj_path + 'RSCompanionAsync/'
+readme_path = proj_path + 'readme/'
+images_path = package_path + 'Resources/Images/'
+icon_path = images_path + 'rs_icon.ico'
+main_path = package_path + 'main.py'
 
-filepath = 'C:/RSDev'
-app_filepath = filepath + '/asyncCompanion'
-redist_filepath = filepath + '/redist/'
-images_filepath = app_filepath + '/Resources/Images/'
-icon_filepath = images_filepath + 'rs_icon.ico'
-readme_filepath = app_filepath + '/readme/'
+# Ensure path has project path to allow cx_freeze to add specified app packages.
+sys.path.append(proj_path)
 
-sys.path.append(app_filepath)
-
+# Explicitly list required packages/files for cx_freeze to add/ignore and set output path.
 build_exe_options = {'packages': ['os',
                                   'requests',
                                   'queue',
@@ -49,30 +67,29 @@ build_exe_options = {'packages': ['os',
                                   'urllib3',
                                   'numpy',
                                   'matplotlib',
-                                  'Pyside2',
-                                  'Controller',
-                                  'Devices',
-                                  'Model',
-                                  'Resources',
-                                  'View',
+                                  'RSCompanionAsync',
                                   ],
                      'excludes': ['tkinter'],
-                     'include_files': [redist_filepath,
-                                       images_filepath,
-                                       readme_filepath]}
+                     'include_files': [redist_path,
+                                       images_path,
+                                       readme_path],
+                     'build_exe': out_path}
 
+# Add required .dll files. if needed.
 PYTHON_INSTALL_DIR = os.path.dirname(os.path.dirname(os.__file__))
 include_files = [os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'libcrypto-1_1.dll'),
                  os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'libssl-1_1.dll')]
 
+# Set base platform (OS) and include required files.
 base = None
 if sys.platform == 'win32':
     base = 'Win32GUI'
     for file in include_files:
         build_exe_options['include_files'].append(file)
 
+# Run setup.
 setup(name=app_name,
       version=app_version,
       description=app_description,
       options={'build_exe': build_exe_options},
-      executables=[Executable(app_filepath + '/main.py', targetName=exe_name, base=base, icon=icon_filepath)])
+      executables=[Executable(main_path, targetName=exe_name, base=base, icon=icon_path)])
