@@ -1,0 +1,11 @@
+-   Add new folder for build version (ex. Build 1.1) in your builds folder
+-   Update version number in app_defs.py and comp_app_setup.py
+-   in cmd go to build version directory
+-   command: python (full path to comp_app_setup.py) build
+-   Update comp_app_inno.iss with latest version and filepaths.
+-   compile .iss
+
+Things to check for each build:
+-   general_defs.py filepaths and version number
+-   setup.py version number
+-   inno setup version number and filepaths
