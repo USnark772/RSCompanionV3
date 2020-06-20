@@ -27,6 +27,7 @@ import sys
 import tempfile
 import cProfile  # TODO: Remove this before release.
 import pstats
+import multiprocessing
 from os import remove
 from asyncio import set_event_loop, run
 from asyncqt import QEventLoop
@@ -46,6 +47,7 @@ async def main():
 
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support()
     profile = False  # True: Profile code. False: Run normally.
     if profile:
         filename = tempfile.gettempdir() + "/companion_app_profile.stats"

@@ -28,7 +28,7 @@ import os
 import glob
 import importlib.util
 import zipfile
-from shutil import move, rmtree
+from shutil import move
 import tempfile
 from logging import StreamHandler, getLogger
 from datetime import datetime
@@ -36,14 +36,14 @@ from asyncio import Event, create_task, futures, get_running_loop
 from aioserial import AioSerial
 from Model.rs_device_com_scanner import RSDeviceCommScanner
 from Model.cam_scanner import CamScanner
-from Model.app_defs import LangEnum
+import Model.app_defs as defs
 from Model.app_helpers import await_event, write_line_to_file, format_current_time
 from Model.version_checker import VersionChecker
 from Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
 class AppModel:
-    def __init__(self, lang: LangEnum = LangEnum.ENG, log_handlers: [StreamHandler] = None):
+    def __init__(self, lang: defs.LangEnum = defs.LangEnum.ENG, log_handlers: [StreamHandler] = None):
         self._logger = getLogger(__name__)
         if log_handlers:
             for h in log_handlers:
@@ -103,7 +103,7 @@ class AppModel:
         """
         return self._cam_scanner.await_err()
 
-    def change_lang(self, lang: LangEnum) -> None:
+    def change_lang(self, lang: defs.LangEnum) -> None:
         """
         Change the language new devices are initialized with.
         :param lang: The enum to use.
@@ -112,7 +112,7 @@ class AppModel:
         self._current_lang = lang
         self._signal_lang_change()
 
-    def set_lang(self, lang: LangEnum) -> None:
+    def set_lang(self, lang: defs.LangEnum) -> None:
         """
         Set language in each device controller.
         :param lang: The enum for the language.
@@ -495,22 +495,23 @@ class AppModel:
         Iteratively search for any devices and get the profiles for those devices.
         :return dict: The list of keyval pairs {device name: device profile}
         """
-        profs = {}
-        # TODO: Handle when not under asyncCompanion directory
-        while not os.getcwd().endswith("asyncCompanion"):  # Make sure we are in the right directory.
-            os.chdir(os.pardir)
-        for device in os.listdir('Devices'):
-            if device != "AbstractDevice":
-                fpath = glob.glob("Devices/" + device + "/Model/*defs.py")
-                if fpath:
-                    spec = importlib.util.spec_from_file_location("stuff", fpath[0])
-                    mod = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(mod)
-                    try:
-                        profs.update(mod.profile)
-                    except Exception as e:
-                        pass
-        return profs
+        profiles = {}
+        for listing in os.listdir(defs.dev_path):
+            listing_path = defs.dev_path + listing
+            if "Abstract" not in listing and os.path.isdir(listing_path):
+                model_dir = listing_path + "/Model/"
+                if os.path.isdir(model_dir):
+                    for name in os.listdir(model_dir):
+                        if "defs.py" in name:
+                            fpath = model_dir + name
+                            spec = importlib.util.spec_from_file_location(listing, fpath)
+                            mod = importlib.util.module_from_spec(spec)
+                            spec.loader.exec_module(mod)
+                            try:
+                                profiles.update(mod.profile)
+                            except Exception as e:
+                                pass
+        return profiles
 
     # TODO add debugging
     @staticmethod
@@ -520,18 +521,19 @@ class AppModel:
         :return dict: The list of keyval pairs {device name: device controller class}
         """
         controllers = {}
-        # TODO: Handle when not under asyncCompanion directory
-        while not os.getcwd().endswith("asyncCompanion"):  # Make sure we are in the right directory.
-            os.chdir(os.pardir)
-        for device in os.listdir('Devices'):
-            if device != "AbstractDevice":
-                fpath = glob.glob("Devices/" + device + "/Controller/*controller.py")
-                if fpath:
-                    spec = importlib.util.spec_from_file_location(device, fpath[0])
-                    mod = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(mod)
-                    try:
-                        controllers.update({device: mod.Controller})
-                    except Exception as e:
-                        pass
+        for listing in os.listdir(defs.dev_path):
+            listing_path = defs.dev_path + listing
+            if "Abstract" not in listing and os.path.isdir(listing_path):
+                controller_dir = listing_path + "/Controller/"
+                if os.path.isdir(controller_dir):
+                    for name in os.listdir(controller_dir):
+                        if "controller.py" in name:
+                            fpath = controller_dir + name
+                            spec = importlib.util.spec_from_file_location(listing, fpath)
+                            mod = importlib.util.module_from_spec(spec)
+                            spec.loader.exec_module(mod)
+                            try:
+                                controllers.update({listing: mod.Controller})
+                            except Exception as e:
+                                pass
         return controllers

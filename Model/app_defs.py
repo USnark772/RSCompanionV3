@@ -24,7 +24,8 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from cv2 import VideoWriter_fourcc, CAP_DSHOW
+from sys import argv
+from os.path import dirname
 from enum import Enum, auto
 
 
@@ -34,13 +35,18 @@ from enum import Enum, auto
 # Model
 #################################################################################################################
 
+# TODO: Set release to True and increment version number for builds.
+release = True
+current_version = 2.0
+
 version_url = "https://raw.githubusercontent.com/redscientific/CompanionApp/master/Version.txt"
 log_format = '%(levelname)s - %(name)s - %(funcName)s: %(message)s'
-# TODO: Switch image_file_path for build
-image_file_path = '../asyncCompanion/Resources/Images/'
-# image_file_path = 'Images/'
-# TODO: Increment version number for build
-current_version = 2.0
+if release:
+    image_file_path = 'Images/'
+    dev_path = dirname(argv[0]) + '/lib/Devices/'
+else:
+    image_file_path = '../asyncCompanion/Resources/Images/'
+    dev_path = dirname(argv[0]) + '/Devices/'
 
 #################################################################################################################
 # View
