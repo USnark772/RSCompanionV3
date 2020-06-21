@@ -2,6 +2,6 @@ To build/package app:
 -   Update version number and set release bool to True in app_defs.py
 -   Update build path in comp_app_setup.py
 -   Update version and build path in comp_app_inno.iss
--   run in console: python (path to comp_app_setup.py) build
+-   run in terminal: python (path to comp_app_setup.py) build
         - example: "python C:\RSDev\asyncCompanion\For_setup\comp_app_setup.py build"
--   compile .iss using Inno Setup Compiler app
+-   compile .iss using Inno Setup Compiler

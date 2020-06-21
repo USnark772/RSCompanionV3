@@ -23,6 +23,7 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
+import numpy as np
 from abc import ABCMeta, ABC, abstractmethod
 from asyncio import create_task, sleep
 from logging import getLogger, StreamHandler
@@ -30,7 +31,6 @@ from datetime import datetime
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as Canvas
 from matplotlib.figure import Figure
 from RSCompanionAsync.Devices.AbstractDevice.Resources.abstract_strings import strings, LangEnum
-import numpy as np
 
 
 class AbstractMeta(ABCMeta, type(Canvas)):

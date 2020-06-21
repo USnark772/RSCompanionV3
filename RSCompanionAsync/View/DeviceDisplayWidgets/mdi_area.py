@@ -45,8 +45,9 @@ class MDIArea(QMdiArea):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
         # Dummy subwindows for testing.
-        # from Devices.DRT.View.drt_view import DRTView as subwindow
-        # from Devices.VOG.View.vog_view import VOGView as subwindow
+        # from RSCompanionAsync.Devices.DRT.View.drt_view import DRTView as subwindow
+        # from RSCompanionAsync.Devices.VOG.View.vog_view import VOGView as subwindow
+        # from RSCompanionAsync.Devices.VOG.View.vog_view import VOGView as subwindow
         # for i in range(6):
         #     window = subwindow()
         #     self.add_window(window)

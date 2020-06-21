@@ -23,10 +23,12 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-
+import pathlib
 import sys
 import os
 from cx_Freeze import setup, Executable
+# Make sure script has access to RSCompanion module.
+sys.path.append("C:/RSDev/asyncCompanion/")
 from RSCompanionAsync.Model.app_defs import current_version
 
 # EDIT THESE VARIABLES AS NEEDED.
@@ -40,8 +42,7 @@ app_version = str(current_version)
 app_v_maj, app_v_min = app_version.split('.')
 out_path = builds_path + 'Version ' + app_v_maj + '/Build ' + app_v_maj + '.' + app_v_min + '/RSCompanion/'
 # Ensure output path exists.
-if not os.path.exists(out_path):
-    os.mkdir(out_path)
+pathlib.Path(out_path).mkdir(parents=True, exist_ok=True)
 # App information.
 app_name = 'RS Companion'
 exe_name = 'RSCompanion.exe'
@@ -67,6 +68,7 @@ build_exe_options = {'packages': ['os',
                                   'urllib3',
                                   'numpy',
                                   'matplotlib',
+                                  'Pyside2',
                                   'RSCompanionAsync',
                                   ],
                      'excludes': ['tkinter'],

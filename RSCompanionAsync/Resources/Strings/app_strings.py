@@ -26,6 +26,7 @@ https://redscientific.com/index.html
 
 from RSCompanionAsync.Model.app_defs import LangEnum
 from enum import Enum, auto
+from RSCompanionAsync.Model.app_defs import current_version
 
 
 class StringsEnum(Enum):
@@ -73,7 +74,8 @@ english = {StringsEnum.COMPANY_NAME: company_name,
                                   " data files within the current experiment.\n\n"
                                   " - Information: Displays information in regards to the current experiment.\n\n"
                                   " - Drive Info: Displays information in regards to the current volume where data is"
-                                  " being saved to.",
+                                  " being saved to.\n\n"
+                                  " Version: " + str(current_version),
            StringsEnum.UPDATE_HDR: "Update",
            StringsEnum.UPDATE_HDR_ERR: "Error",
            StringsEnum.UPDATE_AVAILABLE: "An update is available.",
@@ -111,7 +113,8 @@ dutch = {StringsEnum.COMPANY_NAME: company_name,
                                 " passen op alle apparaatgegevensbestanden binnen het huidige experiment.\n\n"
                                 " - Informatie: Geeft informatie weer met betrekking tot het huidige experiment.\n\n"
                                 " - Drive Info: Geeft informatie weer met betrekking tot het huidige volume waarin"
-                                " gegevens worden opgeslagen.",
+                                " gegevens worden opgeslagen.\n\n"
+                                " Versie: " + str(current_version),
          StringsEnum.UPDATE_HDR: "Bijwerken",
          StringsEnum.UPDATE_HDR_ERR: "Fout",
          StringsEnum.UPDATE_AVAILABLE: "Een update is beschikbaar.",
@@ -152,7 +155,8 @@ french = {StringsEnum.COMPANY_NAME: company_name,
                                  " en cours.\n\n"
                                  " - Informations: affiche des informations concernant l'expérience en cours.\n\n"
                                  " - Informations sur le lecteur: affiche des informations concernant le volume"
-                                 " actuel sur lequel les données sont enregistrées.",
+                                 " actuel sur lequel les données sont enregistrées.\n\n"
+                                 " Version: " + str(current_version),
           StringsEnum.UPDATE_HDR: "Mise à jour",
           StringsEnum.UPDATE_HDR_ERR: "Erreur",
           StringsEnum.UPDATE_AVAILABLE: "Une mise à jour est disponible.",
@@ -191,7 +195,8 @@ german = {StringsEnum.COMPANY_NAME: company_name,
                                  " Notiz auf alle Gerätedatendateien im aktuellen Experiment anzuwenden.\n\n"
                                  " - Information: Zeigt Informationen zum aktuellen Experiment an.\n\n"
                                  " - Laufwerksinformationen: Zeigt Informationen zum aktuellen Volume an, auf dem"
-                                 " Daten gespeichert werden.",
+                                 " Daten gespeichert werden.\n\n"
+                                 " Ausführung: " + str(current_version),
           StringsEnum.UPDATE_HDR: "Aktualisieren",
           StringsEnum.UPDATE_HDR_ERR: "Error",
           StringsEnum.UPDATE_AVAILABLE: "Eine Aktualisierung ist verfügbar.",
@@ -269,7 +274,8 @@ spanish = {StringsEnum.COMPANY_NAME: company_name,
                                   " todos los archivos de datos del dispositivo dentro del experimento actual.\n\n"
                                   " - Información: Muestra información sobre el experimento actual.\n\n"
                                   " - Información de la unidad: Muestra información sobre el volumen actual donde"
-                                  " se guardan los datos.",
+                                  " se guardan los datos.\n\n"
+                                  " Versión: " + str(current_version),
            StringsEnum.UPDATE_HDR: "Actualizar",
            StringsEnum.UPDATE_HDR_ERR: "Error",
            StringsEnum.UPDATE_AVAILABLE: "Hay una actualización disponible.",
