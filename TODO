@@ -1,45 +1,28 @@
 TODO: Pressing matters.
     - Implement camera handler in app_controller.py (Turning cameras on or off).
     - Ensure app does not save experiment before devices finish saving. (Can we tell if a file is still opened?)
-    - Fix errors that show up in release version.
-        - Traceback (most recent call last):
-          File "C:/RSDev/asyncCompanion\Model\app_model.py", line 389, in _make_rs_controller
-            controller = self._controllers[dev_type](conn, self._current_lang, self._log_handlers)
-          File "C:/RSDev/asyncCompanion\Devices\VOG\Controller\vog_controller.py", line 56, in __init__
-            self.view.add_graph(GraphFrame(view, self._graph, log_handlers))
-          File "C:/RSDev/asyncCompanion\Devices\AbstractDevice\View\graph_frame.py", line 57, in __init__
-            self.layout().addWidget(self._graph)
-          TypeError: 'PySide2.QtWidgets.QBoxLayout.addWidget' called with wrong argument types:
-            PySide2.QtWidgets.QBoxLayout.addWidget(VOGGraph)
-          Supported signatures:
-            PySide2.QtWidgets.QBoxLayout.addWidget(PySide2.QtWidgets.QWidget, int = 0, PySide2.QtCore.Qt.Alignment = Default(Qt.Alignment))
-            PySide2.QtWidgets.QBoxLayout.addWidget(PySide2.QtWidgets.QWidget)
-
-TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
         - Try to figure out which camera each mic belongs to and make that an mp4.
         - If mic is not attached to camera then save as audio file.
         - https://stackoverflow.com/questions/14140495/how-to-capture-a-video-and-audio-in-python-from-a-camera-or-webcam
+
+TODO: At some point
     - Implement CAM.
         - Make image fit fully into subwindow display area.
         - Consider passing selected fps to writer instead of current fps.
         - handle other to do items listed in cam modules
     - Consider making properties out of our getter/setter methods.
         - https://www.python-course.eu/python3_properties.php
-    - Finish fine tuning MDI subwindows.
-        - Make subwindows rearrange/resize/move on main window resize.
     - Check all files for proper and complete logging usage.
     - Implement playback of experiment data.
         - Scanning through data example: DRT_7,_8,_9 clicks threshold x, scan through all by timestamp.
         - Reimplement saving as .rs files.
-    - Figure out how to get app to work with other character languages.
+    - Figure out how to get app to work with non-ascii character languages. Issue seems to be with matplotlib.
         - Chinese
         - Japanese
         - Russian
     - Add more languages.
-        - Mandarin (Chinese simplified/formal)
-        - European languages
-        - 10 most spoken languages would be nice.
+        - Top 10 most spoken languages would be nice.
     - Finish adding/translating languages for current string.py files.
     - Look over https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html and make edits to imports.
     - Look at info_box.py empty QLabel items and consider a spacer item instead.

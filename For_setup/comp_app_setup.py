@@ -27,14 +27,13 @@ import pathlib
 import sys
 import os
 from cx_Freeze import setup, Executable
-# Make sure script has access to RSCompanion module.
-sys.path.append("C:/RSDev/asyncCompanion/")
-from RSCompanionAsync.Model.app_defs import current_version
-
 # EDIT THESE VARIABLES AS NEEDED.
 ##########################################################################
 builds_path = 'C:/RSDev/Builds/'  # Set to your Builds folder.
+sys.path.append("C:/RSDev/asyncCompanion/")  # Set to your asyncCompanion folder.
 ##########################################################################
+from RSCompanionAsync.Model.app_defs import current_version
+
 
 # Version number.
 app_version = str(current_version)
@@ -71,7 +70,9 @@ build_exe_options = {'packages': ['os',
                                   'Pyside2',
                                   'RSCompanionAsync',
                                   ],
-                     'excludes': ['tkinter'],
+                     'excludes': ['tkinter',
+                                  'PyQt5',
+                                  ],
                      'include_files': [redist_path,
                                        images_path,
                                        readme_path],

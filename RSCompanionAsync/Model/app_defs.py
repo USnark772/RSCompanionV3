@@ -36,7 +36,7 @@ from enum import Enum, auto
 #################################################################################################################
 
 # Set release bool to True and update current_version when building. Increment version by .01
-release = True
+release = False
 current_version = 2.00
 
 version_url = "https://raw.githubusercontent.com/redscientific/CompanionApp/master/Version.txt"
