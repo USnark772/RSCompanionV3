@@ -5,6 +5,7 @@ TODO: Pressing matters.
         - Try to figure out which camera each mic belongs to and make that an mp4.
         - If mic is not attached to camera then save as audio file.
         - https://stackoverflow.com/questions/14140495/how-to-capture-a-video-and-audio-in-python-from-a-camera-or-webcam
+    - App won't fully close in pycharm but appears to fully close in release version.
 
 TODO: At some point
     - Implement CAM.

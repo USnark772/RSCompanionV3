@@ -479,6 +479,7 @@ class AppModel:
         for task in self._tasks:
             task.cancel()
         await self._rs_dev_scanner.cleanup()
+        await self._cam_scanner.cleanup()
         for dev in self._devs.values():
             await dev.cleanup(True)
         if self._saving_flag.is_set():
