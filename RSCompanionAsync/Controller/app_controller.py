@@ -57,6 +57,8 @@ class AppController:
         if not self._settings.contains("language"):
             self._settings.setValue("language", LangEnum.ENG)
         self._lang = self._settings.value("language")
+        if self._lang not in strings.keys():
+            self._lang = LangEnum.ENG
         self._strings = strings[self._lang]
 
         self._settings.beginGroup("logging")
