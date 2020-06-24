@@ -55,6 +55,7 @@ class AppMainWindow(QMainWindow):
         self.setMinimumSize(min_size)
         self.setWindowIcon(self._icon)
         self.setCentralWidget(CentralWidget(self))
+        self.centralWidget().layout().setMargin(0)
 
         self._control_frame = QFrame(self)
         self._control_frame.setFrameShape(QFrame.NoFrame)
