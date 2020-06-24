@@ -1,10 +1,16 @@
 To build/package app:
--   In asyncCompanion/RSCompanionAsync/Model/app_defs.py, update version_number and set release bool to True.
--   In asyncCompanion/For_setup/comp_app_setup.py, update root_dir.
--   In asyncCompanion/For_setup/comp_app_inno.iss, update version and build path.
--   In asyncCompanion/For_setup/setup.bat, make sure TOPDIR points to your RSDev folder and PYTHONEXE points to your python executable.
+-   In ../asyncCompanion/RSCompanionAsync/Model/app_defs.py, update version_number and set release bool to True.
+-   In ../asyncCompanion/For_setup/comp_app_setup.py,   (Use either forward-slash '/' or double back-slash '\\' in .py files)
+    -   update root_dir.                                        Ex. C:/RSDev
+-   In ../asyncCompanion/For_setup/comp_app_inno.iss,   (Use back-slash '\' in .iss files)
+    -   make sure BuildDir points to your Builds directory.     Ex. C:\RSDev\Builds\
+    -   make sure AppVMaj and AppVMin are set to match app version.
+-   In ../asyncCompanion/For_setup/setup.bat,           (Use back-slash '\' or double back-slash '\\' in .bat files)
+    -   make sure APPDIR points to your app dir's parent dir.   Ex. C:\RSDev\asyncCompanion would be C:\RSDev\
+    -   make sure PYTHONDIR points to your python directory.    Ex. ..\Python\Python37\
 -   run setup.bat in terminal.
 -   compile comp_app_inno.iss using Inno Setup Compiler.
 
--   If using matplotlib and mpl_toolkits is required, ensure mpl_toolkits folder has an __init__.py file for build
-    purposes. Path example: ..\Python\Python37\Lib\site-packages\mpl_toolkits
+-   Make sure your ..\Python\Python37\Lib\site-packages\mpl_toolkits\ has an __init__.py file in it.
+-   Make sure you have vc_redist.x86.exe located at the equivalent of APPDIR\redist\
+-   Make sure you have the 'requests' python package installed.

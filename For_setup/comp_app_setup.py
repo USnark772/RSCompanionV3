@@ -3,7 +3,7 @@ Licensed under GNU GPL-3.0-or-later
 
 This file is part of RS Companion.
 
-RS Companion is free software: you can redistribute it and\\or modify
+RS Companion is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
@@ -14,13 +14,13 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with RS Companion.  If not, see <https:\\\\www.gnu.org\\licenses\\>.
+along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
 Date: 2019 - 2020
 Project: Companion App
 Company: Red Scientific
-https:\\\\redscientific.com\\index.html
+https://redscientific.com/index.html
 """
 
 import pathlib
@@ -29,8 +29,8 @@ import os
 from cx_Freeze import setup, Executable
 
 # ************************************************* EDIT AS NEEDED *****************************************************
-root_dir = 'C:\\RSDev\\'  # Point to parent dir of project dir.
-builds_dir = root_dir + 'Builds\\'
+root_dir = 'C:/RSDev/'  # Point to parent dir of project dir.
+builds_dir = root_dir + 'Builds/'
 # **********************************************************************************************************************
 
 
@@ -59,7 +59,7 @@ check_path(root_dir)
 # Check if project dir exists.
 proj_name = 'asyncCompanion'
 check_path(root_dir, proj_name)
-proj_dir = root_dir + proj_name + '\\'
+proj_dir = root_dir + proj_name + '/'
 
 # Get access to app version number.
 sys.path.append(proj_dir)  # Set to your asyncCompanion folder.
@@ -73,17 +73,17 @@ app_description = app_name
 # Check if vc redist exists.
 redist = 'redist'
 check_path(root_dir, redist)
-redist_dir = root_dir + redist + '\\'
+redist_dir = root_dir + redist + '/'
 redist_filename = 'vc_redist.x86.exe'
 check_path(redist_dir, redist_filename, False)
 
 # Check if readme dir exists.
-readme_dir = proj_dir + 'readme\\'
+readme_dir = proj_dir + 'readme/'
 
 # Initialize rest of paths required for building.
-proj_packages_dir = proj_dir + 'RSCompanionAsync\\'
+proj_packages_dir = proj_dir + 'RSCompanionAsync/'
 main_path = proj_packages_dir + 'main.py'
-images_dir = proj_packages_dir + 'Resources\\Images\\'
+images_dir = proj_packages_dir + 'Resources/Images/'
 icon_path = images_dir + 'rs_icon.ico'
 
 # Version number.
@@ -91,7 +91,7 @@ app_v_num = str(version_number)
 
 # Output path.
 app_v_maj, app_v_min = app_v_num.split('.')
-out_path = builds_dir + 'Version ' + app_v_maj + '\\Build ' + app_v_maj + '.' + app_v_min + '\\RSCompanion\\'
+out_path = builds_dir + 'Version ' + app_v_maj + '/Build ' + app_v_maj + '.' + app_v_min + '/RSCompanion/'
 
 # Ensure output path exists.
 pathlib.Path(out_path).mkdir(parents=True, exist_ok=True)
@@ -99,7 +99,7 @@ pathlib.Path(out_path).mkdir(parents=True, exist_ok=True)
 # Ensure path has project path to allow cx_freeze to add specified app packages.
 sys.path.append(proj_dir)
 
-# Explicitly list required packages\\files for cx_freeze to add\\ignore and set output path.
+# Explicitly list required packages/files for cx_freeze to add/ignore and set output path.
 build_exe_options = {'packages': ['os',
                                   'requests',
                                   'queue',
