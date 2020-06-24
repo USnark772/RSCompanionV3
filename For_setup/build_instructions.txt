@@ -1,8 +1,8 @@
 To build/package app:
--   In app_defs.py, ipdate version_number and set release bool to True.
--   In comp_app_setup.py, update root_dir.
--   In comp_app_inno.iss, update version and build path.
--   In setup.bat, make sure TOPDIR points to your RSDev folder and PYTHONEXE points to your python executable.
+-   In asyncCompanion/RSCompanionAsync/Model/app_defs.py, update version_number and set release bool to True.
+-   In asyncCompanion/For_setup/comp_app_setup.py, update root_dir.
+-   In asyncCompanion/For_setup/comp_app_inno.iss, update version and build path.
+-   In asyncCompanion/For_setup/setup.bat, make sure TOPDIR points to your RSDev folder and PYTHONEXE points to your python executable.
 -   run setup.bat in terminal.
 -   compile comp_app_inno.iss using Inno Setup Compiler.
 
