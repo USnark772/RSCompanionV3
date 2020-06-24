@@ -28,7 +28,8 @@ import tempfile
 import cProfile  # TODO: Remove this before release.
 import pstats
 import multiprocessing
-from os import remove
+from os import remove, environ
+environ['QT_API'] = 'PySide2'
 from asyncio import set_event_loop, run
 from asyncqt import QEventLoop
 from PySide2.QtWidgets import QApplication

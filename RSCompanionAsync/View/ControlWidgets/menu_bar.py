@@ -47,14 +47,12 @@ class AppMenuBar(QMenuBar):
 
         self._exit_action = QAction(self)
 
-        # self._cam_list_menu = QMenu(self)
-        # self._file_menu.addMenu(self._cam_list_menu)
-
-        # self._use_cams_action = QAction(self)
-        # self._use_cams_action.setCheckable(True)
-        # self._cam_list_menu.addAction(self._use_cams_action)
-
-        # sep = self._cam_list_menu.addSeparator()
+        self._cam_list_menu = QMenu(self)
+        self._file_menu.addMenu(self._cam_list_menu)
+        self._use_cams_action = QAction(self)
+        self._use_cams_action.setCheckable(True)
+        self._cam_list_menu.addAction(self._use_cams_action)
+        sep = self._cam_list_menu.addSeparator()
 
         self._settings_menu = QMenu(self)
 
@@ -551,8 +549,8 @@ class AppMenuBar(QMenuBar):
         self._debug_menu.setTitle(self._strings[StringsEnum.DEBUG_MENU])
         self._debug_action.setText(self._strings[StringsEnum.DEBUG])
         self._warning_action.setText(self._strings[StringsEnum.WARNING])
-        # self._cam_list_menu.setTitle(self._strings[StringsEnum.ATTACHED_CAMS])
-        # self._use_cams_action.setText(self._strings[StringsEnum.USE_CAMS])
+        self._cam_list_menu.setTitle(self._strings[StringsEnum.ATTACHED_CAMS])
+        self._use_cams_action.setText(self._strings[StringsEnum.USE_CAMS])
         self._language_menu.setTitle(self._strings[StringsEnum.LANG])
         self._english_action.setText(self._strings[StringsEnum.ENG])
         self._dutch_action.setText(self._strings[StringsEnum.DUT])

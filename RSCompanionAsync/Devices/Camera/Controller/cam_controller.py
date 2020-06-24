@@ -56,7 +56,7 @@ class Controller(AbstractController):
         # TODO: Get logging in here. See https://docs.python.org/3/howto/logging-cookbook.html find multiprocessing.
         self._model_msg_pipe, msg_pipe = Pipe()  # For messages/commands.
         self._model_image_pipe, img_pipe = Pipe(False)  # For images.
-        self._model = Process(target=CamModel, args=(msg_pipe, img_pipe, self.cam_index))
+        self._model = Process(target=CamModel, args=(msg_pipe, img_pipe, self.cam_index), daemon=True)
         # TODO: Multiprocessing could cause issues when packaging app.
         self._switcher = {defs.ModelEnum.FAILURE: self.err_cleanup,
                           defs.ModelEnum.CUR_FPS: self._update_view_fps,
@@ -83,6 +83,7 @@ class Controller(AbstractController):
         self._res_list = list()
         self.send_msg_to_model((defs.ModelEnum.INITIALIZE, None))
         self._setup_handlers()
+        self._cleaning = False
         self._logger.debug("Initialized")
 
     def set_lang(self, lang: LangEnum) -> None:
@@ -103,6 +104,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
+        self._cleaning = True
         self.send_msg_to_model((defs.ModelEnum.CLEANUP, discard))
         await self._model_cleaned.wait()
         self._stop.set()
@@ -110,6 +112,7 @@ class Controller(AbstractController):
             self._model.join()
         self._ended.set()
         self.view.save_window_state()
+        self._cleaning = False
         self._logger.debug("done")
 
     def await_saved(self) -> futures:
@@ -140,17 +143,19 @@ class Controller(AbstractController):
         self._logger.debug("running")
         self.send_msg_to_model((defs.ModelEnum.STOP, None))
         self.view.set_config_active(True)
+        self.send_msg_to_model((defs.ModelEnum.BLOCK_NUM, 0))
         self._logger.debug("done")
 
-    def start_exp(self, block_num: int) -> None:
+    def start_exp(self, block_num: int, cond_name: str) -> None:
         """
         Handle start exp signal for this camera.
         :param block_num: The current block number.
+        :param cond_name: The name for this part of the experiment.
         :return None:
         """
         self._logger.debug("running")
-        print("")
         self.send_msg_to_model((defs.ModelEnum.BLOCK_NUM, block_num))
+        self.send_msg_to_model((defs.ModelEnum.COND_NAME, cond_name))
         self.send_msg_to_model((defs.ModelEnum.EXP_STATUS, True))
         self._logger.debug("done")
 
@@ -244,7 +249,8 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self._logger.warning("Camera error occurred.")
-        create_task(self.cleanup(True))
+        if not self._cleaning:
+            create_task(self.cleanup(True))
         self._logger.debug("done")
 
     def _set_saved(self) -> None:

@@ -142,10 +142,11 @@ class Controller(AbstractController):
         self._model.send_end()
         self._logger.debug("done")
 
-    def start_exp(self, block_num: int) -> None:
+    def start_exp(self, block_num: int, cond_name: str) -> None:
         """
         Notify this device of experiment start.
         :param block_num: The block number for this exp block.
+        :param cond_name: The name for this part of the experiment.
         :return None:
         """
         self._logger.debug("running")

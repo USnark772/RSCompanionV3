@@ -124,10 +124,11 @@ class Controller(AbstractController):
         self._model.add_save_hdr()
         self._logger.debug("done")
 
-    def start_exp(self, block_num: int) -> None:
+    def start_exp(self, block_num: int, cond_name: str) -> None:
         """
         Start this device.
         :param block_num: The block number for this exp block.
+        :param cond_name: The name for this part of the experiment.
         :return: None.
         """
         self._logger.debug("running")

@@ -27,6 +27,7 @@ https://redscientific.com/index.html
 import os
 import importlib.util
 from shutil import move
+from pathlib import Path
 import tempfile
 from logging import StreamHandler, getLogger
 from datetime import datetime
@@ -68,6 +69,7 @@ class AppModel:
         self._flag_filename = "flags.csv"
         self._saving = False
         self._running = True
+        self._block_num = 0
         self.exp_created = False
         self.exp_running = False
         self._loop = get_running_loop()
@@ -155,7 +157,7 @@ class AppModel:
             line = timestamp + ", " + note
             create_task(write_line_to_file(self._temp_folder.name + "/" + self._note_filename, line))
 
-    def keyflag_to_devs(self, flag: str) -> None:
+    def send_keyflag_to_devs(self, flag: str) -> None:
         """
         Pass the new flag to devices.
         :param flag: The new flag.
@@ -189,9 +191,7 @@ class AppModel:
         self._logger.debug("running")
         devices_running = list()
         self._temp_folder = tempfile.TemporaryDirectory()
-        print("Trying to set self._save_path to:", path)
-        self._save_path = path
-        print("self._save_path:", self._save_path)
+        self._save_path = path + "/experiment_" + format_current_time(datetime.now(), save=True)
         try:
             for controller in self._devs.values():
                 controller.create_exp(self._temp_folder.name + "/", cond_name)
@@ -215,31 +215,34 @@ class AppModel:
         try:
             for controller in self._devs.values():
                 controller.end_exp()
-            self._logger.debug("done")
+            self._block_num = 0
             self._saving_flag.set()
             create_task(self._save_exp())
+            self._logger.debug("done")
         except Exception as e:
             self._logger.exception("Failed ending exp on a controller.")
         self.exp_created = False
 
-    def signal_start_exp(self, block_num: int) -> None:
+    def signal_start_exp(self, cond_name: str) -> None:
         """
         Starts an experiment.
-        :param block_num: The number of this block.
+        :param cond_name: The optional name for this block.
         :return bool: Return false if an experiment failed to start, otherwise return true.
         """
         self._logger.debug("running")
         devices = list()
+        next_block_num = self._block_num + 1
         try:
             for controller in self._devs.values():
-                controller.start_exp(block_num)
+                controller.start_exp(next_block_num, cond_name)
                 devices.append(controller)
-                self.exp_running = True
+            self.exp_running = True
+            self._block_num = next_block_num
         except Exception as e:
             self._logger.exception("Failed trying to start exp on controller.")
             for controller in devices:
                 controller.end_exp()
-                self.exp_running = False
+            self.exp_running = False
 
     def signal_stop_exp(self) -> None:
         """
@@ -253,6 +256,12 @@ class AppModel:
         except Exception as e:
             self._logger.exception("Failed trying to stop exp on controller")
         self.exp_running = False
+
+    def get_block_num(self) -> int:
+        """
+        :return int: The latest block number.
+        """
+        return self._block_num
 
     async def _await_new_devs(self) -> None:
         """
@@ -319,6 +328,7 @@ class AppModel:
         :return None:
         """
         # TODO: Use zipfile code when reading .rs files is implemented.
+        Path(self._save_path).mkdir(parents=True, exist_ok=True)
         # with zipfile.ZipFile(self._save_path, "w") as zipper:
         #     for file in os.listdir(self._temp_folder.name):
         #         zipper.write(self._temp_folder.name + "/" + file, file)

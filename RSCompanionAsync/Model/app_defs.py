@@ -35,9 +35,9 @@ from enum import Enum, auto
 # Model
 #################################################################################################################
 
-# Set release bool to True and update current_version when building. Increment version by .01
+# Set release bool to True and update version_number when building. Increment version by .01
+version_number = 2.00
 release = False
-current_version = 2.00
 
 version_url = "https://raw.githubusercontent.com/redscientific/CompanionApp/master/Version.txt"
 log_format = '%(levelname)s - %(name)s - %(funcName)s: %(message)s'

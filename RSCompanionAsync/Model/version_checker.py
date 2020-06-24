@@ -27,7 +27,7 @@ https://redscientific.com/index.html
 
 from logging import getLogger, StreamHandler
 from urllib3 import PoolManager
-from RSCompanionAsync.Model.app_defs import version_url, current_version
+from RSCompanionAsync.Model.app_defs import version_url, version_number
 
 
 class VersionChecker:
@@ -59,7 +59,7 @@ class VersionChecker:
         if self.latest_version < 0:
             self.logger.debug("done")
             return -1
-        elif self.latest_version > current_version:
+        elif self.latest_version > version_number:
             self.logger.debug("done")
             return 1
         self.logger.debug("done")

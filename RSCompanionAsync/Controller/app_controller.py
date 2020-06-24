@@ -34,7 +34,7 @@ from PySide2.QtWidgets import QFileDialog
 from PySide2.QtGui import QKeyEvent, QDesktopServices
 from PySide2.QtCore import QSettings, QSize, QUrl, QDir
 from RSCompanionAsync.Model.app_model import AppModel
-from RSCompanionAsync.Model.app_defs import current_version, log_format, LangEnum
+from RSCompanionAsync.Model.app_defs import version_number, log_format, LangEnum
 from RSCompanionAsync.Model.app_helpers import setup_log_file, get_disk_usage_stats, format_current_time
 from RSCompanionAsync.Resources.Strings.app_strings import strings, StringsEnum, company_name, app_name
 from RSCompanionAsync.View.HelpWidgets.output_window import OutputWindow
@@ -59,6 +59,7 @@ class AppController:
         self._lang = self._settings.value("language")
         if self._lang not in strings.keys():
             self._lang = LangEnum.ENG
+            self._settings.setValue("language", LangEnum.ENG)
         self._strings = strings[self._lang]
 
         self._settings.beginGroup("logging")
@@ -80,7 +81,7 @@ class AppController:
         self.stderr_lh.setFormatter(self.formatter)
         self._logger.addHandler(self.app_lh)
         self._logger.addHandler(self.stderr_lh)
-        self._logger.info(self._strings[StringsEnum.LOG_VER_ID] + str(current_version))
+        self._logger.info(self._strings[StringsEnum.LOG_VER_ID] + str(version_number))
         setup_logging_queue()
 
         self._logger.debug("Initializing")
@@ -378,11 +379,10 @@ class AppController:
         :return None:
         """
         self._logger.debug("running")
-        block_num = int(self.info_box.get_block_num()) + 1
-        self._model.signal_start_exp(block_num)
+        self._model.signal_start_exp(self.button_box.get_condition_name())
         if not self._model.exp_running:
             return
-        self.info_box.set_block_num(str(block_num))
+        self.info_box.set_block_num(str(self._model.get_block_num()))
         self.button_box.set_start_button_state(1)
         self.button_box.set_condition_name_box_enabled(False)
         self._curr_cond_name = self.button_box.get_condition_name()
@@ -469,7 +469,7 @@ class AppController:
         if 0x41 <= event.key() <= 0x5a:
             self.flag_box.set_flag(chr(event.key()))
             flag = self.flag_box.get_flag()
-            self._model.keyflag_to_devs(flag)
+            self._model.send_keyflag_to_devs(flag)
             self._model.save_keyflag(flag)
         event.accept()
         self._logger.debug("done")
@@ -489,7 +489,7 @@ class AppController:
 
         # File menu
         self.menu_bar.add_open_last_save_dir_handler(self.last_save_dir_handler)
-        # self.menu_bar.add_cam_bool_handler(self.toggle_cam_handler)
+        self.menu_bar.add_cam_bool_handler(self.toggle_cam_handler)
         self.menu_bar.add_exit_handler(self.exit_handler)
 
         # Settings menu

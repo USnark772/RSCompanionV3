@@ -1,7 +1,10 @@
 To build/package app:
--   Update version number and set release bool to True in app_defs.py
--   Update build path in comp_app_setup.py
--   Update version and build path in comp_app_inno.iss
--   run in terminal: python (path to comp_app_setup.py) build
-        - example: "python C:\RSDev\asyncCompanion\For_setup\comp_app_setup.py build"
--   compile .iss using Inno Setup Compiler
+-   In app_defs.py, ipdate version_number and set release bool to True.
+-   In comp_app_setup.py, update root_dir.
+-   In comp_app_inno.iss, update version and build path.
+-   In setup.bat, make sure TOPDIR points to your RSDev folder and PYTHONEXE points to your python executable.
+-   run setup.bat in terminal.
+-   compile comp_app_inno.iss using Inno Setup Compiler.
+
+-   If using matplotlib and mpl_toolkits is required, ensure mpl_toolkits folder has an __init__.py file for build
+    purposes. Path example: ..\Python\Python37\Lib\site-packages\mpl_toolkits

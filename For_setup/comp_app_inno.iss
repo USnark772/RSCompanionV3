@@ -3,9 +3,9 @@
 
 ; EDIT THESE VARIABLES AS NEEDED
 ; ******************************************************************************************
-#define BuildDir "C:\RSDev\Builds\"  ; SET TO YOUR BUILDS FOLDER
-#define AppVMaj "2"                  ; UPDATE TO CORRECT MAJOR VERSION Ex. 2.01 would be 2
-#define AppVMin "0"                  ; UPDATE TO CORRECT MINOR VERSION Ex. 2.01 would be 01
+#define BuildDir "C:\RSDev\Builds\"  ; SET TO YOUR BUILDS DIRECTORY
+#define AppVMaj "2"                  ; UPDATE TO CORRECT MAJOR VERSION Ex. v2.01 would be 2
+#define AppVMin "0"                  ; UPDATE TO CORRECT MINOR VERSION Ex. v2.01 would be 01
 ; ******************************************************************************************
 
 #define MyAppName "RS Companion"
@@ -32,11 +32,12 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
+DisableDirPage=no
 DisableProgramGroupPage=yes
 ; The [Icons] "quicklaunchicon" entry uses {userappdata} but its [Tasks] entry has a proper IsAdminInstallMode Check.
 UsedUserAreasWarning=no
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
-;PrivilegesRequired=lowest
+PrivilegesRequired=lowest
 OutputBaseFilename={#OutputName}
 OutputDir={#OutputDir}
 Compression=lzma
