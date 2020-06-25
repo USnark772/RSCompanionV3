@@ -35,4 +35,6 @@
             File "C:/RSDev/asyncCompanion/RSCompanionAsync/main.py", line 50, in main
             File "C:/RSDev/AsyncCompanion/RSCompanionAsync/Controller/app_controller.py", line 59, in __init__
             ModuleNotFoundError: No module named 'Model'
-    -   Fixes attempted:
+    -   The fix:
+        -   Problem was with the QSettings persistent file having some reference to the Model module which no longer
+            existed which means clearing the file and starting fresh is the answer.
