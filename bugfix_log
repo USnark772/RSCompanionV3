@@ -1,25 +1,38 @@
-- Issue with matplotlib showing up in release version.
-    - What worked:
-        - https://stackoverflow.com/questions/56304203/pyside2-qtwidgets-qxxxxlayout-addwidget-called-with-wrong-argument-types
-        - Make sure PyQt5 is not added to build.
-    - The error:
-        - Traceback (most recent call last):
-          File "C:/RSDev/asyncCompanion\Model\app_model.py", line 389, in _make_rs_controller
-            controller = self._controllers[dev_type](conn, self._current_lang, self._log_handlers)
-          File "C:/RSDev/asyncCompanion\Devices\VOG\Controller\vog_controller.py", line 56, in __init__
-            self.view.add_graph(GraphFrame(view, self._graph, log_handlers))
-          File "C:/RSDev/asyncCompanion\Devices\AbstractDevice\View\graph_frame.py", line 57, in __init__
-            self.layout().addWidget(self._graph)
-          TypeError: 'PySide2.QtWidgets.QBoxLayout.addWidget' called with wrong argument types:
-            PySide2.QtWidgets.QBoxLayout.addWidget(VOGGraph)
-          Supported signatures:
-            PySide2.QtWidgets.QBoxLayout.addWidget(PySide2.QtWidgets.QWidget, int = 0, PySide2.QtCore.Qt.Alignment = Default(Qt.Alignment))
-            PySide2.QtWidgets.QBoxLayout.addWidget(PySide2.QtWidgets.QWidget)
-    - Fixes attempted:
-        - https://stackoverflow.com/questions/56182256/figurecanvas-not-interpreted-as-qtwidget-after-using-pyinstaller
-        - https://stackoverflow.com/questions/56304203/pyside2-qtwidgets-qxxxxlayout-addwidget-called-with-wrong-argument-types
+-   Issue with matplotlib showing up in release version.
+    -   What worked:
+        -   https://stackoverflow.com/questions/56304203/pyside2-qtwidgets-qxxxxlayout-addwidget-called-with-wrong-argument-types
+        -   Make sure PyQt5 is not added to build.
+    -   The error:
+        -   Traceback (most recent call last):
+            File "C:/RSDev/asyncCompanion\Model\app_model.py", line 389, in _make_rs_controller
+                controller = self._controllers[dev_type](conn, self._current_lang, self._log_handlers)
+            File "C:/RSDev/asyncCompanion\Devices\VOG\Controller\vog_controller.py", line 56, in __init__
+                self.view.add_graph(GraphFrame(view, self._graph, log_handlers))
+            File "C:/RSDev/asyncCompanion\Devices\AbstractDevice\View\graph_frame.py", line 57, in __init__
+                self.layout().addWidget(self._graph)
+            TypeError: 'PySide2.QtWidgets.QBoxLayout.addWidget' called with wrong argument types:
+                PySide2.QtWidgets.QBoxLayout.addWidget(VOGGraph)
+            Supported signatures:
+                PySide2.QtWidgets.QBoxLayout.addWidget(PySide2.QtWidgets.QWidget, int = 0, PySide2.QtCore.Qt.Alignment = Default(Qt.Alignment))
+                PySide2.QtWidgets.QBoxLayout.addWidget(PySide2.QtWidgets.QWidget)
+    -   Fixes attempted:
+        -   https://stackoverflow.com/questions/56182256/figurecanvas-not-interpreted-as-qtwidget-after-using-pyinstaller
+        -   https://stackoverflow.com/questions/56304203/pyside2-qtwidgets-qxxxxlayout-addwidget-called-with-wrong-argument-types
 
-- Issue with multiprocessing working with release version.
-    - What worked:
-        - https://stackoverflow.com/questions/56816643/why-cant-i-create-a-threadpool-in-cx-freeze
-        - Add multiprocessing.freeze_support() as first executed line in main.py
+-   Issue with multiprocessing working with release version.
+    -   What worked:
+        -   https://stackoverflow.com/questions/56816643/why-cant-i-create-a-threadpool-in-cx-freeze
+        -   Add multiprocessing.freeze_support() as first executed line in main.py
+
+-   Issue with release version installed on some computers.
+    -   The error:
+        -   Traceback (most recent call last):
+            File "C:\RSDev\Python\Python37\lib\site-packages\cx_Freeze\initscripts\__startup__.py", line 40, in run
+            File "C:\RSDev\Python\Python37\lib\site-packages\cx_Freeze\initscripts\Console.py", line 37, in run
+            File "C:/RSDev/asyncCompanion/RSCompanionAsync/main.py", line 73, in <module>
+            File "C:\RSDev\Python\Python37\lib\asyncio\runners.py", line 43, in run
+            File "C:\RSDev\Python\Python37\lib\asyncio\base_events.py", line 587, in run_until_complete
+            File "C:/RSDev/asyncCompanion/RSCompanionAsync/main.py", line 50, in main
+            File "C:/RSDev/AsyncCompanion/RSCompanionAsync/Controller/app_controller.py", line 59, in __init__
+            ModuleNotFoundError: No module named 'Model'
+    -   Fixes attempted:

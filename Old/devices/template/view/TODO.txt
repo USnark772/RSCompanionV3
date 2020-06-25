@@ -1,1 +1,0 @@
-The "view" will be displayed on the main thread in an MDI window.

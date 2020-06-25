@@ -28,7 +28,6 @@ from sys import argv
 from os.path import dirname
 from enum import Enum, auto
 
-
 """ General definitions for the app """
 
 #################################################################################################################

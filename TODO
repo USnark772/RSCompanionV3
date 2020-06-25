@@ -8,8 +8,6 @@ TODO: Pressing matters.
     - App won't fully close in pycharm but appears to fully close in release version.
     - Make sure no data is saved solely in the UI.
     - Make sure reading data from devices is done in threads so timestamps are not hung up.
-    - Add installation path option for installation process.
-    - Check where things are being imported from when building. Some things are being imported from C:\users\phill instead of C:\RSDev
     - Why are cameras having playback lag in the view? Appears to be cpu issue. Neither Joel or Nate have this issue.
 
 TODO: At some point
