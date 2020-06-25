@@ -23,12 +23,9 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-import sys
-import tempfile
-import cProfile  # TODO: Remove this before release.
-import pstats
-import multiprocessing
-from os import remove, environ
+from sys import argv, exit
+from multiprocessing import freeze_support
+from os import environ
 environ['QT_API'] = 'PySide2'
 from asyncio import set_event_loop, run
 from asyncqt import QEventLoop
@@ -39,24 +36,28 @@ from RSCompanionAsync.Controller.app_controller import AppController
 
 async def main():
     QApplication.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    app = QApplication(sys.argv)
+    app = QApplication(argv)
     app_loop = QEventLoop(app)
     set_event_loop(app_loop)
     controller = AppController()  # Need reference else garbage collector has too much fun
     with app_loop:
-        sys.exit(app_loop.run_forever())
+        exit(app_loop.run_forever())
 
 
 if __name__ == '__main__':
-    multiprocessing.freeze_support()
+    freeze_support()
     profile = False  # True: Profile code. False: Run normally.
     if profile:
-        filename = tempfile.gettempdir() + "/companion_app_profile.stats"
-        cProfile.run('run(main())', filename)
-        stats = pstats.Stats(filename)
+        from os import remove
+        from cProfile import run
+        from tempfile import gettempdir
+        from pstats import Stats, SortKey
+        filename = gettempdir() + "/companion_app_profile.stats"
+        run('run(main())', filename)
+        stats = Stats(filename)
 
         # Pick sorting order for stat output.
-        stats.sort_stats(pstats.SortKey.CALLS)  # Sort by total calls to code.
+        stats.sort_stats(SortKey.CALLS)  # Sort by total calls to code.
         # stats.sort_stats(pstats.SortKey.CUMULATIVE)  # Sort by time spent in code.
 
         # Pick print filter

@@ -208,6 +208,6 @@ class CamScanner:
         :return None:
         """
         self._logger.debug("running")
-        self._running = False
-        print(__name__, "Implement cam_scanner.deactivate().")
+        self.cleanup()
+        self._counter.reset()
         self._logger.debug("done")

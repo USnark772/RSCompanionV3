@@ -13,17 +13,17 @@
 #define MyAppURL "https://redscientific.com/index.html"
 #define MyAppExeName "RSCompanion.exe"
 #define MyAppVersion AppVMaj + "." + AppVMin
-#define OutputName "rs_companion_app_v" + AppVMaj + "_" + AppVMin
+#define OutputName "rs_companion_app_v" + AppVMaj + "_" + AppVMin + "_x64"
 #define VBuildDir BuildDir + "Version " + AppVMaj + "\Build " + AppVMaj + "." + AppVMin + "\"
 #define TargetDir VBuildDir + "RSCompanion\"
 #define OutputDir VBuildDir + "Installer\"
 #define StarPath TargetDir + "*"
 #define ExePath TargetDir + MyAppExeName
-
+#define DLLPath TargetDir + "redist\vcruntime140.dll"
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{{1DC18AD3-C6B0-4BE3-A079-621992325E5C}}
+AppId={{1DC18AD3-C6B0-4BE3-A079-621992325E5C}}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
@@ -37,12 +37,13 @@ DisableProgramGroupPage=yes
 ; The [Icons] "quicklaunchicon" entry uses {userappdata} but its [Tasks] entry has a proper IsAdminInstallMode Check.
 UsedUserAreasWarning=no
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
-PrivilegesRequired=lowest
+;PrivilegesRequired=lowest
 OutputBaseFilename={#OutputName}
 OutputDir={#OutputDir}
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+ArchitecturesInstallIn64BitMode=x64 ia64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -54,6 +55,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 [Files]
 Source: {#ExePath}; DestDir: "{app}"; Flags: ignoreversion
 Source: {#StarPath}; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: {#DLLPath}; DestDir: "{sys}"; Flags: sharedfile
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
