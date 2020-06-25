@@ -163,7 +163,7 @@ class DRTView(AbstractView):
         self._strings = dict()
         self._lang_enum = LangEnum.ENG
         self.setMinimumSize(self._subwindow_width, self._subwindow_height)
-        # self.resize(self._subwindow_width, self._subwindow_height)
+        self.resize(self._subwindow_width, self._subwindow_height)
         self._logger.debug("Initialized")
 
     def add_graph(self, graph) -> None:

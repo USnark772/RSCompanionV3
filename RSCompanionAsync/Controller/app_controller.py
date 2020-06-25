@@ -104,6 +104,9 @@ class AppController:
         self.mdi_area = MDIArea(self.main_window, mdi_area_min_size, [self.app_lh, self.stderr_lh])
         self._file_dialog = QFileDialog(self.main_window)
 
+        if not self._settings.contains("cam_scanner/active"):
+            self._settings.setValue("cam_scanner/active", "True")
+
         # Model
         self._model = AppModel(self._lang, [self.app_lh, self.stderr_lh])
 
@@ -526,6 +529,7 @@ class AppController:
         """
         self._logger.debug("running")
         self.menu_bar.set_debug_action(self._settings.value("logging/level"))
+        self.menu_bar.set_cam_bool_checked(eval(self._settings.value("cam_scanner/active")))
         self.main_window.add_menu_bar(self.menu_bar)
         self.main_window.add_control_bar_widget(self.button_box)
         self.main_window.add_control_bar_widget(self.flag_box)
