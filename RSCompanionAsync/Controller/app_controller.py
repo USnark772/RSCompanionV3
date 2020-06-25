@@ -311,14 +311,25 @@ class AppController:
         self.main_window.close()
         self._logger.debug("done")
 
-    # TODO: Implement
     def toggle_cam_handler(self) -> None:
         """
         Handler for use cam button.
         :return None:
         """
         self._logger.debug("running")
-        print("Implement handling for this button")
+        self._settings.beginGroup("cam_scanner")
+        if not self._settings.contains("active"):
+            self._settings.setValue("active", "True")
+            active = True
+        else:
+            active = not eval(self._settings.value("active"))
+            if active:
+                self._settings.setValue("active", "True")
+            else:
+                self._settings.setValue("active", "False")
+        self._settings.endGroup()
+        self.menu_bar.set_cam_bool_checked(active)
+        self._model.set_cams_active(active)
         self._logger.debug("done")
 
     async def _update_drive_info_box(self) -> None:

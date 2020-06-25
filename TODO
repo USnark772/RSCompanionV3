@@ -1,13 +1,11 @@
 TODO: Pressing matters.
-    - Implement camera handler in app_controller.py (Turning cameras on or off).
+    - Implement camera activation/deactivation in app_model.py
     - Ensure app does not save experiment before devices finish saving. (Can we tell if a file is still opened?)
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
         - Try to figure out which camera each mic belongs to and make that an mp4.
         - If mic is not attached to camera then save as audio file.
         - https://stackoverflow.com/questions/14140495/how-to-capture-a-video-and-audio-in-python-from-a-camera-or-webcam
-    - App won't fully close in pycharm but appears to fully close in release version.
-    - Make sure no data is saved solely in the UI.
-    - Make sure reading data from devices is done in threads so timestamps are not hung up.
+    - Make sure reading data from devices is done in threads so timestamps are not delayed.
     - Why are cameras having playback lag in the view? Appears to be cpu issue. Neither Joel or Nate have this issue.
 
 TODO: At some point
@@ -17,7 +15,7 @@ TODO: At some point
         - handle other to do items listed in cam modules
     - Consider making properties out of our getter/setter methods.
         - https://www.python-course.eu/python3_properties.php
-    - Check all files for proper and complete logging usage.
+    - Check all modules for proper and complete logging usage.
     - Implement playback of experiment data.
         - Scanning through data example: DRT_7,_8,_9 clicks threshold x, scan through all by timestamp.
         - Reimplement saving as .rs files.

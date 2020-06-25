@@ -293,7 +293,7 @@ class AppMenuBar(QMenuBar):
         :return None:
         """
         self._logger.debug("running")
-        self._use_cams_action.toggled.connect(func)
+        self._use_cams_action.triggered.connect(func)
         self._logger.debug("done")
 
     def set_use_cams_action_active(self, is_active: bool) -> None:

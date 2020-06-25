@@ -467,6 +467,37 @@ class AppModel:
         del self._devs[cam_index]
         self._logger.debug("done")
 
+    def set_cams_active(self, is_active: bool) -> None:
+        """
+        Set whether this app looks for and uses cameras or not.
+        :param is_active: Whether to look for and use cameras.
+        :return None:
+        """
+        if is_active:
+            self._activate_use_cams()
+        else:
+            self._deactivate_use_cams()
+
+    def _deactivate_use_cams(self) -> None:
+        """
+        Disconnect any cameras currently connected to app and stop cam_scanner.
+        :return None:
+        """
+        self._logger.debug("running")
+        print(__name__, "Implement deactivate_use_cams()")
+        # self._cam_scanner.deactivate()
+        self._logger.debug("done")
+
+    def _activate_use_cams(self) -> None:
+        """
+        Tell cam_scanner to activate.
+        :return None:
+        """
+        self._logger.debug("running")
+        print(__name__, "Implement activate_use_cams()")
+        # self._cam_scanner.activate()
+        self._logger.debug("done")
+
     def start(self) -> None:
         """
         Create all async tasks this model requires.
@@ -477,7 +508,7 @@ class AppModel:
         self._tasks.append(create_task(self._await_remove_devs()))
         self._tasks.append(create_task(self._await_new_cams()))
         self._rs_dev_scanner.start()
-        self._cam_scanner.start()
+        self._cam_scanner.activate()
         self._logger.debug("done")
 
     async def cleanup(self) -> None:

@@ -112,11 +112,6 @@ class CamScanner:
         self._loop = get_running_loop()
         self._logger.debug("Initialized")
 
-    def start(self):
-        self._logger.debug("running")
-        self._tasks.append(create_task(self._scan_for_cams()))
-        self._logger.debug("done")
-
     async def cleanup(self):
         """
         Cleanup this object and prep for app closure.
@@ -135,8 +130,8 @@ class CamScanner:
         """
         self._logger.debug("running")
         while self._running:
-            # ret = await self._loop.run_in_executor(None, self._check_for_cam, self._counter.get_next_index())
-            ret = self._check_for_cam(self._counter.get_next_index())
+            ret = await self._loop.run_in_executor(None, self._check_for_cam, self._counter.get_next_index())
+            # ret = self._check_for_cam(self._counter.get_next_index())
             if ret[0]:
                 while ret[0]:
                     self._unhandled_cams.append(ret[1])
@@ -202,11 +197,17 @@ class CamScanner:
         Set this scanner to search for cameras.
         :return None:
         """
-        pass
+        self._logger.debug("running")
+        self._running = True
+        self._tasks.append(create_task(self._scan_for_cams()))
+        self._logger.debug("done")
 
     def deactivate(self) -> None:
         """
         Set this scanner to do nothing.
         :return None:
         """
-        pass
+        self._logger.debug("running")
+        self._running = False
+        print(__name__, "Implement cam_scanner.deactivate().")
+        self._logger.debug("done")
