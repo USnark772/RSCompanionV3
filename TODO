@@ -7,6 +7,7 @@ TODO: Pressing matters.
         - https://stackoverflow.com/questions/14140495/how-to-capture-a-video-and-audio-in-python-from-a-camera-or-webcam
     - Make sure reading data from devices is done in threads so timestamps are not delayed.
     - Why are cameras having playback lag in the view? Appears to be cpu issue. Neither Joel or Nate have this issue.
+    - Look into making sure vc_redist gets installed even if it has already been installed.
 
 TODO: At some point
     - Implement CAM.

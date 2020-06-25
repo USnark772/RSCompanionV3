@@ -120,7 +120,7 @@ build_exe_options = {'packages': ['os',
                                   'serial',
                                   'shiboken2',
                                   'six',
-                                  # 'RSCompanionAsync',
+                                  'RSCompanionAsync',
                                   ],
                      'excludes': ['tkinter',
                                   'PyQt5',
@@ -133,7 +133,6 @@ build_exe_options = {'packages': ['os',
 # Add required .dll files. if needed.
 PYTHON_INSTALL_DIR = os.path.dirname(os.path.dirname(os.__file__))
 include_files = [os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'libcrypto-1_1.dll'),
-                 os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'libssl-1_1.dll'),
                  os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'libssl-1_1.dll')]
 
 # Set base platform (OS) and include required files.
