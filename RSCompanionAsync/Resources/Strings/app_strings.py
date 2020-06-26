@@ -26,7 +26,7 @@ https://redscientific.com/index.html
 
 from RSCompanionAsync.Model.app_defs import LangEnum
 from enum import Enum, auto
-from RSCompanionAsync.Model.app_defs import version_number
+from RSCompanionAsync.Model.app_defs import version_number, company_name, app_name
 
 
 class StringsEnum(Enum):
@@ -46,10 +46,7 @@ class StringsEnum(Enum):
     UPDATE_HDR_ERR = auto()
 
 
-company_name = "Red Scientific"
-app_name = "RS Companion"
 log_out_filename = "companion_app_log.txt"
-
 
 english = {StringsEnum.COMPANY_NAME: company_name,
            StringsEnum.APP_NAME: app_name,

@@ -24,8 +24,7 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from RSCompanionAsync.Model.app_defs import LangEnum
-from RSCompanionAsync.Resources.Strings.app_strings import app_name, company_name
+from RSCompanionAsync.Model.app_defs import LangEnum, app_name, company_name
 from enum import Enum, auto
 
 
