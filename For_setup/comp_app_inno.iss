@@ -20,7 +20,6 @@
 #define StarPath TargetDir + "*"
 #define ExePath TargetDir + MyAppExeName
 #define DLLPath TargetDir + "redist\vcruntime140.dll"
-
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
@@ -56,7 +55,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 [Files]
 Source: {#ExePath}; DestDir: "{app}"; Flags: ignoreversion
 Source: {#StarPath}; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: {#DLLPath}; DestDir: "{sys}"; Flags: sharedfile
+Source: {#DLLPath}; DestDir: "{sys}"; Flags: sharedfile onlyifdoesntexist
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
