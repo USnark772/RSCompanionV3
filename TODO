@@ -1,14 +1,19 @@
 TODO: Pressing matters.
     - Implement camera activation/deactivation in app_model.py
     - Ensure app does not save experiment before devices finish saving. (Can we tell if a file is still opened?)
+    - Make sure reading data from devices is done in threads so timestamps are not delayed.
+    - Why are cameras having playback lag in the view? Appears to be cpu issue. Neither Joel or Nate have this issue.
+    - Move window layout options into radial buttons on the main control bar.
+    - Allow camera subwindow to resize without aspect ration.
+    - Look into drt/vog being able to resize smaller than even now.
+    - Look into camera overlay issues with language changes. (Unsupported characters for some languages)
+    - Make sure rec in camera subwindow does not happen when camera is not used.
+
+TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
         - Try to figure out which camera each mic belongs to and make that an mp4.
         - If mic is not attached to camera then save as audio file.
         - https://stackoverflow.com/questions/14140495/how-to-capture-a-video-and-audio-in-python-from-a-camera-or-webcam
-    - Make sure reading data from devices is done in threads so timestamps are not delayed.
-    - Why are cameras having playback lag in the view? Appears to be cpu issue. Neither Joel or Nate have this issue.
-
-TODO: At some point
     - Implement CAM.
         - Make image fit fully into subwindow display area.
         - Consider passing selected fps to writer instead of current fps.
@@ -28,3 +33,9 @@ TODO: At some point
     - Finish adding/translating languages for current string.py files.
     - Look over https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html and make edits to imports.
     - Look at info_box.py empty QLabel items and consider a spacer item instead.
+
+
+TODO: Test this thing like crazy!
+    - Look for if video is smooth on saved files even if it's not in the preview in the app.
+    - Proper app usage tests.
+    - Improper app usage tests.
