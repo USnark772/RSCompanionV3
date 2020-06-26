@@ -7,7 +7,6 @@ TODO: Pressing matters.
     - Allow camera subwindow to resize without aspect ration.
     - Look into drt/vog being able to resize smaller than even now.
     - Look into camera overlay issues with language changes. (Unsupported characters for some languages)
-    - Make sure rec in camera subwindow does not happen when camera is not used.
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)

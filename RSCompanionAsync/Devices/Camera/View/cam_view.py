@@ -512,7 +512,7 @@ class CamView(AbstractView):
         if self._showing_images:
             if is_active:
                 self._rec_label.hide()
-            else:
+            elif self.use_cam:
                 self._rec_label.show()
         for item in self._config_items:
             item.setEnabled(is_active)
