@@ -38,3 +38,4 @@
     -   The fix:
         -   Problem was with the QSettings persistent file having some reference to the Model module which no longer
             existed which means clearing the file and starting fresh is the answer.
+        -   Added version number to app_name in QSettings initialization. This will ensure new settings per version.

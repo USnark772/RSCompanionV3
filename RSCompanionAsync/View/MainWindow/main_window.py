@@ -30,8 +30,7 @@ from PySide2.QtGui import QFont, QIcon, QCloseEvent
 from PySide2.QtCore import QSize, Qt, QSettings
 from RSCompanionAsync.View.HelpWidgets.help_window import HelpWindow
 from RSCompanionAsync.View.MainWindow.central_widget import CentralWidget
-from RSCompanionAsync.Model.app_defs import image_file_path
-from RSCompanionAsync.Resources.Strings.app_strings import company_name, app_name
+from RSCompanionAsync.Model.app_defs import image_file_path, settings_info
 from RSCompanionAsync.Resources.Strings.main_window_strings import strings, StringsEnum, LangEnum
 
 window_geometry = "mw_geo"
@@ -196,7 +195,7 @@ class AppMainWindow(QMainWindow):
         :return None:
         """
         self._logger.debug("running")
-        settings = QSettings(company_name, app_name)
+        settings = QSettings(settings_info[0], settings_info[1])
         settings.setValue(window_geometry, self.saveGeometry())
         settings.setValue(window_state, self.saveState())
         self._logger.debug("done")
@@ -206,7 +205,7 @@ class AppMainWindow(QMainWindow):
         Restore window state and geometry from previous session if exists.
         :return None:
         """
-        settings = QSettings(company_name, app_name)
+        settings = QSettings(settings_info[0], settings_info[1])
         if not settings.contains(window_geometry):
             settings.setValue(window_geometry, self.saveGeometry())
         if not settings.contains(window_state):

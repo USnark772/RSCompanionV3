@@ -34,9 +34,9 @@ from PySide2.QtWidgets import QFileDialog
 from PySide2.QtGui import QKeyEvent, QDesktopServices
 from PySide2.QtCore import QSettings, QSize, QUrl, QDir
 from RSCompanionAsync.Model.app_model import AppModel
-from RSCompanionAsync.Model.app_defs import version_number, log_format, LangEnum
+from RSCompanionAsync.Model.app_defs import version_number, log_format, LangEnum, settings_info
 from RSCompanionAsync.Model.app_helpers import setup_log_file, get_disk_usage_stats, format_current_time
-from RSCompanionAsync.Resources.Strings.app_strings import strings, StringsEnum, company_name, app_name
+from RSCompanionAsync.Resources.Strings.app_strings import strings, StringsEnum
 from RSCompanionAsync.View.HelpWidgets.output_window import OutputWindow
 from RSCompanionAsync.View.MainWindow.main_window import AppMainWindow
 from RSCompanionAsync.View.ControlWidgets.menu_bar import AppMenuBar
@@ -52,7 +52,7 @@ class AppController:
     """ The main controller for this app. """
     def __init__(self):
         # App settings and logging.
-        self._settings = QSettings(company_name, app_name)
+        self._settings = QSettings(settings_info[0], settings_info[1])
 
         if not self._settings.contains("language"):
             self._settings.setValue("language", LangEnum.ENG)

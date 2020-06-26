@@ -27,6 +27,7 @@ https://redscientific.com/index.html
 from sys import argv
 from os.path import dirname
 from enum import Enum, auto
+from RSCompanionAsync.Resources.Strings.app_strings import company_name, app_name
 
 """ General definitions for the app """
 
@@ -50,6 +51,8 @@ else:
 #################################################################################################################
 # View
 #################################################################################################################
+
+settings_info = (company_name, app_name + str(version_number))
 
 button_box_start_image_filepath = image_file_path + "green_arrow.png"
 button_box_pause_image_filepath = image_file_path + "red_vertical_bars.png"

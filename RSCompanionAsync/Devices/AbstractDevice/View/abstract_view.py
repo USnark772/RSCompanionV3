@@ -27,8 +27,7 @@ https://redscientific.com/index.html
 
 from abc import ABCMeta, ABC
 from RSCompanionAsync.Model.app_helpers import EasyFrame
-from RSCompanionAsync.Model.app_defs import image_file_path
-from RSCompanionAsync.Resources.Strings.app_strings import company_name, app_name
+from RSCompanionAsync.Model.app_defs import image_file_path, settings_info
 from PySide2.QtWidgets import QMdiSubWindow, QHBoxLayout, QGridLayout, QLayout
 from PySide2.QtCore import Qt, QSettings
 from PySide2.QtGui import QCloseEvent, QIcon
@@ -116,7 +115,7 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
         :return None:
         """
         self._logger.debug("running")
-        settings = QSettings(company_name, app_name)
+        settings = QSettings(settings_info[0], settings_info[1])
         settings.beginGroup(self._settings_group_ident)
         cur_geo = self.saveGeometry()
         settings.setValue(self._win_geo_ident, cur_geo)
@@ -129,7 +128,7 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
         :return None:
         """
         self._logger.debug("running")
-        settings = QSettings(company_name, app_name)
+        settings = QSettings(settings_info[0], settings_info[1])
         settings.beginGroup(self._settings_group_ident)
         if not settings.contains(self._win_geo_ident):
             settings.setValue(self._win_geo_ident, self.saveGeometry())
