@@ -70,9 +70,11 @@ Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChang
 ; The VCRedistNeedsInstall function checks if a given version of VC++ is already installed
 ; Modify the function with one (or more) of the VC_* constants to suit your version
 
+; Check: VCRedistNeedsInstall;
+
 [Run]
-Filename: "{app}\redist\vc_redist.x86.exe"; Parameters: "/q /norestart /q:a /c:""VCREDI~3.EXE /q:a /c:""""msiexec /i vcredist.msi /qn"""" """; StatusMsg: Installing VC++ 2015-2019 x86 Redistributables...
-Filename: "{app}\redist\vc_redist.x64.exe"; Parameters: "/q /norestart /q:a /c:""VCREDI~3.EXE /q:a /c:""""msiexec /i vcredist.msi /qn"""" """; StatusMsg: Installing VC++ 2015-2019 x64 Redistributables...
+Filename: "{app}\redist\vc_redist.x86.exe"; Parameters: "/q /norestart /q:a /c:""VCREDI~3.EXE /q:a /c:""""msiexec /i vcredist.msi /qn"""" """; WorkingDir: {app}\redist; StatusMsg: Installing VC++ 2015-2019 x86 Redistributables...
+Filename: "{app}\redist\vc_redist.x64.exe"; Parameters: "/q /norestart /q:a /c:""VCREDI~3.EXE /q:a /c:""""msiexec /i vcredist.msi /qn"""" """; WorkingDir: {app}\redist; StatusMsg: Installing VC++ 2015-2019 x64 Redistributables...
 
 [Code]
 #IFDEF UNICODE
