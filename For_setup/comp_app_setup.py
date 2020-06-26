@@ -23,9 +23,10 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-import pathlib
 import sys
 import os
+from pathlib import Path
+from shutil import rmtree
 from cx_Freeze import setup, Executable
 
 # ************************************************* EDIT AS NEEDED *****************************************************
@@ -74,7 +75,7 @@ app_description = app_name
 redist = 'redist'
 check_path(root_dir, redist)
 redist_dir = root_dir + redist + '/'
-redist_filename = 'vc_redist.x86.exe'
+redist_filename = 'VC_redist.x64.exe'
 check_path(redist_dir, redist_filename, False)
 
 # Check if readme dir exists.
@@ -94,7 +95,16 @@ app_v_maj, app_v_min = app_v_num.split('.')
 out_path = builds_dir + 'Version ' + app_v_maj + '/Build ' + app_v_maj + '.' + app_v_min + '/RSCompanion/'
 
 # Ensure output path exists.
-pathlib.Path(out_path).mkdir(parents=True, exist_ok=True)
+if Path(out_path).exists():
+    rmtree(out_path)
+tries = 0
+while tries < 30:
+    try:
+        Path(out_path).mkdir(parents=True)
+        break
+    except PermissionError as pe:
+        tries += 1
+        pass
 
 # Ensure path has project path to allow cx_freeze to add specified app packages.
 sys.path.append(proj_dir)
@@ -125,7 +135,7 @@ build_exe_options = {'packages': ['os',
                      'excludes': ['tkinter',
                                   'PyQt5',
                                   ],
-                     'include_files': [redist_dir,
+                     'include_files': [redist_dir+redist_filename,
                                        images_dir,
                                        readme_dir],
                      'build_exe': out_path}

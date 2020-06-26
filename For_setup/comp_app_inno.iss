@@ -19,7 +19,7 @@
 #define OutputDir VBuildDir + "Installer\"
 #define StarPath TargetDir + "*"
 #define ExePath TargetDir + MyAppExeName
-#define DLLPath TargetDir + "redist\vcruntime140.dll"
+;#define DLLPath TargetDir + "redist\vcruntime140.dll"
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
@@ -55,7 +55,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 [Files]
 Source: {#ExePath}; DestDir: "{app}"; Flags: ignoreversion
 Source: {#StarPath}; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: {#DLLPath}; DestDir: "{sys}"; Flags: sharedfile onlyifdoesntexist
+; Source: {#DLLPath}; DestDir: "{sys}"; Flags: sharedfile onlyifdoesntexist
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -64,18 +64,12 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 
 [Run]
+Filename: "{app}\VC_redist.x64.exe"; Parameters: "/q /norestart /q:a /c:""VCREDI~3.EXE /q:a /c:""""msiexec /i vcredist.msi /qn"""" """; WorkingDir: {app}; StatusMsg: Installing VC++ 2019 x64 Redistributable...
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-
 
 ; The VCRedistNeedsInstall function checks if a given version of VC++ is already installed
 ; Modify the function with one (or more) of the VC_* constants to suit your version
-
 ; Check: VCRedistNeedsInstall;
-
-[Run]
-Filename: "{app}\redist\vc_redist.x86.exe"; Parameters: "/q /norestart /q:a /c:""VCREDI~3.EXE /q:a /c:""""msiexec /i vcredist.msi /qn"""" """; WorkingDir: {app}\redist; StatusMsg: Installing VC++ 2015-2019 x86 Redistributables...
-Filename: "{app}\redist\vc_redist.x64.exe"; Parameters: "/q /norestart /q:a /c:""VCREDI~3.EXE /q:a /c:""""msiexec /i vcredist.msi /qn"""" """; WorkingDir: {app}\redist; StatusMsg: Installing VC++ 2015-2019 x64 Redistributables...
-
 [Code]
 #IFDEF UNICODE
   #DEFINE AW "W"
@@ -145,6 +139,8 @@ const
   // Visual C++ 2015-2019 Redistributable 14.22.27821
   VC_2015_2019_REDIST_X86_MIN = '{1E6FC929-567E-4D22-9206-C5B83F0A21B9}';
   VC_2015_2019_REDIST_X86_ADD = '{3BDE80F7-7EC9-448E-8160-4ADA0CDA8879}';
+
+  VC_2019_REDIST_X64_DEBUG = '{540DD0C5-47A8-F584-AA10-482CC01BC874}';
 
 function MsiQueryProductState(szProduct: string): INSTALLSTATE; 
   external 'MsiQueryProductState{#AW}@msi.dll stdcall';

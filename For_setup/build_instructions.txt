@@ -1,16 +1,26 @@
-To build/package app:
--   In ../asyncCompanion/RSCompanionAsync/Model/app_defs.py, update version_number and set release bool to True.
--   In ../asyncCompanion/For_setup/comp_app_setup.py,   (Use either forward-slash '/' or double back-slash '\\' in .py files)
-    -   update root_dir.                                        Ex. C:/RSDev
+Pre-checks:
+-   In ..\asyncCompanion\For_setup\setup.bat,           (Use back-slash '\' or double back-slash '\\' in .bat files)
+    -   Make sure APPDIR points to your app dir's parent dir.   Ex. C:\RSDev\asyncCompanion would be C:\RSDev\
+    -   Make sure PYTHONDIR points to your python directory.    Ex. ..\Python\Python37\
+-   In ..\asyncCompanion\For_setup\comp_app_setup.py,   (Use either forward-slash '/' or double back-slash '\\' in .py files)
+    -   Update root_dir.                                        Ex. C:/RSDev
+-   In ..\asyncCompanion\For_setup\comp_app_inno.iss,   (Use back-slash '\' in .iss files)
+    -   Make sure BuildDir points to your Builds directory.     Ex. C:\RSDev\Builds\
+-   In ..\Python\Python37\Lib\site-packages\mpl_toolkits\
+    -   Make sure __init__.py file exists. (can be a blank file)
+-   in ..\project parent dir\redist\
+    -   Make sure you have vc_redist.x64.exe
+-   Make sure you have the 'requests' python package installed.
+
+Build/Package:
+-   In ../asyncCompanion/RSCompanionAsync/Model/app_defs.py,
+    -   Update version_number.
+    -   Set release bool to True.
 -   In ../asyncCompanion/For_setup/comp_app_inno.iss,   (Use back-slash '\' in .iss files)
-    -   make sure BuildDir points to your Builds directory.     Ex. C:\RSDev\Builds\
-    -   make sure AppVMaj and AppVMin are set to match app version.
--   In ../asyncCompanion/For_setup/setup.bat,           (Use back-slash '\' or double back-slash '\\' in .bat files)
-    -   make sure APPDIR points to your app dir's parent dir.   Ex. C:\RSDev\asyncCompanion would be C:\RSDev\
-    -   make sure PYTHONDIR points to your python directory.    Ex. ..\Python\Python37\
+    -   make sure AppVMaj and AppVMin are set to match version_number.
 -   run setup.bat in terminal.
 -   compile comp_app_inno.iss using Inno Setup Compiler.
 
--   Make sure your ..\Python\Python37\Lib\site-packages\mpl_toolkits\ has an __init__.py file in it.
--   Make sure you have vc_redist.x86.exe located at the equivalent of APPDIR\redist\
--   Make sure you have the 'requests' python package installed.
+Post-checks:
+-   In ../asyncCompanion/RSCompanionAsync/Model/app_defs.py,
+    -   Set release bool to False.
