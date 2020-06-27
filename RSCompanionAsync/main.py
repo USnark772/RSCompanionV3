@@ -48,22 +48,18 @@ if __name__ == '__main__':
     freeze_support()
     profile = False  # True: Profile code. False: Run normally.
     if profile:
-        from os import remove
-        from cProfile import run
-        from tempfile import gettempdir
+        import cProfile
         from pstats import Stats, SortKey
-        filename = gettempdir() + "/companion_app_profile.stats"
-        run('run(main())', filename)
+        filename = "C:/RSDev/profiler_output/companion_app_profile.stats"
+        cProfile.run('run(main())', filename)
         stats = Stats(filename)
 
         # Pick sorting order for stat output.
-        stats.sort_stats(SortKey.CALLS)  # Sort by total calls to code.
-        # stats.sort_stats(pstats.SortKey.CUMULATIVE)  # Sort by time spent in code.
+        # stats.sort_stats(SortKey.CALLS)  # Sort by total calls to code.
+        stats.sort_stats(SortKey.CUMULATIVE)  # Sort by time spent in code.
 
         # Pick print filter
         stats.print_stats("asyncCompanion")  # Only show project files.
         # stats.print_stats()  # Show all files.
-
-        remove(filename)  # cleanup
     else:
         run(main())
