@@ -5,9 +5,8 @@ TODO: Pressing matters.
     - Why are cameras having playback lag in the view? Appears to be cpu issue. Neither Joel or Nate have this issue.
     - Move window layout options into radial buttons on the main control bar.
     - Allow camera subwindow to resize without aspect ration.
-    - Look into drt/vog being able to resize smaller than even now.
+        - Do we want the ability to lock it into an aspect ratio. if desired?
     - Look into camera overlay issues with language changes. (Unsupported characters for some languages)
-    - Make sure rec in camera subwindow does not happen when camera is not used.
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)

@@ -27,6 +27,7 @@ https://redscientific.com/index.html
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QHBoxLayout, QLabel, QSlider, QGridLayout, QLineEdit, QVBoxLayout
 from PySide2.QtCore import Qt, QSize
+from PySide2.QtGui import QResizeEvent
 from RSCompanionAsync.Model.app_helpers import ClickAnimationButton, EasyFrame
 from RSCompanionAsync.Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style
 from RSCompanionAsync.Devices.DRT.Resources.drt_strings import strings, StringsEnum, LangEnum
@@ -44,8 +45,8 @@ class DRTView(AbstractView):
         super().__init__(name)
 
         """ Min size for the DRT window """
-        self._subwindow_height = 309
-        self._subwindow_width = 550
+        self._subwindow_height = 222
+        self._subwindow_width = 518
 
         # self.tab_height = int(self.subwindow_height * 0.9)
         """ min and max sizes for the configuration popup """
