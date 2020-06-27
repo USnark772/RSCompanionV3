@@ -44,8 +44,8 @@ class CamView(AbstractView):
         super().__init__(name)
 
         """ Min size for cam window """
-        self._subwindow_height = 300
-        self._subwindow_width = 550
+        self._subwindow_height = 222
+        self._subwindow_width = 518
 
         self._initialization_bar_frame = EasyFrame()
         self._initialization_bar_frame.setMouseTracking(True)
@@ -381,11 +381,11 @@ class CamView(AbstractView):
         self._use_cam_checkbox.setChecked(useable)
         self._logger.debug("Done")
 
-    def resizeEvent(self, resizeEvent: QResizeEvent) -> None:
-        if not self._hidden:
-            resizeEvent.accept()
-            self.resize(self.width(), self.heightForWidth(self.width()))
-        return super().resizeEvent(resizeEvent)
+    # def resizeEvent(self, resizeEvent: QResizeEvent) -> None:
+    #     if not self._hidden:
+    #         resizeEvent.accept()
+    #         self.resize(self.width(), self.heightForWidth(self.width()))
+    #     return super().resizeEvent(resizeEvent)
 
     def heightForWidth(self, w: int) -> int:
         return int(w * self._aspect_ratio)

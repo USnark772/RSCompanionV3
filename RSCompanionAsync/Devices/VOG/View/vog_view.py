@@ -27,6 +27,7 @@ https://redscientific.com/index.html
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QHBoxLayout, QLabel, QGridLayout, QLineEdit, QVBoxLayout, QCheckBox, QComboBox
 from PySide2.QtCore import Qt
+from PySide2.QtGui import QResizeEvent
 from RSCompanionAsync.Model.app_helpers import ClickAnimationButton, EasyFrame
 from RSCompanionAsync.Model.app_defs import tab_line_edit_compliant_style, tab_line_edit_error_style
 from RSCompanionAsync.Devices.VOG.Resources.vog_strings import strings, StringsEnum, LangEnum
@@ -44,8 +45,8 @@ class VOGView(AbstractView):
         super().__init__(name)
 
         """ Min size for the VOG window """
-        self._subwindow_height = 309
-        self._subwindow_width = 550
+        self._subwindow_height = 222
+        self._subwindow_width = 518
 
         """ min and max sizes for the configuration popup (width, height) """
         self._popup_min = (229, 409)
