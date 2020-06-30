@@ -5,8 +5,9 @@ TODO: Pressing matters.
     - Why are cameras having playback lag in the view? Appears to be cpu issue. Neither Joel or Nate have this issue.
     - Move window layout options into radial buttons on the main control bar.
     - Allow camera subwindow to resize without aspect ration.
-        - Do we want the ability to lock it into an aspect ratio. if desired?
+        - force image to always show entire image
     - Look into camera overlay issues with language changes. (Unsupported characters for some languages)
+    - app minimum size
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
@@ -32,6 +33,7 @@ TODO: At some point
     - Finish adding/translating languages for current string.py files.
     - Look over https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html and make edits to imports.
     - Look at info_box.py empty QLabel items and consider a spacer item instead.
+    - extract view from controller
 
 
 TODO: Test this thing like crazy!

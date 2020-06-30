@@ -44,6 +44,8 @@ class MDIArea(QMdiArea):
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
+        self._window_moved = True
+
         # Dummy subwindows for testing.
         # from RSCompanionAsync.Devices.DRT.View.drt_view import DRTView as subwindow
         # from RSCompanionAsync.Devices.VOG.View.vog_view import VOGView as subwindow
@@ -106,6 +108,7 @@ class MDIArea(QMdiArea):
             size = sizes[win]
             win.resize(size[0], size[1])
         self.setActivationOrder(QMdiArea.CreationOrder)
+        self.window_moved = False
         self._logger.debug("done")
 
     def sort_windows_tiled(self) -> None:
@@ -115,6 +118,7 @@ class MDIArea(QMdiArea):
         """
         self._logger.debug("running")
         self.tileSubWindows()
+        self.window_moved = False
         self._logger.debug("done")
 
     def sort_windows_horizontal(self) -> None:
@@ -130,6 +134,7 @@ class MDIArea(QMdiArea):
             else:
                 prev = window_list[i-1]
                 window_list[i].move(prev.pos().x() + prev.width(), 0)
+        self.window_moved = False
         self._logger.debug("done")
 
     def sort_windows_vertical(self) -> None:
@@ -145,7 +150,16 @@ class MDIArea(QMdiArea):
             else:
                 prev = window_list[i-1]
                 window_list[i].move(0, prev.pos().y() + prev.height())
+        self.window_moved = False
         self._logger.debug("done")
+
+    @property
+    def window_moved(self) -> bool:
+        return self._window_moved
+
+    @window_moved.setter
+    def window_moved(self, isMoved: bool) -> None:
+        self._window_moved = True
 
     # TODO: Implement this
     def set_window_view_mode(self):

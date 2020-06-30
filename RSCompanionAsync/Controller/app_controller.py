@@ -41,6 +41,7 @@ from RSCompanionAsync.View.HelpWidgets.output_window import OutputWindow
 from RSCompanionAsync.View.MainWindow.main_window import AppMainWindow
 from RSCompanionAsync.View.ControlWidgets.menu_bar import AppMenuBar
 from RSCompanionAsync.View.ControlWidgets.button_box import ButtonBox
+from RSCompanionAsync.View.ControlWidgets.layout_box import LayoutBox
 from RSCompanionAsync.View.InfoWidgets.info_box import InfoBox
 from RSCompanionAsync.View.InfoWidgets.drive_info_box import DriveInfoBox
 from RSCompanionAsync.View.InfoWidgets.flag_box import FlagBox
@@ -89,6 +90,7 @@ class AppController:
         # View
         ui_min_size = QSize(950, 740)
         button_box_size = QSize(205, 120)
+        layout_box_size = QSize(200, 120)
         info_box_size = QSize(230, 120)
         flag_box_size = QSize(80, 120)
         note_box_size = QSize(250, 120)
@@ -97,6 +99,7 @@ class AppController:
         self.main_window = AppMainWindow(ui_min_size, self._lang, [self.app_lh, self.stderr_lh])
         self.menu_bar = AppMenuBar(self.main_window, self._lang, [self.app_lh, self.stderr_lh])
         self.button_box = ButtonBox(self.main_window, button_box_size, self._lang, [self.app_lh, self.stderr_lh])
+        self.layout_box = LayoutBox(self.main_window, layout_box_size, self._lang, [self.app_lh, self.stderr_lh])
         self.info_box = InfoBox(self.main_window, info_box_size, self._lang, [self.app_lh, self.stderr_lh])
         self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, self._lang, [self.app_lh, self.stderr_lh])
         self.flag_box = FlagBox(self.main_window, flag_box_size, self._lang, [self.app_lh, self.stderr_lh])
@@ -148,6 +151,7 @@ class AppController:
         self.main_window.set_lang(lang)
         self.menu_bar.set_lang(lang)
         self.button_box.set_lang(lang)
+        self.layout_box.set_lang(lang)
         self.info_box.set_lang(lang)
         self.d_info_box.set_lang(lang)
         self.flag_box.set_lang(lang)
@@ -500,6 +504,7 @@ class AppController:
         self.note_box.add_note_box_changed_handler(self._check_toggle_post_button)
         self.note_box.add_post_handler(self.post_handler)
         self.main_window.keyPressEvent = self._keypress_handler
+        self.layout_box.add_window_layout_handler(self.window_layout_handler)
 
         # File menu
         self.menu_bar.add_open_last_save_dir_handler(self.last_save_dir_handler)
@@ -509,7 +514,7 @@ class AppController:
         # Settings menu
         self.menu_bar.add_lang_select_handler(self.language_change_handler)
         self.menu_bar.add_debug_select_handler(self.debug_change_handler)
-        self.menu_bar.add_window_layout_handler(self.window_layout_handler)
+        # self.menu_bar.add_window_layout_handler(self.window_layout_handler)
 
         # Help menu
         self.menu_bar.add_about_company_handler(self.about_rs_handler)
@@ -534,6 +539,7 @@ class AppController:
         self.main_window.add_control_bar_widget(self.button_box)
         self.main_window.add_control_bar_widget(self.flag_box)
         self.main_window.add_control_bar_widget(self.note_box)
+        self.main_window.add_control_bar_widget(self.layout_box)
         self.main_window.add_spacer_item(1)
         self.main_window.add_control_bar_widget(self.info_box)
         self.main_window.add_control_bar_widget(self.d_info_box)

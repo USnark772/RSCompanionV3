@@ -169,15 +169,15 @@ class AppMenuBar(QMenuBar):
         self._file_menu.addAction(self._exit_action)
 
         # Menu bar -> Settings menu options
-        self._settings_menu.addMenu(self._subwindow_layout_menu)
+        # self._settings_menu.addMenu(self._subwindow_layout_menu)
         self._settings_menu.addMenu(self._language_menu)
         self._settings_menu.addMenu(self._debug_menu)
 
         # Menu bar -> Settings -> Window Layout options
-        self._subwindow_layout_menu.addAction(self._horiz_action)
-        self._subwindow_layout_menu.addAction(self._vert_action)
-        self._subwindow_layout_menu.addAction(self._tiled_action)
-        self._subwindow_layout_menu.addAction(self._cascade_action)
+        # self._subwindow_layout_menu.addAction(self._horiz_action)
+        # self._subwindow_layout_menu.addAction(self._vert_action)
+        # self._subwindow_layout_menu.addAction(self._tiled_action)
+        # self._subwindow_layout_menu.addAction(self._cascade_action)
 
         # Menu bar -> Settings -> Language menu options
         self._language_menu.addAction(self._english_action)
@@ -541,11 +541,11 @@ class AppMenuBar(QMenuBar):
         self._open_last_save_dir_action.setText(self._strings[StringsEnum.LAST_DIR])
         self._exit_action.setText(self._strings[StringsEnum.EXIT])
         self._settings_menu.setTitle(self._strings[StringsEnum.SETTINGS])
-        self._subwindow_layout_menu.setTitle(self._strings[StringsEnum.LAYOUT])
-        self._horiz_action.setText(self._strings[StringsEnum.HORIZONTAL])
-        self._vert_action.setText(self._strings[StringsEnum.VERTICAL])
-        self._tiled_action.setText(self._strings[StringsEnum.TILED])
-        self._cascade_action.setText(self._strings[StringsEnum.CASCADE])
+        # self._subwindow_layout_menu.setTitle(self._strings[StringsEnum.LAYOUT])
+        # self._horiz_action.setText(self._strings[StringsEnum.HORIZONTAL])
+        # self._vert_action.setText(self._strings[StringsEnum.VERTICAL])
+        # self._tiled_action.setText(self._strings[StringsEnum.TILED])
+        # self._cascade_action.setText(self._strings[StringsEnum.CASCADE])
         self._debug_menu.setTitle(self._strings[StringsEnum.DEBUG_MENU])
         self._debug_action.setText(self._strings[StringsEnum.DEBUG])
         self._warning_action.setText(self._strings[StringsEnum.WARNING])
