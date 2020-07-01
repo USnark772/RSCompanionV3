@@ -3,11 +3,9 @@ TODO: Pressing matters.
     - Ensure app does not save experiment before devices finish saving. (Can we tell if a file is still opened?)
     - Make sure reading data from devices is done in threads so timestamps are not delayed.
     - Why are cameras having playback lag in the view? Appears to be cpu issue. Neither Joel or Nate have this issue.
-    - Move window layout options into radial buttons on the main control bar.
     - Allow camera subwindow to resize without aspect ration.
         - force image to always show entire image
     - Look into camera overlay issues with language changes. (Unsupported characters for some languages)
-    - app minimum size
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)

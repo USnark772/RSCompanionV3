@@ -44,16 +44,16 @@ class LayoutBox(QGroupBox):
         self.setMaximumSize(size)
 
         self._horizontal_button = QRadioButton(self)
-        self._horizontal_button.toggled.connect(self._horizontal_toggled)
+        self._horizontal_button.clicked.connect(self._horizontal_toggled)
 
         self._vertical_button = QRadioButton(self)
-        self._vertical_button.toggled.connect(self._vertical_toggled)
+        self._vertical_button.clicked.connect(self._vertical_toggled)
 
         self._tiled_button = QRadioButton(self)
-        self._tiled_button.toggled.connect(self._tiled_toggled)
+        self._tiled_button.clicked.connect(self._tiled_toggled)
 
         self._cascade_button = QRadioButton(self)
-        self._cascade_button.toggled.connect(self._cascade_toggled)
+        self._cascade_button.clicked.connect(self._cascade_toggled)
 
         # self._custom_button = QRadioButton(self)
         # self._custom_button.toggled.connect(self._custom_toggled)

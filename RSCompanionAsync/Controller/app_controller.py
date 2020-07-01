@@ -88,7 +88,7 @@ class AppController:
         self._logger.debug("Initializing")
 
         # View
-        ui_min_size = QSize(950, 740)
+        ui_min_size = QSize(1038, 740)
         button_box_size = QSize(205, 120)
         layout_box_size = QSize(200, 120)
         info_box_size = QSize(230, 120)
