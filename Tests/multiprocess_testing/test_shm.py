@@ -16,7 +16,8 @@ OVL2 = SEP + "Block: 2" + SEP + \
 
 STR_ENCODING = 'utf-8'
 DTYPE = np.uint8
-OVL_FNT = ImageFont.truetype("simsun.ttc", 15)
+FNT_SIZE = 15
+OVL_FNT = ImageFont.truetype("simsun.ttc", FNT_SIZE)
 r = 211
 g = 250
 b = 10
@@ -24,10 +25,10 @@ OVL_CLR = (b, g, r)
 OVL_POS = (6, 3)
 NUM_CAM_PROCS = 2
 NUM_CAMS = 3
-RUN_TIME = 60
+RUN_TIME = 15
 IMG_SIZE = (640, 480)
 # IMG_SIZE = (1920, 1080)
-EDIT_DIVISOR = 5
+EDIT_HEIGHT = FNT_SIZE * 6
 
 
 class FPSTracker:
@@ -61,9 +62,9 @@ def add_overlay(image: np.ndarray, line: str):
 
 
 def image_processor(shared_array: Array, shared_dim: tuple, sem1: Semaphore, sem2: Semaphore, line: Array):
-    shm_size = (shared_dim[0] / EDIT_DIVISOR) * shared_dim[1] * shared_dim[2]
+    shm_size = EDIT_HEIGHT * shared_dim[1] * shared_dim[2]
     np_arr = np.frombuffer(shared_array.get_obj(), count=int(shm_size), dtype=DTYPE).reshape(
-        (int(shared_dim[0] / EDIT_DIVISOR), shared_dim[1], shared_dim[2]))
+        (EDIT_HEIGHT, shared_dim[1], shared_dim[2]))
     while True:
         sem1.acquire()
         np.copyto(np_arr, add_overlay(np_arr, line.value.decode(STR_ENCODING)))
