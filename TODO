@@ -1,11 +1,13 @@
 TODO: Pressing matters.
     - Implement camera activation/deactivation in app_model.py
+        - use name property from abstract_controller to deactivate the correct camera.
+        - grey out during experiment.
+            - create/end experiment should handle this logic
     - Ensure app does not save experiment before devices finish saving. (Can we tell if a file is still opened?)
     - Make sure reading data from devices is done in threads so timestamps are not delayed.
     - Why are cameras having playback lag in the view? Appears to be cpu issue. Neither Joel or Nate have this issue.
-    - Allow camera subwindow to resize without aspect ration.
-        - force image to always show entire image
     - Look into camera overlay issues with language changes. (Unsupported characters for some languages)
+    - Put a get name property in abstract_controller.py
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
