@@ -1,13 +1,11 @@
 TODO: Pressing matters.
     - Implement camera activation/deactivation in app_model.py
-        - use name property from abstract_controller to deactivate the correct camera.
         - grey out during experiment.
             - create/end experiment should handle this logic
     - Ensure app does not save experiment before devices finish saving. (Can we tell if a file is still opened?)
     - Make sure reading data from devices is done in threads so timestamps are not delayed.
     - Why are cameras having playback lag in the view? Appears to be cpu issue. Neither Joel or Nate have this issue.
     - Look into camera overlay issues with language changes. (Unsupported characters for some languages)
-    - Put a get name property in abstract_controller.py
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
@@ -15,7 +13,6 @@ TODO: At some point
         - If mic is not attached to camera then save as audio file.
         - https://stackoverflow.com/questions/14140495/how-to-capture-a-video-and-audio-in-python-from-a-camera-or-webcam
     - Implement CAM.
-        - Make image fit fully into subwindow display area.
         - Consider passing selected fps to writer instead of current fps.
         - handle other to do items listed in cam modules
     - Consider making properties out of our getter/setter methods.

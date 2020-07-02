@@ -54,6 +54,8 @@ class MDIArea(QMdiArea):
         #     window = subwindow()
         #     self.add_window(window)
 
+        self.set_window_order(2)
+
     def add_window(self, window: AbstractView) -> None:
         """
         Add given window to the MDI Area.
@@ -98,7 +100,7 @@ class MDIArea(QMdiArea):
         :return None:
         """
         self._logger.debug("running")
-        self.setActivationOrder(QMdiArea.StackingOrder)
+        self.set_window_order(1)
         sizes = dict()
         window_list = self.subWindowList()
         for win in window_list:
@@ -107,7 +109,7 @@ class MDIArea(QMdiArea):
         for win in window_list:
             size = sizes[win]
             win.resize(size[0], size[1])
-        self.setActivationOrder(QMdiArea.CreationOrder)
+        self.set_window_order(2)
         self.window_moved = False
         self._logger.debug("done")
 
@@ -127,7 +129,8 @@ class MDIArea(QMdiArea):
         :return None:
         """
         self._logger.debug("running")
-        window_list = self.subWindowList()
+        window_list = self.subWindowList(QMdiArea.ActivationHistoryOrder)
+        window_list.reverse()
         for i in range(len(window_list)):
             if i == 0:
                 window_list[i].move(0, 0)
@@ -143,7 +146,8 @@ class MDIArea(QMdiArea):
         :return None:
         """
         self._logger.debug("running")
-        window_list = self.subWindowList()
+        window_list = self.subWindowList(QMdiArea.ActivationHistoryOrder)
+        window_list.reverse()
         for i in range(len(window_list)):
             if i == 0:
                 window_list[i].move(0, 0)
