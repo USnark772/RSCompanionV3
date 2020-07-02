@@ -455,12 +455,9 @@ class CamView(AbstractView):
                 temp_image_w = image.scaledToWidth(self.width() - 15)
                 temp_image_h = image.scaledToHeight(self.height() - 35)
                 if temp_image_w.height() > self.height() - 35:
-                    # print("Setting as temp_image_w")
                     self._image_display.setPixmap(temp_image_h)
                 else:
-                    # print("Setting as temp_image_h")
                     self._image_display.setPixmap(temp_image_w)
-                # self._image_display.setPixmap(image.scaled(self.width(), self.heightForWidth(self.width()), Qt.KeepAspectRatio))
             elif msg is not None:
                 self._image_display.setText(msg)
         self._logger.debug("done")
