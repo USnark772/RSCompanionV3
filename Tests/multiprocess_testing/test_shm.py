@@ -8,27 +8,33 @@ from PIL import Image, ImageDraw, ImageFont
 from cv2 import VideoCapture, CAP_DSHOW, imshow, waitKey, CAP_PROP_FOURCC, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
 from ctypes import c_char
 from collections import deque
+from textwrap import fill
 
 SEP = "\n"
-OVL1 = "Condition name: This is a test condition name." + SEP
+OVL1 = "Condition name: This is a test condition name that is so long that it likely goes off the edge of the image which is not really good so we have to add textwrap so it fits more properly but hopefully it wraps nicely and looks ok." + SEP
 OVL2 = SEP + "Block: 2" + SEP + \
        "Keyflag: f" + SEP
-
 STR_ENCODING = 'utf-8'
 DTYPE = np.uint8
+
 FNT_SIZE = 15
+LINE_WIDTH = FNT_SIZE * 4
+OVL1 = fill(OVL1, LINE_WIDTH) + SEP
+EDIT_HEIGHT = FNT_SIZE * 7
 OVL_FNT = ImageFont.truetype("simsun.ttc", FNT_SIZE)
 r = 211
 g = 250
 b = 10
 OVL_CLR = (b, g, r)
 OVL_POS = (6, 3)
+
 NUM_CAM_PROCS = 2
 NUM_CAMS = 3
 RUN_TIME = 15
 IMG_SIZE = (640, 480)
 # IMG_SIZE = (1920, 1080)
-EDIT_HEIGHT = FNT_SIZE * 6
+
+BYTESTR_SIZE = 512
 
 
 class FPSTracker:
@@ -93,7 +99,7 @@ def cam_reader(index: int, shared_arrays: [Array], shared_dim: tuple, sems1_list
         if ret and frame is not None:
             np.copyto(np_arrs[k], frame)
             fps = str(fps_tracker.get_fps())
-            line = OVL1 + format_current_time(timestamp, True, True, True) + OVL2 + "FPS: " + fps
+            line = OVL1 + "Timestamp: " + format_current_time(timestamp, True, True, True) + OVL2 + "FPS: " + fps
             ovl_arrs[k].value = line.encode(STR_ENCODING)
         sems1_list[k].release()
         k = (k + 1) % NUM_CAM_PROCS
@@ -127,7 +133,7 @@ def prog_proc(cam_index: int):
         sems1.append(Semaphore(0))
         sems2.append(Semaphore(0))
         sems3.append(Semaphore(1))
-        shm_ovl_arrs.append(Array(c_char, 256))
+        shm_ovl_arrs.append(Array(c_char, BYTESTR_SIZE))
         shm_arrs.append(Array('i', shm_arr_dim[0] * shm_arr_dim[1] * shm_arr_dim[2]))
         image_processors.append(Process(target=image_processor, daemon=True, args=(shm_arrs[i], image_dim, sems1[i],
                                                                                    sems2[i], shm_ovl_arrs[i],)))
