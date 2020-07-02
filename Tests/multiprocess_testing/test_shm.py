@@ -2,9 +2,10 @@ import numpy as np
 from time import sleep, time, mktime
 from datetime import datetime
 from RSCompanionAsync.Model.app_helpers import format_current_time
+from RSCompanionAsync.Devices.Camera.Model.cam_defs import cap_temp_codec, cap_codec
 from multiprocessing import Process, Array, Semaphore
 from PIL import Image, ImageDraw, ImageFont
-from cv2 import VideoCapture, CAP_DSHOW, imshow, waitKey
+from cv2 import VideoCapture, CAP_DSHOW, imshow, waitKey, CAP_PROP_FOURCC, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
 from ctypes import c_char
 from collections import deque
 
@@ -19,6 +20,7 @@ OVL_POS = (20, 20)
 NUM_CAM_PROCS = 2
 NUM_CAMS = 3
 RUN_TIME = 60
+FRAME_SIZE = (1920, 1080)
 
 
 class FPSTracker:
@@ -64,6 +66,12 @@ def cam_reader(index: int, shared_arrays: [Array], shared_dim: tuple, sems1_list
                ovl_arrs: [Array]):
     fps_tracker = FPSTracker()
     cap = VideoCapture(index, CAP_DSHOW)
+    cap.set(CAP_PROP_FOURCC, cap_temp_codec)
+    cap.set(CAP_PROP_FOURCC, cap_codec)
+
+    # Set frame size to desired max.
+    cap.set(CAP_PROP_FRAME_WIDTH, FRAME_SIZE[0])
+    cap.set(CAP_PROP_FRAME_HEIGHT, FRAME_SIZE[1])
     ret, frame = cap.read()
     shm_size = shared_dim[0] * shared_dim[1] * shared_dim[2]
     np_arrs = list()
@@ -78,8 +86,6 @@ def cam_reader(index: int, shared_arrays: [Array], shared_dim: tuple, sems1_list
         if ret and frame is not None:
             np.copyto(np_arrs[k], frame)
             fps = str(fps_tracker.get_fps())
-            if index == 2:
-                print("cam_: " + str(index) + " is: " + fps)
             line = format_current_time(timestamp, True, True, True) + "\nFPS: " + fps
             ovl_arrs[k].value = line.encode(STR_ENCODING)
         sems1_list[k].release()
@@ -103,7 +109,7 @@ def vid_disp(index: int, shared_arrays: [Array], shared_dim: tuple, sems2_list: 
 
 def prog_proc(cam_index: int):
     shm_arr_dim = (1080, 1920, 3)
-    image_dim = (480, 640, 3)
+    image_dim = (FRAME_SIZE[1], FRAME_SIZE[0], 3)
     image_processors = list()
     sems1 = list()
     sems2 = list()
