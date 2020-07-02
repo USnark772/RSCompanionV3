@@ -10,17 +10,18 @@ from ctypes import c_char
 from collections import deque
 
 STR_ENCODING = 'utf-8'
-SHM_DTYPE = np.uint8
-OVL_FNT = ImageFont.truetype("simsun.ttc", 18)
+DTYPE = np.uint8
+OVL_FNT = ImageFont.truetype("simsun.ttc", 20)
 r = 211
 g = 250
 b = 10
 OVL_CLR = (b, g, r)
-OVL_POS = (20, 20)
+OVL_POS = (10, 3)
 NUM_CAM_PROCS = 2
 NUM_CAMS = 3
 RUN_TIME = 60
-FRAME_SIZE = (1920, 1080)
+IMG_SIZE = (640, 480)
+# IMG_SIZE = (1920, 1080)
 
 
 class FPSTracker:
@@ -54,8 +55,8 @@ def add_overlay(image: np.ndarray, line: str):
 
 
 def image_processor(shared_array: Array, shared_dim: tuple, sem1: Semaphore, sem2: Semaphore, line: Array):
-    shm_size = shared_dim[0] * shared_dim[1] * shared_dim[2]
-    np_arr = np.frombuffer(shared_array.get_obj(), count=shm_size, dtype=SHM_DTYPE).reshape(shared_dim)
+    shm_size = (shared_dim[0]/8) * shared_dim[1] * shared_dim[2]
+    np_arr = np.frombuffer(shared_array.get_obj(), count=int(shm_size), dtype=DTYPE).reshape((int(shared_dim[0]/8), shared_dim[1], shared_dim[2]))
     while True:
         sem1.acquire()
         np.copyto(np_arr, add_overlay(np_arr, line.value.decode(STR_ENCODING)))
@@ -68,15 +69,13 @@ def cam_reader(index: int, shared_arrays: [Array], shared_dim: tuple, sems1_list
     cap = VideoCapture(index, CAP_DSHOW)
     cap.set(CAP_PROP_FOURCC, cap_temp_codec)
     cap.set(CAP_PROP_FOURCC, cap_codec)
-
-    # Set frame size to desired max.
-    cap.set(CAP_PROP_FRAME_WIDTH, FRAME_SIZE[0])
-    cap.set(CAP_PROP_FRAME_HEIGHT, FRAME_SIZE[1])
+    cap.set(CAP_PROP_FRAME_WIDTH, IMG_SIZE[0])
+    cap.set(CAP_PROP_FRAME_HEIGHT, IMG_SIZE[1])
     ret, frame = cap.read()
     shm_size = shared_dim[0] * shared_dim[1] * shared_dim[2]
     np_arrs = list()
     for j in range(NUM_CAM_PROCS):
-        np_arrs.append(np.frombuffer(shared_arrays[j].get_obj(), count=shm_size, dtype=SHM_DTYPE).reshape(shared_dim))
+        np_arrs.append(np.frombuffer(shared_arrays[j].get_obj(), count=shm_size, dtype=DTYPE).reshape(shared_dim))
     k = 0
     while True:
         ret, frame = cap.read()
@@ -96,7 +95,7 @@ def vid_disp(index: int, shared_arrays: [Array], shared_dim: tuple, sems2_list: 
     shm_size = shared_dim[0] * shared_dim[1] * shared_dim[2]
     np_arrs = list()
     for j in range(NUM_CAM_PROCS):
-        np_arrs.append(np.frombuffer(shared_arrays[j].get_obj(), count=shm_size, dtype=SHM_DTYPE).reshape(shared_dim))
+        np_arrs.append(np.frombuffer(shared_arrays[j].get_obj(), count=shm_size, dtype=DTYPE).reshape(shared_dim))
     k = 0
     name = "Camera: " + str(index)
     while True:
@@ -109,7 +108,7 @@ def vid_disp(index: int, shared_arrays: [Array], shared_dim: tuple, sems2_list: 
 
 def prog_proc(cam_index: int):
     shm_arr_dim = (1080, 1920, 3)
-    image_dim = (FRAME_SIZE[1], FRAME_SIZE[0], 3)
+    image_dim = (IMG_SIZE[1], IMG_SIZE[0], 3)
     image_processors = list()
     sems1 = list()
     sems2 = list()
