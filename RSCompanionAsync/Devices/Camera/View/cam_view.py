@@ -111,7 +111,7 @@ class CamView(AbstractView):
         self._image_display_label = QLabel(self._image_display_frame)
         self._image_display_label.setAlignment(Qt.AlignHCenter)
         self._image_display = QLabel(self._image_display_frame)
-        self._image_display.setAlignment(Qt.AlignHCenter)
+        self._image_display.setAlignment(Qt.AlignCenter)
         self._image_display.setMouseTracking(True)
         self._image_display_layout.addWidget(self._image_display_label)
         self._image_display_layout.addWidget(self._image_display)
@@ -383,10 +383,11 @@ class CamView(AbstractView):
         self._logger.debug("Done")
 
     # def resizeEvent(self, resizeEvent: QResizeEvent) -> None:
-    #     if not self._hidden:
-    #         resizeEvent.accept()
-    #         self.resize(self.width(), self.heightForWidth(self.width()))
-    #     return super().resizeEvent(resizeEvent)
+    #     # if not self._hidden:
+    #     resizeEvent.accept()
+    #     super().resizeEvent(resizeEvent)
+    #     print("window size:", self.size())
+    #     print("super size:", super().size())
 
     def heightForWidth(self, w: int) -> int:
         return int(w * self._aspect_ratio)
@@ -451,14 +452,14 @@ class CamView(AbstractView):
         self._logger.debug("running")
         if not self._window_changing:
             if image is not None:
-                temp_image_w = image.scaledToWidth(self.width())
-                temp_image_h = image.scaledToHeight(self.heightForWidth(self.width()))
-                if not (temp_image_w.width() > self.width() or temp_image_w.height() > self.height()):
+                temp_image_w = image.scaledToWidth(self.width() - 15)
+                temp_image_h = image.scaledToHeight(self.height() - 35)
+                if temp_image_w.height() > self.height() - 35:
                     # print("Setting as temp_image_w")
-                    self._image_display.setPixmap(temp_image_w)
+                    self._image_display.setPixmap(temp_image_h)
                 else:
                     # print("Setting as temp_image_h")
-                    self._image_display.setPixmap(temp_image_h)
+                    self._image_display.setPixmap(temp_image_w)
                 # self._image_display.setPixmap(image.scaled(self.width(), self.heightForWidth(self.width()), Qt.KeepAspectRatio))
             elif msg is not None:
                 self._image_display.setText(msg)
