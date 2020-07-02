@@ -2,6 +2,8 @@ import cv2
 from statistics import median
 from time import time
 from RSCompanionAsync.Devices.Camera.Model.cam_defs import cap_backend, cap_temp_codec, cap_codec
+from Tests.multiprocess_testing.test_shm import FPSTracker
+from datetime import datetime
 
 
 def test_type_read_times(cap: cv2.VideoCapture, cam_index: int, num_reads: int, show_values: bool):
@@ -55,9 +57,11 @@ def test_type_read_times(cap: cv2.VideoCapture, cam_index: int, num_reads: int, 
 
 def test_type_fps(cap: cv2.VideoCapture, cam_index: int, num_reads: int):
     # Get time taken to read camera num_frames times with no other operations.
+    tracker = FPSTracker()
     s = time()
     for i in range(num_reads):
         cap.read()
+        tracker.update_fps(datetime.now())
     elapsed = time() - s
 
     # Print results.
@@ -65,7 +69,7 @@ def test_type_fps(cap: cv2.VideoCapture, cam_index: int, num_reads: int):
           "\n- Camera:", cam_index,
           "\n- Num_frames:", num_reads,
           "\n- Time_taken:", elapsed,
-          "\n- fps:", num_reads / elapsed)
+          "\n- tester says fps:", num_reads / elapsed, " and tracker says:", tracker.get_fps())
     print("\n")
 
 
