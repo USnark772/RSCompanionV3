@@ -56,7 +56,7 @@ class Controller(AbstractController):
         # TODO: Get logging in here. See https://docs.python.org/3/howto/logging-cookbook.html find multiprocessing.
         self._model_msg_pipe, msg_pipe = Pipe()  # For messages/commands.
         self._model_image_pipe, img_pipe = Pipe(False)  # For images.
-        self._model = Process(target=CamModel, args=(msg_pipe, img_pipe, self.cam_index), daemon=True)
+        self._model = Process(target=CamModel, args=(msg_pipe, img_pipe, self.cam_index))
         # TODO: Multiprocessing could cause issues when packaging app.
         self._switcher = {defs.ModelEnum.FAILURE: self.err_cleanup,
                           defs.ModelEnum.CUR_FPS: self._update_view_fps,
@@ -76,12 +76,12 @@ class Controller(AbstractController):
         self._handle_pipe_flag = TEvent()
         self._handle_pipe_flag.set()
         self._model.start()
+        self.send_msg_to_model((defs.ModelEnum.INITIALIZE, None))
         self._fps_inf = float("inf")
         self._fps_inf_str = "\u221e"
         self._max_fps = 30
         self.set_lang(lang)
         self._res_list = list()
-        self.send_msg_to_model((defs.ModelEnum.INITIALIZE, None))
         self._setup_handlers()
         self._cleaning = False
         self._logger.debug("Initialized")
