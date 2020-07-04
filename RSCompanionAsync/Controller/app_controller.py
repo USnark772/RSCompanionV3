@@ -25,7 +25,7 @@ https://redscientific.com/index.html
 """
 
 import logging
-from logging import DEBUG
+from logging import ERROR
 from datetime import datetime
 from asyncio import create_task, sleep
 from aioserial import AioSerial
@@ -65,7 +65,7 @@ class AppController:
 
         self._settings.beginGroup("logging")
         if not self._settings.contains("level"):
-            self._settings.setValue("level", DEBUG)
+            self._settings.setValue("level", ERROR)
         log_level = self._settings.value('level')
         self._settings.endGroup()
 

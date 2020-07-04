@@ -84,12 +84,12 @@ async def write_line_to_file(fname, line, new=False):
     logger.debug("done")
 
 
-def format_current_time(to_format: datetime, day=False, time=False, mil=False, micro=False, save=False):
+def format_current_time(to_format: datetime, date=False, time=False, mil=False, micro=False, save=False):
     """
     Returns a datetime string with day, time, and milliseconds options. If save then returned string has dashes
     instead of periods for use in filenames.
     :param to_format: The datetime object to stringify.
-    :param day: If day should be included in the returned string.
+    :param date: If day should be included in the returned string.
     :param time: If time should be included in the returned string.
     :param mil: If milliseconds should be included in the returned string.
     :param micro: If not milliseconds then microseconds will be included in the returned string.
@@ -97,27 +97,28 @@ def format_current_time(to_format: datetime, day=False, time=False, mil=False, m
     :return str: The formatted datetime string.
     """
     logger.debug("running")
-    if day and time and mil:
-        logger.debug("day, time, mil. done")
-        return to_format.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
-    elif day and time and micro:
-        logger.debug("day, time, mil. done")
-        return to_format.strftime("%Y-%m-%d %H:%M:%S.%f")
-    elif day and time and not mil:
-        logger.debug("day, time. done")
-        return to_format.strftime("%Y-%m-%d %H:%M:%S")
-    elif day and not time and not mil:
-        logger.debug("day. done")
-        return to_format.strftime("%Y-%m-%d")
-    elif not day and time and not mil:
-        logger.debug("time, done")
-        return to_format.strftime("%H:%M:%S")
-    elif not day and time and mil:
-        logger.debug("time, mil. done")
-        return to_format.strftime("%H:%M:%S.%f")
-    elif save:
-        logger.debug("save. done")
+    if save:
+        logger.debug("done with save")
         return to_format.strftime("%Y-%m-%d-%H-%M-%S")
+    fmt_str = str()
+    date_str = "%Y-%m-%d"
+    time_str = "%H:%M:%S"
+    micro_str = ".%f"
+    spacer = " "
+    if date:
+        fmt_str += date_str
+        if time or mil or micro:
+            fmt_str += spacer
+    if time:
+        fmt_str += time_str
+    if mil or micro:
+        fmt_str += micro_str
+    if mil:
+        logger.debug("done with mil")
+        return to_format.strftime(fmt_str)[:-3]
+    else:
+        logger.debug("done")
+        return to_format.strftime(fmt_str)
 
 
 async def await_event(event: Event, to_print: bool = False) -> futures:
