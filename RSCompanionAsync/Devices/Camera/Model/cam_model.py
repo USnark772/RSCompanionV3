@@ -127,7 +127,8 @@ class CamModel:
         self._loop = get_event_loop()
 
         self._strings = strings[LangEnum.ENG]
-        self._fps = 30  # TODO: We're not using this properly, fix it.
+        self._max_fps = 30
+        self._fps = self._max_fps
         self._cam_name = "CAM_" + str(self._cam_index)
         self._cond_name = str()
         self._exp_status = self._strings[StringsEnum.EXP_STATUS_STOP]
@@ -214,6 +215,7 @@ class CamModel:
             self._msg_pipe.send((defs.ModelEnum.FAILURE, None))
             prog_tracker.cancel()
             return
+        self._max_fps = max_fps
         self._msg_pipe.send((defs.ModelEnum.START, (max_fps, sizes)))
         prog_tracker.cancel()
         self._proc_thread = Thread(target=self._start_frame_processing, args=())
@@ -350,6 +352,7 @@ class CamModel:
         self._frame_size = (int(self._frame_size[0]), int(self._frame_size[1]))
         self._write_q = SimpleQueue()
         self._cam_writer = StreamWriter()
+        print("Starting writing with fps:", self._fps)
         self._cam_writer.start(filename, int(self._fps), self._frame_size, self._write_q)
         self._writing = True
 
@@ -450,6 +453,10 @@ class CamModel:
         """
         self._times = deque()
         self._cam_reader.set_fps(new_fps)
+        if new_fps == float("inf"):
+            self._fps = self._max_fps
+        else:
+            self._fps = new_fps
 
     def _distribute_frames(self) -> None:
         """
