@@ -208,6 +208,6 @@ class CamScanner:
         :return None:
         """
         self._logger.debug("running")
-        self.cleanup()
+        create_task(self.cleanup())
         self._counter.reset()
         self._logger.debug("done")
