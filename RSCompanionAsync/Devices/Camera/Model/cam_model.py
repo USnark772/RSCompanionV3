@@ -216,6 +216,7 @@ class CamModel:
             prog_tracker.cancel()
             return
         self._max_fps = max_fps
+        self._fps = max_fps
         self._msg_pipe.send((defs.ModelEnum.START, (max_fps, sizes)))
         prog_tracker.cancel()
         self._proc_thread = Thread(target=self._start_frame_processing, args=())
