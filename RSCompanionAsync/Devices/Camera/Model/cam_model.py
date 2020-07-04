@@ -352,7 +352,6 @@ class CamModel:
         self._frame_size = (int(self._frame_size[0]), int(self._frame_size[1]))
         self._write_q = SimpleQueue()
         self._cam_writer = StreamWriter()
-        print("Starting writing with fps:", self._fps)
         self._cam_writer.start(filename, int(self._fps), self._frame_size, self._write_q)
         self._writing = True
 
