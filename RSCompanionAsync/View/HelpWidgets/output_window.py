@@ -28,7 +28,6 @@ from PySide2.QtGui import QTextCursor
 from RSCompanionAsync.Resources.Strings.output_window_strings import strings, StringsEnum, LangEnum
 
 
-# TODO: Proper logging for this file?
 class OutputWindow(QWidget):
     """ This is to display small messages to the user. """
     def __init__(self, lang: LangEnum = LangEnum.ENG):

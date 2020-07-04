@@ -378,7 +378,6 @@ class CamModel:
         Run all async tasks in this model and wait for stop signal. (This method is the main loop for this process)
         :return None:
         """
-        # TODO: Consider putting these in threads like in cam_controller.
         self._tasks.append(create_task(self._handle_pipe()))
         self._tasks.append(create_task(self._await_reader_err()))
         # self._tasks.append(create_task(self.signal_done_writing()))

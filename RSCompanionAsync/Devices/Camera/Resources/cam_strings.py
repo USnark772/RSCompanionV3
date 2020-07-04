@@ -96,7 +96,6 @@ english = {StringsEnum.CONFIG_TAB_LABEL: "Configuration",
            StringsEnum.OVERLAY_EXP_STATUS_LABEL: "Exp Status:",
            }
 
-# TODO: Verify translations
 # Dutch strings
 dutch = {StringsEnum.CONFIG_TAB_LABEL: "Configuratie",
          StringsEnum.INITIALIZATION_BAR_LABEL: "Initialisatievoortgang",
@@ -270,7 +269,6 @@ spanish = {StringsEnum.CONFIG_TAB_LABEL: "Configuración",
            }
 
 # Chinese simplified strings
-# TODO: Verify simplified.
 chinese = {StringsEnum.CONFIG_TAB_LABEL: "组态",
            StringsEnum.INITIALIZATION_BAR_LABEL: "初始化进度",
            StringsEnum.INITIALIZING: "初始化中",

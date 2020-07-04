@@ -57,7 +57,6 @@ class Controller(AbstractController):
         self._model_msg_pipe, msg_pipe = Pipe()  # For messages/commands.
         self._model_image_pipe, img_pipe = Pipe(False)  # For images.
         self._model = Process(target=CamModel, args=(msg_pipe, img_pipe, self.cam_index))
-        # TODO: Multiprocessing could cause issues when packaging app.
         self._switcher = {defs.ModelEnum.FAILURE: self.err_cleanup,
                           defs.ModelEnum.CUR_FPS: self._update_view_fps,
                           defs.ModelEnum.CUR_RES: self._update_view_resolution,
