@@ -1,7 +1,4 @@
 TODO: Pressing matters.
-    - Implement camera activation/deactivation in app_model.py
-        - grey out during experiment.
-            - create/end experiment should handle this logic
     - Ensure app does not save experiment before devices finish saving. (Can we tell if a file is still opened?)
     - Make sure reading data from devices is done in threads so timestamps are not delayed.
 
