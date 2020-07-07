@@ -365,6 +365,7 @@ class AppController:
             self.button_box.set_start_button_enabled(True)
             self.button_box.set_create_button_state(1)
             self._check_toggle_post_button()
+            self.menu_bar.set_use_cams(False)
             if self._set_drive_updater():
                 self._drive_updater_task = create_task(self._update_drive_info_box())
             self.info_box.set_start_time(format_current_time(datetime.now(), time=True))
@@ -389,6 +390,7 @@ class AppController:
         self.button_box.set_create_button_state(0)
         self.button_box.set_start_button_enabled(False)
         self.button_box.set_start_button_state(0)
+        self.menu_bar.set_use_cams(True)
         self._logger.debug("done")
 
     def _start_exp(self) -> None:

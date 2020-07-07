@@ -33,6 +33,8 @@ from logging import StreamHandler, getLogger
 from datetime import datetime
 from asyncio import Event, create_task, futures, get_running_loop
 from aioserial import AioSerial
+
+from RSCompanionAsync.Devices import Camera
 from RSCompanionAsync.Model.rs_device_com_scanner import RSDeviceCommScanner
 from RSCompanionAsync.Model.cam_scanner import CamScanner
 import RSCompanionAsync.Model.app_defs as defs
@@ -484,8 +486,10 @@ class AppModel:
         :return None:
         """
         self._logger.debug("running")
-        print(__name__, "Implement deactivate_use_cams()")
-        # self._cam_scanner.deactivate()
+        for o in self._devs.values():
+            if str(type(o)) == "<class 'Camera.Controller'>":
+                create_task(o.cleanup())
+        self._cam_scanner.deactivate()
         self._logger.debug("done")
 
     def _activate_use_cams(self) -> None:
@@ -494,8 +498,7 @@ class AppModel:
         :return None:
         """
         self._logger.debug("running")
-        print(__name__, "Implement activate_use_cams()")
-        # self._cam_scanner.activate()
+        self._cam_scanner.activate()
         self._logger.debug("done")
 
     def start(self) -> None:

@@ -231,6 +231,9 @@ class AppMenuBar(QMenuBar):
         # elif lang == LangEnum.JPN:
         #     self._reset_lang_actions(self._japanese_action)
 
+    def set_use_cams(self, usable: bool) -> None:
+        self._use_cams_action.setEnabled(usable)
+
     def add_window_layout_handler(self, func: classmethod) -> None:
         """
         Add handler for window layout.

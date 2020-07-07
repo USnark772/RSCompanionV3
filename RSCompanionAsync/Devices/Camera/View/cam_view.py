@@ -131,16 +131,6 @@ class CamView(AbstractView):
         # self._config_button_frame_layout.addWidget(self.config_button)
         self.layout().addWidget(self.config_button, 0, 0, Qt.AlignTop | Qt.AlignRight)
         self.config_button.setFixedSize(30, 25)
-
-        # trying to set the alpha for the config button.
-        # self._button_palette = self.config_button.palette()
-        # self._button_color = self._button_palette.color(QPalette.Window)
-        # self._button_color.setAlpha(100)
-        # self._button_palette.setColor(QPalette.Text, self._button_color)
-        # self.config_button.setPalette(self._button_palette)
-        # print(self.config_button.palette())
-
-        # print(self.config_button.styleSheet())
         self.config_button.setStyleSheet("background-color: rgba(200, 200, 200, 50%)")
 
         # self._menu_bar = QMenuBar()
