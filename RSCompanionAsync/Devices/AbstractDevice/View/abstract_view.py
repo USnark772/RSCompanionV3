@@ -117,7 +117,7 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
         self._logger.debug("running")
         settings = QSettings(settings_info[0], settings_info[1])
         settings.beginGroup(self._settings_group_ident)
-        cur_geo = self.saveGeometry()
+        cur_geo = self.frameGeometry()
         settings.setValue(self._win_geo_ident, cur_geo)
         settings.endGroup()
         self._logger.debug("done")
@@ -131,7 +131,7 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
         settings = QSettings(settings_info[0], settings_info[1])
         settings.beginGroup(self._settings_group_ident)
         if not settings.contains(self._win_geo_ident):
-            settings.setValue(self._win_geo_ident, self.saveGeometry())
-        self.restoreGeometry(settings.value(self._win_geo_ident))
+            settings.setValue(self._win_geo_ident, self.frameGeometry())
+        self.setGeometry(settings.value(self._win_geo_ident))
         settings.endGroup()
         self._logger.debug("done")
