@@ -1,6 +1,9 @@
 TODO: Pressing matters.
-    - Ensure app does not save experiment before devices finish saving. (Can we tell if a file is still opened?)
     - Make sure reading data from devices is done in threads so timestamps are not delayed.
+    - When devices are unplugged on accident and plugged back in during experiments:
+        - Allow device to join in middle of experiement
+        - Create/Start experiment depending on experiment status when device is plugged in.
+        - Use same file to save data if replugged.
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
@@ -29,3 +32,19 @@ TODO: Test this thing like crazy!
     - Look for if video is smooth on saved files even if it's not in the preview in the app.
     - Proper app usage tests.
     - Improper app usage tests.
+
+
+TODO: Bug fixes.
+    -   Exception ignored in: <finalize object at 0x1a8c3f03ee0; dead>
+        Traceback (most recent call last):
+          File "C:\RSDev\Python\Python37\lib\weakref.py", line 572, in __call__
+            return info.func(*info.args, **(info.kwargs or {}))
+          File "C:\RSDev\Python\Python37\lib\tempfile.py", line 797, in _cleanup
+            _shutil.rmtree(name)
+          File "C:\RSDev\Python\Python37\lib\shutil.py", line 516, in rmtree
+            return _rmtree_unsafe(path, onerror)
+          File "C:\RSDev\Python\Python37\lib\shutil.py", line 400, in _rmtree_unsafe
+            onerror(os.unlink, fullname, sys.exc_info())
+          File "C:\RSDev\Python\Python37\lib\shutil.py", line 398, in _rmtree_unsafe
+            os.unlink(fullname)
+        PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\phill\\AppData\\Local\\Temp\\tmpe4_ooo0j\\CAM_0_2020-07-06-16-17-19.avi'

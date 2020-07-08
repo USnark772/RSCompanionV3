@@ -25,9 +25,9 @@ https://redscientific.com/index.html
 
 from cv2 import VideoWriter
 from queue import SimpleQueue
-from asyncio import sleep, get_event_loop, create_task, Event, futures
+from asyncio import get_event_loop, create_task, Event
 from threading import Event as TEvent
-from time import sleep
+from time import sleep as tsleep
 from RSCompanionAsync.Devices.Camera.Model import cam_defs as defs
 from RSCompanionAsync.Model.app_helpers import await_event
 
@@ -38,7 +38,6 @@ class StreamWriter:
         self._frame_queue = SimpleQueue()
         self._stopping_flag = TEvent()
         self._done_writing_flag = Event()
-        self._writer_released = Event()
         self._tasks = list()
         self._stop_flag = TEvent()
         self._stop_flag.set()
@@ -51,13 +50,6 @@ class StreamWriter:
         :return None:
         """
         self.stop(discard)
-
-    def await_done_writing(self) -> futures:
-        """
-        Signal when there is a done writing frames event.
-        :return futures: If the flag is set.
-        """
-        return await_event(self._writer_released, True)
 
     def start(self, filename: str, fps: int, size: (int, int), q: SimpleQueue) -> None:
         """
@@ -92,7 +84,6 @@ class StreamWriter:
             self._stopping_flag.clear()
         self._stop_flag.set()
         self._writer.release()
-        self._writer_released.set()  # TODO: Figure out why this is not noticed by await_done_writing()
         await self._tasks[0]
 
     def _update(self) -> None:
@@ -110,4 +101,4 @@ class StreamWriter:
                 self._loop.call_soon_threadsafe(self._done_writing_flag.set)
                 break
             else:
-                sleep(.001)
+                tsleep(.001)

@@ -105,6 +105,16 @@ class CamView(AbstractView):
         self._cam_settings_layout.addWidget(self._use_cam_checkbox_label, 3, 0)
         self._cam_settings_layout.addWidget(self._use_cam_checkbox, 3, 1)
 
+        self._use_overlay_checkbox_label = QLabel(self._cam_settings_frame)
+        self._use_overlay_checkbox_label.setAlignment(Qt.AlignLeft)
+
+        self._use_overlay_checkbox = QCheckBox()
+        self._use_overlay_checkbox.setChecked(True)
+        self._use_overlay_checkbox.setLayoutDirection(Qt.RightToLeft)
+
+        self._cam_settings_layout.addWidget(self._use_overlay_checkbox_label, 4, 0)
+        self._cam_settings_layout.addWidget(self._use_overlay_checkbox, 4, 1)
+
         self._image_display_frame = EasyFrame()
         self._image_display_layout = QVBoxLayout(self._image_display_frame)
 
@@ -149,7 +159,9 @@ class CamView(AbstractView):
         self._config_items = [self._resolution_selector,
                               self._fps_selector,
                               self._use_cam_checkbox,
-                              self._show_feed_checkbox]
+                              self._show_feed_checkbox,
+                              self._use_overlay_checkbox,
+                              ]
 
         config_win_w = 350
         config_win_h = len(self._config_items) * 40
@@ -222,6 +234,17 @@ class CamView(AbstractView):
         self._logger.debug("running")
         self._use_cam_checkbox.toggled.connect(func)
         self._logger.debug("done")
+
+    def set_use_overlay_button_handler(self, func) -> None:
+        """
+        Add handler for use camera selector.
+        :param func: The handler.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._use_overlay_checkbox.toggled.connect(func)
+        self._logger.debug("done")
+
 
     def _config_button_handler(self) -> None:
         """
@@ -372,6 +395,25 @@ class CamView(AbstractView):
         self._use_cam_checkbox.setChecked(useable)
         self._logger.debug("Done")
 
+    @property
+    def use_overlay(self) -> bool:
+        """
+        Get the current use_overlay setting.
+        :return bool: User selection for using overlay.
+        """
+        return self._use_overlay_checkbox.isChecked()
+
+    @use_overlay.setter
+    def use_overlay(self, useable: bool) -> None:
+        """
+        Set use_overlay setting.
+        :param useable: The setting to set to.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._use_overlay_checkbox.setChecked(useable)
+        self._logger.debug("Done")
+
     # def resizeEvent(self, resizeEvent: QResizeEvent) -> None:
     #     # if not self._hidden:
     #     resizeEvent.accept()
@@ -519,6 +561,7 @@ class CamView(AbstractView):
         self._image_display.setText(self._strings[StringsEnum.IMAGE_DISPLAY])
         self._show_feed_checkbox_label.setText(self._strings[StringsEnum.SHOW_FEED_CHECKBOX_LABEL])
         self._use_cam_checkbox_label.setText(self._strings[StringsEnum.USE_CAM_CHECKBOX_LABEL])
+        self._use_overlay_checkbox_label.setText(self._strings[StringsEnum.USE_OVERLAY_CHECKBOX_LABEL])
         self._resolution_selector_label.setText(self._strings[StringsEnum.RESOLUTION_SELECTOR_LABEL])
         self._fps_selector_label.setText(self._strings[StringsEnum.FPS_SELECTOR_LABEL])
         self._config_win.setWindowTitle(self.get_name() + " " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
@@ -541,5 +584,7 @@ class CamView(AbstractView):
         self._show_feed_checkbox.setToolTip(self._strings[StringsEnum.SHOW_FEED_CHECKBOX_TOOLTIP])
         self._use_cam_checkbox_label.setToolTip(self._strings[StringsEnum.USE_CAM_CHECKBOX_TOOLTIP])
         self._use_cam_checkbox.setToolTip(self._strings[StringsEnum.USE_CAM_CHECKBOX_TOOLTIP])
+        self._use_overlay_checkbox_label.setToolTip(self._strings[StringsEnum.USE_OVERLAY_TOOLTIP])
+        self._use_overlay_checkbox.setToolTip(self._strings[StringsEnum.USE_OVERLAY_TOOLTIP])
         self._image_display.setToolTip(self._strings[StringsEnum.IMAGE_DISPLAY_TOOLTIP])
         self._logger.debug("done")

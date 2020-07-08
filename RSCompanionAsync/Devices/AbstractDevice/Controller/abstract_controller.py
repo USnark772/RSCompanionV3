@@ -35,6 +35,7 @@ class AbstractController(ABC):
         super().__init__()
         self.view = view
         self.saved = Event()
+        self.saved.set()
 
     def get_view(self) -> AbstractView:
         """
@@ -76,6 +77,7 @@ class AbstractController(ABC):
         """
         pass
 
+    # TODO: Change these to async
     def create_exp(self, path: str, cond_name: str) -> None:
         """
         Set the current experiment save directory for this device if this device needs to save data to file.

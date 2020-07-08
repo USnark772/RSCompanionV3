@@ -47,14 +47,14 @@ class AppMenuBar(QMenuBar):
 
         self._exit_action = QAction(self)
 
+        self._settings_menu = QMenu(self)
+
         self._cam_list_menu = QMenu(self)
-        self._file_menu.addMenu(self._cam_list_menu)
+        self._settings_menu.addMenu(self._cam_list_menu)
         self._use_cams_action = QAction(self)
         self._use_cams_action.setCheckable(True)
         self._cam_list_menu.addAction(self._use_cams_action)
         sep = self._cam_list_menu.addSeparator()
-
-        self._settings_menu = QMenu(self)
 
         """ Display layout options """
         self._subwindow_layout_actions = []

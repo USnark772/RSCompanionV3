@@ -38,6 +38,7 @@ class StringsEnum(Enum):
     IMAGE_DISPLAY = auto()
     SHOW_FEED_CHECKBOX_LABEL = auto()
     USE_CAM_CHECKBOX_LABEL = auto()
+    USE_OVERLAY_CHECKBOX_LABEL = auto()
     RESOLUTION_SELECTOR_LABEL = auto()
     FRAME_ROTATION_SETTING_LABEL = auto()
     FPS_SELECTOR_LABEL = auto()
@@ -52,6 +53,7 @@ class StringsEnum(Enum):
     RESOLUTION_SELECTOR_TOOLTIP = auto()
     SHOW_FEED_CHECKBOX_TOOLTIP = auto()
     USE_CAM_CHECKBOX_TOOLTIP = auto()
+    USE_OVERLAY_TOOLTIP = auto()
     FPS_DISPLAY_TOOLTIP = auto()
     ROTATION_TOOLTIP = auto()
     IMAGE_DISPLAY_TOOLTIP = auto()
@@ -70,6 +72,7 @@ english = {StringsEnum.CONFIG_TAB_LABEL: "Configuration",
            StringsEnum.IMAGE_DISPLAY: "No video",
            StringsEnum.SHOW_FEED_CHECKBOX_LABEL: "Show Feed",
            StringsEnum.USE_CAM_CHECKBOX_LABEL: "Use Camera",
+           StringsEnum.USE_OVERLAY_CHECKBOX_LABEL: "Use Overlay",
            StringsEnum.RESOLUTION_SELECTOR_LABEL: "Image Resolution",
            StringsEnum.FRAME_ROTATION_SETTING_LABEL: "Rotate Image",
            StringsEnum.FPS_SELECTOR_LABEL: "FPS Limiter",
@@ -85,6 +88,7 @@ english = {StringsEnum.CONFIG_TAB_LABEL: "Configuration",
                                                     " lag)",
            StringsEnum.SHOW_FEED_CHECKBOX_TOOLTIP: "Show or hide camera feed preview. (Does not disable camera)",
            StringsEnum.USE_CAM_CHECKBOX_TOOLTIP: "Enable/disable use of this camera.",
+           StringsEnum.USE_OVERLAY_TOOLTIP: "Use overlay on this camrea.",
            StringsEnum.FPS_DISPLAY_TOOLTIP: "The approximate fps this camera is performing at. This value can be"
                                             " affected by the load your computer is currently under.",
            StringsEnum.ROTATION_TOOLTIP: "Set degree of rotation for video feed. -360 < value < 360.",
@@ -104,6 +108,7 @@ dutch = {StringsEnum.CONFIG_TAB_LABEL: "Configuratie",
          StringsEnum.IMAGE_DISPLAY: "Geen video",
          StringsEnum.SHOW_FEED_CHECKBOX_LABEL: "Feed Weergeven",
          StringsEnum.USE_CAM_CHECKBOX_LABEL: "Gebruikerscamera",
+         StringsEnum.USE_OVERLAY_CHECKBOX_LABEL: "Use Overlay",
          StringsEnum.RESOLUTION_SELECTOR_LABEL: "Foto resolutie",
          StringsEnum.FRAME_ROTATION_SETTING_LABEL: "Roteer afbeelding",
          StringsEnum.FPS_SELECTOR_LABEL: "FPS Limiter",
@@ -119,6 +124,7 @@ dutch = {StringsEnum.CONFIG_TAB_LABEL: "Configuratie",
          StringsEnum.SHOW_FEED_CHECKBOX_TOOLTIP: "Voorbeeldweergave van camerafeed weergeven of verbergen."
                                        " (Schakelt camera niet uit)",
          StringsEnum.USE_CAM_CHECKBOX_TOOLTIP: "Schakel het gebruik van deze camera in / uit.",
+         StringsEnum.USE_OVERLAY_TOOLTIP: "Use overlay on this camrea.",
          StringsEnum.FPS_DISPLAY_TOOLTIP: "De geschatte fps waarop deze camera presteert. Deze waarde kan worden"
                                           " beïnvloed door de belasting van uw computer.",
          StringsEnum.ROTATION_TOOLTIP: "Stel de mate van rotatie in voor videofeed. -360 < waarde < 360.",
@@ -138,6 +144,7 @@ french = {StringsEnum.CONFIG_TAB_LABEL: "Configuration",
           StringsEnum.IMAGE_DISPLAY: "Pas de vidéo",
           StringsEnum.SHOW_FEED_CHECKBOX_LABEL: "Afficher le flux",
           StringsEnum.USE_CAM_CHECKBOX_LABEL: "Caméra utilisateur",
+          StringsEnum.USE_OVERLAY_CHECKBOX_LABEL: "Use Overlay",
           StringsEnum.RESOLUTION_SELECTOR_LABEL: "Résolution de l'image",
           StringsEnum.FRAME_ROTATION_SETTING_LABEL: "Faire pivoter l'image",
           StringsEnum.FPS_SELECTOR_LABEL: "FPS Limiter",
@@ -153,6 +160,7 @@ french = {StringsEnum.CONFIG_TAB_LABEL: "Configuration",
           StringsEnum.SHOW_FEED_CHECKBOX_TOOLTIP: "Afficher ou masquer l'aperçu du flux de la caméra."
                                         " (Ne désactive pas la caméra)",
           StringsEnum.USE_CAM_CHECKBOX_TOOLTIP: "Activez / désactivez l'utilisation de cette caméra.",
+          StringsEnum.USE_OVERLAY_TOOLTIP: "Use overlay on this camrea.",
           StringsEnum.FPS_DISPLAY_TOOLTIP: "Les fps approximatifs de cet appareil photo à."
                                            " Cette valeur peut être affectée par la charge de votre ordinateur.",
           StringsEnum.ROTATION_TOOLTIP: "Définissez le degré de rotation du flux vidéo. -360 < valeur < 360.",
@@ -172,6 +180,7 @@ german = {StringsEnum.CONFIG_TAB_LABEL: "Konfiguration",
           StringsEnum.IMAGE_DISPLAY: "Kein Video",
           StringsEnum.SHOW_FEED_CHECKBOX_LABEL: "Feed anzeigen",
           StringsEnum.USE_CAM_CHECKBOX_LABEL: "Benutzerkamera",
+          StringsEnum.USE_OVERLAY_CHECKBOX_LABEL: "Use Overlay",
           StringsEnum.RESOLUTION_SELECTOR_LABEL: "Bildauflösung",
           StringsEnum.FRAME_ROTATION_SETTING_LABEL: "Bild drehen",
           StringsEnum.FPS_SELECTOR_LABEL: "FPS-Begrenzer",
@@ -187,6 +196,7 @@ german = {StringsEnum.CONFIG_TAB_LABEL: "Konfiguration",
           StringsEnum.SHOW_FEED_CHECKBOX_TOOLTIP: "Vorschau des Kamera-Feeds ein- oder ausblenden."
                                         " (Deaktiviert die Kamera nicht)",
           StringsEnum.USE_CAM_CHECKBOX_TOOLTIP: "Aktivieren / Deaktivieren der Verwendung dieser Kamera.",
+          StringsEnum.USE_OVERLAY_TOOLTIP: "Use overlay on this camrea.",
           StringsEnum.FPS_DISPLAY_TOOLTIP: "Die ungefähren Bilder pro Sekunde, mit denen diese Kamera arbeitet."
                                            " Dieser Wert kann durch die Belastung Ihres Computers beeinflusst werden.",
           StringsEnum.ROTATION_TOOLTIP: "Stellen Sie den Rotationsgrad für den Video-Feed ein. -360 < Wert < 360.",
@@ -206,6 +216,7 @@ russian = {StringsEnum.CONFIG_TAB_LABEL: "конфигурация",
            StringsEnum.IMAGE_DISPLAY: "Нет видео",
            StringsEnum.SHOW_FEED_CHECKBOX_LABEL: "Показать видео",
            StringsEnum.USE_CAM_CHECKBOX_LABEL: "Пользовательская камера",
+           StringsEnum.USE_OVERLAY_CHECKBOX_LABEL: "Use Overlay",
            StringsEnum.RESOLUTION_SELECTOR_LABEL: "Разрешение изображения",
            StringsEnum.FRAME_ROTATION_SETTING_LABEL: "Повернуть изображение",
            StringsEnum.FPS_SELECTOR_LABEL: "FPS Limiter",
@@ -221,6 +232,7 @@ russian = {StringsEnum.CONFIG_TAB_LABEL: "конфигурация",
            StringsEnum.SHOW_FEED_CHECKBOX_TOOLTIP: "Показать или скрыть предварительный просмотр камеры."
                                                    " (Не отключает камеру)",
            StringsEnum.USE_CAM_CHECKBOX_TOOLTIP: "Enable/disable use of this camera.",
+           StringsEnum.USE_OVERLAY_TOOLTIP: "Use overlay on this camrea.",
            StringsEnum.FPS_DISPLAY_TOOLTIP: "Приблизительный кадр / с, с которым работает эта камера."
                                             " На это значение может повлиять нагрузка на ваш компьютер.",
            StringsEnum.ROTATION_TOOLTIP: "Установите степень поворота видео. -360 < значение < 360.",
@@ -240,6 +252,7 @@ spanish = {StringsEnum.CONFIG_TAB_LABEL: "Configuración",
            StringsEnum.IMAGE_DISPLAY: "No hay video",
            StringsEnum.SHOW_FEED_CHECKBOX_LABEL: "Mostrar feed",
            StringsEnum.USE_CAM_CHECKBOX_LABEL: "Cámara de usuario",
+           StringsEnum.USE_OVERLAY_CHECKBOX_LABEL: "Use Overlay",
            StringsEnum.RESOLUTION_SELECTOR_LABEL: "Resolución de imagen",
            StringsEnum.FRAME_ROTATION_SETTING_LABEL: "Girar imagen",
            StringsEnum.FPS_SELECTOR_LABEL: "Limitador FPS",
@@ -255,6 +268,7 @@ spanish = {StringsEnum.CONFIG_TAB_LABEL: "Configuración",
            StringsEnum.SHOW_FEED_CHECKBOX_TOOLTIP: "Mostrar u ocultar la vista previa de alimentación de la cámara."
                                          " (No desactiva la cámara)",
            StringsEnum.USE_CAM_CHECKBOX_TOOLTIP: "Activar / desactivar el uso de esta cámara.",
+           StringsEnum.USE_OVERLAY_TOOLTIP: "Use overlay on this camrea.",
            StringsEnum.FPS_DISPLAY_TOOLTIP: "Los fps aproximados que esta cámara está realizando. Este valor puede"
                                             " verse afectado por la carga a la que se encuentra actualmente"
                                             " su computadora.",
@@ -276,6 +290,7 @@ chinese = {StringsEnum.CONFIG_TAB_LABEL: "组态",
            StringsEnum.IMAGE_DISPLAY: "沒有視頻",
            StringsEnum.SHOW_FEED_CHECKBOX_LABEL: "显示提要",
            StringsEnum.USE_CAM_CHECKBOX_LABEL: "用户相机",
+           StringsEnum.USE_OVERLAY_CHECKBOX_LABEL: "Use Overlay",
            StringsEnum.RESOLUTION_SELECTOR_LABEL: "影像解析度",
            StringsEnum.FRAME_ROTATION_SETTING_LABEL: "旋转影像",
            StringsEnum.FPS_SELECTOR_LABEL: "FPS 限制器",
@@ -290,6 +305,7 @@ chinese = {StringsEnum.CONFIG_TAB_LABEL: "组态",
            StringsEnum.RESOLUTION_SELECTOR_TOOLTIP: "选择此相机的分辨率。",
            StringsEnum.SHOW_FEED_CHECKBOX_TOOLTIP: "显示或隐藏相机供稿预览。 （不禁用相机）",
            StringsEnum.USE_CAM_CHECKBOX_TOOLTIP: "启用/禁用此相机。",
+           StringsEnum.USE_OVERLAY_TOOLTIP: "Use overlay on this camrea.",
            StringsEnum.FPS_DISPLAY_TOOLTIP: "相机执行的大概fps。 该值可能会受到计算机当前负载的影响。",
            StringsEnum.ROTATION_TOOLTIP: "设置视频馈送的旋转度。 -360 <值<360。",
            StringsEnum.IMAGE_DISPLAY_TOOLTIP: "相机供稿预览。",
@@ -308,6 +324,7 @@ japanese = {StringsEnum.CONFIG_TAB_LABEL: "構成",
             StringsEnum.IMAGE_DISPLAY: "ビデオなし",
             StringsEnum.SHOW_FEED_CHECKBOX_LABEL: "フィードを表示",
             StringsEnum.USE_CAM_CHECKBOX_LABEL: "ユーザーカメラ",
+            StringsEnum.USE_OVERLAY_CHECKBOX_LABEL: "Use Overlay",
             StringsEnum.RESOLUTION_SELECTOR_LABEL: "画像解像度",
             StringsEnum.FRAME_ROTATION_SETTING_LABEL: "画像を回転",
             StringsEnum.FPS_SELECTOR_LABEL: "FPSリミッター",
@@ -323,6 +340,7 @@ japanese = {StringsEnum.CONFIG_TAB_LABEL: "構成",
             StringsEnum.SHOW_FEED_CHECKBOX_TOOLTIP: "カメラフィードのプレビューを表示または非表示にします。"
                                           " （カメラを無効にしません）",
             StringsEnum.USE_CAM_CHECKBOX_TOOLTIP: "このカメラの使用を有効/無効にします。",
+            StringsEnum.USE_OVERLAY_TOOLTIP: "Use overlay on this camrea.",
             StringsEnum.FPS_DISPLAY_TOOLTIP: "このカメラが実行しているおおよそのfps。 この値は、コンピューターに現在か"
                                              "かっている負荷の影響を受ける可能性があります。",
             StringsEnum.ROTATION_TOOLTIP: "ビデオフィードの回転角度を設定します。 -360 <値<360。",

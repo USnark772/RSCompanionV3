@@ -82,7 +82,12 @@ class Controller(AbstractController):
         self.set_lang(lang)
         self._res_list = list()
         self._setup_handlers()
+        self._exp_info_for_later = [str(), str(), 0]  # path, cond_name, block_num
+        self._create_exp_later_task = None
+        self._start_exp_later_task = None
         self._cleaning = False
+        self._initialized = Event()
+        self._running = False
         self._logger.debug("Initialized")
 
     def set_lang(self, lang: LangEnum) -> None:
@@ -129,10 +134,31 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        self.send_msg_to_model((defs.ModelEnum.COND_NAME, cond_name))
-        self.view.set_config_active(False)
-        self.send_msg_to_model((defs.ModelEnum.START, path))
+        if self._initialized.is_set():
+            print("create_exp with:", path, cond_name)
+            self.send_msg_to_model((defs.ModelEnum.COND_NAME, cond_name))
+            self.view.set_config_active(False)
+            self.send_msg_to_model((defs.ModelEnum.START, path))
+            self._running = True
+            self.saved.clear()
+        else:
+            if self._create_exp_later_task is not None:
+                self._create_exp_later_task.cancel()
+            print("Updating create_exp_later with", path, cond_name)
+            self._create_exp_later_task = create_task(self._create_exp_later())
         self._logger.debug("done")
+
+    async def _create_exp_later(self) -> None:
+        """
+        Wait until camera is initialized, then use create exp
+        :param path:
+        :param cond_name:
+        :return:
+        """
+        print("Starting create_exp_later")
+        await self._initialized.wait()
+        print("calling self.create_exp")
+        self.create_exp(self._exp_info_for_later[0], self._exp_info_for_later[1])
 
     def end_exp(self) -> None:
         """
@@ -140,9 +166,14 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        self.send_msg_to_model((defs.ModelEnum.STOP, None))
-        self.view.set_config_active(True)
-        self.send_msg_to_model((defs.ModelEnum.BLOCK_NUM, 0))
+        if self._running:
+            self.send_msg_to_model((defs.ModelEnum.STOP, None))
+            self.view.set_config_active(True)
+            self.send_msg_to_model((defs.ModelEnum.BLOCK_NUM, 0))
+            self._running = False
+            if self._create_exp_later_task is not None:
+                self._create_exp_later_task.cancel()
+                self._create_exp_later_task = None
         self._logger.debug("done")
 
     def start_exp(self, block_num: int, cond_name: str) -> None:
@@ -153,10 +184,31 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        self.send_msg_to_model((defs.ModelEnum.BLOCK_NUM, block_num))
-        self.send_msg_to_model((defs.ModelEnum.COND_NAME, cond_name))
-        self.send_msg_to_model((defs.ModelEnum.EXP_STATUS, True))
+        if self._initialized.is_set():
+            print("start_exp with:", block_num, cond_name)
+            self.send_msg_to_model((defs.ModelEnum.BLOCK_NUM, block_num))
+            self.send_msg_to_model((defs.ModelEnum.COND_NAME, cond_name))
+            self.send_msg_to_model((defs.ModelEnum.EXP_STATUS, True))
+        else:
+            if self._start_exp_later_task is not None:
+                self._start_exp_later_task.cancel()
+            print("Updating start_exp_later with", block_num, cond_name)
+            self._exp_info_for_later[1] = cond_name
+            self._exp_info_for_later[2] = block_num
+            self._start_exp_later_task = create_task(self._start_exp_later())
         self._logger.debug("done")
+
+    async def _start_exp_later(self) -> None:
+        """
+        Wait until camera is initialized, then use start exp
+        :param block_num:
+        :param cond_name:
+        :return:
+        """
+        print("Starting start_exp_later")
+        await self._initialized.wait()
+        print("calling self.start_exp")
+        self.start_exp(self._exp_info_for_later[2], self._exp_info_for_later[1])
 
     def stop_exp(self) -> None:
         """
@@ -165,6 +217,9 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self.send_msg_to_model((defs.ModelEnum.EXP_STATUS, False))
+        if self._create_exp_later_task is not None:
+            self._create_exp_later_task.cancel()
+            self._create_exp_later_task = None
         self._logger.debug("done")
 
     def update_keyflag(self, flag: str) -> None:
@@ -227,6 +282,13 @@ class Controller(AbstractController):
         self.update_show_feed()
         self._logger.debug("done")
 
+    def update_use_overlay(self) -> None:
+        """
+        Toggle whether overlay is being used on this camera.
+        :return None:
+        """
+        self.send_msg_to_model((defs.ModelEnum.OVERLAY, self.view.use_overlay))
+
     def get_index(self) -> int:
         """
         Get this camera index.
@@ -257,7 +319,7 @@ class Controller(AbstractController):
         Set saved signal.
         :return None:
         """
-        self._loop.call_soon_threadsafe(self.saved.set())
+        self._loop.call_soon_threadsafe(self.saved.set)
 
     def _handle_pipe(self) -> None:
         """
@@ -333,6 +395,7 @@ class Controller(AbstractController):
         self.send_msg_to_model((defs.ModelEnum.GET_RES, None))
         self.view.set_config_active(True)
         self.view.show_images()
+        self._initialized.set()
         self._logger.debug("done")
 
     def _update_view_fps(self, new_fps: int) -> None:
@@ -371,6 +434,7 @@ class Controller(AbstractController):
         self.view.set_resolution_selector_handler(self.update_resolution)
         self.view.set_show_feed_button_handler(self.update_show_feed)
         self.view.set_use_cam_button_handler(self.update_use_cam)
+        self.view.set_use_overlay_button_handler(self.update_use_overlay)
         self._logger.debug("done")
 
     def _set_model_cleaned(self) -> None:

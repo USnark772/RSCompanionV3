@@ -33,8 +33,6 @@ from logging import StreamHandler, getLogger
 from datetime import datetime
 from asyncio import Event, create_task, futures, get_running_loop
 from aioserial import AioSerial
-
-from RSCompanionAsync.Devices import Camera
 from RSCompanionAsync.Model.rs_device_com_scanner import RSDeviceCommScanner
 from RSCompanionAsync.Model.cam_scanner import CamScanner
 import RSCompanionAsync.Model.app_defs as defs
@@ -72,6 +70,7 @@ class AppModel:
         self._saving = False
         self._running = True
         self._block_num = 0
+        self._cond_name = str()
         self.exp_created = False
         self.exp_running = False
         self._loop = get_running_loop()
@@ -194,9 +193,10 @@ class AppModel:
         devices_running = list()
         self._temp_folder = tempfile.TemporaryDirectory()
         self._save_path = path + "/experiment_" + format_current_time(datetime.now(), save=True)
+        self._cond_name = cond_name
         try:
             for controller in self._devs.values():
-                controller.create_exp(self._temp_folder.name + "/", cond_name)
+                controller.create_exp(self._temp_folder.name + "/", self._cond_name)
                 devices_running.append(controller)
             self._logger.debug("done")
             self.exp_created = True
@@ -234,9 +234,10 @@ class AppModel:
         self._logger.debug("running")
         devices = list()
         next_block_num = self._block_num + 1
+        self._cond_name = cond_name
         try:
             for controller in self._devs.values():
-                controller.start_exp(next_block_num, cond_name)
+                controller.start_exp(next_block_num, self._cond_name)
                 devices.append(controller)
             self.exp_running = True
             self._block_num = next_block_num
@@ -306,8 +307,8 @@ class AppModel:
         Save the latest exp and cleanup temp folder.
         :return None:
         """
-        # for device in self._devs.values():
-        #     await device.await_saved()
+        for device in self._devs.values():
+            await device.await_saved()
         await get_running_loop().run_in_executor(None, self._convert_to_rs_file)
         self._saving_flag.clear()
         self._done_saving_flag.set()
@@ -400,6 +401,10 @@ class AppModel:
             self._devs[conn.port] = controller
             self._new_dev_views.append(controller.get_view())
             self._new_dev_view_flag.set()
+            if self.exp_created:
+                controller.create_exp(self._temp_folder.name + "/", self._cond_name)
+            if self.exp_running:
+                controller.start_exp(self._block_num, self._cond_name)
         except Exception as e:
             self._logger.exception("Problem making controller")
             ret = False
@@ -431,6 +436,10 @@ class AppModel:
             self._tasks.append(create_task(self._await_remove_cam(controller, cam_index)))
             self._new_dev_views.append(controller.get_view())
             self._new_dev_view_flag.set()
+            if self.exp_created:
+                controller.create_exp(self._temp_folder.name + "/", self._cond_name)
+            if self.exp_running:
+                controller.start_exp(self._block_num, self._cond_name)
         except Exception as e:
             self._logger.exception("Problem making controller")
         self._logger.debug("done")
@@ -487,7 +496,7 @@ class AppModel:
         """
         self._logger.debug("running")
         for o in self._devs.values():
-            if str(type(o)) == "<class 'Camera.Controller'>":
+            if 'Camera' in str(type(o)):
                 create_task(o.cleanup())
         self._cam_scanner.deactivate()
         self._logger.debug("done")
@@ -524,8 +533,11 @@ class AppModel:
             task.cancel()
         await self._rs_dev_scanner.cleanup()
         await self._cam_scanner.cleanup()
+        awaitables = list()
         for dev in self._devs.values():
-            await dev.cleanup(True)
+            awaitables.append(dev.cleanup(True))
+        for awaitable in awaitables:
+            await awaitable
         if self._saving_flag.is_set():
             await self._done_saving_flag.wait()
         self.cleanup_temp_folder()

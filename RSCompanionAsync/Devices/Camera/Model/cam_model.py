@@ -60,6 +60,8 @@ r = 211
 g = 250
 b = 10
 OVL_CLR = (b, g, r)
+FALSE_VAL = 0
+TRUE_VAL = 1
 
 
 class FPSTracker:
@@ -117,6 +119,7 @@ class CamModel:
                           defs.ModelEnum.KEYFLAG: self._update_keyflag,
                           defs.ModelEnum.EXP_STATUS: self._update_exp_status,
                           defs.ModelEnum.LANGUAGE: self.set_lang,
+                          defs.ModelEnum.OVERLAY: self._toggle_overlay,
                           }
         self._running = True
         self._process_imgs = False
@@ -139,13 +142,13 @@ class CamModel:
         self._fps_tracker = FPSTracker()
 
         self._num_img_workers = 1
-        self._img_workers = list()
         self._sems1 = list()
         self._sems2 = list()
         self._sems3 = list()
         self._shm_ovl_arrs = list()
         self._shm_img_arrs = list()
         self._np_img_arrs = list()
+        self._use_overlay = True
         self._proc_thread = Thread(target=None, args=())
         cur_res = self._cam_reader.get_resolution()
         self._cur_arr_shape = (int(cur_res[1]), int(cur_res[0]), 3)
@@ -288,10 +291,15 @@ class CamModel:
         :return None:
         """
         self._exp_running = status
-        if status:
-            self._exp_status = self._strings[StringsEnum.EXP_STATUS_RUN]
-        else:
-            self._exp_status = self._strings[StringsEnum.EXP_STATUS_STOP]
+        self._set_texts()
+
+    def _toggle_overlay(self, is_active: bool) -> None:
+        """
+        toggle whether to use overlay on this camera.
+        :param is_active: Whether to use overlay.
+        :return None:
+        """
+        self._use_overlay = is_active
 
     def _get_res(self) -> None:
         """
@@ -307,7 +315,6 @@ class CamModel:
         :return None:
         """
         if new_res == self._cam_reader.get_resolution():
-            print("Same res dummy!")
             return
         self._show_feed = False
         self._cam_reader.stop()
@@ -349,8 +356,8 @@ class CamModel:
         :return None:
         """
         filename = path + "CAM_" + str(self._cam_index) + "_" + format_current_time(datetime.now(), save=True) + ".avi"
-        self._frame_size = self._cam_reader.get_resolution()
-        self._frame_size = (int(self._frame_size[0]), int(self._frame_size[1]))
+        x, y = self._cam_reader.get_resolution()
+        self._frame_size = (int(x), int(y))
         self._write_q = SimpleQueue()
         self._cam_writer = StreamWriter()
         self._cam_writer.start(filename, int(self._fps), self._frame_size, self._write_q)
@@ -361,17 +368,11 @@ class CamModel:
         Destroy writer and set boolean to stop putting frames in write queue.
         :return None:
         """
-        self._cam_writer.cleanup()
         self._writing = False
-
-    async def signal_done_writing(self) -> None:
-        """
-        Signal when writer is done writing to file.
-        :return None:
-        """
-        while self._running:
-            await self._cam_writer.await_done_writing()
-            self._msg_pipe.send((defs.ModelEnum.STOP, None))
+        while not self._write_q.empty():
+            sleep(.05)
+        self._cam_writer.cleanup()
+        self._msg_pipe.send((defs.ModelEnum.STOP, None))
 
     async def _start_loop(self) -> None:
         """
@@ -380,7 +381,6 @@ class CamModel:
         """
         self._tasks.append(create_task(self._handle_pipe()))
         self._tasks.append(create_task(self._await_reader_err()))
-        # self._tasks.append(create_task(self.signal_done_writing()))
         await self._stop_event.wait()
 
     def _start_frame_processing(self) -> None:
@@ -392,7 +392,6 @@ class CamModel:
         max_res = defs.common_resolutions[-1]
         max_img_arr_shape = (int(max_res[1]), int(max_res[0]), 3)
         max_img_arr_size = max_img_arr_shape[0] * max_img_arr_shape[1] * max_img_arr_shape[2]
-        self._img_workers = list()
         self._sems1 = list()
         self._sems2 = list()
         self._sems3 = list()
@@ -406,15 +405,13 @@ class CamModel:
             self._shm_ovl_arrs.append(Array(c_char, BYTESTR_SIZE))
             self._shm_img_arrs.append(Array('Q', max_img_arr_size))
             worker_args = (self._shm_img_arrs[i], self._sems1[i], self._sems2[i], self._shm_ovl_arrs[i])
-            # TODO: Figure out why this wont work.
-            # self._img_workers.append(self._loop.run_in_executor(self._executor, self._img_processor, worker_args))
-            self._img_workers.append(Thread(target=self._img_processor, args=worker_args, daemon=True))
-            self._img_workers[i].start()
+            worker = Thread(target=self._img_processor, args=worker_args, daemon=True)
+            worker.start()
         self._refresh_np_arrs()
-        self._img_workers.append(Thread(target=self._distribute_frames, args=(), daemon=True))
-        self._img_workers[-1].start()
-        self._img_workers.append(Thread(target=self._handle_processed_frames, args=(), daemon=True))
-        self._img_workers[-1].start()
+        distributor = Thread(target=self._distribute_frames, args=(), daemon=True)
+        distributor.start()
+        handler = Thread(target=self._handle_processed_frames, args=(), daemon=True)
+        handler.start()
         while self._process_imgs:
             sleep(1)
 
@@ -434,7 +431,8 @@ class CamModel:
         for task in self._tasks:
             task.cancel()
         self._process_imgs = False
-        self._proc_thread.join()
+        if self._proc_thread.is_alive():
+            self._proc_thread.join()
         self._stop_event.set()
 
     def _get_fps(self) -> None:
@@ -492,11 +490,12 @@ class CamModel:
         img_arr = frombuffer(sh_img_arr.get_obj(), count=img_size, dtype=DTYPE).reshape(img_dim)
         while self._process_imgs:
             sem1.acquire()
-            img_pil = Image.fromarray(img_arr)
-            draw = ImageDraw.Draw(img_pil)
-            draw.text(OVL_POS, text=ovl_arr.value.decode(ENCODE_CODE), font=OVL_FONT, fill=OVL_CLR)
-            processed_img = asarray(img_pil)
-            copyto(img_arr, processed_img)
+            if self._use_overlay:
+                img_pil = Image.fromarray(img_arr)
+                draw = ImageDraw.Draw(img_pil)
+                draw.text(OVL_POS, text=ovl_arr.value.decode(ENCODE_CODE), font=OVL_FONT, fill=OVL_CLR)
+                processed_img = asarray(img_pil)
+                copyto(img_arr, processed_img)
             sem2.release()
 
     def _handle_processed_frames(self) -> None:

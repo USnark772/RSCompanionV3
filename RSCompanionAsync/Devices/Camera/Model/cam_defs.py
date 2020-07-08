@@ -60,6 +60,7 @@ class ModelEnum(Enum):
     FAILURE = auto()
     STAT_UPD = auto()
     INITIALIZE = auto()
+    OVERLAY = auto()
     COND_NAME = auto()
     BLOCK_NUM = auto()
     KEYFLAG = auto()
