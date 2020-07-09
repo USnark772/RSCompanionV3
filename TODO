@@ -1,5 +1,9 @@
+TODO: Check for any errors listed below.
+    - ERROR ID: 10-t
+
 TODO: Pressing matters.
     - Make sure reading data from devices is done in threads so timestamps are not delayed.
+    - Look into unit testing
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
@@ -22,7 +26,6 @@ TODO: At some point
     - Look over https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html and make edits to imports.
     - Look at info_box.py empty QLabel items and consider a spacer item instead.
     - extract view from controller
-
 
 TODO: Test this thing like crazy!
     - Look for if video is smooth on saved files even if it's not in the preview in the app.
