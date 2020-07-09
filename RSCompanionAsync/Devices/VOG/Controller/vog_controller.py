@@ -131,6 +131,7 @@ class Controller(AbstractController):
         self._model.update_save_info(path)
         self._model.add_save_hdr()
         self._model.send_create()
+        self._exp_created = True
         self._logger.debug("done")
 
     def end_exp(self) -> None:
@@ -140,6 +141,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self._model.send_end()
+        self._exp_created = False
         self._logger.debug("done")
 
     def start_exp(self, block_num: int, cond_name: str) -> None:
@@ -151,6 +153,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self._model.send_start()
+        self._exp_running = True
         self._logger.debug("done")
 
     def stop_exp(self) -> None:
@@ -160,6 +163,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self._model.send_stop()
+        self._exp_running = False
         self._logger.debug("done")
 
     def _setup_handlers(self) -> None:

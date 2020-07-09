@@ -461,13 +461,16 @@ class VOGModel:
 
     def _send_msg(self, msg) -> None:
         """
-        encode and send a message over serial port
+        Encode and send a message over serial port
         :param msg: message to be sent
         :return None:
         """
         self._logger.debug("running")
         if self._conn.is_open:
-            self._conn.write(str.encode(msg))
+            try:
+                self._conn.write(str.encode(msg))
+            except PermissionError as pe:
+                pass
         self._logger.debug("done")
 
     def send_nhtsa(self):

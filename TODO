@@ -1,9 +1,5 @@
 TODO: Pressing matters.
     - Make sure reading data from devices is done in threads so timestamps are not delayed.
-    - When devices are unplugged on accident and plugged back in during experiments:
-        - Allow device to join in middle of experiement
-        - Create/Start experiment depending on experiment status when device is plugged in.
-        - Use same file to save data if replugged.
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)

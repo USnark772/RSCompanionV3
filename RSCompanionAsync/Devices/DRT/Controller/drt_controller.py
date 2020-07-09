@@ -69,7 +69,8 @@ class Controller(AbstractController):
         :return: None.
         """
         self._logger.debug("running")
-        self.stop_exp()
+        if self._exp:
+            self.stop_exp()
         self._msg_handler_task.cancel()
         self._model.cleanup()
         self.view.save_window_state()
@@ -133,6 +134,7 @@ class Controller(AbstractController):
         self._logger.debug("running")
         self._model.send_start()
         self._graph.add_empty_point(datetime.now())
+        self._exp = True
         self._logger.debug("done")
 
     def stop_exp(self) -> None:
@@ -142,6 +144,7 @@ class Controller(AbstractController):
         """
         self._logger.debug("running")
         self._model.send_stop()
+        self._exp = False
         self._logger.debug("done")
 
     def _setup_handlers(self) -> None:
