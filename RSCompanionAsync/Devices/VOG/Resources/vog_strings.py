@@ -68,12 +68,14 @@ class StringsEnum(Enum):
     GRAPH_TS = auto()
 
 
+nhtsa = "nhtsa"
+inf = "INF"
 # Define languages like this.
 english = {StringsEnum.CUSTOM_LABEL: "Custom",
-           StringsEnum.NHTSA_LABEL: "NHTSA",
+           StringsEnum.NHTSA_LABEL: nhtsa,
            StringsEnum.EBLIND_LABEL: "eBlindfold",
            StringsEnum.DCON_LABEL: "Direct Control",
-           StringsEnum.INF_LABEL: "INF",
+           StringsEnum.INF_LABEL: inf,
            StringsEnum.CONFIG_TAB_LABEL: "Configuration",
            StringsEnum.CONFIG_LABEL: "Current Configuration:",
            StringsEnum.UPLOAD_BUTTON_LABEL: "Upload Settings",
@@ -110,10 +112,10 @@ english = {StringsEnum.CUSTOM_LABEL: "Custom",
 # TODO: Verify translations
 # Dutch strings
 dutch = {StringsEnum.CUSTOM_LABEL: "Op maat",
-         StringsEnum.NHTSA_LABEL: "NHTSA",
+         StringsEnum.NHTSA_LABEL: nhtsa,
          StringsEnum.EBLIND_LABEL: "eBlinddoek",
          StringsEnum.DCON_LABEL: "Directe controle",
-         StringsEnum.INF_LABEL: "INF",
+         StringsEnum.INF_LABEL: inf,
          StringsEnum.CONFIG_TAB_LABEL: "Configuratie",
          StringsEnum.CONFIG_LABEL: "Huidige configuratie:",
          StringsEnum.UPLOAD_BUTTON_LABEL: "Upload instellingen",
@@ -149,10 +151,10 @@ dutch = {StringsEnum.CUSTOM_LABEL: "Op maat",
 
 # French strings
 french = {StringsEnum.CUSTOM_LABEL: "Douane",
-          StringsEnum.NHTSA_LABEL: "NHTSA",
+          StringsEnum.NHTSA_LABEL: nhtsa,
           StringsEnum.EBLIND_LABEL: "ébandeau",
           StringsEnum.DCON_LABEL: "Contrôle direct",
-          StringsEnum.INF_LABEL: "INF",
+          StringsEnum.INF_LABEL: inf,
           StringsEnum.CONFIG_TAB_LABEL: "Configuration",
           StringsEnum.CONFIG_LABEL: "Configuration actuelle",
           StringsEnum.UPLOAD_BUTTON_LABEL: "Paramètres de téléchargement",
@@ -188,10 +190,10 @@ french = {StringsEnum.CUSTOM_LABEL: "Douane",
 
 # German strings
 german = {StringsEnum.CUSTOM_LABEL: "Benutzerdefiniert",
-          StringsEnum.NHTSA_LABEL: "NHTSA",
+          StringsEnum.NHTSA_LABEL: nhtsa,
           StringsEnum.EBLIND_LABEL: "eAugenbinde",
           StringsEnum.DCON_LABEL: "Direkte Kontrolle",
-          StringsEnum.INF_LABEL: "INF",
+          StringsEnum.INF_LABEL: inf,
           StringsEnum.CONFIG_TAB_LABEL: "Konfiguration",
           StringsEnum.CONFIG_LABEL: "Aktuelle Konfiguration:",
           StringsEnum.UPLOAD_BUTTON_LABEL: "Einstellungen hochladen",
@@ -227,10 +229,10 @@ german = {StringsEnum.CUSTOM_LABEL: "Benutzerdefiniert",
 
 # Russian strings
 russian = {StringsEnum.CUSTOM_LABEL: "изготовленный на заказ",
-           StringsEnum.NHTSA_LABEL: "NHTSA",
+           StringsEnum.NHTSA_LABEL: nhtsa,
            StringsEnum.EBLIND_LABEL: "повязка на глазах",
            StringsEnum.DCON_LABEL: "Прямой контроль",
-           StringsEnum.INF_LABEL: "INF",
+           StringsEnum.INF_LABEL: inf,
            StringsEnum.CONFIG_TAB_LABEL: "конфигурация",
            StringsEnum.CONFIG_LABEL: "Текущая конфигурация:",
            StringsEnum.UPLOAD_BUTTON_LABEL: "Настройки загрузки",
@@ -266,10 +268,10 @@ russian = {StringsEnum.CUSTOM_LABEL: "изготовленный на заказ
 
 # Spanish strings
 spanish = {StringsEnum.CUSTOM_LABEL: "Personalizado",
-           StringsEnum.NHTSA_LABEL: "NHTSA",
+           StringsEnum.NHTSA_LABEL: nhtsa,
            StringsEnum.EBLIND_LABEL: "eVenda",
            StringsEnum.DCON_LABEL: "Control directo",
-           StringsEnum.INF_LABEL: "INF",
+           StringsEnum.INF_LABEL: inf,
            StringsEnum.CONFIG_TAB_LABEL: "Configuración",
            StringsEnum.CONFIG_LABEL: "Configuración actual:",
            StringsEnum.UPLOAD_BUTTON_LABEL: "Configuración de carga",
@@ -305,10 +307,10 @@ spanish = {StringsEnum.CUSTOM_LABEL: "Personalizado",
 
 # Chinese strings
 chinese = {StringsEnum.CUSTOM_LABEL: "自订",
-           StringsEnum.NHTSA_LABEL: "NHTSA",
+           StringsEnum.NHTSA_LABEL: nhtsa,
            StringsEnum.EBLIND_LABEL: "眼罩",
            StringsEnum.DCON_LABEL: "直接控制",
-           StringsEnum.INF_LABEL: "INF",
+           StringsEnum.INF_LABEL: inf,
            StringsEnum.CONFIG_TAB_LABEL: "组态",
            StringsEnum.CONFIG_LABEL: "当前配置:",
            StringsEnum.UPLOAD_BUTTON_LABEL: "上载设定",
@@ -344,10 +346,10 @@ chinese = {StringsEnum.CUSTOM_LABEL: "自订",
 
 # Japanese strings
 japanese = {StringsEnum.CUSTOM_LABEL: "カスタム",
-            StringsEnum.NHTSA_LABEL: "NHTSA",
+            StringsEnum.NHTSA_LABEL: nhtsa,
             StringsEnum.EBLIND_LABEL: "e目隠し",
             StringsEnum.DCON_LABEL: "直接制御",
-            StringsEnum.INF_LABEL: "INF",
+            StringsEnum.INF_LABEL: inf,
             StringsEnum.CONFIG_TAB_LABEL: "構成",
             StringsEnum.CONFIG_LABEL: "現在の構成:",
             StringsEnum.UPLOAD_BUTTON_LABEL: "アップロード設定",
