@@ -84,7 +84,6 @@ english = {StringsEnum.COMPANY_NAME: company_name,
            StringsEnum.RESTART_PROG: "This app must restart for changes to take effect."
            }
 
-# TODO: Verify translations
 # Dutch
 dutch = {StringsEnum.COMPANY_NAME: company_name,
          StringsEnum.APP_NAME: app_name,
@@ -119,8 +118,8 @@ dutch = {StringsEnum.COMPANY_NAME: company_name,
          StringsEnum.ERR_UPDATE_CHECK: "Er is een onverwachte fout opgetreden bij het verbinden met de repository."
                                        " Controleer handmatig https://redscientific.com/downloads.html of neem"
                                        " rechtstreeks contact op met Red Scientific.",
-         StringsEnum.DEV_CON_ERR: "Er is een probleem opgetreden bij het verbinden van het apparaat."
-                                  " Probeer het opnieuw.",
+         StringsEnum.DEV_CON_ERR: "Er is een probleem opgetreden bij het verbinden van het apparaat. Probeer het "
+                                  "alstublieft opnieuw",
          StringsEnum.RESTART_PROG: "Deze app moet opnieuw worden opgestart om de wijzigingen door te voeren."
          }
 
