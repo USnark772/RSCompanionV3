@@ -112,6 +112,7 @@ class AppController:
 
         # Model
         self._model = AppModel(self._lang, [self.app_lh, self.stderr_lh])
+        self._model.set_cams_active(eval(self._settings.value("cam_scanner/active")))
 
         self._save_file_name = str()
         self._save_dir = str()
