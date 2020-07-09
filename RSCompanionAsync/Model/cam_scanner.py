@@ -108,7 +108,7 @@ class CamScanner:
         self._tasks = list()
         self._unhandled_cams = list()
         self._connect_event.set()
-        self._running = True
+        self._running = False
         self._loop = get_running_loop()
         self._logger.debug("Initialized")
 
@@ -198,8 +198,9 @@ class CamScanner:
         :return None:
         """
         self._logger.debug("running")
-        self._running = True
-        self._tasks.append(create_task(self._scan_for_cams()))
+        if not self._running:
+            self._running = True
+            self._tasks.append(create_task(self._scan_for_cams()))
         self._logger.debug("done")
 
     def deactivate(self) -> None:
