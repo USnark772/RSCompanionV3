@@ -69,8 +69,7 @@ class Controller(AbstractController):
         :return: None.
         """
         self._logger.debug("running")
-        if self._exp:
-            self.stop_exp()
+        self.stop_exp()
         self._msg_handler_task.cancel()
         self._model.cleanup()
         self.view.save_window_state()

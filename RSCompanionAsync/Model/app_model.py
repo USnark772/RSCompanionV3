@@ -535,7 +535,7 @@ class AppModel:
         await self._cam_scanner.cleanup()
         awaitables = list()
         for dev in self._devs.values():
-            awaitables.append(dev.cleanup(True))
+            awaitables.append(create_task(dev.cleanup(True)))
         for awaitable in awaitables:
             await awaitable
         if self._saving_flag.is_set():
