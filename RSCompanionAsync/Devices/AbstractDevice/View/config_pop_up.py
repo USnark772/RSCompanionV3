@@ -37,12 +37,6 @@ class ConfigPopUp(QDialog):
     def __init__(self, parent=None):
         super(ConfigPopUp, self).__init__(parent)
 
-    """ Used for testing purposes """
-    # def resizeEvent(self, event: QResizeEvent):
-    #     print("popup width:", self.width())
-    #     print("popup height:", self.height())
-    #     return super().resizeEvent(event)
-
     def closeEvent(self, event: QCloseEvent) -> None:
         """
         Override closeEvent to set the Configuration popup to not visible instead of deleting it.

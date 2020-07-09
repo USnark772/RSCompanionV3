@@ -82,7 +82,6 @@ class DRTGraph(BaseGraph):
             axes.plot(data[1], data[2], marker='s', color='#ff7f0e')
         else:
             axes.plot(data[1], data[2], marker='o')
-
         await sleep(.001)
         if len(data[1]) > 0:
             if right < data[1][-1]:

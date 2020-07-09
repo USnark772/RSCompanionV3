@@ -27,7 +27,7 @@ https://redscientific.com/index.html
 from logging import getLogger, StreamHandler
 from PySide2.QtWidgets import QVBoxLayout, QLabel, QProgressBar, QCheckBox, QComboBox, QSizePolicy, QSpacerItem, \
     QGridLayout
-from PySide2.QtGui import QPixmap, QResizeEvent, QHideEvent, QShowEvent
+from PySide2.QtGui import QPixmap, QHideEvent, QShowEvent
 from PySide2.QtCore import Qt, QSize
 from RSCompanionAsync.Devices.AbstractDevice.View.abstract_view import AbstractView
 from RSCompanionAsync.Devices.AbstractDevice.View.config_pop_up import ConfigPopUp
@@ -131,25 +131,12 @@ class CamView(AbstractView):
         self._dev_sets_frame = EasyFrame()
         self._dev_sets_layout = QVBoxLayout(self._dev_sets_frame)
 
-        """ Configuration popup """
-        # self._config_button_frame = EasyFrame()
-        # self._config_button_frame_layout = QHBoxLayout(self._config_button_frame)
-
         self.config_button = ClickAnimationButton()
         self.config_button.clicked.connect(self._config_button_handler)
 
-        # self._config_button_frame_layout.addWidget(self.config_button)
         self.layout().addWidget(self.config_button, 0, 0, Qt.AlignTop | Qt.AlignRight)
         self.config_button.setFixedSize(30, 25)
         self.config_button.setStyleSheet("background-color: rgba(200, 200, 200, 50%)")
-
-        # self._menu_bar = QMenuBar()
-        # self._menu_bar.setMaximumWidth(self.width()-17)
-        # self._menu_bar.setMouseTracking(True)
-        # self._config_action = QAction()
-        # self._menu_bar.addAction(self._config_action)
-        # self._config_action.triggered.connect(self._config_button_handler)
-        # self.layout().setMenuBar(self._menu_bar)
 
         self._dev_sets_layout.addWidget(self._cam_settings_frame)
         self._dev_sets_layout.addItem(spacer)
@@ -167,7 +154,6 @@ class CamView(AbstractView):
         config_win_h = len(self._config_items) * 40
 
         self.config_button.raise_()
-        # self._config_button_frame.hide()
 
         self._config_win = ConfigPopUp()
         self._config_win.setLayout(self._dev_sets_layout)
@@ -184,7 +170,6 @@ class CamView(AbstractView):
         self._window_changing = False
         self._showing_images = False
         self._hidden = False
-        # h = 240
         w = 320
         self._aspect_ratio = 9/16
         self.resize(w, self.heightForWidth(w))
@@ -414,13 +399,6 @@ class CamView(AbstractView):
         self._use_overlay_checkbox.setChecked(useable)
         self._logger.debug("Done")
 
-    # def resizeEvent(self, resizeEvent: QResizeEvent) -> None:
-    #     # if not self._hidden:
-    #     resizeEvent.accept()
-    #     super().resizeEvent(resizeEvent)
-    #     print("window size:", self.size())
-    #     print("super size:", super().size())
-
     def heightForWidth(self, w: int) -> int:
         return int(w * self._aspect_ratio)
 
@@ -442,37 +420,6 @@ class CamView(AbstractView):
         :return None:
         """
         self._hidden = False
-
-    # def mousePressEvent(self, mouseEvent: QMouseEvent) -> None:
-    #     """
-    #     Detect when user is possibly resizing window.
-    #     :param mouseEvent: The event to check.
-    #     :return None:
-    #     """
-    #     self._logger.debug("running")
-    #     super(CamView, self).mousePressEvent(mouseEvent)
-    #     pos = mouseEvent.localPos()
-    #     if 8 < pos.x() < self.width() - 8 and 48 < pos.y() < self.height() - 8:
-    #         return
-    #     self._window_changing = True
-    #     self._image_display.hide()
-    #     self._logger.debug("done")
-    #
-    # def mouseReleaseEvent(self, mouseEvent: QMouseEvent) -> None:
-    #     """
-    #     Detect when use releases mouse event to tell when user is possibly done resizing window.
-    #     :param mouseEvent: The event to check.
-    #     :return None:
-    #     """
-    #     self._logger.debug("running")
-    #     super(CamView, self).mousePressEvent(mouseEvent)
-    #     pos = mouseEvent.localPos()
-    #     if 9 < pos.x() < self.width() - 9 and 49 < pos.y() < self.height() - 9:
-    #         return
-    #     self._window_changing = False
-    #     if self._showing_images:
-    #         self._image_display.show()
-    #     self._logger.debug("done")
 
     def update_image(self, image: QPixmap = None, msg: str = None) -> None:
         """
@@ -565,7 +512,6 @@ class CamView(AbstractView):
         self._resolution_selector_label.setText(self._strings[StringsEnum.RESOLUTION_SELECTOR_LABEL])
         self._fps_selector_label.setText(self._strings[StringsEnum.FPS_SELECTOR_LABEL])
         self._config_win.setWindowTitle(self.get_name() + " " + self._strings[StringsEnum.CONFIG_TAB_LABEL])
-        # self._config_action.setText(self._strings[StringsEnum.CONFIG_TAB_LABEL])
         self.config_button.setText("...")
         self._rec_label.setText("rec ●")
         self._logger.debug("done")

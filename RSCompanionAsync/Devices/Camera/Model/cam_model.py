@@ -23,9 +23,6 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-# import cProfile
-# from Debugging_Profiling.profile_defs import profile_outdir
-
 from time import time, sleep, mktime
 from ctypes import c_char
 from threading import Lock, Thread
@@ -90,10 +87,6 @@ class FPSTracker:
 
 class CamModel:
     def __init__(self, msg_pipe: Connection, img_pipe: Connection, cam_index: int = 0):
-        # cProfile.runctx('self.sec_init(msg_pipe, img_pipe, cam_index)', globals(), locals(),
-        #                 profile_outdir + "Cam_%d.prof" % cam_index)
-    #
-    # def sec_init(self, msg_pipe: Connection, img_pipe: Connection, cam_index: int = 0):
         set_event_loop(new_event_loop())
         self._msg_pipe = msg_pipe
         self._img_pipe = img_pipe
@@ -253,7 +246,6 @@ class CamModel:
             if self._test_task.done():
                 await self._test_task
             else:
-                print("Cancelling self._test_task")
                 self._test_task.cancel()
         self._size_gtr.stop()
         self._stop()

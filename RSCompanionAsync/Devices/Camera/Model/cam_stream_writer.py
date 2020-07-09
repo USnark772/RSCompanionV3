@@ -29,7 +29,6 @@ from asyncio import get_event_loop, create_task, Event
 from threading import Event as TEvent
 from time import sleep as tsleep
 from RSCompanionAsync.Devices.Camera.Model import cam_defs as defs
-from RSCompanionAsync.Model.app_helpers import await_event
 
 
 class StreamWriter:

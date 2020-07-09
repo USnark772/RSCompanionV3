@@ -462,5 +462,4 @@ class DRTModel:
         for i in defs.save_fields:
             line += str(values[i]) + ", "
         line = line.rstrip("\r\n")
-        # line = line + ", "
         return line

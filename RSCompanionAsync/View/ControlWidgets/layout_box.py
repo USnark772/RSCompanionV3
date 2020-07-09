@@ -25,8 +25,7 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from PySide2.QtWidgets import QGroupBox, QVBoxLayout, QHBoxLayout, QLineEdit, QRadioButton
-from PySide2.QtGui import QIcon
+from PySide2.QtWidgets import QGroupBox, QVBoxLayout, QRadioButton
 from PySide2.QtCore import QSize
 from RSCompanionAsync.Resources.Strings.menu_bar_strings import strings, StringsEnum, LangEnum
 
@@ -55,14 +54,10 @@ class LayoutBox(QGroupBox):
         self._cascade_button = QRadioButton(self)
         self._cascade_button.clicked.connect(self._cascade_toggled)
 
-        # self._custom_button = QRadioButton(self)
-        # self._custom_button.toggled.connect(self._custom_toggled)
-
         self.layout().addWidget(self._horizontal_button)
         self.layout().addWidget(self._vertical_button)
         self.layout().addWidget(self._tiled_button)
         self.layout().addWidget(self._cascade_button)
-        # self.layout().addWidget(self._custom_button)
 
         self._layout_callback = None
         self._strings = dict()
@@ -91,39 +86,25 @@ class LayoutBox(QGroupBox):
         self.logger.debug("running")
         if self._horizontal_button.isChecked():
             self._layout_callback("horizontal")
-        # else:
-        #     print("horizontal unchecked")
         self.logger.debug("done")
 
     def _vertical_toggled(self):
         self.logger.debug("running")
         if self._vertical_button.isChecked():
             self._layout_callback("vertical")
-        # else:
-        #     print("vertical unchecked")
         self.logger.debug("done")
 
     def _tiled_toggled(self):
         self.logger.debug("running")
         if self._tiled_button.isChecked():
             self._layout_callback("tiled")
-        # else:
-        #     print("tiled unchecked")
         self.logger.debug("done")
 
     def _cascade_toggled(self):
         self.logger.debug("running")
         if self._cascade_button.isChecked():
             self._layout_callback("cascade")
-        # else:
-        #     print("cascade unchecked")
         self.logger.debug("done")
-
-    # def _custom_toggled(self):
-    #     if self._custom_button.isChecked():
-    #         print("custom checked")
-    #     else:
-    #         print("custom unchecked")
 
     def _set_texts(self) -> None:
         """
@@ -136,5 +117,4 @@ class LayoutBox(QGroupBox):
         self._vertical_button.setText(self._strings[StringsEnum.VERTICAL])
         self._tiled_button.setText(self._strings[StringsEnum.TILED])
         self._cascade_button.setText(self._strings[StringsEnum.CASCADE])
-        # self._custom_button.setText(self._strings[StringsEnum.CUSTOM])
         self.logger.debug("done")

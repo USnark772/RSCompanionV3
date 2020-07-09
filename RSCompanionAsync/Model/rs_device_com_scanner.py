@@ -189,10 +189,6 @@ class RSDeviceCommScanner:
         """
         return port.vid == profile['vid'] and port.pid == profile['pid']
 
-    # Figure out why this sometimes throws error even when device is connected successfully.
-    #  Joel: I can't get an error here no matter how hard I try. It opens every time for me on the first try.
-    #  Nate: I have gotten this error before, but I have not seen it for a few days.
-    #        I am also unable to reproduce it now
     @staticmethod
     async def _try_open_port(port) -> (bool, AioSerial):
         """

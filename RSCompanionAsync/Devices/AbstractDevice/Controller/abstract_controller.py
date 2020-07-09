@@ -58,7 +58,6 @@ class AbstractController(ABC):
         :return futures: An asyncio awaitable.
         """
         self.saved.set()
-        print(__name__, "Saved is set, returning saved.")
         return self.saved.wait()
 
     def get_conn(self) -> AioSerial:

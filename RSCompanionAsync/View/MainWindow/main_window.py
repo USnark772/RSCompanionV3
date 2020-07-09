@@ -60,7 +60,6 @@ class AppMainWindow(QMainWindow):
         self._control_frame.setFrameShape(QFrame.NoFrame)
         self._control_layout = QHBoxLayout(self._control_frame)
         self._splitter = QSplitter(Qt.Vertical, self)
-        # self.centralWidget().layout().addLayout(self._control_layout)
         self.centralWidget().layout().addWidget(self._splitter)
         self._splitter.addWidget(self._control_frame)
 

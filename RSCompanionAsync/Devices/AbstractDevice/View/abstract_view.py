@@ -77,24 +77,6 @@ class AbstractView(ABC, SubWindow, metaclass=AbstractMeta):
         """
         return self._name
 
-    # TODO find why graph disappears if we want to use this
-    # def moveEvent(self, event: QMoveEvent) -> None:
-    #     """
-    #     Prevent subwindow from moving outside of parent window.
-    #     :return None:
-    #     """
-    #     right = self.width()
-    #     bottom = self.height()
-    #     parent_right = self.parent().width()
-    #     parent_bottom = self.parent().height()
-    #
-    #     if self.pos().x() < self.parent().pos().x():
-    #         self.move(0, self.pos().y())
-    #     if self.pos().x() + right > self.parent().pos().x() + parent_right:
-    #         self.move(parent_right - right, self.pos().y())
-    #     if self.pos().y() + bottom > self.parent().pos().y() + parent_bottom:
-    #         self.move(self.pos().x(), parent_bottom - bottom)
-
     def closeEvent(self, event: QCloseEvent) -> None:
         """
         Do not allow user to close window directly.

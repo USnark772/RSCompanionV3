@@ -49,19 +49,9 @@ if __name__ == '__main__':
     profile = False  # True: Profile code. False: Run normally.
     if profile:
         import cProfile
-        from Debugging_Profiling.profiler import make_filepath
-        # from pstats import Stats, SortKey
-        filename = make_filepath("companion_app_profile")
-        # profile_method(run, filename, main)
+        profile_outdir = 'C:/RSDev/profiler_output/'
+        profile_name = "companion_app_profile"
+        filename = profile_outdir + profile_name + ".prof"
         cProfile.run('run(main())', filename)
-        # stats = Stats(filename)
-        #
-        # # Pick sorting order for stat output.
-        # # stats.sort_stats(SortKey.CALLS)  # Sort by total calls to code.
-        # stats.sort_stats(SortKey.CUMULATIVE)  # Sort by time spent in code.
-        #
-        # # Pick print filter
-        # stats.print_stats("asyncCompanion")  # Only show project files.
-        # # stats.print_stats()  # Show all files.
     else:
         run(main())

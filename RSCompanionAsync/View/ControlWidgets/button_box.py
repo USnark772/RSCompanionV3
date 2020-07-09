@@ -60,20 +60,11 @@ class ButtonBox(QGroupBox):
         self._play_icon = QIcon(button_box_start_image_filepath)
         self._pause_icon = QIcon(button_box_pause_image_filepath)
 
-        # self.prog_bar_label = QLabel()
-        # self.prog_bar = QProgressBar()
-        # self.prog_bar.setTextVisible(True)
-        # self.prog_bar.setAlignment(Qt.AlignHCenter)
-        # self.prog_bar.setMaximumHeight(12)
-        # self.layout().addWidget(self.prog_bar_label)
-        # self.layout().addWidget(self.prog_bar)
-
         self._start_button_state = 0
         self._create_button_state = 0
         self._set_button_states()
         self._strings = dict()
         self.set_lang(lang)
-        # self.toggle_show_prog_bar(False)
         self.logger.debug("Initialized")
 
     def set_lang(self, lang: LangEnum) -> None:
@@ -177,29 +168,6 @@ class ButtonBox(QGroupBox):
             self._start_button.setToolTip(self._strings[StringsEnum.RESUME_TT])
         self.logger.debug("done")
 
-    def toggle_show_prog_bar(self, is_visible: bool) -> None:
-        """
-        Toggle showing the progress bar.
-        :param is_visible: Whether or not to show the progress bar.
-        :return: None.
-        """
-        pass
-        # if is_visible:
-        #     self.prog_bar.show()
-        #     self.prog_bar_label.show()
-        # else:
-        #     self.prog_bar.hide()
-        #     self.prog_bar_label.hide()
-
-    def update_prog_bar_value(self, value: int) -> None:
-        """
-        Update the progress bar to the given value
-        :param value: The value to use when updating the progress bar.
-        :return: None.
-        """
-        pass
-        # self.prog_bar.setValue(value)
-
     def _set_texts(self) -> None:
         """
         Set the texts of this view item.
@@ -218,8 +186,6 @@ class ButtonBox(QGroupBox):
         elif self._start_button_state == 1:
             self._start_button.setIcon(self._pause_icon)
             self._start_button.setIconSize(QSize(36, 36))
-        # self.prog_bar_label.setText(button_box_prog_bar_label)
-        # self.prog_bar.setValue(0)
         self.logger.debug("done")
 
     def _set_button_states(self) -> None:

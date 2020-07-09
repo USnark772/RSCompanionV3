@@ -28,7 +28,6 @@ from RSCompanionAsync.Devices.AbstractDevice.View.base_graph import BaseGraph
 from PySide2.QtWidgets import QFrame, QVBoxLayout, QSizePolicy
 
 
-# TODO: Merge this with base graph?
 class GraphFrame(QFrame):
     """ This code is to contain and properly size graph widgets. """
     def __init__(self, parent=None, graph: BaseGraph = None, log_handlers: [StreamHandler] = None):

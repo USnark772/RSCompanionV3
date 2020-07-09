@@ -131,7 +131,6 @@ class CamScanner:
         self._logger.debug("running")
         while self._running:
             ret = await self._loop.run_in_executor(None, self._check_for_cam, self._counter.get_next_index())
-            # ret = self._check_for_cam(self._counter.get_next_index())
             if ret[0]:
                 while ret[0]:
                     self._unhandled_cams.append(ret[1])

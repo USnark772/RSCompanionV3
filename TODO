@@ -4,7 +4,7 @@ TODO: Check for any errors listed below.
 TODO: Pressing matters.
     - Make sure reading data from devices is done in threads so timestamps are not delayed.
         - Can't do async style (aioserial) if want threaded in this situation.
-    - Look into unit testing
+    - Fix DRT clicks axis
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
