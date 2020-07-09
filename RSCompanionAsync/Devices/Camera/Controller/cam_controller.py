@@ -134,8 +134,9 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
+        self._exp_info_for_later[0] = path
+        self._exp_info_for_later[1] = cond_name
         if self._initialized.is_set():
-            print("create_exp with:", path, cond_name)
             self.send_msg_to_model((defs.ModelEnum.COND_NAME, cond_name))
             self.view.set_config_active(False)
             self.send_msg_to_model((defs.ModelEnum.START, path))
@@ -144,7 +145,6 @@ class Controller(AbstractController):
         else:
             if self._create_exp_later_task is not None:
                 self._create_exp_later_task.cancel()
-            print("Updating create_exp_later with", path, cond_name)
             self._create_exp_later_task = create_task(self._create_exp_later())
         self._logger.debug("done")
 
@@ -155,9 +155,7 @@ class Controller(AbstractController):
         :param cond_name:
         :return:
         """
-        print("Starting create_exp_later")
         await self._initialized.wait()
-        print("calling self.create_exp")
         self.create_exp(self._exp_info_for_later[0], self._exp_info_for_later[1])
 
     def end_exp(self) -> None:
@@ -184,15 +182,15 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
+        self._exp_info_for_later[1] = cond_name
+        self._exp_info_for_later[2] = block_num
         if self._initialized.is_set():
-            print("start_exp with:", block_num, cond_name)
             self.send_msg_to_model((defs.ModelEnum.BLOCK_NUM, block_num))
             self.send_msg_to_model((defs.ModelEnum.COND_NAME, cond_name))
             self.send_msg_to_model((defs.ModelEnum.EXP_STATUS, True))
         else:
             if self._start_exp_later_task is not None:
                 self._start_exp_later_task.cancel()
-            print("Updating start_exp_later with", block_num, cond_name)
             self._exp_info_for_later[1] = cond_name
             self._exp_info_for_later[2] = block_num
             self._start_exp_later_task = create_task(self._start_exp_later())
@@ -205,9 +203,7 @@ class Controller(AbstractController):
         :param cond_name:
         :return:
         """
-        print("Starting start_exp_later")
         await self._initialized.wait()
-        print("calling self.start_exp")
         self.start_exp(self._exp_info_for_later[2], self._exp_info_for_later[1])
 
     def stop_exp(self) -> None:
