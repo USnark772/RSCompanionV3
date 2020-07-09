@@ -141,6 +141,7 @@ class CamModel:
         self.set_lang()
         self._fps_tracker = FPSTracker()
 
+        self._test_task = None
         self._num_img_workers = 1
         self._sems1 = list()
         self._sems2 = list()
@@ -191,7 +192,7 @@ class CamModel:
         Begin initializing camera.
         :return None:
         """
-        create_task(self._run_tests())
+        self._test_task = create_task(self._run_tests())
 
     def set_lang(self, lang: LangEnum = LangEnum.ENG) -> None:
         """
@@ -248,6 +249,12 @@ class CamModel:
 
     async def _cleanup(self, discard: bool) -> None:
         self._running = False
+        if self._test_task is not None:
+            if self._test_task.done():
+                await self._test_task
+            else:
+                print("Cancelling self._test_task")
+                self._test_task.cancel()
         self._size_gtr.stop()
         self._stop()
         self._cam_reader.cleanup()
