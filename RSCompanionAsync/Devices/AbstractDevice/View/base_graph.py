@@ -120,7 +120,7 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
                     alt_axes = axes.twinx()
                     alt_axes.set_ylabel(name, color='#ff7f0e')
                     alt_axes.tick_params(axis='y', labelcolor='#ff7f0e')
-                    alt_axes.set_yticks(np.arange(0, 5, step=1))
+                    alt_axes.set_yticks(np.arange(0, 6, step=1))
                     await sleep(.001)
                     if not new:
                         await create_task(self.plot_device_data(alt_axes, name, axes))

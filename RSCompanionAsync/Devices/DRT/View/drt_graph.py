@@ -23,6 +23,7 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
+import numpy as np
 from logging import getLogger, StreamHandler
 from asyncio import create_task, sleep
 from datetime import datetime, timedelta
@@ -40,6 +41,7 @@ class DRTGraph(BaseGraph):
         super().__init__(parent, log_handlers)
         self._data = list()
         self._strings = dict()
+        self._click_max = 5
         self._logger.debug("Initialized")
 
     async def show(self) -> None:
@@ -79,7 +81,15 @@ class DRTGraph(BaseGraph):
         right = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         await sleep(.001)
         if name == self._strings[StringsEnum.PLOT_NAME_CLICKS]:
+            if data[2][-1] > self._click_max:
+                self._click_max = data[2][-1] + 2
+            if self._click_max < 10:
+                axes.set_yticks(np.arange(0, self._click_max, step=1))
+            else:
+                axes.set_yticks(np.arange(0, self._click_max, step=5))
+
             axes.plot(data[1], data[2], marker='s', color='#ff7f0e')
+            # print(data)
         else:
             axes.plot(data[1], data[2], marker='o')
         await sleep(.001)
