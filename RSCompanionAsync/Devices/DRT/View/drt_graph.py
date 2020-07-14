@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2020
 Project: Companion App
 Company: Red Scientific
@@ -41,7 +42,7 @@ class DRTGraph(BaseGraph):
         super().__init__(parent, log_handlers)
         self._data = list()
         self._strings = dict()
-        self._click_max = 5
+        self._click_max = 6
         self._logger.debug("Initialized")
 
     async def show(self) -> None:
@@ -56,6 +57,7 @@ class DRTGraph(BaseGraph):
         for i in range(len(self._data)):
             self._data[i] = [self._data[i][0], [], []]
         self.set_new(True)
+        self._click_max = 6
         create_task(self.show())
 
     def set_lang(self, lang: LangEnum) -> None:
@@ -81,14 +83,14 @@ class DRTGraph(BaseGraph):
         right = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         await sleep(.001)
         if name == self._strings[StringsEnum.PLOT_NAME_CLICKS]:
-            if data[2][-1] > self._click_max:
+            axes.plot(data[1], data[2], marker='s', color='#ff7f0e')
+            if data[2][-1] >= self._click_max:
                 self._click_max = data[2][-1] + 2
             if self._click_max < 10:
                 axes.set_yticks(np.arange(0, self._click_max, step=1))
             else:
-                axes.set_yticks(np.arange(0, self._click_max, step=5))
+                axes.set_yticks(np.arange(0, self._click_max, step=2))
 
-            axes.plot(data[1], data[2], marker='s', color='#ff7f0e')
             # print(data)
         else:
             axes.plot(data[1], data[2], marker='o')
