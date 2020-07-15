@@ -65,8 +65,8 @@ class AppModel:
         self._new_dev_views = []
         self._remove_dev_views = []
         self._tasks = []
-        self._note_filename = "notes.csv"
-        self._flag_filename = "flags.csv"
+        self._note_filename = "notes"
+        self._flag_filename = "flags"
         self._saving = False
         self._running = True
         self._block_num = 0
@@ -192,7 +192,10 @@ class AppModel:
         self._logger.debug("running")
         devices_running = list()
         self._temp_folder = tempfile.TemporaryDirectory()
-        self._save_path = path + "/experiment_" + format_current_time(datetime.now(), save=True)
+        exp_start_time = format_current_time(datetime.now(), save=True)
+        self._save_path = path + "/experiment_" + exp_start_time
+        self._flag_filename = self._flag_filename + "_" + exp_start_time + ".csv"
+        self._note_filename = self._note_filename + "_" + exp_start_time + ".csv"
         self._cond_name = cond_name
         try:
             for controller in self._devs.values():
