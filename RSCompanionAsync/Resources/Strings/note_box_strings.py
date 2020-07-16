@@ -33,12 +33,16 @@ class StringsEnum(Enum):
     POST = auto()
     POST_TT = auto()
     SHADOW = auto()
+    NOTE_HDR = auto()
+    SF_NOTES = auto()
 
 
 english = {StringsEnum.TITLE: "Note",
            StringsEnum.POST: "Post",
            StringsEnum.POST_TT: "Post note",
            StringsEnum.SHADOW: "Enter note here",
+           StringsEnum.NOTE_HDR: "timestamp, note",
+           StringsEnum.SF_NOTES: "notes_",
            }
 
 # TODO: Verify translations
@@ -47,6 +51,8 @@ dutch = {StringsEnum.TITLE: "Notitie",
          StringsEnum.POST: "Posten",
          StringsEnum.POST_TT: "Notitie plaatsen",
          StringsEnum.SHADOW: "Notitie hier invoeren",
+         StringsEnum.NOTE_HDR: "tijdstempel, notitie",
+         StringsEnum.SF_NOTES: "notities_",
          }
 
 # French strings
@@ -54,6 +60,8 @@ french = {StringsEnum.TITLE: "Remarque",
           StringsEnum.POST: "Publier",
           StringsEnum.POST_TT: "Poster une note",
           StringsEnum.SHADOW: "Entrez une note ici",
+          StringsEnum.NOTE_HDR: "horodatage, remarque",
+          StringsEnum.SF_NOTES: "remarques_",
           }
 
 # German strings
@@ -61,13 +69,17 @@ german = {StringsEnum.TITLE: "Notiz",
           StringsEnum.POST: "Post",
           StringsEnum.POST_TT: "Notiz posten",
           StringsEnum.SHADOW: "Notiz hier eingeben",
+          StringsEnum.NOTE_HDR: "Zeitstempel, Notiz",
+          StringsEnum.SF_NOTES: "Aufzeichnungen_",
           }
 
 # Russian strings
-russian = {StringsEnum.TITLE: "Запись",
+russian = {StringsEnum.TITLE: "нота",
            StringsEnum.POST: "Публиковать",
            StringsEnum.POST_TT: "Опубликовать заметку",
            StringsEnum.SHADOW: "Введите примечание здесь",
+           StringsEnum.NOTE_HDR: "отметка времени, Запись",
+           StringsEnum.SF_NOTES: "ноты_",
            }
 
 # Spanish strings
@@ -75,6 +87,8 @@ spanish = {StringsEnum.TITLE: "Nota",
            StringsEnum.POST: "Publicar",
            StringsEnum.POST_TT: "Publicar nota",
            StringsEnum.SHADOW: "Ingrese la nota aquí",
+           StringsEnum.NOTE_HDR: "marca de tiempo, nota",
+           StringsEnum.SF_NOTES: "notas_",
            }
 
 # Chinese (simplified) strings
@@ -82,13 +96,17 @@ chinese = {StringsEnum.TITLE: "注意",
            StringsEnum.POST: "发布",
            StringsEnum.POST_TT: "发布笔记",
            StringsEnum.SHADOW: "在此处输入注释",
+           StringsEnum.NOTE_HDR: "时间戳记, 注意",
+           StringsEnum.SF_NOTES: "注意_",
            }
 
 # Japanese strings
-japanese = {StringsEnum.TITLE: "注意",
+japanese = {StringsEnum.TITLE: "ノート",
             StringsEnum.POST: "ポスト",
             StringsEnum.POST_TT: "ポストノート",
             StringsEnum.SHADOW: "ここにメモを入力",
+            StringsEnum.NOTE_HDR: "タイムスタンプ, 注意",
+            StringsEnum.SF_NOTES: "ノート_",
             }
 
 strings = {LangEnum.ENG: english,

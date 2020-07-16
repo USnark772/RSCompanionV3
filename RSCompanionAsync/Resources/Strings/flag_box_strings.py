@@ -31,46 +31,64 @@ from enum import Enum, auto
 class StringsEnum(Enum):
     TITLE = auto()
     FLAG_TT = auto()
+    FLAG_HDR = auto()
+    SF_FLAGS = auto()
 
 
 english = {StringsEnum.TITLE: "Key Flag",
            StringsEnum.FLAG_TT: "The most recent key pressed for reference in save file",
+           StringsEnum.FLAG_HDR: "timestamp, key flag",
+           StringsEnum.SF_FLAGS: "flags_",
            }
 
 # TODO: Verify translations
 # Dutch strings
 dutch = {StringsEnum.TITLE: "Sleutel vlag",
          StringsEnum.FLAG_TT: "De meest recente toets die ter referentie is ingedrukt in het opslagbestand",
+         StringsEnum.FLAG_HDR: "tijdstempel, sleutel vlag",
+         StringsEnum.SF_FLAGS: "vlaggen_",
          }
 
 # French strings
 french = {StringsEnum.TITLE: "Drapeau clé",
           StringsEnum.FLAG_TT: "La touche la plus récente appuyée pour référence dans le fichier de sauvegarde",
+          StringsEnum.FLAG_HDR: "horodatage, drapeau clé",
+          StringsEnum.SF_FLAGS: "drapeaux_",
           }
 
 # German strings
 german = {StringsEnum.TITLE: "Schlüsselflagge",
           StringsEnum.FLAG_TT: "Die zuletzt als Referenz in der Sicherungsdatei gedrückte Taste",
+          StringsEnum.FLAG_HDR: "Zeitstempel, Schlüsselflagge",
+          StringsEnum.SF_FLAGS: "Flaggen_",
           }
 
 # Russian strings
 russian = {StringsEnum.TITLE: "Ключ Флаг",
            StringsEnum.FLAG_TT: "Самая последняя клавиша нажата для ссылки в файле сохранения",
+           StringsEnum.FLAG_HDR: "отметка времени, Ключ Флаг",
+           StringsEnum.SF_FLAGS: "флаги_",
            }
 
 # Spanish strings
 spanish = {StringsEnum.TITLE: "Bandera clave",
            StringsEnum.FLAG_TT: "La tecla más reciente presionada para referencia en guardar archivo",
+           StringsEnum.FLAG_HDR: "marca de tiempo, Bandera clave",
+           StringsEnum.SF_FLAGS: "banderas_",
            }
 
 # Chinese (simplified) strings
 chinese = {StringsEnum.TITLE: "钥匙旗",
            StringsEnum.FLAG_TT: "在保存文件中按下以供参考的最新键",
+           StringsEnum.FLAG_HDR: "时间戳记, 钥匙旗",
+           StringsEnum.SF_FLAGS: "标志_",
            }
 
 # Japanese strings
 japanese = {StringsEnum.TITLE: "キーフラグ",
             StringsEnum.FLAG_TT: "保存ファイルで参照するために押された最新のキー",
+            StringsEnum.FLAG_HDR: "タイムスタンプ, キーフラグ",
+            StringsEnum.SF_FLAGS: "旗_",
             }
 
 strings = {LangEnum.ENG: english,

@@ -36,6 +36,10 @@ from aioserial import AioSerial
 from RSCompanionAsync.Model.rs_device_com_scanner import RSDeviceCommScanner
 from RSCompanionAsync.Model.cam_scanner import CamScanner
 import RSCompanionAsync.Model.app_defs as defs
+from RSCompanionAsync.Resources.Strings.note_box_strings import strings as note_strings, StringsEnum as note_enum,\
+    LangEnum as note_lang
+from RSCompanionAsync.Resources.Strings.flag_box_strings import strings as flag_strings, StringsEnum as flag_enum,\
+    LangEnum as flag_lang
 from RSCompanionAsync.Model.app_helpers import await_event, write_line_to_file, format_current_time
 from RSCompanionAsync.Model.version_checker import VersionChecker
 from RSCompanionAsync.Devices.AbstractDevice.View.abstract_view import AbstractView
@@ -73,6 +77,10 @@ class AppModel:
         self._cond_name = str()
         self.exp_created = False
         self.exp_running = False
+        self._first_note = True
+        self._note_strings = note_strings[lang]
+        self._first_flag = True
+        self._flag_strings = flag_strings[lang]
         self._loop = get_running_loop()
         self._logger.debug("Initialized")
 
@@ -111,6 +119,8 @@ class AppModel:
         :return None:
         """
         self._current_lang = lang
+        self._flag_strings = flag_strings[lang]
+        self._note_strings = note_strings[lang]
         self._signal_lang_change()
 
     def set_lang(self, lang: defs.LangEnum) -> None:
@@ -119,6 +129,8 @@ class AppModel:
         :param lang: The enum for the language.
         :return: None.
         """
+        self._flag_strings = flag_strings[lang]
+        self._note_strings = note_strings[lang]
         for controller in self._devs.values():
             controller.set_lang(lang)
 
@@ -154,6 +166,10 @@ class AppModel:
         :return None:
         """
         if self.exp_created:
+            if self._first_note:
+                self._first_note = False
+                create_task(write_line_to_file(self._temp_folder.name + "/" + self._note_filename,
+                                               self._note_strings[note_enum.NOTE_HDR]))
             timestamp = format_current_time(datetime.now(), date=True, time=True, micro=True)
             line = timestamp + ", " + note
             create_task(write_line_to_file(self._temp_folder.name + "/" + self._note_filename, line))
@@ -177,6 +193,10 @@ class AppModel:
         """
         self._logger.debug("running")
         if self.exp_created:
+            if self._first_flag:
+                self._first_flag = False
+                create_task(write_line_to_file(self._temp_folder.name + "/" + self._flag_filename,
+                                               self._flag_strings[flag_enum.FLAG_HDR]))
             timestamp = format_current_time(datetime.now(), date=True, time=True, micro=True)
             line = timestamp + ", " + flag
             create_task(write_line_to_file(self._temp_folder.name + "/" + self._flag_filename, line))
@@ -190,12 +210,14 @@ class AppModel:
         :return bool: If there was an error.
         """
         self._logger.debug("running")
+        self._first_flag = True
+        self._first_note = True
         devices_running = list()
         self._temp_folder = tempfile.TemporaryDirectory()
         exp_start_time = format_current_time(datetime.now(), save=True)
         self._save_path = path + "/experiment_" + exp_start_time
-        self._flag_filename = self._flag_filename + "_" + exp_start_time + ".csv"
-        self._note_filename = self._note_filename + "_" + exp_start_time + ".csv"
+        self._flag_filename = self._flag_strings[flag_enum.SF_FLAGS] + exp_start_time + ".csv"
+        self._note_filename = self._note_strings[note_enum.SF_NOTES] + exp_start_time + ".csv"
         self._cond_name = cond_name
         try:
             for controller in self._devs.values():
