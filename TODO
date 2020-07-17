@@ -4,12 +4,7 @@ TODO: Check for any errors listed below.
 TODO: Pressing matters.
     - Make sure reading data from devices is done in threads so timestamps are not delayed.
         - Can't do async style (aioserial) if want threaded in this situation.
-    - Fix DRT clicks axis
     - Add cond name and exp num/block # to device output. drt example: cond_name, timestamp, block #, etc.
-    - Add headers to flags/notes save files
-    - Add timestamp to flags/notes filename like with other devices.
-    - Check trailing commas in save files, we don't need them.
-    - Add new save file that keeps track of create/end and start/stop exp times.
     - For now, merge all flag/note/cond_name/exp start_stop create_end times into each device master save file.
     - toss temp folder without saving that data for now. only save master save file for each device.
 

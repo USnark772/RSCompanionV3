@@ -36,10 +36,9 @@ from aioserial import AioSerial
 from RSCompanionAsync.Model.rs_device_com_scanner import RSDeviceCommScanner
 from RSCompanionAsync.Model.cam_scanner import CamScanner
 import RSCompanionAsync.Model.app_defs as defs
-from RSCompanionAsync.Resources.Strings.note_box_strings import strings as note_strings, StringsEnum as note_enum,\
-    LangEnum as note_lang
-from RSCompanionAsync.Resources.Strings.flag_box_strings import strings as flag_strings, StringsEnum as flag_enum,\
-    LangEnum as flag_lang
+from RSCompanionAsync.Resources.Strings.note_box_strings import strings as note_strings, StringsEnum as NoteEnum
+from RSCompanionAsync.Resources.Strings.flag_box_strings import strings as flag_strings, StringsEnum as FlagEnum
+from RSCompanionAsync.Resources.Strings.main_window_strings import strings, StringsEnum
 from RSCompanionAsync.Model.app_helpers import await_event, write_line_to_file, format_current_time
 from RSCompanionAsync.Model.version_checker import VersionChecker
 from RSCompanionAsync.Devices.AbstractDevice.View.abstract_view import AbstractView
@@ -69,17 +68,19 @@ class AppModel:
         self._new_dev_views = []
         self._remove_dev_views = []
         self._tasks = []
-        self._note_filename = "notes"
-        self._flag_filename = "flags"
         self._saving = False
         self._running = True
         self._block_num = 0
         self._cond_name = str()
         self.exp_created = False
         self.exp_running = False
+        self._note_filename = "notes"
+        self._flag_filename = "flags"
+        self._times_filename = "times"
         self._first_note = True
-        self._note_strings = note_strings[lang]
         self._first_flag = True
+        self._main_strings = strings[lang]
+        self._note_strings = note_strings[lang]
         self._flag_strings = flag_strings[lang]
         self._loop = get_running_loop()
         self._logger.debug("Initialized")
@@ -119,6 +120,7 @@ class AppModel:
         :return None:
         """
         self._current_lang = lang
+        self._main_strings = strings[lang]
         self._flag_strings = flag_strings[lang]
         self._note_strings = note_strings[lang]
         self._signal_lang_change()
@@ -169,7 +171,7 @@ class AppModel:
             if self._first_note:
                 self._first_note = False
                 create_task(write_line_to_file(self._temp_folder.name + "/" + self._note_filename,
-                                               self._note_strings[note_enum.NOTE_HDR]))
+                                               self._note_strings[NoteEnum.NOTE_HDR]))
             timestamp = format_current_time(datetime.now(), date=True, time=True, micro=True)
             line = timestamp + ", " + note
             create_task(write_line_to_file(self._temp_folder.name + "/" + self._note_filename, line))
@@ -196,10 +198,27 @@ class AppModel:
             if self._first_flag:
                 self._first_flag = False
                 create_task(write_line_to_file(self._temp_folder.name + "/" + self._flag_filename,
-                                               self._flag_strings[flag_enum.FLAG_HDR]))
+                                               self._flag_strings[FlagEnum.FLAG_HDR]))
             timestamp = format_current_time(datetime.now(), date=True, time=True, micro=True)
             line = timestamp + ", " + flag
             create_task(write_line_to_file(self._temp_folder.name + "/" + self._flag_filename, line))
+        self._logger.debug("done")
+
+    def save_exp_times(self, time: datetime, time_type: str, hdr: bool=False) -> None:
+        """
+        Save experiment create/end times, and experiment start/stop times.
+        :param exp_start_time: formatted experiment start time used for the save file
+        :param time_type: ["create", "end", "start", "stop"]
+        :param time: datetime to be recorded
+        :return None:
+        """
+        self._logger.debug("running")
+        if hdr:
+            line = self._main_strings[StringsEnum.TIMESTAMP] + ", " + self._main_strings[StringsEnum.TIME_EVENT]
+            create_task(write_line_to_file(self._temp_folder.name + "/" + self._times_filename, line))
+        timestamp = format_current_time(time, date=True, time=True, micro=True)
+        line = timestamp + ", " + time_type
+        create_task(write_line_to_file(self._temp_folder.name + "/" + self._times_filename, line))
         self._logger.debug("done")
 
     def signal_create_exp(self, path: str, cond_name: str) -> None:
@@ -214,10 +233,13 @@ class AppModel:
         self._first_note = True
         devices_running = list()
         self._temp_folder = tempfile.TemporaryDirectory()
-        exp_start_time = format_current_time(datetime.now(), save=True)
+        now = datetime.now()
+        exp_start_time = format_current_time(now, save=True)
         self._save_path = path + "/experiment_" + exp_start_time
-        self._flag_filename = self._flag_strings[flag_enum.SF_FLAGS] + exp_start_time + ".csv"
-        self._note_filename = self._note_strings[note_enum.SF_NOTES] + exp_start_time + ".csv"
+        self._flag_filename = self._flag_strings[FlagEnum.SF_FLAGS] + exp_start_time + ".csv"
+        self._note_filename = self._note_strings[NoteEnum.SF_NOTES] + exp_start_time + ".csv"
+        self._times_filename = self._main_strings[StringsEnum.SF_TIMES] + exp_start_time + ".csv"
+        self.save_exp_times(now, self._main_strings[StringsEnum.CREATE], True)
         self._cond_name = cond_name
         try:
             for controller in self._devs.values():
@@ -239,6 +261,7 @@ class AppModel:
         :return bool: If there was an error.
         """
         self._logger.debug("running")
+        self.save_exp_times(datetime.now(), self._main_strings[StringsEnum.END])
         try:
             for controller in self._devs.values():
                 controller.end_exp()
@@ -260,6 +283,7 @@ class AppModel:
         devices = list()
         next_block_num = self._block_num + 1
         self._cond_name = cond_name
+        self.save_exp_times(datetime.now(), self._main_strings[StringsEnum.START])
         try:
             for controller in self._devs.values():
                 controller.start_exp(next_block_num, self._cond_name)
@@ -278,6 +302,7 @@ class AppModel:
         :return bool: Return false if an experiment failed to stop, otherwise return true.
         """
         self._logger.debug("running")
+        self.save_exp_times(datetime.now(), self._main_strings[StringsEnum.STOP])
         try:
             for controller in self._devs.values():
                 controller.stop_exp()
