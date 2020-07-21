@@ -214,10 +214,10 @@ class AppModel:
         """
         self._logger.debug("running")
         if hdr:
-            line = self._main_strings[StringsEnum.TIMESTAMP] + ", " + self._main_strings[StringsEnum.TIME_EVENT]
+            line = self._main_strings[StringsEnum.HDR]
             create_task(write_line_to_file(self._temp_folder.name + "/" + self._times_filename, line))
         timestamp = format_current_time(time, date=True, time=True, micro=True)
-        line = timestamp + ", " + time_type
+        line = timestamp + ", " + time_type + ", " + self._cond_name + ", " + str(self._block_num)
         create_task(write_line_to_file(self._temp_folder.name + "/" + self._times_filename, line))
         self._logger.debug("done")
 
@@ -229,6 +229,7 @@ class AppModel:
         :return bool: If there was an error.
         """
         self._logger.debug("running")
+        self._cond_name = cond_name
         self._first_flag = True
         self._first_note = True
         devices_running = list()
@@ -240,7 +241,6 @@ class AppModel:
         self._note_filename = self._note_strings[NoteEnum.SF_NOTES] + exp_start_time + ".csv"
         self._times_filename = self._main_strings[StringsEnum.SF_TIMES] + exp_start_time + ".csv"
         self.save_exp_times(now, self._main_strings[StringsEnum.CREATE], True)
-        self._cond_name = cond_name
         try:
             for controller in self._devs.values():
                 controller.create_exp(self._temp_folder.name + "/", self._cond_name)

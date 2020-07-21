@@ -65,16 +65,21 @@ block_num = ""
 flag = ""
 
 loop:
-get min timestamp
+items = the first item in each list
+get min timestamp:
 
 if dev_line:
-	line = type, cond_name, timestamp, block_num, dev_line, flag, ""
+	line = type, cond_name, timestamp, block_num, items[dev_line], flag, ""
+	items[dev_line] = pop next dev data
 if time_line:
 	cond_name = cond_name from time_line
 	block_num = block num from time_line
-	line = type, cond_name, timestamp, block_num, time_line, (comma seps), flag, ""
+	line = type, cond_name, timestamp, block_num, items[time_line], (comma seps), flag, ""
+	items[time_line] = pop next time data
 if flag_line:
 	flag = flag from flag_line
-	line = type, cond_name, timestamp, block_num,(comma seps), flag_line, ""
+	line = type, cond_name, timestamp, block_num,(comma seps), items[flag_line], ""
+	items[flag_line] = pop next flag data
 if notes_line
-	line = type, cond_name, timestamp, block_num, (comma seps), flag, notes_line
+	line = type, cond_name, timestamp, block_num, (comma seps), flag, items[notes_line]
+	items[notes_line] = pop next note data
