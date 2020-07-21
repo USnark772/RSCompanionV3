@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with RS Companion.  If not, see <https://www.gnu.org/licenses/>.
 
 Author: Phillip Riskin
+Author: Nathan Rogers
 Date: 2020
 Project: Companion App
 Company: Red Scientific
@@ -25,53 +26,81 @@ https://redscientific.com/index.html
 
 import os
 import tempfile
-from collections import defaultdict
+from logging import getLogger, StreamHandler
 from operator import itemgetter
 from pathlib import Path
 from shutil import move
+from RSCompanionAsync.Resources.Strings.file_saver_strings import strings, StringsEnum, LangEnum
 
 """
 Take two directories, manipulate all data inside first directory as needed, then move to second directory.
 """
 
 
-app_data_names = ["flags", "notes", "times"]
-data_filetype = ".csv"
-underscore_sep = "_"
-comma_sep = ","
+app_data_names = ["flags", "notes", "events"]
+data_ft = ".csv"
+unsc_sep = "_"
+comma_sep = ", "
 new_line = "\n"
-ts_hdr_name = 'timestamp'
-dev_id_hdr = "device id"
 
 
 class RSSaver:
-    def __init__(self):
+    def __init__(self, lang: LangEnum, log_handlers: [StreamHandler] = None):
+        self._logger = getLogger(__name__)
+        if log_handlers:
+            for h in log_handlers:
+                self._logger.addHandler(h)
+        self._logger.debug("Initializing")
         self._to_dir = str()
         self._from_dir = None
+        self._exp_name = str()
+        self._strings = strings[lang]
+        self._logger.debug("Initialized")
 
     def start(self, to_dir: str) -> str:
         """
-        Take a directory path
+        Take a directory path, give back a temp directory path.
         :param to_dir: The desired output path.
         :return str: The temporary directory to save data to before calling stop().
         """
+        self._logger.debug("running")
         self._to_dir = to_dir
         self._from_dir = tempfile.TemporaryDirectory()
+        self._exp_name = to_dir[to_dir.rindex("/") + 1:]
+        self._logger.debug("done")
         return self._from_dir.name + "/"
 
-    def stop(self) -> None:
+    def stop(self) -> bool:
         """
-        Save data saved in temporary directory into desired output path.
+        Save data saved in temp directory into desired output path.
         :return bool: Whether saving was successful.
         """
+        self._logger.debug("running")
+        if self._from_dir is None:
+            self._logger.debug("done with False")
+            return False
         self._finalize_data_output()
-        self._move_data_to_output_dir()
+        self._move_non_csv_to_out_dir()
+        self._from_dir.cleanup()
+        self._logger.debug("done with True")
+        return True
 
-    def _move_data_to_output_dir(self) -> None:
+    def set_lang(self, lang: LangEnum):
+        """
+        Set the language for output from this module.
+        :param lang: The new language to use.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._strings = strings[lang]
+        self._logger.debug("done")
+
+    def _move_non_csv_to_out_dir(self) -> None:
         """
         Move data from self._from_dir into self._to_dir.
         :return None:
         """
+        self._logger.debug("running")
         Path(self._to_dir).mkdir(parents=True, exist_ok=True)
         # with zipfile.ZipFile(self._save_path, "w") as zipper:
         #     for file in os.listdir(self._temp_folder.name):
@@ -81,69 +110,150 @@ class RSSaver:
         prev_dir = os.getcwd()
         os.chdir(self._from_dir.name)
         for file in os.listdir():
-            move(file, self._to_dir)
+            if not file.endswith(data_ft):
+                print("Moving file:", file)
+                move(file, self._to_dir)
         os.chdir(prev_dir)
+        self._logger.debug("done")
 
     def _finalize_data_output(self) -> None:
         """
         Alter data as desired.
         :return None:
         """
+        self._logger.debug("running")
         data: dict = self._parse_experiment()
+        self._make_master_files(data)
+        self._logger.debug("done")
+
+    def _make_master_files(self, data: dict) -> None:
+        self._logger.debug("running")
+        flag = str()
+        blk_num = str()
+        cond_name = str()
+        exp_status = str()
+        Path(self._to_dir).mkdir(parents=True, exist_ok=True)
+        os.chdir(self._to_dir)
         for key in data.keys():
-            print("looking at data type: " + key + ".")
-            if key in app_data_names:
-                print("It's an app data type")
+            if key not in app_data_names:
+                data[key].append(open(key + unsc_sep + self._exp_name + data_ft, "w"))
+                hdr_list = list()
+                for dkey, dval in data[key][0].items():
+                    hdr_list.append((dkey, dval))
+                hdr_list = sorted(hdr_list, key=itemgetter(1))
+                hdr_list = hdr_list[2:]
+                hdr_list = [x[0] for x in hdr_list]
+                hdr = comma_sep.join([self._strings[StringsEnum.HDR_1], comma_sep.join(hdr_list),
+                                      self._strings[StringsEnum.HDR_2]])
+                data[key][3].write(hdr + new_line)
+        while len(data[app_data_names[2]][1]) > 0:
+            next_key = self._calc_next_item(data)
+            hdr = data[next_key][0]
+            row = data[next_key][1].pop(0)
+            if next_key == app_data_names[0]:
+                flag = row[-1]
+                line1 = comma_sep.join([self._strings[StringsEnum.FLAG], cond_name,
+                                        row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num])
+                line2 = comma_sep.join([comma_sep.join(row[hdr[self._strings[StringsEnum.TSTAMP_HDR]] + 1:]),
+                                        exp_status])
+                self._write_to_all_dev_files(data, line1, line2)
+            elif next_key == app_data_names[1]:
+                line1 = comma_sep.join([self._strings[StringsEnum.NOTE], cond_name,
+                                        row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num])
+                line2 = comma_sep.join([flag, row[hdr[self._strings[StringsEnum.TSTAMP_HDR]] + 1]])
+                self._write_to_all_dev_files(data, line1, line2)
+            elif next_key == app_data_names[2]:
+                cond_name = row[2]
+                blk_num = row[3]
+                exp_status = row[1]
+                line1 = comma_sep.join([self._strings[StringsEnum.EVENT], cond_name,
+                                        row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num])
+                line2 = comma_sep.join([flag, exp_status])
+                self._write_to_all_dev_files(data, line1, line2)
             else:
-                print("It's a device.")
+                line = comma_sep.join([row[0], cond_name, row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num,
+                                       comma_sep.join(row[hdr[self._strings[StringsEnum.TSTAMP_HDR]] + 1:]), flag,
+                                       exp_status])
+                data[next_key][3].write(line + new_line)
+        for key in data.keys():
+            if key not in app_data_names:
+                data[key][3].close()
+        self._logger.debug("done")
+
+    @staticmethod
+    def _write_to_all_dev_files(data: dict, line1: str, line2: str):
+        for key in data.keys():
+            if key not in app_data_names:
+                data[key][3].write(line1 + comma_sep * data[key][2] + line2 + new_line)
+
+    def _calc_next_item(self, data: dict) -> str:
+        """
+        Look through and find earliest timestamp using app events file as metric.
+        :param data: App and data .csv files as dictionary.
+        :return str: The key of the next csv file data to use.
+        """
+        best = app_data_names[2]
+        for key in data.keys():
+            # Compare timestamp of best to timestamp of key
+            best_ts_index = data[best][0][self._strings[StringsEnum.TSTAMP_HDR]]
+            best_array = data[best][1]
+            key_ts_index = data[key][0][self._strings[StringsEnum.TSTAMP_HDR]]
+            key_array = data[key][1]
+            if len(key_array) > 0:
+                if best_array[0][best_ts_index] > key_array[0][key_ts_index]:
+                    best = key
+        return best
 
     def _parse_experiment(self) -> dict:
+        self._logger.debug("running")
         data = dict()
         num_devices = dict()
         prev_dir = os.getcwd()
-        os.chdir(self._from_dir)  # TODO: Change this to self._from_dir.name when running with tempfile.
-        # os.chdir(self._from_dir.name)
+        os.chdir(self._from_dir.name)
         for file in os.listdir():
-            if file.endswith(data_filetype):
-                info = file.rstrip(data_filetype).split(underscore_sep)
+            if file.endswith(data_ft):
+                info = file.rstrip(data_ft).split(unsc_sep)
                 if info[0] in app_data_names:
-                    hdr, vals = self._parse_csv_file(file)
-                    data[info[0]] = [hdr, vals]
+                    hdr, vals, num_col = self._parse_csv_file(file)
+                    data[info[0]] = [hdr, vals, num_col]
                 else:
                     if info[0] not in num_devices.keys():
                         num_devices[info[0]] = 0
                     num_devices[info[0]] += 1
-                    hdr, vals = self._parse_csv_file(file, info[0] + underscore_sep + info[1])
+                    hdr, vals, num_col = self._parse_csv_file(file, info[0] + unsc_sep + info[1])
                     if info[0] not in data.keys():
-                        data[info[0]] = [hdr, []]
-                        data[info[0]][1].append(vals)
+                        data[info[0]] = [hdr, [], num_col]
+                        for item in vals:
+                            data[info[0]][1].append(item)
                     else:
-                        data[info[0]][1].append(vals)
+                        for item in vals:
+                            data[info[0]][1].append(item)
         os.chdir(prev_dir)
         for data_type in data:
             if data_type in app_data_names:
                 continue
             if num_devices[data_type] > 1:
-                data[data_type][1] = sorted([row for sublist in data[data_type][1] for row in sublist],
-                                            key=itemgetter(data[data_type][0][ts_hdr_name]))
+                data[data_type][1] = sorted([row for row in data[data_type][1]],
+                                            key=itemgetter(data[data_type][0][self._strings[StringsEnum.TSTAMP_HDR]]))
+        self._logger.debug("done")
         return data
 
-    @staticmethod
-    def _parse_csv_file(filename: str, dev_id: str = None) -> (dict, list):
+    def _parse_csv_file(self, filename: str, dev_id: str = None) -> (dict, list, int):
         hdr_dict = dict()
         rows = list()
+        dev_num_col = 0
         dev = False
         with open(filename) as f:
             hdr = f.readline()
             if dev_id is not None:
-                hdr_values = [dev_id_hdr]
+                hdr_values = [self._strings[StringsEnum.ID_HDR]]
                 more_vals = hdr.rstrip(new_line).split(comma_sep)
+                dev_num_col = len(more_vals)
                 for x in more_vals:
                     hdr_values.append(x)
                 dev = True
             else:
                 hdr_values = hdr.rstrip(new_line).split(comma_sep)
-            print(hdr_values)
             for i in range(len(hdr_values)):
                 hdr_dict[hdr_values[i]] = i
             for line in f:
@@ -154,22 +264,17 @@ class RSSaver:
                         temp.append(item)
                     row = temp
                 rows.append(row)
-        return hdr_dict, rows
+        return hdr_dict, rows, dev_num_col
 
 
 def main():
-    exp_dir = "C:/Users/phill/Companion Save Files/experiment_2020-07-18-14-06-12"
+    exp_dir = "C:/Users/phill/Companion Save Files/experiment_2020-07-20-17-37-51"
+    to_dir = "C:/Users/phill/Companion Save Files/test_exp_edit_out"
     saver = RSSaver()
+    saver.start(to_dir)
     saver._from_dir = exp_dir
-    saver._finalize_data_output()
-    # hdr = {app_timestamp_hdr_name: 0, 'data': 1}
-    # values = [[(5, 1), (4, 5), (2, 1)], [(3, 2), (2, 1), (8, 4)], [(1, 8), (2, 6), (3, 0)]]
-    # the_dictionary = {'DRT': [hdr, values]}
-    # print(the_dictionary)
-    # for key in the_dictionary:
-    #     the_dictionary[key][1] = sorted([row for sublist in the_dictionary[key][1] for row in sublist],
-    #                                     key=itemgetter(the_dictionary[key][0][app_timestamp_hdr_name]))
-    # print(the_dictionary)
+    saver._exp_name = exp_dir[exp_dir.rindex("/") + 1:]
+    saver.stop()
 
 
 if __name__ == '__main__':

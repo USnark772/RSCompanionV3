@@ -41,6 +41,7 @@ from RSCompanionAsync.Resources.Strings.flag_box_strings import strings as flag_
 from RSCompanionAsync.Resources.Strings.main_window_strings import strings, StringsEnum
 from RSCompanionAsync.Model.app_helpers import await_event, write_line_to_file, format_current_time
 from RSCompanionAsync.Model.version_checker import VersionChecker
+from RSCompanionAsync.Model.rs_file_saver import RSSaver
 from RSCompanionAsync.Devices.AbstractDevice.View.abstract_view import AbstractView
 
 
@@ -61,6 +62,7 @@ class AppModel:
         self._done_saving_flag = Event()
         self._saving_flag = Event()
         self._current_lang = lang
+        self._saver = RSSaver(lang, log_handlers)
         self._temp_folder = None
         self._save_path = str()
         self._devs = dict()
@@ -76,7 +78,7 @@ class AppModel:
         self.exp_running = False
         self._note_filename = "notes"
         self._flag_filename = "flags"
-        self._times_filename = "times"
+        self._events_filename = "events"
         self._first_note = True
         self._first_flag = True
         self._main_strings = strings[lang]
@@ -133,6 +135,7 @@ class AppModel:
         """
         self._flag_strings = flag_strings[lang]
         self._note_strings = note_strings[lang]
+        self._saver.set_lang(lang)
         for controller in self._devs.values():
             controller.set_lang(lang)
 
@@ -170,11 +173,11 @@ class AppModel:
         if self.exp_created:
             if self._first_note:
                 self._first_note = False
-                create_task(write_line_to_file(self._temp_folder.name + "/" + self._note_filename,
+                create_task(write_line_to_file(self._save_path + self._note_filename,
                                                self._note_strings[NoteEnum.NOTE_HDR]))
             timestamp = format_current_time(datetime.now(), date=True, time=True, micro=True)
-            line = timestamp + ", " + note
-            create_task(write_line_to_file(self._temp_folder.name + "/" + self._note_filename, line))
+            line = ", ".join([timestamp, note])
+            create_task(write_line_to_file(self._save_path + self._note_filename, line))
 
     def send_keyflag_to_devs(self, flag: str) -> None:
         """
@@ -197,28 +200,29 @@ class AppModel:
         if self.exp_created:
             if self._first_flag:
                 self._first_flag = False
-                create_task(write_line_to_file(self._temp_folder.name + "/" + self._flag_filename,
+                create_task(write_line_to_file(self._save_path + self._flag_filename,
                                                self._flag_strings[FlagEnum.FLAG_HDR]))
             timestamp = format_current_time(datetime.now(), date=True, time=True, micro=True)
-            line = timestamp + ", " + flag
-            create_task(write_line_to_file(self._temp_folder.name + "/" + self._flag_filename, line))
+            line = ", ".join([timestamp, flag])
+            create_task(write_line_to_file(self._save_path + self._flag_filename, line))
         self._logger.debug("done")
 
-    def save_exp_times(self, time: datetime, time_type: str, hdr: bool=False) -> None:
+    def save_exp_times(self, time: datetime, time_type: str, hdr: bool = False) -> None:
         """
         Save experiment create/end times, and experiment start/stop times.
-        :param exp_start_time: formatted experiment start time used for the save file
+        :param time: formatted experiment start time used for the save file
         :param time_type: ["create", "end", "start", "stop"]
         :param time: datetime to be recorded
+        :param hdr:
         :return None:
         """
         self._logger.debug("running")
         if hdr:
             line = self._main_strings[StringsEnum.HDR]
-            create_task(write_line_to_file(self._temp_folder.name + "/" + self._times_filename, line))
+            create_task(write_line_to_file(self._save_path + self._events_filename, line))
         timestamp = format_current_time(time, date=True, time=True, micro=True)
-        line = timestamp + ", " + time_type + ", " + self._cond_name + ", " + str(self._block_num)
-        create_task(write_line_to_file(self._temp_folder.name + "/" + self._times_filename, line))
+        line = ", ".join([timestamp, time_type, self._cond_name, str(self._block_num)])
+        create_task(write_line_to_file(self._save_path + self._events_filename, line))
         self._logger.debug("done")
 
     def signal_create_exp(self, path: str, cond_name: str) -> None:
@@ -233,17 +237,17 @@ class AppModel:
         self._first_flag = True
         self._first_note = True
         devices_running = list()
-        self._temp_folder = tempfile.TemporaryDirectory()
+        # self._temp_folder = tempfile.TemporaryDirectory()
         now = datetime.now()
         exp_start_time = format_current_time(now, save=True)
-        self._save_path = path + "/experiment_" + exp_start_time
-        self._flag_filename = self._flag_strings[FlagEnum.SF_FLAGS] + exp_start_time + ".csv"
-        self._note_filename = self._note_strings[NoteEnum.SF_NOTES] + exp_start_time + ".csv"
-        self._times_filename = self._main_strings[StringsEnum.SF_TIMES] + exp_start_time + ".csv"
+        self._save_path = self._saver.start(path + "/experiment_" + exp_start_time)
+        self._flag_filename = "flags_" + exp_start_time + ".csv"
+        self._note_filename = "notes_" + exp_start_time + ".csv"
+        self._events_filename = "events_" + exp_start_time + ".csv"
         self.save_exp_times(now, self._main_strings[StringsEnum.CREATE], True)
         try:
             for controller in self._devs.values():
-                controller.create_exp(self._temp_folder.name + "/", self._cond_name)
+                controller.create_exp(self._save_path, self._cond_name)
                 devices_running.append(controller)
             self._logger.debug("done")
             self.exp_created = True
@@ -359,7 +363,7 @@ class AppModel:
         """
         for device in self._devs.values():
             await device.await_saved()
-        await get_running_loop().run_in_executor(None, self._convert_to_rs_file)
+        await get_running_loop().run_in_executor(None, self._saver.stop)
         self._saving_flag.clear()
         self._done_saving_flag.set()
         self.cleanup_temp_folder()
@@ -374,24 +378,6 @@ class AppModel:
             self._temp_folder.cleanup()
         self._temp_folder = None
         self._logger.debug("done")
-
-    def _convert_to_rs_file(self) -> None:
-        """
-        Transfer latest experiment data to .rs file.
-        :return None:
-        """
-        # TODO: Use zipfile code when reading .rs files is implemented.
-        Path(self._save_path).mkdir(parents=True, exist_ok=True)
-        # with zipfile.ZipFile(self._save_path, "w") as zipper:
-        #     for file in os.listdir(self._temp_folder.name):
-        #         zipper.write(self._temp_folder.name + "/" + file, file)
-        if not os.path.isdir(self._save_path):
-            os.mkdir(self._save_path)
-        cur_dur = os.getcwd()
-        os.chdir(self._temp_folder.name)
-        for file in os.listdir(self._temp_folder.name):
-            move(file, self._save_path)
-        os.chdir(cur_dur)
 
     def _signal_lang_change(self) -> bool:
         """
@@ -452,7 +438,7 @@ class AppModel:
             self._new_dev_views.append(controller.get_view())
             self._new_dev_view_flag.set()
             if self.exp_created:
-                controller.create_exp(self._temp_folder.name + "/", self._cond_name)
+                controller.create_exp(self._save_path, self._cond_name)
             if self.exp_running:
                 controller.start_exp(self._block_num, self._cond_name)
         except Exception as e:
@@ -487,7 +473,7 @@ class AppModel:
             self._new_dev_views.append(controller.get_view())
             self._new_dev_view_flag.set()
             if self.exp_created:
-                controller.create_exp(self._temp_folder.name + "/", self._cond_name)
+                controller.create_exp(self._save_path, self._cond_name)
             if self.exp_running:
                 controller.start_exp(self._block_num, self._cond_name)
         except Exception as e:

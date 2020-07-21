@@ -59,7 +59,7 @@ french = {StringsEnum.TITLE: "Drapeau clé",
 # German strings
 german = {StringsEnum.TITLE: "Schlüsselflagge",
           StringsEnum.FLAG_TT: "Die zuletzt als Referenz in der Sicherungsdatei gedrückte Taste",
-          StringsEnum.FLAG_HDR: "Zeitstempel, Schlüsselflagge",
+          StringsEnum.FLAG_HDR: "zeitstempel, schlüsselflagge",
           StringsEnum.SF_FLAGS: "Flaggen_",
           }
 
@@ -73,7 +73,7 @@ russian = {StringsEnum.TITLE: "Ключ Флаг",
 # Spanish strings
 spanish = {StringsEnum.TITLE: "Bandera clave",
            StringsEnum.FLAG_TT: "La tecla más reciente presionada para referencia en guardar archivo",
-           StringsEnum.FLAG_HDR: "marca de tiempo, Bandera clave",
+           StringsEnum.FLAG_HDR: "marca de tiempo, bandera clave",
            StringsEnum.SF_FLAGS: "banderas_",
            }
 

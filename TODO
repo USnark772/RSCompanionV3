@@ -7,6 +7,8 @@ TODO: Pressing matters.
     - Add cond name and exp num/block # to device output. drt example: cond_name, timestamp, block #, etc.
     - For now, merge all flag/note/cond_name/exp start_stop create_end times into each device master save file.
     - toss temp folder without saving that data for now. only save master save file for each device.
+    - Change timestamps to unix timestamps in save files. Keep graphs and save files using current format.
+    - App freezes when trying to close after experiment is ended and language is set to dutch.
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
@@ -65,21 +67,16 @@ block_num = ""
 flag = ""
 
 loop:
-items = the first item in each list
-get min timestamp:
+get min timestamp
 
 if dev_line:
-	line = type, cond_name, timestamp, block_num, items[dev_line], flag, ""
-	items[dev_line] = pop next dev data
+	line = type, cond_name, timestamp, block_num, dev_line, flag, event
 if time_line:
 	cond_name = cond_name from time_line
 	block_num = block num from time_line
-	line = type, cond_name, timestamp, block_num, items[time_line], (comma seps), flag, ""
-	items[time_line] = pop next time data
+	line = type, cond_name, timestamp, block_num, time_line, (comma seps), flag, event
 if flag_line:
 	flag = flag from flag_line
-	line = type, cond_name, timestamp, block_num,(comma seps), items[flag_line], ""
-	items[flag_line] = pop next flag data
+	line = type, cond_name, timestamp, block_num,(comma seps), flag_line, event
 if notes_line
-	line = type, cond_name, timestamp, block_num, (comma seps), flag, items[notes_line]
-	items[notes_line] = pop next note data
+	line = type, cond_name, timestamp, block_num, (comma seps), flag, notes_line

@@ -165,8 +165,8 @@ german = {StringsEnum.CUSTOM_LABEL: "Benutzerdefiniert",
           StringsEnum.INTENSITY_TOOLTIP: "Intensität des Reizes",
           StringsEnum.UPPER_ISI_TOOLTIP: "Millisekunden. Angebot: " + lower_isi_ger + "-" + str(defs.ISI_max),
           StringsEnum.LOWER_ISI_TOOLTIP: "Millisekunden. Angebot: " + str(defs.ISI_min) + "-" + upper_isi_ger,
-          StringsEnum.SAVE_HDR: "Zeitstempel, Sonde #, Klicks, Millisekunden nach Beginn des Experiments,"
-                                " Reaktionszeit",
+          StringsEnum.SAVE_HDR: "zeitstempel, sonde #, klicks, millisekunden nach beginn des experiments,"
+                                " reaktionszeit",
           StringsEnum.PLOT_NAME_RT: "Reaktionszeit",
           StringsEnum.PLOT_NAME_CLICKS: "Klicks",
           StringsEnum.GRAPH_TS: "Zeitstempel",
@@ -222,7 +222,7 @@ spanish = {StringsEnum.CUSTOM_LABEL: "Personalizado",
            StringsEnum.INTENSITY_TOOLTIP: "Intensidad del estímulo",
            StringsEnum.UPPER_ISI_TOOLTIP: "Milisegundos. Alcance: " + lower_isi_spa + "-" + str(defs.ISI_max),
            StringsEnum.LOWER_ISI_TOOLTIP: "Milisegundos. Alcance: " + str(defs.ISI_min) + "-" + upper_isi_spa,
-           StringsEnum.SAVE_HDR: "marca de tiempo, Investigacion #, clics,"
+           StringsEnum.SAVE_HDR: "marca de tiempo, investigacion #, clics,"
                                  " milisegundos desde el inicio del experimento, tiempo de respuesta",
            StringsEnum.PLOT_NAME_RT: "Tiempo de respuesta",
            StringsEnum.PLOT_NAME_CLICKS: "Clics",

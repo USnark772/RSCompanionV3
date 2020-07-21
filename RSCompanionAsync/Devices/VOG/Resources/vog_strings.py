@@ -222,7 +222,7 @@ german = {StringsEnum.CUSTOM_LABEL: "Benutzerdefiniert",
           StringsEnum.TRIAL_VAL_TOOLTIP: "Click the button to switch the trial version.",
           StringsEnum.MANUAL_OPEN_TOOLTIP: "Linse manuell öffnen.",
           StringsEnum.MANUAL_CLOSE_TOOLTIP: "Linse manuell schließen.",
-          StringsEnum.SAVE_HDR: "Zeitstempel, Versuch, öffnen, schließen",
+          StringsEnum.SAVE_HDR: "zeitstempel, versuch, öffnen, schließen",
           StringsEnum.PLOT_NAME_OPEN_CLOSE: "Millisekunden",
           StringsEnum.GRAPH_TS: "Zeitstempel",
           }
