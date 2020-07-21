@@ -4,11 +4,7 @@ TODO: Check for any errors listed below.
 TODO: Pressing matters.
     - Make sure reading data from devices is done in threads so timestamps are not delayed.
         - Can't do async style (aioserial) if want threaded in this situation.
-    - Add cond name and exp num/block # to device output. drt example: cond_name, timestamp, block #, etc.
-    - For now, merge all flag/note/cond_name/exp start_stop create_end times into each device master save file.
-    - toss temp folder without saving that data for now. only save master save file for each device.
     - Change timestamps to unix timestamps in save files. Keep graphs and save files using current format.
-    - App freezes when trying to close after experiment is ended and language is set to dutch.
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
