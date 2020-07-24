@@ -9,6 +9,7 @@ TODO: Pressing matters.
         - Change to unix time for data saving.
         - Keep current format for graphing.
         - Keep current format for public facing save files. (app_model.py should probably not have to change)
+    - Check bugfix items
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
@@ -39,6 +40,8 @@ TODO: Test this thing like crazy!
 
 
 TODO: Bug fixes.
+    - if a camera window is minimized during initialization then that minimized window snaps back to its previous
+        position at end of initialization
     -   Exception ignored in: <finalize object at 0x1a8c3f03ee0; dead>
         Traceback (most recent call last):
           File "C:\RSDev\Python\Python37\lib\weakref.py", line 572, in __call__
@@ -52,31 +55,3 @@ TODO: Bug fixes.
           File "C:\RSDev\Python\Python37\lib\shutil.py", line 398, in _rmtree_unsafe
             os.unlink(fullname)
         PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\phill\\AppData\\Local\\Temp\\tmpe4_ooo0j\\CAM_0_2020-07-06-16-17-19.avi'
-
-pseudo code for master files:
-
-device file, times file, keyflag file, notes file
-
-dev_line = str
-time_line = str
-flag_line = str
-notes_line = str
-
-cond_name = ""
-block_num = ""
-flag = ""
-
-loop:
-get min timestamp
-
-if dev_line:
-	line = type, cond_name, timestamp, block_num, dev_line, flag, event
-if time_line:
-	cond_name = cond_name from time_line
-	block_num = block num from time_line
-	line = type, cond_name, timestamp, block_num, time_line, (comma seps), flag, event
-if flag_line:
-	flag = flag from flag_line
-	line = type, cond_name, timestamp, block_num,(comma seps), flag_line, event
-if notes_line
-	line = type, cond_name, timestamp, block_num, (comma seps), flag, notes_line

@@ -29,7 +29,8 @@ from pathlib import Path
 from shutil import rmtree
 from cx_Freeze import setup, Executable
 
-# ************************************************* EDIT AS NEEDED *****************************************************
+# EDIT THESE VARIABLES AS NEEDED
+# **********************************************************************************************************************
 root_dir = 'C:/RSDev/'  # Point to parent dir of project dir.
 builds_dir = root_dir + 'Builds/'
 # **********************************************************************************************************************
