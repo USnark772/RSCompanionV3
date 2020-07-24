@@ -202,8 +202,8 @@ class AppModel:
                 self._first_flag = False
                 create_task(write_line_to_file(self._save_path + self._flag_filename,
                                                self._flag_strings[FlagEnum.FLAG_HDR]))
-            timestamp = format_current_time(datetime.now(), date=True, time=True, micro=True)
-            line = ", ".join([timestamp, flag])
+            # timestamp = format_current_time(datetime.now(), date=True, time=True, micro=True)
+            line = ", ".join([str(datetime.now().timestamp()), flag])
             create_task(write_line_to_file(self._save_path + self._flag_filename, line))
         self._logger.debug("done")
 
@@ -220,8 +220,9 @@ class AppModel:
         if hdr:
             line = self._main_strings[StringsEnum.HDR]
             create_task(write_line_to_file(self._save_path + self._events_filename, line))
-        timestamp = format_current_time(time, date=True, time=True, micro=True)
-        line = ", ".join([timestamp, time_type, self._cond_name, str(self._block_num)])
+        # timestamp = format_current_time(time, date=True, time=True, micro=True)
+        unix = time.timestamp()
+        line = ", ".join([str(time.timestamp()), time_type, self._cond_name, str(self._block_num)])
         create_task(write_line_to_file(self._save_path + self._events_filename, line))
         self._logger.debug("done")
 

@@ -458,7 +458,8 @@ class DRTModel:
         :param timestamp: The timestamp the values were received.
         :return: The formatted output.
         """
-        line = format_current_time(timestamp, date=True, time=True, micro=True)
+        # line = format_current_time(timestamp, date=True, time=True, micro=True)
+        line = str(timestamp.timestamp())
         for i in defs.save_fields:
             line += ", " + str(values[i])
         line = line.rstrip("\r\n")
