@@ -34,40 +34,31 @@ from enum import Enum, auto
 # Define enum like this.
 class StringsEnum(Enum):
     EXAMPLE_ENTRY = auto()
-    GRAPH_TS = auto()
 
 
 # Define languages like this.
 english = {StringsEnum.EXAMPLE_ENTRY: "Implement this language.",
-           StringsEnum.GRAPH_TS: "Timestamp",
            }
 
 dutch = {StringsEnum.EXAMPLE_ENTRY: "Implementeer deze taal.",
-         StringsEnum.GRAPH_TS: "Tijdstempel",
          }
 
 french = {StringsEnum.EXAMPLE_ENTRY: "Implémentez ce langage.",
-          StringsEnum.GRAPH_TS: "Horodatage",
           }
 
 german = {StringsEnum.EXAMPLE_ENTRY: "Implementieren Sie diese Sprache.",
-          StringsEnum.GRAPH_TS: "Zeitstempel",
           }
 
 russian = {StringsEnum.EXAMPLE_ENTRY: "Реализуйте этот язык.",
-           StringsEnum.GRAPH_TS: "Отметка",
            }
 
 spanish = {StringsEnum.EXAMPLE_ENTRY: "Implementa este lenguaje.",
-           StringsEnum.GRAPH_TS: "marca de tiempo",
            }
 
 chinese = {StringsEnum.EXAMPLE_ENTRY: "实施这种语言。",
-           StringsEnum.GRAPH_TS: "时间戳记",
            }
 
 japanese = {StringsEnum.EXAMPLE_ENTRY: "この言語を実装します。",
-            StringsEnum.GRAPH_TS: "タイムスタンプ",
             }
 
 # Add defined languages to strings dictionary.
