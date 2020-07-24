@@ -111,7 +111,6 @@ class RSSaver:
         os.chdir(self._from_dir.name)
         for file in os.listdir():
             if not file.endswith(data_ft):
-                print("Moving file:", file)
                 move(file, self._to_dir)
         os.chdir(prev_dir)
         self._logger.debug("done")
@@ -127,13 +126,53 @@ class RSSaver:
         self._logger.debug("done")
 
     def _make_master_files(self, data: dict) -> None:
+        """
+        Create master output files for each device, add in all flags, notes and events in order of timestamp.
+        :param data: The parsed output data from each device and other .csv output files.
+        :return None:
+        """
         self._logger.debug("running")
         flag = str()
         blk_num = str()
         cond_name = str()
-        exp_status = str()
         Path(self._to_dir).mkdir(parents=True, exist_ok=True)
         os.chdir(self._to_dir)
+        self._open_master_output_files(data)
+        while len(data[app_data_names[2]][1]) > 0:
+            next_key = self._calc_next_item(data)
+            hdr = data[next_key][0]
+            row = data[next_key][1].pop(0)
+            if next_key == app_data_names[0]:  # Flag
+                flag = row[-1]
+                line1 = comma_sep.join([self._strings[StringsEnum.FLAG], cond_name,
+                                        row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num])
+                line2 = comma_sep.join([comma_sep.join(row[hdr[self._strings[StringsEnum.TSTAMP_HDR]] + 1:]), ""])
+                self._write_to_all_dev_files(data, line1, line2)
+            elif next_key == app_data_names[1]:  # Note
+                line1 = comma_sep.join([self._strings[StringsEnum.NOTE], cond_name,
+                                        row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num])
+                line2 = comma_sep.join([flag, comma_sep.join(row[hdr[self._strings[StringsEnum.TSTAMP_HDR]] + 1:])])
+                self._write_to_all_dev_files(data, line1, line2)
+            elif next_key == app_data_names[2]:  # Event
+                cond_name = row[2]
+                blk_num = row[3]
+                line1 = comma_sep.join([self._strings[StringsEnum.EVENT], cond_name,
+                                        row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num])
+                line2 = comma_sep.join([flag, row[1]])
+                self._write_to_all_dev_files(data, line1, line2)
+            else:
+                line = comma_sep.join([row[0], cond_name, row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num,
+                                       comma_sep.join(row[hdr[self._strings[StringsEnum.TSTAMP_HDR]] + 1:]), flag, ""])
+                data[next_key][3].write(line + new_line)
+
+        self._logger.debug("done")
+
+    def _open_master_output_files(self, data: dict) -> None:
+        """
+        Open data_ft type output files for each data type.
+        :param data: The dict containing all data types that will contain open output files for each data type.
+        :return None:
+        """
         for key in data.keys():
             if key not in app_data_names:
                 data[key].append(open(key + unsc_sep + self._exp_name + data_ft, "w"))
@@ -145,43 +184,28 @@ class RSSaver:
                 hdr_list = [x[0] for x in hdr_list]
                 hdr = comma_sep.join([self._strings[StringsEnum.HDR_1], comma_sep.join(hdr_list),
                                       self._strings[StringsEnum.HDR_2]])
-                data[key][3].write(hdr + new_line)
-        while len(data[app_data_names[2]][1]) > 0:
-            next_key = self._calc_next_item(data)
-            hdr = data[next_key][0]
-            row = data[next_key][1].pop(0)
-            if next_key == app_data_names[0]:
-                flag = row[-1]
-                line1 = comma_sep.join([self._strings[StringsEnum.FLAG], cond_name,
-                                        row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num])
-                line2 = comma_sep.join([comma_sep.join(row[hdr[self._strings[StringsEnum.TSTAMP_HDR]] + 1:]),
-                                        exp_status])
-                self._write_to_all_dev_files(data, line1, line2)
-            elif next_key == app_data_names[1]:
-                line1 = comma_sep.join([self._strings[StringsEnum.NOTE], cond_name,
-                                        row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num])
-                line2 = comma_sep.join([flag, row[hdr[self._strings[StringsEnum.TSTAMP_HDR]] + 1]])
-                self._write_to_all_dev_files(data, line1, line2)
-            elif next_key == app_data_names[2]:
-                cond_name = row[2]
-                blk_num = row[3]
-                exp_status = row[1]
-                line1 = comma_sep.join([self._strings[StringsEnum.EVENT], cond_name,
-                                        row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num])
-                line2 = comma_sep.join([flag, exp_status])
-                self._write_to_all_dev_files(data, line1, line2)
-            else:
-                line = comma_sep.join([row[0], cond_name, row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num,
-                                       comma_sep.join(row[hdr[self._strings[StringsEnum.TSTAMP_HDR]] + 1:]), flag,
-                                       exp_status])
-                data[next_key][3].write(line + new_line)
+                data[key][-1].write(hdr + new_line)
+
+    @staticmethod
+    def _close_master_output_files(data: dict) -> None:
+        """
+        Close all master output files in data dictionary.
+        :param data: The data dict containing open output files.
+        :return None:
+        """
         for key in data.keys():
             if key not in app_data_names:
                 data[key][3].close()
-        self._logger.debug("done")
 
     @staticmethod
-    def _write_to_all_dev_files(data: dict, line1: str, line2: str):
+    def _write_to_all_dev_files(data: dict, line1: str, line2: str) -> None:
+        """
+        Concat line1, appropriate comma sep, and line2 and write to each device master output file.
+        :param data: refernece to each device output file and appropriate comma sep stored in dictionary.
+        :param line1: first line to concat.
+        :param line2: second line to concat.
+        :return None:
+        """
         for key in data.keys():
             if key not in app_data_names:
                 data[key][3].write(line1 + comma_sep * data[key][2] + line2 + new_line)
@@ -205,6 +229,11 @@ class RSSaver:
         return best
 
     def _parse_experiment(self) -> dict:
+        """
+        Take all files of type data_ft and parse into dictionary with keys for each type of output and values tuples
+        containing string rows from each respective output type.
+        :return dict: The parsed data.
+        """
         self._logger.debug("running")
         data = dict()
         num_devices = dict()
@@ -239,6 +268,13 @@ class RSSaver:
         return data
 
     def _parse_csv_file(self, filename: str, dev_id: str = None) -> (dict, list, int):
+        """
+        Parse rs_companion device output files of type data_ft.
+        :param filename: The file to open and parse.
+        :param dev_id: Optional device id if the file is a device output file.
+        :return tuple: dictionary of hdr:index, list of rows in index order, number of comma_sep required for this
+        output file.
+        """
         hdr_dict = dict()
         rows = list()
         dev_num_col = 0
@@ -268,13 +304,14 @@ class RSSaver:
 
 
 def main():
-    exp_dir = "C:/Users/phill/Companion Save Files/experiment_2020-07-20-17-37-51"
-    to_dir = "C:/Users/phill/Companion Save Files/test_exp_edit_out"
-    saver = RSSaver()
-    saver.start(to_dir)
-    saver._from_dir = exp_dir
-    saver._exp_name = exp_dir[exp_dir.rindex("/") + 1:]
-    saver.stop()
+    pass
+    # exp_dir = "C:/Users/phill/Companion Save Files/experiment_2020-07-20-17-37-51"
+    # to_dir = "C:/Users/phill/Companion Save Files/test_exp_edit_out"
+    # saver = RSSaver(LangEnum.ENG)
+    # saver.start(to_dir)
+    # saver._from_dir = exp_dir
+    # saver._exp_name = exp_dir[exp_dir.rindex("/") + 1:]
+    # saver.stop()
 
 
 if __name__ == '__main__':

@@ -175,8 +175,8 @@ class AppModel:
                 self._first_note = False
                 create_task(write_line_to_file(self._save_path + self._note_filename,
                                                self._note_strings[NoteEnum.NOTE_HDR]))
-            timestamp = format_current_time(datetime.now(), date=True, time=True, micro=True)
-            line = ", ".join([timestamp, note])
+            timestamp = datetime.now().timestamp()
+            line = ", ".join([str(timestamp), note])
             create_task(write_line_to_file(self._save_path + self._note_filename, line))
 
     def send_keyflag_to_devs(self, flag: str) -> None:
@@ -202,7 +202,6 @@ class AppModel:
                 self._first_flag = False
                 create_task(write_line_to_file(self._save_path + self._flag_filename,
                                                self._flag_strings[FlagEnum.FLAG_HDR]))
-            # timestamp = format_current_time(datetime.now(), date=True, time=True, micro=True)
             line = ", ".join([str(datetime.now().timestamp()), flag])
             create_task(write_line_to_file(self._save_path + self._flag_filename, line))
         self._logger.debug("done")
@@ -220,17 +219,16 @@ class AppModel:
         if hdr:
             line = self._main_strings[StringsEnum.HDR]
             create_task(write_line_to_file(self._save_path + self._events_filename, line))
-        # timestamp = format_current_time(time, date=True, time=True, micro=True)
-        unix = time.timestamp()
         line = ", ".join([str(time.timestamp()), time_type, self._cond_name, str(self._block_num)])
         create_task(write_line_to_file(self._save_path + self._events_filename, line))
         self._logger.debug("done")
 
-    def signal_create_exp(self, path: str, cond_name: str) -> None:
+    def signal_create_exp(self, path: str, cond_name: str, keyflag: str) -> None:
         """
         Call create_exp on all device controllers.
         :param path: The save dir for this experiment.
         :param cond_name: The optional condition name for this experiment.
+        :param keyflag: The latest keyflag in effect.
         :return bool: If there was an error.
         """
         self._logger.debug("running")
@@ -253,6 +251,8 @@ class AppModel:
             self._logger.debug("done")
             self.exp_created = True
             self._done_saving_flag.clear()
+            self.send_keyflag_to_devs(keyflag)
+            self.save_keyflag(keyflag)
         except Exception as e:
             self._logger.exception("Failed creating exp on a controller.")
             for controller in devices_running:
@@ -288,13 +288,13 @@ class AppModel:
         devices = list()
         next_block_num = self._block_num + 1
         self._cond_name = cond_name
-        self.save_exp_times(datetime.now(), self._main_strings[StringsEnum.START])
         try:
             for controller in self._devs.values():
                 controller.start_exp(next_block_num, self._cond_name)
                 devices.append(controller)
             self.exp_running = True
             self._block_num = next_block_num
+            self.save_exp_times(datetime.now(), self._main_strings[StringsEnum.START])
         except Exception as e:
             self._logger.exception("Failed trying to start exp on controller.")
             for controller in devices:

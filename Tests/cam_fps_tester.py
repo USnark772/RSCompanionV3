@@ -98,14 +98,17 @@ def test_cam(backend_to_use, cam_index: int = 0, num_reads: int = 300, info_leve
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
     # Run tests.
+    print("Testing fps")
     test_type_fps(cap, cam_index, num_reads)
+    print("Testing read times")
     test_type_read_times(cap, cam_index, num_reads, info_level)
+    print("Done testing")
 
 
 def main():
     detailed = False     # Change to true to see more detailed output.
     cam_range_start = 0  # Change to index of first cam to test
-    cam_range_end = 3    # Change to index of last cam to test + 1
+    cam_range_end = 1    # Change to index of last cam to test + 1
     num_reads = 180      # Change to number of frames to capture per test.
     ts = list()
     for cam_index in range(cam_range_start, cam_range_end):
