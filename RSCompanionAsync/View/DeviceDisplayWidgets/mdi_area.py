@@ -128,12 +128,18 @@ class MDIArea(QMdiArea):
         self._logger.debug("running")
         window_list = self.subWindowList(QMdiArea.ActivationHistoryOrder)
         window_list.reverse()
+        window_list_mod = list()
         for i in range(len(window_list)):
-            if i == 0:
-                window_list[i].move(0, 0)
+            if window_list[i].isMinimized():
+                continue
             else:
-                prev = window_list[i-1]
-                window_list[i].move(prev.pos().x() + prev.width(), 0)
+                window_list_mod.append(window_list[i])
+        for i in range(len(window_list_mod)):
+            if i == 0:
+                window_list_mod[i].move(0, 0)
+            else:
+                prev = window_list_mod[i-1]
+                window_list_mod[i].move(prev.pos().x() + prev.width(), 0)
         self._logger.debug("done")
 
     def sort_windows_vertical(self) -> None:
@@ -144,12 +150,18 @@ class MDIArea(QMdiArea):
         self._logger.debug("running")
         window_list = self.subWindowList(QMdiArea.ActivationHistoryOrder)
         window_list.reverse()
+        window_list_mod = list()
         for i in range(len(window_list)):
-            if i == 0:
-                window_list[i].move(0, 0)
+            if window_list[i].isMinimized():
+                continue
             else:
-                prev = window_list[i-1]
-                window_list[i].move(0, prev.pos().y() + prev.height())
+                window_list_mod.append(window_list[i])
+        for i in range(len(window_list_mod)):
+            if i == 0:
+                window_list_mod[i].move(0, 0)
+            else:
+                prev = window_list_mod[i-1]
+                window_list_mod[i].move(0, prev.pos().y() + prev.height())
         self._logger.debug("done")
 
     # TODO: Implement this
