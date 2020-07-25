@@ -361,7 +361,7 @@ class AppController:
         self._logger.debug("running")
         # TODO: switch these back when .rs file reading is implemented.
         # self._model.signal_create_exp(self._save_file_name, self.button_box.get_condition_name())
-        self._model.signal_create_exp(self._save_dir, self.button_box.get_condition_name())
+        self._model.signal_create_exp(self._save_dir, self.button_box.get_condition_name(), self.flag_box.get_flag())
         if self._model.exp_created:
             self.button_box.set_start_button_enabled(True)
             self.button_box.set_create_button_state(1)

@@ -16,7 +16,7 @@ def scan_ports() -> None:
         ports = comports()
         print("Plugged in COMs")
         for port in ports:
-            print(port)
+            print(port, port.pid, port.vid)
         print()
         if len(ports) > len(known_ports):
             check_for_new_devices(ports)
