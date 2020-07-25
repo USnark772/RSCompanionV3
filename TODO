@@ -40,8 +40,6 @@ TODO: Test this thing like crazy!
 
 
 TODO: Bug fixes.
-    - if a camera window is minimized during initialization then that minimized window snaps back to its previous
-        position at end of initialization
     -   Exception ignored in: <finalize object at 0x1a8c3f03ee0; dead>
         Traceback (most recent call last):
           File "C:\RSDev\Python\Python37\lib\weakref.py", line 572, in __call__

@@ -230,7 +230,6 @@ class CamView(AbstractView):
         self._use_overlay_checkbox.toggled.connect(func)
         self._logger.debug("done")
 
-
     def _config_button_handler(self) -> None:
         """
         Show config pop up.
@@ -447,11 +446,13 @@ class CamView(AbstractView):
         :return None:
         """
         self._logger.debug("running")
+        geo = self.geometry()
         self._showing_images = True
         self._initialization_bar_frame.hide()
         self._image_display.show()
         self.config_button.show()
         self.setStyleSheet("background-color: black")
+        self.setGeometry(geo)
         self._logger.debug("done")
 
     def show_initialization(self) -> None:
