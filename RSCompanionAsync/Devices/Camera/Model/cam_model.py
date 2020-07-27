@@ -354,7 +354,8 @@ class CamModel:
         Create new writer and set boolean to start putting frames in write queue.
         :return None:
         """
-        filename = path + "CAM_" + str(self._cam_index) + "_" + format_current_time(datetime.now(), save=True) + ".avi"
+        # filename = path + "CAM_" + str(self._cam_index) + "_" + format_current_time(datetime.now(), save=True) + ".avi"
+        filename = path + "CAM_" + str(self._cam_index) + ".avi"
         x, y = self._cam_reader.get_resolution()
         self._frame_size = (int(x), int(y))
         self._write_q = SimpleQueue()

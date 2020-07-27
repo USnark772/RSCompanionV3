@@ -63,7 +63,8 @@ class DRTModel:
         :return None:
         """
         self._save_dir = path
-        self._save_filename = self._dev_name + "_" + format_current_time(datetime.now(), save=True) + ".csv"
+        # self._save_filename = self._dev_name + "_" + format_current_time(datetime.now(), save=True) + ".csv"
+        self._save_filename = self._dev_name + ".csv"
 
     def set_current_vals(self, duration: int = None, intensity: int = None, upper_isi: int = None,
                          lower_isi: int = None) -> None:

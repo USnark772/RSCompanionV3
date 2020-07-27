@@ -66,7 +66,8 @@ class VOGModel:
         :return None:
         """
         self._save_dir = path
-        self._save_filename = self._dev_name + "_" + format_current_time(datetime.now(), save=True) + ".csv"
+        # self._save_filename = self._dev_name + "_" + format_current_time(datetime.now(), save=True) + ".csv"
+        self._save_filename = self._dev_name + ".csv"
 
     def set_current_vals(self, name: str = None, max_open: int = None, max_close: int = None, debounce: int = None,
                          button_mode: int = None, control_mode: int = None) -> None:

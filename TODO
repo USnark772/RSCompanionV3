@@ -4,12 +4,6 @@ TODO: Check for any errors listed below.
 TODO: Pressing matters.
     - Make sure reading data from devices is done in threads so timestamps are not delayed.
         - Can't do async style (aioserial) if want threaded in this situation.
-    - Change timestamps to unix timestamps.
-        - Take out timestamp from device specific save filenames.
-        - Change to unix time for data saving.
-        - Keep current format for graphing.
-        - Keep current format for public facing save files. (app_model.py should probably not have to change)
-    - Check bugfix items
 
 TODO: At some point
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)

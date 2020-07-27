@@ -76,9 +76,9 @@ class AppModel:
         self._cond_name = str()
         self.exp_created = False
         self.exp_running = False
-        self._note_filename = "notes"
-        self._flag_filename = "flags"
-        self._events_filename = "events"
+        self._flag_filename = "flags.csv"
+        self._note_filename = "notes.csv"
+        self._events_filename = "events.csv"
         self._first_note = True
         self._first_flag = True
         self._main_strings = strings[lang]
@@ -212,7 +212,7 @@ class AppModel:
         :param time: formatted experiment start time used for the save file
         :param time_type: ["create", "end", "start", "stop"]
         :param time: datetime to be recorded
-        :param hdr:
+        :param hdr: Whether this file needs a header before writing any other line.
         :return None:
         """
         self._logger.debug("running")
@@ -240,9 +240,9 @@ class AppModel:
         now = datetime.now()
         exp_start_time = format_current_time(now, save=True)
         self._save_path = self._saver.start(path + "/experiment_" + exp_start_time)
-        self._flag_filename = "flags_" + exp_start_time + ".csv"
-        self._note_filename = "notes_" + exp_start_time + ".csv"
-        self._events_filename = "events_" + exp_start_time + ".csv"
+        # self._flag_filename = "flags_" + exp_start_time + ".csv"
+        # self._note_filename = "notes_" + exp_start_time + ".csv"
+        # self._events_filename = "events_" + exp_start_time + ".csv"
         self.save_exp_times(now, self._main_strings[StringsEnum.CREATE], True)
         try:
             for controller in self._devs.values():
@@ -484,7 +484,7 @@ class AppModel:
     async def _remove_lost_devices(self) -> None:
         """
         For any lost device, destroy controller and signal view removal to controller.
-        :return: None.
+        :return None:
         """
         self._logger.debug("running")
         ret, item = self._rs_dev_scanner.get_next_lost_com()
