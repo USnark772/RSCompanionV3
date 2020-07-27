@@ -18,11 +18,11 @@ def scan_ports() -> None:
         for port in ports:
             print(port, port.pid, port.vid)
         print()
-        if len(ports) > len(known_ports):
-            check_for_new_devices(ports)
-        elif len(ports) < len(known_ports):
-            check_for_disconnects(ports)
-        sleep(1)
+        # if len(ports) > len(known_ports):
+        #     check_for_new_devices(ports)
+        # elif len(ports) < len(known_ports):
+        #     check_for_disconnects(ports)
+        sleep(5)
 
 
 def check_for_new_devices(ports: [ListPortInfo]) -> None:
@@ -33,6 +33,7 @@ def check_for_new_devices(ports: [ListPortInfo]) -> None:
             ret_val, connection = try_open_port(port)
             if ret_val:
                 print("Connected to port:", port, "Connection is:", connection)
+                connection.close()
             else:
                 print("Failed to connect to port:", port)
             print()

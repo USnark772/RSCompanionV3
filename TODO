@@ -6,6 +6,8 @@ TODO: Pressing matters.
         - Can't do async style (aioserial) if want threaded in this situation.
 
 TODO: At some point
+    - Figure out how to catch SIGINT and close cameras gracefully.
+    - Consider creating a base class(es) for Horizontally Graphable Devices (?) such as drt and vog.
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
         - Try to figure out which camera each mic belongs to and make that an mp4.
         - If mic is not attached to camera then save as audio file.
@@ -26,14 +28,17 @@ TODO: At some point
     - Look over https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html and make edits to imports.
     - Look at info_box.py empty QLabel items and consider a spacer item instead.
     - extract view from controller
+    - Look up python support for xb radio?
 
 TODO: Test this thing like crazy!
     - Look for if video is smooth on saved files even if it's not in the preview in the app.
     - Proper app usage tests.
     - Improper app usage tests.
+    - Check .csv output files for any issues with notes, flags, events, device data, number of comma separators.
 
 
 TODO: Bug fixes.
+    - App is not saving data...
     -   Exception ignored in: <finalize object at 0x1a8c3f03ee0; dead>
         Traceback (most recent call last):
           File "C:\RSDev\Python\Python37\lib\weakref.py", line 572, in __call__
