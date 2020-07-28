@@ -31,7 +31,6 @@ from logging import getLogger, StreamHandler
 from operator import itemgetter
 from pathlib import Path
 from shutil import move
-from time import sleep
 from RSCompanionAsync.Resources.Strings.file_saver_strings import strings, StringsEnum, LangEnum
 
 """
@@ -78,17 +77,12 @@ class RSSaver:
         :return bool: Whether saving was successful.
         """
         self._logger.debug("running")
-        # print("stop() Here 1")
         if self._from_dir is None:
             self._logger.debug("done with False")
             return False
-        # print("stop() Here 2")
         self._finalize_data_output()
-        # print("stop() Here 3")
         self._move_non_csv_to_out_dir()
-        # print("stop() Here 4")
         self._from_dir.cleanup()
-        # print("stop() Here 5")
         self._logger.debug("done with True")
         return True
 
@@ -128,11 +122,8 @@ class RSSaver:
         :return None:
         """
         self._logger.debug("running")
-        # print("_finalize_data_output() Here 1")
         data: dict = self._parse_experiment()
-        # print("_finalize_data_output() Here 2")
         self._make_master_files(data)
-        # print("_finalize_data_output() Here 3")
         self._logger.debug("done")
 
     def _make_master_files(self, data: dict) -> None:
@@ -145,61 +136,38 @@ class RSSaver:
         flag = str()
         blk_num = str()
         cond_name = str()
-        # print("_make_master_files() Here 1")
         Path(self._to_dir).mkdir(parents=True, exist_ok=True)
-        # print("_make_master_files() Here 2")
         prev_dir = os.getcwd()
         os.chdir(self._to_dir)
-        # print("_make_master_files() Here 3")
         self._open_master_output_files(data)
-        # print("_make_master_files() Here 4")
-        # print(data[app_data_names[2]])
-        # print(data[app_data_names[2]][1])
-        # print("len(data[app_data_names[2]][1]))", data[app_data_names[2]][1])
         while len(data[app_data_names[2]][1]) > 0:
-            # print("_make_master_files() Here 5")
             next_key = self._calc_next_item(data)
             hdr = data[next_key][0]
             row = data[next_key][1].pop(0)
             if next_key == app_data_names[0]:  # Flag
-                # print("_make_master_files() Here 6")
                 flag = row[-1]
                 line1 = comma_sep.join([self._strings[StringsEnum.FLAG], cond_name,
                                         row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num])
                 line2 = comma_sep.join([comma_sep.join(row[hdr[self._strings[StringsEnum.TSTAMP_HDR]] + 1:]), ""])
-                # print("_make_master_files() Here 7")
                 self._write_to_all_dev_files(data, line1, line2)
-                # print("_make_master_files() Here 8")
             elif next_key == app_data_names[1]:  # Note
-                # print("_make_master_files() Here 9")
                 line1 = comma_sep.join([self._strings[StringsEnum.NOTE], cond_name,
                                         row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num])
                 line2 = comma_sep.join([flag, comma_sep.join(row[hdr[self._strings[StringsEnum.TSTAMP_HDR]] + 1:])])
-                # print("_make_master_files() Here 10")
                 self._write_to_all_dev_files(data, line1, line2)
-                # print("_make_master_files() Here 11")
             elif next_key == app_data_names[2]:  # Event
-                # print("_make_master_files() Here 12")
                 cond_name = row[2]
                 blk_num = row[3]
                 line1 = comma_sep.join([self._strings[StringsEnum.EVENT], cond_name,
                                         row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num])
                 line2 = comma_sep.join([flag, row[1]])
-                # print("_make_master_files() Here 13")
                 self._write_to_all_dev_files(data, line1, line2)
-                # print("_make_master_files() Here 14")
             else:
-                # print("_make_master_files() Here 15")
                 line = comma_sep.join([row[0], cond_name, row[hdr[self._strings[StringsEnum.TSTAMP_HDR]]], blk_num,
                                        comma_sep.join(row[hdr[self._strings[StringsEnum.TSTAMP_HDR]] + 1:]), flag, ""])
-                # print("_make_master_files() Here 16")
                 data[next_key][3].write(line + new_line)
-        #         print("_make_master_files() Here 17")
-        # print("_make_master_files() Here 18")
         self._close_master_output_files(data)
         os.chdir(prev_dir)
-        # print("_make_master_files() Here 19")
-        # sleep(5)
         self._logger.debug("done")
 
     def _open_master_output_files(self, data: dict) -> None:
@@ -231,9 +199,7 @@ class RSSaver:
         for key in data.keys():
             if key not in app_data_names:
                 file: TextIOWrapper = data[key][3]
-                # print("closing master output file: " + str(data[key][3]))
                 file.close()
-                # print("closed master output file: " + str(data[key][3]))
 
     @staticmethod
     def _write_to_all_dev_files(data: dict, line1: str, line2: str) -> None:
@@ -277,30 +243,21 @@ class RSSaver:
         num_devices = dict()
         prev_dir = os.getcwd()
         os.chdir(self._from_dir.name)
-        # print("_parse_experiment() Here 1")
         for file in os.listdir():
-            # print("_parse_experiment() Here 2: " + file)
             if file.endswith(data_ft):
-                # print("_parse_experiment() Here 3")
                 info = os.path.splitext(file)[0]
                 if unsc_sep in file:
                     info = info.split(unsc_sep)
                 else:
                     info = [info, ""]
-                # print("_parse_experiment() Here 4: ", info)
                 if info[0] in app_data_names:  # Type: app output data.
-                    # print("_parse_experiment() Here 4.1")
                     hdr, vals, num_col = self._parse_csv_file(file)
                     data[info[0]] = [hdr, vals, num_col]
-                    # print("_parse_experiment() Here 4.2: " + str(data[info[0]]))
                 else:  # Type: device output data.
-                    # print("_parse_experiment() Here 4.3")
                     if info[0] not in num_devices.keys():  # Have not seen this device type yet.
                         num_devices[info[0]] = 0
                     num_devices[info[0]] += 1
-                    # print("_parse_experiment() Here 4.4")
                     hdr, vals, num_col = self._parse_csv_file(file, info[0] + unsc_sep + info[1])
-                    # print("_parse_experiment() Here 4.5", hdr, vals, num_col)
                     if info[0] not in data.keys():
                         data[info[0]] = [hdr, [], num_col]
                         for item in vals:
@@ -308,17 +265,13 @@ class RSSaver:
                     else:
                         for item in vals:
                             data[info[0]][1].append(item)
-                # print("_parse_experiment() Here 5")
         os.chdir(prev_dir)
-        # print("_parse_experiment() Here 6")
         for data_type in data:
-            # print("_parse_experiment() Here 7")
             if data_type in app_data_names:
                 continue
             if num_devices[data_type] > 1:
                 data[data_type][1] = sorted([row for row in data[data_type][1]],
                                             key=itemgetter(data[data_type][0][self._strings[StringsEnum.TSTAMP_HDR]]))
-        # print("_parse_experiment() Here 8")
         self._logger.debug("done")
         return data
 
@@ -334,41 +287,27 @@ class RSSaver:
         rows = list()
         dev_num_col = 0
         dev = False
-        # print("_parse_csv_file() Here 1")
         with open(filename) as f:
-            # print("_parse_csv_file() Here 2: " + filename)
             hdr = f.readline()
-            # print("_parse_csv_file() Here 3")
             if dev_id is not None:
-                # print("_parse_csv_file() Here 4")
                 hdr_values = [self._strings[StringsEnum.ID_HDR]]
                 more_vals = hdr.rstrip(new_line).split(comma_sep)
                 dev_num_col = len(more_vals)
-                # print("_parse_csv_file() Here 5", hdr_values, more_vals, dev_num_col)
                 for x in more_vals:
-                    # print("_parse_csv_file() Here 6")
                     hdr_values.append(x)
                 dev = True
             else:
-                # print("_parse_csv_file() Here 8")
                 hdr_values = hdr.rstrip(new_line).split(comma_sep)
             for i in range(len(hdr_values)):
-                # print("_parse_csv_file() Here 9")
                 hdr_dict[hdr_values[i]] = i
             for line in f:
-                # print("_parse_csv_file() Here 10")
                 row = line.rstrip(new_line).split(comma_sep)
                 if dev:
-                    # print("_parse_csv_file() Here 11")
                     temp = [dev_id]
                     for item in row:
-                        # print("_parse_csv_file() Here 12")
                         temp.append(item)
-                    # print("_parse_csv_file() Here 13")
                     row = temp
                 rows.append(row)
-        #     print("_parse_csv_file() Here 14")
-        # print("_parse_csv_file() Here 15")
         return hdr_dict, rows, dev_num_col
 
 

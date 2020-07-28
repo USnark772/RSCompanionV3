@@ -38,7 +38,9 @@ TODO: Test this thing like crazy!
 
 
 TODO: Bug fixes.
-    -   Exception ignored in: <finalize object at 0x1a8c3f03ee0; dead>
+    Heisenbugs:
+    -   Error saving what seems to be last data line from device when ending experiment.
+    -   Exception ignored in: <finalize object at 0x1a8c3f03ee0; dead>  # Fixed?
         Traceback (most recent call last):
           File "C:\RSDev\Python\Python37\lib\weakref.py", line 572, in __call__
             return info.func(*info.args, **(info.kwargs or {}))

@@ -238,9 +238,6 @@ class AppModel:
         now = datetime.now()
         exp_start_time = format_current_time(now, save=True)
         self._save_path = self._saver.start(path + "/experiment_" + exp_start_time)
-        # self._flag_filename = "flags_" + exp_start_time + ".csv"
-        # self._note_filename = "notes_" + exp_start_time + ".csv"
-        # self._events_filename = "events_" + exp_start_time + ".csv"
         self.save_exp_times(now, self._main_strings[StringsEnum.CREATE], True)
         try:
             for controller in self._devs.values():
@@ -249,8 +246,9 @@ class AppModel:
             self._logger.debug("done")
             self.exp_created = True
             self._done_saving_flag.clear()
-            self.send_keyflag_to_devs(keyflag)
-            self.save_keyflag(keyflag)
+            if len(keyflag) > 0:
+                self.send_keyflag_to_devs(keyflag)
+                self.save_keyflag(keyflag)
         except Exception as e:
             self._logger.exception("Failed creating exp on a controller.")
             for controller in devices_running:
