@@ -3,7 +3,7 @@ Pre-checks:
     -   Make sure APPDIR points to your app dir's parent dir.   Ex. C:\RSDev\asyncCompanion would be C:\RSDev\
     -   Make sure PYTHONDIR points to your python directory.    Ex. ..\Python\Python37\
 -   In ..\asyncCompanion\For_setup\comp_app_setup.py,   (Use either forward-slash '/' or double back-slash '\\' in .py files)
-    -   Update root_dir.                                        Ex. C:/RSDev
+    -   Update root_dir.                                        Ex. C:/RSDev/
 -   In ..\asyncCompanion\For_setup\comp_app_inno.iss,   (Use back-slash '\' in .iss files)
     -   Make sure BuildDir points to your Builds directory.     Ex. C:\RSDev\Builds\
 -   In ..\Python\Python37\Lib\site-packages\mpl_toolkits\
