@@ -360,10 +360,8 @@ class AppModel:
         :return None:
         """
         for device in self._devs.values():
-            # print("app_model.py _save_exp() awaiting device: " + str(device) + ".await_saved()")
             await device.await_saved()
-        x = await get_running_loop().run_in_executor(None, self._saver.stop)
-        print("Got x:", x)
+        await get_running_loop().run_in_executor(None, self._saver.stop)
         self._saving_flag.clear()
         self._done_saving_flag.set()
 

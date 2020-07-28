@@ -38,7 +38,6 @@ TODO: Test this thing like crazy!
 
 
 TODO: Bug fixes.
-    - App is not saving data...
     -   Exception ignored in: <finalize object at 0x1a8c3f03ee0; dead>
         Traceback (most recent call last):
           File "C:\RSDev\Python\Python37\lib\weakref.py", line 572, in __call__
