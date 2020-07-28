@@ -26,10 +26,12 @@ https://redscientific.com/index.html
 
 import os
 import tempfile
+from io import TextIOWrapper
 from logging import getLogger, StreamHandler
 from operator import itemgetter
 from pathlib import Path
 from shutil import move
+from time import sleep
 from RSCompanionAsync.Resources.Strings.file_saver_strings import strings, StringsEnum, LangEnum
 
 """
@@ -146,6 +148,7 @@ class RSSaver:
         # print("_make_master_files() Here 1")
         Path(self._to_dir).mkdir(parents=True, exist_ok=True)
         # print("_make_master_files() Here 2")
+        prev_dir = os.getcwd()
         os.chdir(self._to_dir)
         # print("_make_master_files() Here 3")
         self._open_master_output_files(data)
@@ -194,7 +197,9 @@ class RSSaver:
         #         print("_make_master_files() Here 17")
         # print("_make_master_files() Here 18")
         self._close_master_output_files(data)
+        os.chdir(prev_dir)
         # print("_make_master_files() Here 19")
+        # sleep(5)
         self._logger.debug("done")
 
     def _open_master_output_files(self, data: dict) -> None:
@@ -225,7 +230,10 @@ class RSSaver:
         """
         for key in data.keys():
             if key not in app_data_names:
-                data[key][3].close()
+                file: TextIOWrapper = data[key][3]
+                # print("closing master output file: " + str(data[key][3]))
+                file.close()
+                # print("closed master output file: " + str(data[key][3]))
 
     @staticmethod
     def _write_to_all_dev_files(data: dict, line1: str, line2: str) -> None:

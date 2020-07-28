@@ -63,7 +63,6 @@ class AppModel:
         self._saving_flag = Event()
         self._current_lang = lang
         self._saver = RSSaver(lang, log_handlers)
-        self._temp_folder = None
         self._save_path = str()
         self._devs = dict()
         self._dev_inits = dict()
@@ -236,7 +235,6 @@ class AppModel:
         self._first_flag = True
         self._first_note = True
         devices_running = list()
-        # self._temp_folder = tempfile.TemporaryDirectory()
         now = datetime.now()
         exp_start_time = format_current_time(now, save=True)
         self._save_path = self._saver.start(path + "/experiment_" + exp_start_time)
@@ -257,7 +255,6 @@ class AppModel:
             self._logger.exception("Failed creating exp on a controller.")
             for controller in devices_running:
                 controller.end_exp()
-            self._temp_folder.cleanup()
             self.exp_created = False
 
     def signal_end_exp(self) -> None:
@@ -365,21 +362,10 @@ class AppModel:
         for device in self._devs.values():
             # print("app_model.py _save_exp() awaiting device: " + str(device) + ".await_saved()")
             await device.await_saved()
-        await get_running_loop().run_in_executor(None, self._saver.stop)
+        x = await get_running_loop().run_in_executor(None, self._saver.stop)
+        print("Got x:", x)
         self._saving_flag.clear()
         self._done_saving_flag.set()
-        self.cleanup_temp_folder()
-
-    def cleanup_temp_folder(self) -> None:
-        """
-        Cleanup and remove temp folder.
-        :return None:
-        """
-        self._logger.debug("running")
-        if self._temp_folder is not None:
-            self._temp_folder.cleanup()
-        self._temp_folder = None
-        self._logger.debug("done")
 
     def _signal_lang_change(self) -> bool:
         """
@@ -578,7 +564,6 @@ class AppModel:
             await awaitable
         if self._saving_flag.is_set():
             await self._done_saving_flag.wait()
-        self.cleanup_temp_folder()
         self._logger.debug("done")
 
     # TODO add debugging
