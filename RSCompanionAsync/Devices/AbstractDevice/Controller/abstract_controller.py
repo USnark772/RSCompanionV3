@@ -117,3 +117,11 @@ class AbstractController(ABC):
         :return None:
         """
         pass
+
+    def update_cond_name(self, name: str) -> None:
+        """
+        Logic for if this device needs to know about condition name updates.
+        :param name: The new condition name.
+        :return None:
+        """
+        pass

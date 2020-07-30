@@ -228,6 +228,16 @@ class Controller(AbstractController):
         self.send_msg_to_model((defs.ModelEnum.KEYFLAG, flag))
         self._logger.debug("done")
 
+    def update_cond_name(self, name: str) -> None:
+        """
+        Update condition name for this device.
+        :param name: The new condition name.
+        :return None:
+        """
+        self._logger.debug("running")
+        self.send_msg_to_model((defs.ModelEnum.COND_NAME, name))
+        self._logger.debug("done")
+
     def update_resolution(self) -> None:
         """
         Get resolution selection from View and pass to model.

@@ -4,6 +4,18 @@ TODO: Check for any errors listed below.
 TODO: Pressing matters.
     - Make sure reading data from devices is done in threads so timestamps are not delayed.
         - Can't do async style (aioserial) if want threaded in this situation.
+    - Figure out xbee api mode
+        https://serdmanczyk.github.io/XBeeAPI-PythonArduino-Tutorial/
+    - in Info box:
+        - Add current time
+        - Add block start time
+        - Ensure Block number is there
+        - Ensure exp start time is there
+    - Allow main window to resize more freely.
+        - Allow MDI area to completely disappear due to resize.
+    - Response times of -1 (a miss) should not be plotted at all or the color of their marker should be Red.
+        Right now they appear to be an extremely fast reaction time in the plot
+
 
 TODO: At some point
     - Figure out how to catch SIGINT and close cameras gracefully.
@@ -38,8 +50,18 @@ TODO: Test this thing like crazy!
 
 
 TODO: Bug fixes.
+    - When multiple devices are plugged in and an exp and block are running:
+        - dev window does not disappear on device unplug
+        - Replugging device causes new window to appear (multiple windows for same device)
+        - Issue with control loss if new device is plugged in:
+            Related to a window not being removed when a device is unplugged during an experiment.
+            If the ghost window stays around and another device is plugged in, the ghost window appears to block the
+            functionality of the block start button. I plugged in a drt, started a block, removed the DRT during a
+            block (window stays), ended the experiment, plugged in a VOG, started an experiment, now the block start
+            button does nothing and the app wont close
     Heisenbugs:
     -   Error saving what seems to be last data line from device when ending experiment.
+    -   Sometimes when unplugging cameras during initialization, the device window fails to disappear.
     -   Exception ignored in: <finalize object at 0x1a8c3f03ee0; dead>  # Fixed?
         Traceback (most recent call last):
           File "C:\RSDev\Python\Python37\lib\weakref.py", line 572, in __call__

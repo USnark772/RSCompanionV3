@@ -124,7 +124,7 @@ class AppController:
         self._curr_cond_name = ""
         self._logger.debug("Initialized")
 
-    def window_layout_handler(self, layout: str) -> None:
+    def _window_layout_handler(self, layout: str) -> None:
         """
         Sets the subwindow layout to vertical or horizontal
         :param layout: string value of either "vertical" or "horizontal" to set layout
@@ -249,6 +249,16 @@ class AppController:
         note = self.note_box.get_note()
         self.note_box.clear_note()
         self._model.save_note(note)
+        self._logger.debug("done")
+
+    def _cond_name_handler(self, text: str) -> None:
+        """
+        Handle when condition name is changed.
+        :param text: The new condition name text.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._model.send_cond_name_to_devs(text)
         self._logger.debug("done")
 
     def about_rs_handler(self) -> None:
@@ -504,10 +514,11 @@ class AppController:
         # Experiment controls
         self.button_box.add_create_button_handler(self.create_end_exp_handler)
         self.button_box.add_start_button_handler(self.start_stop_exp_handler)
+        self.button_box.add_cond_name_changed_handler(self._cond_name_handler)
         self.note_box.add_note_box_changed_handler(self._check_toggle_post_button)
         self.note_box.add_post_handler(self.post_handler)
         self.main_window.keyPressEvent = self._keypress_handler
-        self.layout_box.add_window_layout_handler(self.window_layout_handler)
+        self.layout_box.add_window_layout_handler(self._window_layout_handler)
 
         # File menu
         self.menu_bar.add_open_last_save_dir_handler(self.last_save_dir_handler)

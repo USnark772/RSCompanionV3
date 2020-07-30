@@ -189,6 +189,17 @@ class AppModel:
             controller.update_keyflag(flag)
         self._logger.debug("done")
 
+    def send_cond_name_to_devs(self, name: str) -> None:
+        """
+        Pass new condition name to devices.
+        :param name: The new condition name.
+        :return None:
+        """
+        self._logger.debug("running")
+        for controller in self._devs.values():
+            controller.update_cond_name(name)
+        self._logger.debug("done")
+
     def save_keyflag(self, flag: str) -> None:
         """
         Save flag to experiment flag file if experiment created.

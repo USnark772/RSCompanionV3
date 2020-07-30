@@ -97,11 +97,21 @@ class ButtonBox(QGroupBox):
     def add_start_button_handler(self, func: classmethod) -> None:
         """
         Add handler for the start button click event.
-        :param func: The handler
+        :param func: The handler.
         :return: None.
         """
         self.logger.debug("running")
         self._start_button.clicked.connect(func)
+        self.logger.debug("done")
+
+    def add_cond_name_changed_handler(self, func: classmethod) -> None:
+        """
+        Add handler for when the condition name box text is edited.
+        :param func: The handler.
+        :return None:
+        """
+        self.logger.debug("running")
+        self._text_entry.textChanged.connect(func)
         self.logger.debug("done")
 
     def set_condition_name_box_enabled(self, is_active: bool) -> None:
