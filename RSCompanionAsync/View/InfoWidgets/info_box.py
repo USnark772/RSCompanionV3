@@ -35,52 +35,54 @@ class InfoBox(QGroupBox):
     """ This code is for displaying information about the current experiment. """
     def __init__(self, parent=None, size: QSize = QSize(10, 10), lang: LangEnum = LangEnum.ENG,
                  log_handlers: [StreamHandler] = None):
-        self.logger = getLogger(__name__)
+        self._logger = getLogger(__name__)
         if log_handlers:
             for h in log_handlers:
-                self.logger.addHandler(h)
-        self.logger.debug("Initializing")
+                self._logger.addHandler(h)
+        self._logger.debug("Initializing")
         super().__init__(parent)
         self.setFixedSize(size)
         self.setLayout(QGridLayout())
 
-        self.__start_time_label = QLabel()
-        self.__start_time_label.setAlignment(Qt.AlignLeft)
-        self.layout().addWidget(self.__start_time_label, 0, 0, 1, 1)
+        self._start_time_label = QLabel()
+        self._start_time_label.setAlignment(Qt.AlignLeft)
+        self.layout().addWidget(self._start_time_label, 1, 0, 1, 1)
 
-        self.__start_time_val = QLabel()
-        self.__start_time_val.setAlignment(Qt.AlignRight)
-        self.layout().addWidget(self.__start_time_val, 0, 1, 1, 1)
+        self._start_time_val = QLabel()
+        self._start_time_val.setAlignment(Qt.AlignRight)
+        self.layout().addWidget(self._start_time_val, 1, 1, 1, 1)
 
-        self.__block_num_label = QLabel()
-        self.__block_num_label.setAlignment(Qt.AlignLeft)
-        self.layout().addWidget(self.__block_num_label, 1, 0, 1, 1)
+        self._block_num_label = QLabel()
+        self._block_num_label.setAlignment(Qt.AlignLeft)
+        self.layout().addWidget(self._block_num_label, 3, 0, 1, 1)
 
-        self.__block_num_val = QLabel()
-        self.__block_num_val.setAlignment(Qt.AlignRight)
-        self.layout().addWidget(self.__block_num_val, 1, 1, 1, 1)
+        self._block_num_val = QLabel()
+        self._block_num_val.setAlignment(Qt.AlignRight)
+        self.layout().addWidget(self._block_num_val, 3, 1, 1, 1)
 
-        self._empty_block_1_label = QLabel()
-        self._empty_block_1_label.setAlignment(Qt.AlignLeft)
-        self.layout().addWidget(self._empty_block_1_label, 2, 0, 1, 1)
+        self._current_time_label = QLabel()
+        self._current_time_label.setAlignment(Qt.AlignLeft)
+        self.layout().addWidget(self._current_time_label, 0, 0, 1, 1)
 
-        self._empty_block_1_val = QLabel()
-        self._empty_block_1_val.setAlignment(Qt.AlignRight)
-        self.layout().addWidget(self._empty_block_1_val, 2, 1, 1, 1)
+        self._current_time_val = QLabel()
+        self._current_time_val.setAlignment(Qt.AlignRight)
+        self.layout().addWidget(self._current_time_val, 0, 1, 1, 1)
 
-        self._empty_block_2_label = QLabel()
-        self._empty_block_2_label.setAlignment(Qt.AlignLeft)
-        self.layout().addWidget(self._empty_block_2_label, 3, 0, 1, 1)
+        self._block_start_time_label = QLabel()
+        self._block_start_time_label.setAlignment(Qt.AlignLeft)
+        self.layout().addWidget(self._block_start_time_label, 2, 0, 1, 1)
 
-        self._empty_block_2_val = QLabel()
-        self._empty_block_2_val.setAlignment(Qt.AlignRight)
-        self.layout().addWidget(self._empty_block_2_val, 3, 1, 1, 1)
+        self._block_start_time_val = QLabel()
+        self._block_start_time_val.setAlignment(Qt.AlignRight)
+        self.layout().addWidget(self._block_start_time_val, 2, 1, 1, 1)
 
         self.setMinimumWidth(260)
 
+        self._default_time = '00:00:00'
         self._strings = dict()
         self.set_lang(lang)
-        self.logger.debug("Initialized")
+        self._set_default_values()
+        self._logger.debug("Initialized")
 
     def set_lang(self, lang: LangEnum) -> None:
         """
@@ -91,29 +93,82 @@ class InfoBox(QGroupBox):
         self._strings = strings[lang]
         self._set_texts()
 
-    def set_start_time(self, time):
-        self.logger.debug("running")
-        self.__start_time_val.setText(time)
-        self.logger.debug("done")
+    def set_current_time(self, time: str) -> None:
+        """
+        Set current time display.
+        :param time: The new value to display.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._current_time_val.setText(time)
+        self._logger.debug("done")
 
-    def reset_start_time(self):
-        self.logger.debug("running")
-        self.__start_time_val.setText("00:00:00")
-        self.logger.debug("done")
+    def set_exp_start_time(self, time: str) -> None:
+        """
+        Set exp start time display.
+        :param time: The new value to display.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._start_time_val.setText(time)
+        self._logger.debug("done")
 
-    def set_block_num(self, num):
-        self.logger.debug("running")
-        self.__block_num_val.setText(str(num))
-        self.logger.debug("done")
+    def reset_exp_start_time(self) -> None:
+        """
+        Set exp start time to '00:00:00'
+        :return None:
+        """
+        self._logger.debug("running")
+        self._start_time_val.setText(self._default_time)
+        self._logger.debug("done")
 
-    def get_block_num(self):
-        return self.__block_num_val.text()
+    def set_block_num(self, num: str) -> None:
+        """
+        Set block number display.
+        :param num: The new value to display.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._block_num_val.setText(num)
+        self._logger.debug("done")
 
-    def _set_texts(self):
-        self.logger.debug("running")
+    def get_block_num(self) -> str:
+        """
+        :return str: The value of block num display.
+        """
+        return self._block_num_val.text()
+
+    def set_block_start_time(self, time: str) -> None:
+        """
+        Set block start time display.
+        :param time: The new value to display.
+        :return None:
+        """
+        self._logger.debug("running")
+        self._block_start_time_val.setText(time)
+        self._logger.debug("done")
+
+    def _set_texts(self) -> None:
+        """
+        Set text of all display labels.
+        :return:
+        """
+        self._logger.debug("running")
         self.setTitle(self._strings[StringsEnum.TITLE])
-        self.__start_time_label.setText(self._strings[StringsEnum.START_TIME])
-        self.__block_num_label.setText(self._strings[StringsEnum.BLOCK_NO])
-        self.__block_num_val.setText("0")
-        self.reset_start_time()
-        self.logger.debug("done")
+        self._current_time_label.setText(self._strings[StringsEnum.CUR_TIME])
+        self._block_start_time_label.setText(self._strings[StringsEnum.BLK_ST_TIME])
+        self._start_time_label.setText(self._strings[StringsEnum.START_TIME])
+        self._block_num_label.setText(self._strings[StringsEnum.BLOCK_NUM])
+        self._logger.debug("done")
+
+    def _set_default_values(self) -> None:
+        """
+        Set text of all display values to default.
+        :return:
+        """
+        self._logger.debug("running")
+        self._block_num_val.setText("0")
+        self.set_current_time(self._default_time)
+        self.set_block_start_time(self._default_time)
+        self.reset_exp_start_time()
+        self._logger.debug("done")

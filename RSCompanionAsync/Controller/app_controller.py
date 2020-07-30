@@ -379,7 +379,7 @@ class AppController:
             self.menu_bar.set_use_cams(False)
             if self._set_drive_updater():
                 self._drive_updater_task = create_task(self._update_drive_info_box())
-            self.info_box.set_start_time(format_current_time(datetime.now(), time=True))
+            self.info_box.set_exp_start_time(format_current_time(datetime.now(), time=True))
         else:
             self.button_box.set_create_button_state(0)
         self._logger.debug("done")
@@ -397,7 +397,7 @@ class AppController:
         if self._drive_updater_task:
             self._drive_updater_task.cancel()
             self._drive_updater_task = None
-        self.info_box.set_block_num(0)
+        self.info_box.set_block_num('0')
         self.button_box.set_create_button_state(0)
         self.button_box.set_start_button_enabled(False)
         self.button_box.set_start_button_state(0)
@@ -417,6 +417,7 @@ class AppController:
         self.button_box.set_start_button_state(1)
         self.button_box.set_condition_name_box_enabled(False)
         self._curr_cond_name = self.button_box.get_condition_name()
+        self.info_box.set_block_start_time(format_current_time(datetime.now(), time=True))
         self._logger.debug("done")
 
     def _stop_exp(self) -> None:
@@ -447,6 +448,16 @@ class AppController:
         else:
             ret = False
         return ret
+
+    async def _keep_time(self) -> None:
+        """
+        Update time every tick.
+        :return None:
+        """
+        self._logger.debug("running")
+        while True:
+            self.info_box.set_current_time(format_current_time(datetime.now(), time=True))
+            await sleep(1)
 
     def _check_toggle_post_button(self) -> None:
         """
@@ -569,6 +580,7 @@ class AppController:
         self._tasks.append(create_task(self.new_device_view_handler()))
         self._tasks.append(create_task(self.device_conn_error_handler()))
         self._tasks.append(create_task(self.remove_device_view_handler()))
+        self._tasks.append(create_task(self._keep_time()))
         self._model.start()
 
     def cleanup(self) -> None:
