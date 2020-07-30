@@ -11,8 +11,6 @@ TODO: Pressing matters.
         - Add block start time
         - Ensure Block number is there
         - Ensure exp start time is there
-    - Allow main window to resize more freely.
-        - Allow MDI area to completely disappear due to resize.
     - Response times of -1 (a miss) should not be plotted at all or the color of their marker should be Red.
         Right now they appear to be an extremely fast reaction time in the plot
 
