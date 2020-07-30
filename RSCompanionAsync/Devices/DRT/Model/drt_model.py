@@ -24,8 +24,8 @@ https://redscientific.com/index.html
 """
 
 from logging import getLogger, StreamHandler
-from asyncio import create_task
-from aioserial import AioSerial
+from asyncio import create_task, get_running_loop
+from aioserial import AioSerial, SerialException
 from math import trunc, ceil
 from datetime import datetime
 from RSCompanionAsync.Model.app_helpers import write_line_to_file, format_current_time
@@ -48,6 +48,7 @@ class DRTModel:
         self._current_vals = [0] * 4  # dur, int, upper, lower
         self._errs = [False] * 4  # dur, int, upper, lower
         self._changed = [False] * 4
+        self._loop = get_running_loop()
         self._logger.debug("Initialized")
 
     def get_conn(self) -> AioSerial:
@@ -122,9 +123,16 @@ class DRTModel:
         :return: (The next message from device, when the message was received.)
         """
         self._logger.debug("running")
-        line = await self._conn.readline_async()
-        msg = self._parse_msg(line.decode("utf-8"))
+        msg = await self._loop.run_in_executor(None, self.readline_threaded)
+        self._logger.debug("done")
+        return msg
+
+    def readline_threaded(self) -> (dict, datetime):
+        self._logger.debug("running")
+        line = self._conn.readline()
         timestamp = datetime.now()
+        msg = self._parse_msg(line.decode("utf-8"))
+        self._logger.debug("done")
         return msg, timestamp
 
     def cleanup(self) -> None:
@@ -364,11 +372,15 @@ class DRTModel:
         :param msg: message to be sent
         :return None:
         """
-        if self._conn.is_open:
-            try:
-                self._conn.write(str.encode(msg))
-            except PermissionError as pe:
-                pass
+        try:
+            if self._conn.is_open:
+                self._conn.write(msg.encode())
+        except PermissionError as pe:
+            self._logger.exception("Device " + self._dev_name + " connection failed")
+        except SerialException as se:
+            self._logger.exception("Device " + self._dev_name + " connection failed")
+        except Exception as ge:
+            self._logger.exception("Device " + self._dev_name + " connection failed")
 
     def _output_save_data(self, line: str) -> None:
         """

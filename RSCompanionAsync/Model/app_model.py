@@ -483,19 +483,22 @@ class AppModel:
         self._logger.debug("running")
         ret, item = self._rs_dev_scanner.get_next_lost_com()
         to_remove = []
-        while ret:
-            for key in self._devs:
-                conn = self._devs[key].get_conn()
-                if conn and conn.port == item.device:
-                    self._remove_dev_views.append(self._devs[key].get_view())
-                    await self._devs[key].cleanup(True)
-                    to_remove.append(key)
-                    self._remove_dev_view_flag.set()
-                    break
-            ret, item = self._rs_dev_scanner.get_next_lost_com()
-        if len(to_remove) > 0:
-            for ele in to_remove:
-                del self._devs[ele]
+        try:
+            while ret:
+                for key in self._devs:
+                    conn = self._devs[key].get_conn()
+                    if conn and conn.port == item.device:
+                        self._remove_dev_views.append(self._devs[key].get_view())
+                        await self._devs[key].cleanup(True)
+                        to_remove.append(key)
+                        self._remove_dev_view_flag.set()
+                        break
+                ret, item = self._rs_dev_scanner.get_next_lost_com()
+            if len(to_remove) > 0:
+                for ele in to_remove:
+                    del self._devs[ele]
+        except Exception as e:
+            self._logger.exception("Got an exception")
         self._logger.debug("done")
 
     async def _remove_lost_cam(self, cam_index: int) -> None:
