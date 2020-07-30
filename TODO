@@ -2,8 +2,6 @@ TODO: Check for any errors listed below.
     - ERROR ID: 10-t
 
 TODO: Pressing matters.
-    - Make sure reading data from devices is done in threads so timestamps are not delayed.
-        - Can't do async style (aioserial) if want threaded in this situation.
     - Figure out xbee api mode
         https://serdmanczyk.github.io/XBeeAPI-PythonArduino-Tutorial/
     - in Info box:
