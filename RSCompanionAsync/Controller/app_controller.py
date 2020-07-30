@@ -88,14 +88,14 @@ class AppController:
         self._logger.debug("Initializing")
 
         # View
-        ui_min_size = QSize(1065, 740)
+        ui_min_size = QSize(1065, 165)
         button_box_size = QSize(205, 120)
         layout_box_size = QSize(200, 120)
         info_box_size = QSize(230, 120)
         flag_box_size = QSize(80, 120)
         note_box_size = QSize(250, 120)
         drive_info_box_size = QSize(200, 120)
-        mdi_area_min_size = QSize(500, 300)
+        mdi_area_min_size = QSize(1, 1)
         self.main_window = AppMainWindow(ui_min_size, self._lang, [self.app_lh, self.stderr_lh])
         self.menu_bar = AppMenuBar(self.main_window, self._lang, [self.app_lh, self.stderr_lh])
         self.button_box = ButtonBox(self.main_window, button_box_size, self._lang, [self.app_lh, self.stderr_lh])
