@@ -2,7 +2,7 @@ import os
 import cv2
 import time
 
-dir_name = "C:/Users/phill/Companion Save Files/experiment_2020-08-01-10-16-41/"
+dir_name = "C:/Users/phill/Companion Save Files/experiment_2020-08-01-11-47-21/"
 
 
 def get_frms_fps(file: str) -> (int, int):

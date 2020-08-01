@@ -8,6 +8,13 @@ TODO: Pressing matters.
         - Can be two plot lines, one for misses and one for hits.
         - Right now they appear to be an extremely fast reaction time in the plot
           Look up: https://stackoverflow.com/questions/43281993/change-color-of-matplotlib-pyplot-points
+    - App gives video files an fps to save as. When cameras have no limiter, that fps to save as could be lower than
+        the actual camera fps during an experiment due to fluctuations.
+        - Changed number of reads on camera fps tester to maybe get a more accurate fps. (cam_stream_reader.py line 245)
+        - At end of experiment, calculate average fps and set video file fps to that.
+        - Remove limiter usage.
+        - Remove FPS test.
+        - Remove FPS control.
 
 TODO: At some point
     - Figure out how to catch SIGINT and close cameras gracefully.
@@ -42,15 +49,6 @@ TODO: Test this thing like crazy!
 
 
 TODO: Bug fixes.
-    - When multiple devices are plugged in and an exp and block are running:
-        - dev window does not disappear on device unplug
-        - Replugging device causes new window to appear (multiple windows for same device)
-        - Issue with control loss if new device is plugged in:
-            Related to a window not being removed when a device is unplugged during an experiment.
-            If the ghost window stays around and another device is plugged in, the ghost window appears to block the
-            functionality of the block start button. I plugged in a drt, started a block, removed the DRT during a
-            block (window stays), ended the experiment, plugged in a VOG, started an experiment, now the block start
-            button does nothing and the app wont close
     Heisenbugs:
     -   Error saving what seems to be last data line from device when ending experiment.
     -   Sometimes when unplugging cameras during initialization, the device window fails to disappear.

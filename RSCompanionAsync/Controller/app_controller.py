@@ -80,8 +80,9 @@ class AppController:
         self.stderr_lh = logging.StreamHandler()
         self.stderr_lh.setLevel(logging.WARNING)
         self.stderr_lh.setFormatter(self.formatter)
-        self._logger.addHandler(self.app_lh)
-        self._logger.addHandler(self.stderr_lh)
+        log_handlers = [self.app_lh, self.stderr_lh]  # TODO: Remove self.stderr_lh from list for builds.
+        for h in log_handlers:
+            self._logger.addHandler(h)
         self._logger.info(self._strings[StringsEnum.LOG_VER_ID] + str(version_number))
         setup_logging_queue()
 
@@ -96,22 +97,22 @@ class AppController:
         note_box_size = QSize(250, 120)
         drive_info_box_size = QSize(200, 120)
         mdi_area_min_size = QSize(1, 1)
-        self.main_window = AppMainWindow(ui_min_size, self._lang, [self.app_lh, self.stderr_lh])
-        self.menu_bar = AppMenuBar(self.main_window, self._lang, [self.app_lh, self.stderr_lh])
-        self.button_box = ButtonBox(self.main_window, button_box_size, self._lang, [self.app_lh, self.stderr_lh])
-        self.layout_box = LayoutBox(self.main_window, layout_box_size, self._lang, [self.app_lh, self.stderr_lh])
-        self.info_box = InfoBox(self.main_window, info_box_size, self._lang, [self.app_lh, self.stderr_lh])
-        self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, self._lang, [self.app_lh, self.stderr_lh])
-        self.flag_box = FlagBox(self.main_window, flag_box_size, self._lang, [self.app_lh, self.stderr_lh])
-        self.note_box = NoteBox(self.main_window, note_box_size, self._lang, [self.app_lh, self.stderr_lh])
-        self.mdi_area = MDIArea(self.main_window, mdi_area_min_size, [self.app_lh, self.stderr_lh])
+        self.main_window = AppMainWindow(ui_min_size, self._lang, log_handlers)
+        self.menu_bar = AppMenuBar(self.main_window, self._lang, log_handlers)
+        self.button_box = ButtonBox(self.main_window, button_box_size, self._lang, log_handlers)
+        self.layout_box = LayoutBox(self.main_window, layout_box_size, self._lang, log_handlers)
+        self.info_box = InfoBox(self.main_window, info_box_size, self._lang, log_handlers)
+        self.d_info_box = DriveInfoBox(self.main_window, drive_info_box_size, self._lang, log_handlers)
+        self.flag_box = FlagBox(self.main_window, flag_box_size, self._lang, log_handlers)
+        self.note_box = NoteBox(self.main_window, note_box_size, self._lang, log_handlers)
+        self.mdi_area = MDIArea(self.main_window, mdi_area_min_size, log_handlers)
         self._file_dialog = QFileDialog(self.main_window)
 
         if not self._settings.contains("cam_scanner/active"):
             self._settings.setValue("cam_scanner/active", "True")
 
         # Model
-        self._model = AppModel(self._lang, [self.app_lh, self.stderr_lh])
+        self._model = AppModel(self._lang, log_handlers)
         self._model.set_cams_active(eval(self._settings.value("cam_scanner/active")))
 
         self._save_file_name = str()
