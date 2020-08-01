@@ -47,6 +47,9 @@ class AppMainWindow(QMainWindow):
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
         super().__init__()
+
+        self._cf_height = 138
+
         self._icon = QIcon(image_file_path + "rs_icon.png")
         font = QFont()
         font.setPointSize(10)
@@ -58,10 +61,12 @@ class AppMainWindow(QMainWindow):
 
         self._control_frame = QFrame(self)
         self._control_frame.setFrameShape(QFrame.NoFrame)
+        self._control_frame.setFixedHeight(self._cf_height)
         self._control_layout = QHBoxLayout(self._control_frame)
         self._splitter = QSplitter(Qt.Vertical, self)
         self.centralWidget().layout().addWidget(self._splitter)
         self._splitter.addWidget(self._control_frame)
+        self._splitter.setChildrenCollapsible(False)
 
         self.close_check = False
         self._checker = QMessageBox()
