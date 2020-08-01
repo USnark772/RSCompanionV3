@@ -4,10 +4,6 @@ TODO: Check for any errors listed below.
 TODO: Pressing matters.
     - Figure out xbee api mode
         https://serdmanczyk.github.io/XBeeAPI-PythonArduino-Tutorial/
-    - Response times of -1 (a miss) should not be plotted at all or the color of their marker should be Red.
-        - Can be two plot lines, one for misses and one for hits.
-        - Right now they appear to be an extremely fast reaction time in the plot
-          Look up: https://stackoverflow.com/questions/43281993/change-color-of-matplotlib-pyplot-points
     - App gives video files an fps to save as. When cameras have no limiter, that fps to save as could be lower than
         the actual camera fps during an experiment due to fluctuations.
         - Changed number of reads on camera fps tester to maybe get a more accurate fps. (cam_stream_reader.py line 245)

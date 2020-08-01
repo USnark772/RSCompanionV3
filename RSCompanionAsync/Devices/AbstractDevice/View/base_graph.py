@@ -124,7 +124,7 @@ class BaseGraph(Canvas, ABC, metaclass=AbstractMeta):
                     alt_axes.set_yticks(np.arange(0, 6, step=1))
                     await sleep(.001)
                     if not new:
-                        await create_task(self.plot_device_data(alt_axes, name, axes))
+                        await create_task(self.plot_device_data(alt_axes, name))
 
         if not new:
             self.add_vert_lines()
