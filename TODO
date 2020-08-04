@@ -4,13 +4,12 @@ TODO: Check for any errors listed below.
 TODO: Pressing matters.
     - Figure out xbee api mode
         https://serdmanczyk.github.io/XBeeAPI-PythonArduino-Tutorial/
-    - App gives video files an fps to save as. When cameras have no limiter, that fps to save as could be lower than
-        the actual camera fps during an experiment due to fluctuations.
-        - Changed number of reads on camera fps tester to maybe get a more accurate fps. (cam_stream_reader.py line 245)
-        - At end of experiment, calculate average fps and set video file fps to that.
+    - Handle cameras differently
         - Remove limiter usage.
         - Remove FPS test.
-        - Remove FPS control.
+        - read cameras at full speed
+        - dup or drop frames depending in user selected fps
+        - in overlay, show actual fps/selected fps
 
 TODO: At some point
     - Figure out how to catch SIGINT and close cameras gracefully.
@@ -42,7 +41,6 @@ TODO: Test this thing like crazy!
     - Proper app usage tests.
     - Improper app usage tests.
     - Check .csv output files for any issues with notes, flags, events, device data, number of comma separators.
-
 
 TODO: Bug fixes.
     Heisenbugs:

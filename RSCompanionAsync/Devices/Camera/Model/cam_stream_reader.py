@@ -115,7 +115,7 @@ class StreamReader:
 
     def _read_cam(self) -> None:
         """
-        Continuously check camera for new frames and put into queue. Raise error event if camera fails.
+        Continuously check camera for new frames and put into queue.
         :return None:
         """
         self._calc_timeout()
@@ -136,7 +136,7 @@ class StreamReader:
 
     def _get_a_frame(self, prev: time) -> bool:
         """
-        Helper function for self._read_cam.
+        Helper function for self._read_cam. Raise error event if camera fails.
         :param prev: The current time()
         :return bool: If frame was read successfully.
         """
@@ -242,7 +242,7 @@ class StreamReader:
         """
         return self._fps_test_status
 
-    async def calc_max_fps(self, res_to_test: (float, float), num_reads: int = 180) -> int:
+    async def calc_max_fps(self, res_to_test: (float, float), num_reads: int = 240) -> int:
         """
         Calculate this camera's actual max fps.
         :return int: The max supported fps.

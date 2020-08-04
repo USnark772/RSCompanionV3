@@ -44,7 +44,6 @@ from RSCompanionAsync.Devices.Camera.Model.cam_stream_writer import StreamWriter
 from RSCompanionAsync.Devices.Camera.Model.cam_size_getter import SizeGetter
 from RSCompanionAsync.Devices.Camera.Resources.cam_strings import LangEnum, strings, StringsEnum
 
-
 ENCODE_CODE = "utf-8"
 CM_SEP = ","
 DTYPE = uint8
@@ -464,17 +463,35 @@ class CamModel:
         while self._process_imgs:
             ret, (frame, timestamp) = self._cam_reader.get_next_new_frame()
             if ret:
-                self._fps_tracker.update_fps(timestamp)
-                overlay = shorten(self._cond_name, COND_NAME_WIDTH) + CM_SEP + \
-                          format_current_time(timestamp, time=True, mil=True) + CM_SEP + self._exp_status + CM_SEP + \
-                          str(self._block_num) + CM_SEP + str(self._keyflag) + CM_SEP + str(self._fps_tracker.get_fps())
-                self._sems3[i].acquire()
-                copyto(self._np_img_arrs[i], frame)
-                self._shm_ovl_arrs[i].value = (overlay.encode(ENCODE_CODE))
-                self._sems1[i].release()
-                i = (i + 1) % self._num_img_workers
+                self._hand_out_frame(frame, timestamp, i)
+                i = self._increment_counter(i)
             else:
                 sleep(.001)
+
+    def _hand_out_frame(self, frame, timestamp: datetime, i: int) -> None:
+        """
+        Helper function for self._distribute_frames()
+        :param frame:
+        :param timestamp:
+        :param i:
+        :return:
+        """
+        self._fps_tracker.update_fps(timestamp)
+        overlay = shorten(self._cond_name, COND_NAME_WIDTH) + CM_SEP + \
+                  format_current_time(timestamp, time=True, mil=True) + CM_SEP + self._exp_status + CM_SEP + \
+                  str(self._block_num) + CM_SEP + str(self._keyflag) + CM_SEP + str(self._fps_tracker.get_fps())
+        self._sems3[i].acquire()
+        copyto(self._np_img_arrs[i], frame)
+        self._shm_ovl_arrs[i].value = (overlay.encode(ENCODE_CODE))
+        self._sems1[i].release()
+
+    def _increment_counter(self, num: int) -> int:
+        """
+        Helper function for self._distribute_frames()
+        :param num:
+        :return:
+        """
+        return (num + 1) % self._num_img_workers
 
     def _img_processor(self, sh_img_arr: Array, sem1: Semaphore, sem2: Semaphore, ovl_arr: Array) -> None:
         """

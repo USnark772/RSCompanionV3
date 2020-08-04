@@ -347,7 +347,7 @@ class AppModel:
 
     async def _await_new_cams(self) -> None:
         """
-        Wait for and handle new cameras.
+        Wait for and handle new video.
         :return None:
         """
         while self._running:
@@ -514,8 +514,8 @@ class AppModel:
 
     def set_cams_active(self, is_active: bool) -> None:
         """
-        Set whether this app looks for and uses cameras or not.
-        :param is_active: Whether to look for and use cameras.
+        Set whether this app looks for and uses video or not.
+        :param is_active: Whether to look for and use video.
         :return None:
         """
         if is_active:
@@ -525,7 +525,7 @@ class AppModel:
 
     def _deactivate_use_cams(self) -> None:
         """
-        Disconnect any cameras currently connected to app and stop cam_scanner.
+        Disconnect any video currently connected to app and stop cam_scanner.
         :return None:
         """
         self._logger.debug("running")

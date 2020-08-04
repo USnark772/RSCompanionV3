@@ -5,14 +5,14 @@ import time
 dir_name = "C:/Users/phill/Companion Save Files/experiment_2020-08-01-11-47-21/"
 
 
-def get_frms_fps(file: str) -> (int, int):
+def get_frms_fps(file: str):
     reader = cv2.VideoCapture(file)
     num_frames = 0
     fps = 0
     runtime = 0
     try:
         num_frames = int(reader.get(cv2.CAP_PROP_FRAME_COUNT))
-        fps = int(reader.get(cv2.CAP_PROP_FPS))
+        fps = reader.get(cv2.CAP_PROP_FPS)
         runtime = num_frames/fps
         return num_frames, fps, runtime
     except Exception as e:

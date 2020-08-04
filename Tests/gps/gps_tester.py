@@ -11,7 +11,7 @@ import adafruit_gps
 
 cont = True
 
-uart = Serial("COM3", baudrate=9600, timeout=10)
+uart = Serial("COM6", baudrate=9600, timeout=10)
 
 print("uart.name:", uart.name)
 print("type:", type(uart))

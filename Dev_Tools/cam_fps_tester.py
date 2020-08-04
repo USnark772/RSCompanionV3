@@ -2,7 +2,7 @@ import cv2
 from statistics import median
 from time import time
 from RSCompanionAsync.Devices.Camera.Model.cam_defs import cap_backend, cap_temp_codec, cap_codec
-from Tests.test_shm import FPSTracker
+from Tests.video.test_shm import FPSTracker
 from datetime import datetime
 from threading import Thread
 
