@@ -9,13 +9,6 @@ from serial.tools.list_ports_common import ListPortInfo
 import time
 import adafruit_gps
 
-cont = True
-
-uart = Serial("COM6", baudrate=9600, timeout=10)
-
-print("uart.name:", uart.name)
-print("type:", type(uart))
-print("uart:", uart)
 x = list_ports.comports()
 for port in x:
     print("port:", port)
@@ -23,6 +16,11 @@ for port in x:
     print("port.pid:", port.pid)
     print("port.vid:", port.vid)
 
+uart = Serial("COM3", baudrate=9600, timeout=10)
+
+print("uart.name:", uart.name)
+print("type:", type(uart))
+print("uart:", uart)
 
 gps = adafruit_gps.GPS(uart, debug=False)
 
@@ -33,6 +31,7 @@ gps.send_command(b"PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
 gps.send_command(b"PMTK220,1000")
 
 last_print = time.monotonic()
+cont = True
 while cont:
     gps.update()
     current = time.monotonic()
