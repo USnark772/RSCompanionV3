@@ -93,11 +93,19 @@ class DRTModel:
         Reset all changed bools to false.
         :return: None.
         """
+        self._logger.debug("running")
         for i in range(len(self._changed)):
             self._changed[i] = False
+        self._logger.debug("done")
 
     def add_save_hdr(self) -> None:
+        """
+        Add header line to save file.
+        :return None:
+        """
+        self._logger.debug("running")
         self._output_save_data(self._strings[StringsEnum.SAVE_HDR])
+        self._logger.debug("done")
 
     def set_lang(self, lang: LangEnum) -> None:
         """
@@ -105,17 +113,21 @@ class DRTModel:
         :param lang: The lang enum to use.
         :return None:
         """
+        self._logger.debug("running")
         self._strings = strings[lang]
+        self._logger.debug("done")
 
     def send_iso(self) -> None:
         """
         Reset device to ISO standards
         :return None:
         """
+        self._logger.debug("running")
         self.send_stim_dur(str(defs.iso_standards["stimDur"]))
         self.send_stim_intensity(100)
         self.send_upper_isi(str(defs.iso_standards["upperISI"]))
         self.send_lower_isi(str(defs.iso_standards["lowerISI"]))
+        self._logger.debug("done")
 
     async def get_msg(self) -> (dict, datetime):
         """
