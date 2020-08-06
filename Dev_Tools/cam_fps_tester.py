@@ -2,7 +2,7 @@ import cv2
 from statistics import median
 from time import time
 from RSCompanionAsync.Devices.Camera.Model.cam_defs import cap_backend, cap_temp_codec, cap_codec
-from Tests.video.test_shm import FPSTracker
+from RSCompanionAsync.Devices.Camera.Model.fps_tracker import FPSTracker
 from datetime import datetime
 from threading import Thread
 
@@ -48,8 +48,9 @@ def test_type_read_times(cap: cv2.VideoCapture, cam_index: int, num_reads: int, 
     prev_key = 0
     for key in intervals:
         if len(intervals[key]) > 0:
-            print("- Number of read times between", "{:.2f}".format(prev_key), "and", "{:.2f}".format(key), "seconds:",
-                  len(intervals[key]))
+            print("- Number of read times between {:.2f}".format(prev_key) + " and {:.2f}".format(key) + " seconds:" +
+                  str(len(intervals[key])) + ". Percentage in this range: {:.1f}".format(len(intervals[key]) /
+                                                                                         num_reads * 100) + "%")
             if show_values:
                 print(intervals[key])
         prev_key = key
