@@ -16,8 +16,8 @@ Build/Package:
 -   In ../asyncCompanion/RSCompanionAsync/Model/app_defs.py,
     -   Update version_number.
     -   Set release bool to True.
--   In ../asyncCompanion/For_setup/comp_app_inno.iss,   (Use back-slash '\' in .iss files)
-    -   make sure AppVMaj and AppVMin are set to match version_number.
+-   In ../asyncCompanion/For_setup/comp_app_inno.iss,
+    -   Make sure AppVMaj and AppVMin are set to match version_number.
 -   run setup.bat in terminal.
 -   compile comp_app_inno.iss using Inno Setup Compiler.
 
