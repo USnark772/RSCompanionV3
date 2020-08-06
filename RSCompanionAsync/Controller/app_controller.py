@@ -80,7 +80,7 @@ class AppController:
         self.stderr_lh = logging.StreamHandler()
         self.stderr_lh.setLevel(logging.WARNING)
         self.stderr_lh.setFormatter(self.formatter)
-        log_handlers = [self.app_lh, self.stderr_lh]  # TODO: Remove self.stderr_lh from list for builds.
+        log_handlers = [self.app_lh]  # , self.stderr_lh]  # TODO: Remove self.stderr_lh from list for builds.
         for h in log_handlers:
             self._logger.addHandler(h)
         self._logger.info(self._strings[StringsEnum.LOG_VER_ID] + str(version_number))

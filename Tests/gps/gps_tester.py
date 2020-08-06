@@ -3,7 +3,8 @@ Author: Nathan Rogers
 Date: 2020
 """
 
-from serial import Serial, SerialException
+from aioserial import AioSerial as Serial
+# from serial import Serial, SerialException
 from serial.tools import list_ports
 from serial.tools.list_ports_common import ListPortInfo
 import time
@@ -25,10 +26,10 @@ print("uart:", uart)
 gps = adafruit_gps.GPS(uart, debug=False)
 
 # turn on basic GGA and RMC info
-gps.send_command(b"PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
+gps.send_command("PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0".encode())
 
 # set update rate to 1hz
-gps.send_command(b"PMTK220,1000")
+gps.send_command("PMTK220,1000".encode())
 
 last_print = time.monotonic()
 cont = True
