@@ -29,14 +29,13 @@ from collections import deque
 
 
 class FPSTracker:
-    def __init__(self, index = -1):
+    def __init__(self):
         self._lock = Lock()
         self._fps = 0
         self._times = deque()
         self._num_to_keep = 60
         self._sum_times = 0
         self._prev_time = time()
-        self.index = index
 
     def update_fps(self, timestamp):
         now = mktime(timestamp.timetuple()) + timestamp.microsecond / 1E6

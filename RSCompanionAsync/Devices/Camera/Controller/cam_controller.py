@@ -76,9 +76,6 @@ class Controller(AbstractController):
         self._handle_pipe_flag.set()
         self._model.start()
         self.send_msg_to_model((defs.ModelEnum.INITIALIZE, None))
-        self._fps_inf = float("inf")
-        self._fps_inf_str = "\u221e"
-        self._max_fps = 30
         self.set_lang(lang)
         self._res_list = list()
         self._setup_handlers()
@@ -257,10 +254,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        if self.view.fps == self._fps_inf_str:
-            new_fps = self._fps_inf
-        else:
-            new_fps = float(self.view.fps)
+        new_fps = float(self.view.fps)
         self.send_msg_to_model((defs.ModelEnum.SET_FPS, new_fps))
         self._logger.debug("done")
 
@@ -388,15 +382,13 @@ class Controller(AbstractController):
         self._loop.run_in_executor(self._executor, self._update_feed)
         self.send_msg_to_model((defs.ModelEnum.SET_USE_CAM, True))
         self.send_msg_to_model((defs.ModelEnum.SET_USE_FEED, True))
-        self._max_fps = init_results[0]
-        fps_list = [str(x) for x in range(1, self._max_fps + 1)]
-        fps_list.append(self._fps_inf_str)
+        fps = init_results[0]
+        fps_list = [str(x) for x in range(1, fps + 1)]
         res_list = init_results[1]
-        # res_list = init_results
         self._res_list = [((str(x[0]) + ", " + str(x[1])), x) for x in res_list]
         self.view.resolution_list = [x[0] for x in self._res_list]
         self.view.fps_list = fps_list
-        self.send_msg_to_model((defs.ModelEnum.SET_FPS, self._fps_inf))
+        self.send_msg_to_model((defs.ModelEnum.SET_FPS, fps))
         self.send_msg_to_model((defs.ModelEnum.GET_FPS, None))
         self.send_msg_to_model((defs.ModelEnum.GET_RES, None))
         self.view.set_config_active(True)
@@ -411,10 +403,7 @@ class Controller(AbstractController):
         :return None:
         """
         self._logger.debug("running")
-        if new_fps > self._max_fps:
-            new_fps = self._fps_inf_str
-        else:
-            new_fps = str(new_fps)
+        new_fps = str(new_fps)
         self.view.fps = new_fps
         self._logger.debug("done")
 

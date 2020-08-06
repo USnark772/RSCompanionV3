@@ -32,6 +32,7 @@ from time import time, sleep as tsleep
 from asyncio import futures, Event, get_event_loop, sleep
 from RSCompanionAsync.Devices.Camera.Model import cam_defs as defs
 from RSCompanionAsync.Model.app_helpers import await_event
+from RSCompanionAsync.Devices.Camera.Model.fps_tracker import FPSTracker
 
 
 class StreamReader:
@@ -42,16 +43,16 @@ class StreamReader:
                 self._logger.addHandler(h)
         self._logger.debug("Initializing")
         self.index = index
+        self._tracker = FPSTracker()
         self._running = False
         self._closing_flag = Event()
         self._timeout_limit = 0
         self._stream = VideoCapture(index, defs.cap_backend)
         self.set_resolution(self.get_resolution())
         self._fps_test_status = 0
-        self._fps_limit = float("inf")
-        self._frame_rate_limiter = 1/self._fps_limit
+        self._fps_target = float("inf")
+        self._spf_target = 1 / self._fps_target
         self._use_limiter = False
-        self._new_frame_event = Event()
         self._err_event = Event()
         self._internal_frame_q = SimpleQueue()
         self._loop = get_event_loop()
@@ -86,15 +87,9 @@ class StreamReader:
         :return None:
         """
         self._running = True
+        self._tracker.reset()
         self._internal_frame_q = SimpleQueue()
         self._read_loop_task = self._loop.run_in_executor(None, self._read_cam)
-
-    def await_new_frame(self) -> futures:
-        """
-        Signal when there is a connect event.
-        :return futures: If the flag is set.
-        """
-        return await_event(self._new_frame_event)
 
     def await_err(self) -> futures:
         """
@@ -119,31 +114,30 @@ class StreamReader:
         :return None:
         """
         self._calc_timeout()
-        prev = time()
+        num_reads = 0
+        start = time()
         while self._running:
-            if self._use_limiter:
-                elapsed = time() - prev
-                if elapsed >= self._frame_rate_limiter:
-                    prev = time()
-                    if not self._get_a_frame(prev):
-                        break
-                else:
-                    self._stream.grab()
-                    tsleep(.0001)
-            else:
-                if not self._get_a_frame(time()):
-                    break
+            ret, frame, dt = self._get_a_frame()
+            if not ret:
+                break
+            self._tracker.update_fps(dt)
+            num_reads += 1
+            metric = (time() - start) // self._spf_target
+            needed = int(metric - num_reads)
+            if needed >= 0:
+                self._internal_frame_q.put((frame, dt, needed + 1))
+            num_reads += needed
 
-    def _get_a_frame(self, prev: time) -> bool:
+    def _get_a_frame(self) -> (bool, ndarray, datetime):
         """
         Helper function for self._read_cam. Raise error event if camera fails.
-        :param prev: The current time()
         :return bool: If frame was read successfully.
         """
+        s = time()
         ret, frame = self._stream.read()
-        end = time()
+        e = time()
         dt = datetime.now()
-        time_taken = end - prev
+        time_taken = e - s
         timeout = time_taken > self._timeout_limit
         if not ret or frame is None or timeout:
             self._logger.warning("cam_stream_reader.py _read_cam(): Camera failed. "
@@ -151,17 +145,22 @@ class StreamReader:
                                  + ". Frame is None: " + str(frame is None)
                                  + ". Time taken: " + str(time_taken))
             self._loop.call_soon_threadsafe(self._err_event.set)
-            return False
-        self._internal_frame_q.put((frame, dt))
-        self._loop.call_soon_threadsafe(self._new_frame_event.set)
-        return True
+            return False, None, None
+        return True, frame, dt
 
     def get_fps(self) -> float:
         """
         Return the current fps limit for this camera.
         :return int: The current fps limit.
         """
-        return self._fps_limit
+        return self._fps_target
+
+    def get_fps_reading(self) -> int:
+        """
+        Return the current fps this camera is reading at.
+        :return int: The current fps.
+        """
+        return self._tracker.get_fps()
 
     def set_fps(self, new_fps: float) -> None:
         """
@@ -169,14 +168,10 @@ class StreamReader:
         :param new_fps: The new rate to read at.
         :return None:
         """
-        if new_fps == float("inf"):
-            self._use_limiter = False
-        else:
-            self._use_limiter = True
-        self._fps_limit = new_fps
-        self._frame_rate_limiter = 1 / self._fps_limit - .001
+        self._fps_target = new_fps
+        self._spf_target = 1 / self._fps_target
 
-    def get_next_new_frame(self) -> (bool, (ndarray, datetime)):
+    def get_next_new_frame(self) -> (bool, (ndarray, datetime, int)):
         """
         Get next frame from queue if it exists and return it, else return None.
         :return (bool, (ndarray, datetime)): (Whether there is a frame, (frame/None, datetime/None))
@@ -186,7 +181,7 @@ class StreamReader:
             self._logger.debug("done with next element")
             return True, self._internal_frame_q.get()
         self._logger.debug("done with None")
-        return False, (None, None)
+        return False, (None, None, None)
 
     def test_resolution(self, size: (float, float)) -> (bool, (float, float)):
         """

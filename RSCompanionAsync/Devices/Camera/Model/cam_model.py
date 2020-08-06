@@ -23,18 +23,18 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from time import time, sleep, mktime
+from time import sleep
 from ctypes import c_char
-from threading import Lock, Thread
+from threading import Thread
 from PIL import ImageFont, ImageDraw, Image
-from numpy import frombuffer, copyto, asarray, uint8
+from numpy import frombuffer, copyto, copy, asarray, uint8
 from collections import deque
 from textwrap import shorten
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 from asyncio import create_task, Event, sleep as asyncsleep, set_event_loop, new_event_loop, get_event_loop
 from multiprocessing.connection import Connection
-from multiprocessing import Array, Semaphore
+from multiprocessing import Array, Value, Semaphore
 from cv2 import resize, INTER_AREA
 from queue import SimpleQueue
 from RSCompanionAsync.Model.app_helpers import format_current_time
@@ -44,7 +44,6 @@ from RSCompanionAsync.Devices.Camera.Model.cam_stream_writer import StreamWriter
 from RSCompanionAsync.Devices.Camera.Model.cam_size_getter import SizeGetter
 from RSCompanionAsync.Devices.Camera.Resources.cam_strings import LangEnum, strings, StringsEnum
 
-ENCODE_CODE = "utf-8"
 CM_SEP = ","
 DTYPE = uint8
 COND_NAME_WIDTH = 30
@@ -58,30 +57,6 @@ b = 10
 OVL_CLR = (b, g, r)
 FALSE_VAL = 0
 TRUE_VAL = 1
-
-
-class FPSTracker:
-    def __init__(self):
-        self._lock = Lock()
-        self._fps = 0
-        self._times = deque()
-        self._num_to_keep = 60
-        self._sum_times = 0
-        self._prev_time = time()
-
-    def update_fps(self, timestamp):
-        now = mktime(timestamp.timetuple()) + timestamp.microsecond / 1E6
-        diff = now - self._prev_time
-        self._times.append(diff)
-        self._sum_times += diff
-        while len(self._times) > self._num_to_keep:
-            self._sum_times -= self._times.popleft()
-        self._prev_time = now
-        self._fps = round(self._num_to_keep / self._sum_times)
-
-    def get_fps(self) -> int:
-        ret = self._fps
-        return ret
 
 
 class CamModel:
@@ -122,8 +97,7 @@ class CamModel:
         self._loop = get_event_loop()
 
         self._strings = strings[LangEnum.ENG]
-        self._max_fps = 30
-        self._fps = self._max_fps
+        self._fps = 60
         self._cam_name = "CAM_" + str(self._cam_index)
         self._cond_name = str()
         self._exp_status = self._strings[StringsEnum.EXP_STATUS_STOP]
@@ -131,7 +105,6 @@ class CamModel:
         self._block_num = 0
         self._keyflag = str()
         self.set_lang()
-        self._fps_tracker = FPSTracker()
 
         self._test_task = None
         self._num_img_workers = 1
@@ -141,6 +114,7 @@ class CamModel:
         self._shm_ovl_arrs = list()
         self._shm_img_arrs = list()
         self._np_img_arrs = list()
+        self._num_writes_arrs = list()
         self._use_overlay = True
         self._proc_thread = Thread(target=None, args=())
         cur_res = self._cam_reader.get_resolution()
@@ -206,14 +180,7 @@ class CamModel:
             self._msg_pipe.send((defs.ModelEnum.FAILURE, None))
             prog_tracker.cancel()
             return
-        max_fps = await self._cam_reader.calc_max_fps(max(sizes))
-        if max_fps < 0:
-            self._msg_pipe.send((defs.ModelEnum.FAILURE, None))
-            prog_tracker.cancel()
-            return
-        self._max_fps = max_fps
-        self._fps = max_fps
-        self._msg_pipe.send((defs.ModelEnum.START, (max_fps, sizes)))
+        self._msg_pipe.send((defs.ModelEnum.START, (self._fps, sizes)))
         prog_tracker.cancel()
         self._proc_thread = Thread(target=self._start_frame_processing, args=())
         self._proc_thread.start()
@@ -224,10 +191,9 @@ class CamModel:
         :return None:
         """
         while True:
-            status = (self._cam_reader.get_fps_status() / 2) + (self._size_gtr.status / 2)
-            if status >= 100:
+            if self._size_gtr.status >= 100:
                 break
-            self._msg_pipe.send((defs.ModelEnum.STAT_UPD, status))
+            self._msg_pipe.send((defs.ModelEnum.STAT_UPD, self._size_gtr.status))
             await asyncsleep(.5)
 
     async def _await_reader_err(self) -> None:
@@ -397,12 +363,14 @@ class CamModel:
         self._shm_ovl_arrs = list()
         self._shm_img_arrs = list()
         self._np_img_arrs = list()
+        self._num_writes_arrs = list()
         for i in range(self._num_img_workers):
             self._sems1.append(Semaphore(0))
             self._sems2.append(Semaphore(0))
             self._sems3.append(Semaphore(1))
             self._shm_ovl_arrs.append(Array(c_char, BYTESTR_SIZE))
             self._shm_img_arrs.append(Array('Q', max_img_arr_size))
+            self._num_writes_arrs.append(Value('i', 1))
             worker_args = (self._shm_img_arrs[i], self._sems1[i], self._sems2[i], self._shm_ovl_arrs[i])
             worker = Thread(target=self._img_processor, args=worker_args, daemon=True)
             worker.start()
@@ -449,10 +417,7 @@ class CamModel:
         """
         self._times = deque()
         self._cam_reader.set_fps(new_fps)
-        if new_fps == float("inf"):
-            self._fps = self._max_fps
-        else:
-            self._fps = new_fps
+        self._fps = int(new_fps)
 
     def _distribute_frames(self) -> None:
         """
@@ -461,46 +426,49 @@ class CamModel:
         """
         i = 0
         while self._process_imgs:
-            ret, (frame, timestamp) = self._cam_reader.get_next_new_frame()
+            ret, (frame, timestamp, num_writes) = self._cam_reader.get_next_new_frame()
             if ret:
-                self._hand_out_frame(frame, timestamp, i)
+                self._hand_out_frame(frame, timestamp, i, num_writes)
                 i = self._increment_counter(i)
             else:
                 sleep(.001)
 
-    def _hand_out_frame(self, frame, timestamp: datetime, i: int) -> None:
+    def _hand_out_frame(self, frame, timestamp: datetime, i: int, num_writes: int) -> None:
         """
         Helper function for self._distribute_frames()
-        :param frame:
-        :param timestamp:
-        :param i:
-        :return:
+        :param frame: The frame to put an overlay on.
+        :param timestamp: A datetime object to add to the overlay.
+        :param i: Which arrays to access.
+        :param num_writes: The number of times to write this frame to save file.
+        :return None:
         """
-        self._fps_tracker.update_fps(timestamp)
         overlay = shorten(self._cond_name, COND_NAME_WIDTH) + CM_SEP + \
                   format_current_time(timestamp, time=True, mil=True) + CM_SEP + self._exp_status + CM_SEP + \
-                  str(self._block_num) + CM_SEP + str(self._keyflag) + CM_SEP + str(self._fps_tracker.get_fps())
+                  str(self._block_num) + CM_SEP + str(self._keyflag) + CM_SEP + str(self._cam_reader.get_fps_reading())\
+                  + "/" + str(self._fps)
+
         self._sems3[i].acquire()
         copyto(self._np_img_arrs[i], frame)
-        self._shm_ovl_arrs[i].value = (overlay.encode(ENCODE_CODE))
+        self._shm_ovl_arrs[i].value = (overlay.encode())
+        self._num_writes_arrs[i].value = num_writes
         self._sems1[i].release()
 
     def _increment_counter(self, num: int) -> int:
         """
         Helper function for self._distribute_frames()
-        :param num:
-        :return:
+        :param num: The integer to increment from.
+        :return int: The incremented integer.
         """
         return (num + 1) % self._num_img_workers
 
     def _img_processor(self, sh_img_arr: Array, sem1: Semaphore, sem2: Semaphore, ovl_arr: Array) -> None:
         """
         Process images as needed.
-        :param sh_img_arr:
-        :param sem1:
-        :param sem2:
-        :param ovl_arr:
-        :return:
+        :param sh_img_arr: The array containing the frame to work with.
+        :param sem1: The entrance lock.
+        :param sem2: The exit lock.
+        :param ovl_arr: The array containing the overlay work with.
+        :return None:
         """
         img_dim = (EDIT_HEIGHT, self._cur_arr_shape[1], self._cur_arr_shape[2])
         img_size = int(EDIT_HEIGHT * img_dim[1] * img_dim[2])
@@ -510,7 +478,7 @@ class CamModel:
             if self._use_overlay:
                 img_pil = Image.fromarray(img_arr)
                 draw = ImageDraw.Draw(img_pil)
-                draw.text(OVL_POS, text=ovl_arr.value.decode(ENCODE_CODE), font=OVL_FONT, fill=OVL_CLR)
+                draw.text(OVL_POS, text=ovl_arr.value.decode(), font=OVL_FONT, fill=OVL_CLR)
                 processed_img = asarray(img_pil)
                 copyto(img_arr, processed_img)
             sem2.release()
@@ -525,12 +493,13 @@ class CamModel:
             self._sems2[i].acquire()
             frame = self._np_img_arrs[i]
             if self._writing:
-                self._write_q.put(frame)
+                for p in range(self._num_writes_arrs[i].value):
+                    self._write_q.put(copy(frame))
             if self._show_feed:
                 to_send = self.image_resize(frame, width=640)
                 self._img_pipe.send(to_send)
             self._sems3[i].release()
-            i = (i + 1) % self._num_img_workers
+            i = self._increment_counter(i)
 
     def _set_texts(self) -> None:
         """
