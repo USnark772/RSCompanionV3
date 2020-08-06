@@ -151,7 +151,7 @@ class CamView(AbstractView):
                               ]
 
         config_win_w = 350
-        config_win_h = len(self._config_items) * 40
+        config_win_h = len(self._config_items) * 30
 
         self.config_button.raise_()
 
