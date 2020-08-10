@@ -97,7 +97,7 @@ class CamModel:
         self._loop = get_event_loop()
 
         self._strings = strings[LangEnum.ENG]
-        self._fps = 60
+        self._fps = 30
         self._cam_name = "CAM_" + str(self._cam_index)
         self._cond_name = str()
         self._exp_status = self._strings[StringsEnum.EXP_STATUS_STOP]
@@ -416,7 +416,9 @@ class CamModel:
         :return None:
         """
         self._times = deque()
+        self._cam_reader.stop()
         self._cam_reader.set_fps(new_fps)
+        self._cam_reader.start()
         self._fps = int(new_fps)
 
     def _distribute_frames(self) -> None:
@@ -446,7 +448,6 @@ class CamModel:
                   format_current_time(timestamp, time=True, mil=True) + CM_SEP + self._exp_status + CM_SEP + \
                   str(self._block_num) + CM_SEP + str(self._keyflag) + CM_SEP + str(self._cam_reader.get_fps_reading())\
                   + "/" + str(self._fps)
-
         self._sems3[i].acquire()
         copyto(self._np_img_arrs[i], frame)
         self._shm_ovl_arrs[i].value = (overlay.encode())

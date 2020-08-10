@@ -26,6 +26,7 @@ https://redscientific.com/index.html
 from time import time, mktime
 from threading import Lock
 from collections import deque
+from datetime import datetime
 
 
 class FPSTracker:
@@ -37,8 +38,13 @@ class FPSTracker:
         self._sum_times = 0
         self._prev_time = time()
 
-    def update_fps(self, timestamp):
-        now = mktime(timestamp.timetuple()) + timestamp.microsecond / 1E6
+    def update_fps(self, timestamp: datetime = None, given_time: time = None):
+        if timestamp is not None:
+            now = mktime(timestamp.timetuple()) + timestamp.microsecond / 1E6
+        elif given_time is not None:
+            now = given_time
+        else:
+            now = time()
         self._lock.acquire()
         diff = now - self._prev_time
         self._times.append(diff)

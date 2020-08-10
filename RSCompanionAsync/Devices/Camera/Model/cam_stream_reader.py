@@ -28,7 +28,7 @@ from datetime import datetime
 from cv2 import VideoCapture, CAP_PROP_FOURCC, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
 from queue import SimpleQueue
 from numpy import ndarray
-from time import time, sleep as tsleep
+from time import time
 from asyncio import futures, Event, get_event_loop, sleep
 from RSCompanionAsync.Devices.Camera.Model import cam_defs as defs
 from RSCompanionAsync.Model.app_helpers import await_event
@@ -50,8 +50,9 @@ class StreamReader:
         self._stream = VideoCapture(index, defs.cap_backend)
         self.set_resolution(self.get_resolution())
         self._fps_test_status = 0
-        self._fps_target = float("inf")
+        self._fps_target = 30
         self._spf_target = 1 / self._fps_target
+        self._buffer = 5
         self._use_limiter = False
         self._err_event = Event()
         self._internal_frame_q = SimpleQueue()
@@ -114,19 +115,21 @@ class StreamReader:
         :return None:
         """
         self._calc_timeout()
-        num_reads = 0
+        num_frms = 0
         start = time()
         while self._running:
             ret, frame, dt = self._get_a_frame()
             if not ret:
                 break
-            self._tracker.update_fps(dt)
-            num_reads += 1
+            self._tracker.update_fps()
             metric = (time() - start) // self._spf_target
-            needed = int(metric - num_reads)
-            if needed >= 0:
-                self._internal_frame_q.put((frame, dt, needed + 1))
-            num_reads += needed
+            frm_diff = int(metric - num_frms)
+            if frm_diff > 0:
+                self._internal_frame_q.put((frame, dt, frm_diff))
+                num_frms += frm_diff
+            elif frm_diff > -self._buffer:
+                self._internal_frame_q.put((frame, dt, 1))
+                num_frms += 1
 
     def _get_a_frame(self) -> (bool, ndarray, datetime):
         """
@@ -164,12 +167,13 @@ class StreamReader:
 
     def set_fps(self, new_fps: float) -> None:
         """
-        Set read speed of this camera as fps
-        :param new_fps: The new rate to read at.
+        Set simulated read speed of this camera. Reader will still read from camera at max rate.
+        :param new_fps: The new simulated fps.
         :return None:
         """
         self._fps_target = new_fps
         self._spf_target = 1 / self._fps_target
+        self._buffer = new_fps // 6
 
     def get_next_new_frame(self) -> (bool, (ndarray, datetime, int)):
         """
