@@ -26,13 +26,34 @@ https://redscientific.com/index.html
 from logging import getLogger, StreamHandler
 from datetime import datetime
 from cv2 import VideoCapture, CAP_PROP_FOURCC, CAP_PROP_FRAME_WIDTH, CAP_PROP_FRAME_HEIGHT
-from queue import SimpleQueue
 from numpy import ndarray
-from time import time
-from asyncio import futures, Event, get_event_loop, sleep
+from time import time, sleep as tsleep
+from asyncio import futures, Event, get_event_loop, sleep as asyncsleep
+from threading import Event as TEvent, Lock
 from RSCompanionAsync.Devices.Camera.Model import cam_defs as defs
 from RSCompanionAsync.Model.app_helpers import await_event
 from RSCompanionAsync.Devices.Camera.Model.fps_tracker import FPSTracker
+
+
+class InternalFrameQueue:
+    def __init__(self):
+        self._lock = Lock()
+        self._q = list()
+
+    def reset_q(self) -> None:
+        with self._lock:
+            self._q = list()
+
+    def add_to_q(self, item) -> None:
+        with self._lock:
+            self._q.append(item)
+
+    def get_from_q(self) -> object:
+        ret = None
+        with self._lock:
+            if len(self._q) > 0:
+                ret = self._q.pop(0)
+        return ret
 
 
 class StreamReader:
@@ -44,7 +65,10 @@ class StreamReader:
         self._logger.debug("Initializing")
         self.index = index
         self._tracker = FPSTracker()
-        self._running = False
+        self._internal_frame_q = InternalFrameQueue()
+        self._running = TEvent()
+        self._running.clear()
+        self._lock = Lock()
         self._closing_flag = Event()
         self._timeout_limit = 0
         self._stream = VideoCapture(index, defs.cap_backend)
@@ -54,10 +78,13 @@ class StreamReader:
         self._spf_target = 1 / self._fps_target
         self._buffer = 5
         self._use_limiter = False
+        self._finalized = False
+        self._end = TEvent()
+        self._end.clear()
         self._err_event = Event()
-        self._internal_frame_q = SimpleQueue()
+        self._num_frms = 0
+        self._start = time()
         self._loop = get_event_loop()
-        self._read_loop_task = None
         self._logger.debug("Initialized")
 
     def cleanup(self) -> None:
@@ -66,7 +93,8 @@ class StreamReader:
         :return None:
         """
         self._closing_flag.set()
-        self.stop()
+        self._end.set()
+        self.stop_reading()
         self._stream.release()
 
     def _calc_timeout(self) -> None:
@@ -82,15 +110,25 @@ class StreamReader:
             tries.append(end - start)
         self._timeout_limit = max(tries) + 1.5  # + 1.5 to handle possible lag spikes.
 
-    def start(self) -> None:
+    def _finalize(self) -> None:
+        self._calc_timeout()
+        self._loop.run_in_executor(None, self._read_cam)
+        self._finalized = True
+
+    def start_reading(self) -> None:
         """
         Reset internal frame queue so we have no leftover frames and run read_cam in thread.
         :return None:
         """
-        self._running = True
-        self._tracker.reset()
-        self._internal_frame_q = SimpleQueue()
-        self._read_loop_task = self._loop.run_in_executor(None, self._read_cam)
+        with self._lock:
+            if not self._finalized:
+                self._finalize()
+            if not self._running.is_set():
+                self._tracker.reset()
+                self._internal_frame_q.reset_q()
+                self._num_frms = 0
+                self._start = time()
+                self._running.set()
 
     def await_err(self) -> futures:
         """
@@ -99,37 +137,35 @@ class StreamReader:
         """
         return await_event(self._err_event)
 
-    def stop(self) -> None:
+    def stop_reading(self) -> None:
         """
         End any looping tasks.
         :return None:
         """
-        self._running = False
-        if self._read_loop_task is not None:
-            self._read_loop_task.cancel()
-            self._read_loop_task = None
+        with self._lock:
+            self._running.clear()
 
     def _read_cam(self) -> None:
         """
         Continuously check camera for new frames and put into queue.
         :return None:
         """
-        self._calc_timeout()
-        num_frms = 0
-        start = time()
-        while self._running:
-            ret, frame, dt = self._get_a_frame()
-            if not ret:
-                break
-            self._tracker.update_fps()
-            metric = (time() - start) // self._spf_target
-            frm_diff = int(metric - num_frms)
-            if frm_diff > 0:
-                self._internal_frame_q.put((frame, dt, frm_diff))
-                num_frms += frm_diff
-            elif frm_diff > -self._buffer:
-                self._internal_frame_q.put((frame, dt, 1))
-                num_frms += 1
+        while not self._end.is_set():
+            if self._running.is_set():
+                ret, frame, dt = self._get_a_frame()
+                if not ret:
+                    break
+                self._tracker.update_fps()
+                metric = (time() - self._start) // self._spf_target
+                frm_diff = int(metric - self._num_frms)
+                if frm_diff > 0:
+                    self._internal_frame_q.add_to_q((frame, dt, frm_diff))
+                    self._num_frms += frm_diff
+                elif frm_diff > -self._buffer:
+                    self._internal_frame_q.add_to_q((frame, dt, 1))
+                    self._num_frms += 1
+            else:
+                tsleep(.1)
 
     def _get_a_frame(self) -> (bool, ndarray, datetime):
         """
@@ -151,14 +187,14 @@ class StreamReader:
             return False, None, None
         return True, frame, dt
 
-    def get_fps(self) -> float:
+    def get_fps_setting(self) -> float:
         """
         Return the current fps limit for this camera.
         :return int: The current fps limit.
         """
         return self._fps_target
 
-    def get_fps_reading(self) -> int:
+    def get_fps_actual(self) -> int:
         """
         Return the current fps this camera is reading at.
         :return int: The current fps.
@@ -171,9 +207,15 @@ class StreamReader:
         :param new_fps: The new simulated fps.
         :return None:
         """
-        self._fps_target = new_fps
-        self._spf_target = 1 / self._fps_target
-        self._buffer = new_fps // 6
+        with self._lock:
+            self._running.clear()
+            tsleep(.05)
+            self._fps_target = new_fps
+            self._spf_target = 1 / self._fps_target
+            self._buffer = new_fps // 6
+            self._start = time()
+            self._num_frms = 0
+            self._running.set()
 
     def get_next_new_frame(self) -> (bool, (ndarray, datetime, int)):
         """
@@ -181,11 +223,12 @@ class StreamReader:
         :return (bool, (ndarray, datetime)): (Whether there is a frame, (frame/None, datetime/None))
         """
         self._logger.debug("running")
-        if not self._internal_frame_q.empty():
+        ret = self._internal_frame_q.get_from_q()
+        if ret is not None:
             self._logger.debug("done with next element")
-            return True, self._internal_frame_q.get()
+            return True, ret
         self._logger.debug("done with None")
-        return False, (None, None, None)
+        return False, None
 
     def test_resolution(self, size: (float, float)) -> (bool, (float, float)):
         """
@@ -214,9 +257,10 @@ class StreamReader:
         :param size: The new frame size to use.
         :return None:
         """
-        self._internal_frame_q = SimpleQueue()
-        self._set_fourcc()
-        self._set_resolution(size)
+        with self._lock:
+            self._internal_frame_q.reset_q()
+            self._set_fourcc()
+            self._set_resolution(size)
 
     def _set_resolution(self, size: (float, float)) -> None:
         """
@@ -258,7 +302,7 @@ class StreamReader:
                 return 0
             self._stream.read()
             self._fps_test_status = int(i / divisor)
-            await sleep(0)
+            await asyncsleep(0)
         e = time()
         self.set_resolution(cur_res)
         time_taken = e - s

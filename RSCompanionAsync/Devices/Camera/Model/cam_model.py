@@ -23,7 +23,7 @@ Company: Red Scientific
 https://redscientific.com/index.html
 """
 
-from time import sleep
+from time import sleep as tsleep
 from ctypes import c_char
 from threading import Thread
 from PIL import ImageFont, ImageDraw, Image
@@ -107,7 +107,7 @@ class CamModel:
         self.set_lang()
 
         self._test_task = None
-        self._num_img_workers = 1
+        self._num_img_workers = 2
         self._sems1 = list()
         self._sems2 = list()
         self._sems3 = list()
@@ -281,7 +281,7 @@ class CamModel:
         if new_res == self._cam_reader.get_resolution():
             return
         self._show_feed = False
-        self._cam_reader.stop()
+        self._cam_reader.stop_reading()
         self._stop_frame_processing()
         self._cam_reader.set_resolution(new_res)
         self._times = deque()
@@ -289,7 +289,7 @@ class CamModel:
         self._cur_arr_shape = (int(cur_res[1]), int(cur_res[0]), 3)
         self._cur_arr_size = self._cur_arr_shape[0] * self._cur_arr_shape[1] * self._cur_arr_shape[2]
         self._proc_thread = Thread(target=self._start_frame_processing, args=())
-        self._cam_reader.start()
+        self._cam_reader.start_reading()
         self._proc_thread.start()
         self._show_feed = True
 
@@ -300,10 +300,10 @@ class CamModel:
         :return None:
         """
         if is_active:
-            self._cam_reader.start()
+            self._cam_reader.start_reading()
             self._handle_frames.set()
         else:
-            self._cam_reader.stop()
+            self._cam_reader.stop_reading()
             self._handle_frames.clear()
 
     def _use_feed(self, is_active: bool) -> None:
@@ -335,7 +335,7 @@ class CamModel:
         """
         self._writing = False
         while not self._write_q.empty():
-            sleep(.05)
+            tsleep(.05)
         self._cam_writer.cleanup()
         self._msg_pipe.send((defs.ModelEnum.STOP, None))
 
@@ -380,7 +380,7 @@ class CamModel:
         handler = Thread(target=self._handle_processed_frames, args=(), daemon=True)
         handler.start()
         while self._process_imgs:
-            sleep(1)
+            tsleep(1)
 
     def _stop_frame_processing(self) -> None:
         """
@@ -407,7 +407,7 @@ class CamModel:
         Send the current fps of this camera.
         :return None:
         """
-        self._msg_pipe.send((defs.ModelEnum.CUR_FPS, self._cam_reader.get_fps()))
+        self._msg_pipe.send((defs.ModelEnum.CUR_FPS, self._cam_reader.get_fps_setting()))
 
     def _set_fps(self, new_fps: float) -> None:
         """
@@ -416,9 +416,7 @@ class CamModel:
         :return None:
         """
         self._times = deque()
-        self._cam_reader.stop()
         self._cam_reader.set_fps(new_fps)
-        self._cam_reader.start()
         self._fps = int(new_fps)
 
     def _distribute_frames(self) -> None:
@@ -428,12 +426,13 @@ class CamModel:
         """
         i = 0
         while self._process_imgs:
-            ret, (frame, timestamp, num_writes) = self._cam_reader.get_next_new_frame()
+            ret, val = self._cam_reader.get_next_new_frame()
             if ret:
+                (frame, timestamp, num_writes) = val
                 self._hand_out_frame(frame, timestamp, i, num_writes)
                 i = self._increment_counter(i)
             else:
-                sleep(.001)
+                tsleep(.001)
 
     def _hand_out_frame(self, frame, timestamp: datetime, i: int, num_writes: int) -> None:
         """
@@ -446,7 +445,7 @@ class CamModel:
         """
         overlay = shorten(self._cond_name, COND_NAME_WIDTH) + CM_SEP + \
                   format_current_time(timestamp, time=True, mil=True) + CM_SEP + self._exp_status + CM_SEP + \
-                  str(self._block_num) + CM_SEP + str(self._keyflag) + CM_SEP + str(self._cam_reader.get_fps_reading())\
+                  str(self._block_num) + CM_SEP + str(self._keyflag) + CM_SEP + str(self._cam_reader.get_fps_actual())\
                   + "/" + str(self._fps)
         self._sems3[i].acquire()
         copyto(self._np_img_arrs[i], frame)
