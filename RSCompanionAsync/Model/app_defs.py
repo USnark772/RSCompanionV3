@@ -35,7 +35,7 @@ from enum import Enum, auto
 #################################################################################################################
 
 # Set release bool to True and update version_number when building. Increment version by .01
-version_number = 2.00
+version_number = 2.01
 release = False
 
 company_name = "Red Scientific"

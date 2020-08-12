@@ -5,7 +5,7 @@
 ; ******************************************************************************************
 #define BuildDir "C:\RSDev\Builds\"  ; SET TO YOUR BUILDS DIRECTORY
 #define AppVMaj "2"                  ; UPDATE TO CORRECT MAJOR VERSION Ex. v2.01 would be 2
-#define AppVMin "0"                  ; UPDATE TO CORRECT MINOR VERSION Ex. v2.01 would be 01
+#define AppVMin "01"                  ; UPDATE TO CORRECT MINOR VERSION Ex. v2.01 would be 01
 ; ******************************************************************************************
 
 #define MyAppName "RS Companion"
