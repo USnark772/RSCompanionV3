@@ -2,28 +2,22 @@ TODO: Check for any errors listed below.
     - ERROR ID: 10-t
 
 TODO: Pressing matters.
-    - Figure out xbee api mode
-        https://serdmanczyk.github.io/XBeeAPI-PythonArduino-Tutorial/
-    - Handle cameras differently
-        - Remove limiter usage.
-        - Remove FPS test.
-        - read cameras at full speed
-        - dup or drop frames depending in user selected fps
-        - in overlay, show actual fps/selected fps
 
 TODO: At some point
-    - Figure out how to catch SIGINT and close cameras gracefully.
-    - Consider creating a base class(es) for Horizontally Graphable Devices (?) such as drt and vog.
+    - Implement wDRT
+        - Figure out xbee api mode
+            https://serdmanczyk.github.io/XBeeAPI-PythonArduino-Tutorial/
     - Implement audio recording. (SimpleAudio, PyAudio, etc.)
         - Try to figure out which camera each mic belongs to and make that an mp4.
         - If mic is not attached to camera then save as audio file.
         - https://stackoverflow.com/questions/14140495/how-to-capture-a-video-and-audio-in-python-from-a-camera-or-webcam
-    - Consider making properties out of our getter/setter methods.
-        - https://www.python-course.eu/python3_properties.php
-    - Check all modules for proper and complete logging usage.
     - Implement playback of experiment data.
         - Scanning through data example: DRT_7,_8,_9 clicks threshold x, scan through all by timestamp.
         - Reimplement saving as .rs files.
+    - Check all modules for proper and complete logging usage.
+    - Consider creating a base class(es) for Horizontally Graphable Devices (?) such as drt and vog.
+    - Consider making properties out of our getter/setter methods.
+        - https://www.python-course.eu/python3_properties.php
     - Figure out how to get app to work with non-ascii character languages. Issue seems to be with matplotlib.
         - Chinese
         - Japanese
@@ -34,7 +28,6 @@ TODO: At some point
     - Look over https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html and make edits to imports.
     - Look at info_box.py empty QLabel items and consider a spacer item instead.
     - extract view from controller
-    - Look up python support for xb radio?
 
 TODO: Test this thing like crazy!
     - Look for if video is smooth on saved files even if it's not in the preview in the app.
